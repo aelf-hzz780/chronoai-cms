@@ -6,7 +6,7 @@ Ghost 镜像不增加源码补丁或自定义构建层。两个实例分别使�
 
 ## 启动
 
-需要 Docker Engine／Desktop、Docker Compose、Python 3。命令在当前目录执行。首先拉取准备验证的官方 Ghost 和其支持的 MySQL 镜像，然后生成配置；示例标签必须结合当时官方兼容矩阵复核。
+需要 Docker Engine（可通过 Docker Desktop 或 Colima 运行）、Docker Compose、Python 3.9+。两个 Python 脚本仅使用标准库，无需安装 pip 依赖。命令在当前目录执行。首先拉取准备验证的官方 Ghost 和其支持的 MySQL 镜像，然后生成配置；示例标签必须结合当时官方兼容矩阵复核。
 
 ```bash
 docker pull ghost:6-alpine
@@ -37,6 +37,15 @@ python3 experiment.py --verify
 `--verify` 只读，可在重启后执行。中断后的 `--resume` 使用已有状态；若帖子请求结果不确定，先查远端，无法证明结果时停止而不盲重试。实验未配置 SMTP；首次初始化后的再次运维登录可能需要邮件设备验证，应配置邮件后处理，不关闭认证校验。正常的 Integration API 验证不依赖重新登录。
 
 本实验验证 HTML card 的代码／表格呈现、署名、站点 locale、sitemap 可达及两站文章分离；它不证明平台 Markdown 保真、图片保护、翻译互链、业务权限或 NyxID 已完成。
+
+校验逻辑的离线回归测试从仓库根目录执行，覆盖正常与 Python 优化模式：
+
+```bash
+python3 -B -m unittest discover -s infra/ghost -p 'test_*.py' -v
+python3 -B -O -m unittest discover -s infra/ghost -p 'test_*.py' -v
+```
+
+换机器复验时，应使用独立 Compose project、新配置和新 `--state` 文件；迁移过来的 state 不能与新建的空数据库混用。旧 `.env`、运行状态和历史证据保留不覆盖。需要复现已有实验时，使用证据记录中的镜像 digest，避免 `ghost:6-alpine` 等移动标签改变测试版本。
 
 手工方式：
 

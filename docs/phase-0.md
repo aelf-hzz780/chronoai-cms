@@ -2,12 +2,14 @@
 
 日期：2026-10-28；时区 Asia/Shanghai。Document 表示文档核验，Local 表示本机实际行为，Live 表示指定真实集成／部署环境中的行为。层级不能相互替代。
 
-## 1. 当前环境
+## 1. 首次实验环境（迁移前的机器）
 
 - 工作目录原为空，无 Git 仓库、项目文件或 Spec Kitty 配置。用户确认按全新项目处理。
 - 已安装 Spec Kitty CLI，但尚未在项目使用；未创建 mission。本地 Git 已初始化为 `chore/001-blog-platform-baseline`，未配置远程或推送。
 - Docker Desktop 已启动，Docker Engine 29.1.5，Compose v5.0.1。
 - 本地实验仅绑定 loopback，不是公网部署，不执行 DEV／Hashnode／Medium／HackerNoon 写入。
+
+以上记录保留首次实验时的环境事实。当前工作目录由另一台机器迁入，不能据此认定本机已安装 Docker、存在对应数据卷或测试站仍可用。当前仓库与 commit 身份见 [README](../README.md)，迁移后的独立验证见 [本机复验](local-revalidation.md)。
 
 ## 2. 实验台账
 

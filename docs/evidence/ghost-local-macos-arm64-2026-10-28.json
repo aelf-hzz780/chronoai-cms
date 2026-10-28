@@ -1,0 +1,187 @@
+{
+  "experiment_id": "E02",
+  "related_experiment_ids": [
+    "E06"
+  ],
+  "requirement_ids": [
+    "R1",
+    "R6"
+  ],
+  "deliverable_ids": [
+    "D1",
+    "D5"
+  ],
+  "claim": "A fresh, isolated installation on the current Mac publishes synthetic Ghost fixtures and preserves them across a four-container restart.",
+  "evidence_level": "local",
+  "status": "passed",
+  "recorded_at": "2026-10-28T10:18:16.363236+00:00",
+  "timezone": "Asia/Shanghai",
+  "historical_evidence": "ghost-local-2026-10-28.json",
+  "source_baseline_revision": "79e69842f5bacba7f8204f62d151018bacf98d91",
+  "environment": {
+    "host_os": "macOS-26.5.2-arm64-arm-64bit",
+    "host_architecture": "arm64",
+    "python_version": "3.9.6",
+    "colima_version": "0.10.3",
+    "lima_version": "2.2.1",
+    "vm_type": "vz",
+    "vm_cpus": 4,
+    "vm_memory_gib": 6,
+    "vm_data_disk_gib": 30,
+    "host_directory_mounts": false,
+    "docker_context": "colima-blogsystem",
+    "docker_default_context": "default",
+    "compose_project": "blogsystem-current-machine",
+    "docker_client": "29.9.2",
+    "docker_engine": "29.5.2",
+    "docker_architecture": "arm64",
+    "compose_version": "5.6.1",
+    "ghost_version": "6.73.0",
+    "ghost_image": "ghost@sha256:4195f6c405e40230cd10c0770425cf500c1f542a96e9f6584c11649c150e5a89",
+    "mysql_version": "8.0.44",
+    "mysql_image": "mysql@sha256:f37951fc3753a6a22d6c7bf6978c5e5fefcf6f31814d98c582524f98eae52b21",
+    "exposure": "127.0.0.1 only",
+    "ghost_instances": 2,
+    "mysql_instances": 2,
+    "separate_persistent_volumes": 4
+  },
+  "initialization": {
+    "status": "passed",
+    "evidence_level": "local",
+    "run_id": "9921ed963681",
+    "performed_at": "2026-10-28T10:16:09.216796+00:00",
+    "mode": "initialize",
+    "sites": [
+      {
+        "language": "en",
+        "url": "http://localhost:2468/phase0-en-9921ed963681/",
+        "published": true,
+        "author_verified": true,
+        "html_language_verified": true,
+        "code_and_table_rendered": true,
+        "sitemap_accessible": true,
+        "other_site_returns_404": true,
+        "fixture_sha256": "eceb9c07dc2b85b30303ac0405d08e16bbae540705ae92c55bcfaca3025f3be5"
+      },
+      {
+        "language": "zh",
+        "url": "http://localhost:2469/phase0-zh-9921ed963681/",
+        "published": true,
+        "author_verified": true,
+        "html_language_verified": true,
+        "code_and_table_rendered": true,
+        "sitemap_accessible": true,
+        "other_site_returns_404": true,
+        "fixture_sha256": "52f102a4ff775092c84f99ca6426cef1c3d540c82566a7f58a1433a854eb6973"
+      }
+    ]
+  },
+  "after_restart": {
+    "status": "passed",
+    "evidence_level": "local",
+    "run_id": "9921ed963681",
+    "performed_at": "2026-10-28T10:17:07.647960+00:00",
+    "mode": "verify",
+    "sites": [
+      {
+        "language": "en",
+        "url": "http://localhost:2468/phase0-en-9921ed963681/",
+        "published": true,
+        "author_verified": true,
+        "html_language_verified": true,
+        "code_and_table_rendered": true,
+        "sitemap_accessible": true,
+        "other_site_returns_404": true,
+        "fixture_sha256": "eceb9c07dc2b85b30303ac0405d08e16bbae540705ae92c55bcfaca3025f3be5"
+      },
+      {
+        "language": "zh",
+        "url": "http://localhost:2469/phase0-zh-9921ed963681/",
+        "published": true,
+        "author_verified": true,
+        "html_language_verified": true,
+        "code_and_table_rendered": true,
+        "sitemap_accessible": true,
+        "other_site_returns_404": true,
+        "fixture_sha256": "52f102a4ff775092c84f99ca6426cef1c3d540c82566a7f58a1433a854eb6973"
+      }
+    ],
+    "python_optimization_enabled": true
+  },
+  "containers_after_restart": [
+    {
+      "name": "/blogsystem-current-machine-ghost-zh-1",
+      "health": "healthy",
+      "ports": {
+        "2368/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "2469"
+          }
+        ]
+      },
+      "volumes": [
+        "blogsystem-current-machine_content-zh"
+      ]
+    },
+    {
+      "name": "/blogsystem-current-machine-ghost-en-1",
+      "health": "healthy",
+      "ports": {
+        "2368/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "2468"
+          }
+        ]
+      },
+      "volumes": [
+        "blogsystem-current-machine_content-en"
+      ]
+    },
+    {
+      "name": "/blogsystem-current-machine-db-zh-1",
+      "health": "healthy",
+      "ports": {},
+      "volumes": [
+        "blogsystem-current-machine_database-zh"
+      ]
+    },
+    {
+      "name": "/blogsystem-current-machine-db-en-1",
+      "health": "healthy",
+      "ports": {},
+      "volumes": [
+        "blogsystem-current-machine_database-en"
+      ]
+    }
+  ],
+  "verification_code_sha256": {
+    "infra/ghost/experiment.py": "7139b2f66b84b0d50f2844e3749650a3fb9cf00d56d11621e5dfe49bb8baadb3",
+    "infra/ghost/test_experiment.py": "3aaca8650bc2b2c3fe4b8f86fd714afa1442865099c3a2835b805310d0df35dc",
+    "infra/ghost/prepare.py": "62c94b6b4474a6a22b1c6c2914fda8042f418f2ed75e5d3f5d266a2853882b90",
+    "infra/ghost/compose.yaml": "b35117cb632e62b1da83658fb56ce042011efc6594a1980cbecad93865f07af6"
+  },
+  "additional_checks": {
+    "source_snapshot_hashes_and_sizes": "passed",
+    "live_gist_matches_saved_revision_and_sources": "passed",
+    "acceptance_scenarios": 52,
+    "deliverable_mapping_rows": 9,
+    "normal_python_unit_tests": 5,
+    "optimized_python_unit_tests": 5,
+    "transferred_configuration_and_state_unchanged": true,
+    "new_private_file_permissions": "0600",
+    "existing_configuration_overwrite_rejected": true,
+    "non_loopback_target_rejected_before_state_creation": true,
+    "compose_config_validation": "passed",
+    "images_match_historical_digests": true
+  },
+  "limitations": [
+    "One synthetic publication only; no personal/organization business isolation implementation",
+    "HTML-card fixture, not a Markdown round-trip test; fixture SHA is the input fixture hash",
+    "No image upload/privacy, translation links, production domains, SMTP, NyxID or external publishing verification",
+    "Restart persistence is not backup/restore evidence",
+    "Ghost Admin bootstrap endpoints are test-only and version-bound",
+    "No D1–D9 deliverable is marked complete"
+  ]
+}

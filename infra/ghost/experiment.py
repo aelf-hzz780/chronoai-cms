@@ -148,18 +148,22 @@ def publish_fixture(opener, site, language, run_id, checkpoint):
 def verify_site(opener, site, language, other_url):
     post = json_request(opener, site["url"], f'/ghost/api/admin/posts/{site["post"]["id"]}/?formats=html',
                         key=site["key"])["posts"][0]
-    assert post["status"] == "published"
-    assert post["authors"][0]["id"] == site["owner_id"]
+    if post["status"] != "published":
+        raise AssertionError("fixture is not published")
+    if post["authors"][0]["id"] != site["owner_id"]:
+        raise AssertionError("fixture author does not match the local owner")
     path = urllib.parse.urlsplit(site["post"]["url"]).path
     _, body = request(opener, site["url"], path)
     html = body.decode()
     for marker in [site["post"]["marker"], "<table", "<code", f'lang="{language}"']:
-        assert marker in html, f"missing expected rendered marker: {marker}"
+        if marker not in html:
+            raise AssertionError(f"missing expected rendered marker: {marker}")
     request(opener, site["url"], "/sitemap.xml")
     try:
         request(opener, other_url, path)
     except urllib.error.HTTPError as error:
-        assert error.code == 404, "unexpected cross-site response"
+        if error.code != 404:
+            raise AssertionError("unexpected cross-site response") from error
     else:
         raise AssertionError("fixture unexpectedly visible on the other language site")
     return {"language": language, "url": site["post"]["url"], "published": True,
