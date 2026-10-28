@@ -25,8 +25,12 @@ export class Store {
       CREATE INDEX IF NOT EXISTS releases_article ON releases(article_id,created_at);
       CREATE TABLE IF NOT EXISTS deliveries (id TEXT PRIMARY KEY, release_id TEXT NOT NULL REFERENCES releases(id), owner_id TEXT NOT NULL REFERENCES owners(id), connection_id TEXT NOT NULL, target TEXT NOT NULL, action TEXT NOT NULL, format TEXT NOT NULL, digest TEXT NOT NULL, state TEXT NOT NULL, remote_id TEXT, url TEXT, approval_ref TEXT, error_code TEXT, source_verified INTEGER, trace_id TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS deliveries_owner_state ON deliveries(owner_id,state);
+      CREATE TABLE IF NOT EXISTS delivery_payloads (delivery_id TEXT PRIMARY KEY REFERENCES deliveries(id), actor_json TEXT NOT NULL, payload_json TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS delivery_events (id TEXT PRIMARY KEY, delivery_id TEXT NOT NULL REFERENCES deliveries(id), state TEXT NOT NULL, code TEXT, trace_id TEXT NOT NULL, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, kind TEXT NOT NULL, resource_id TEXT NOT NULL, state TEXT NOT NULL, lease_until TEXT, created_at TEXT NOT NULL, UNIQUE(kind,resource_id));
       CREATE INDEX IF NOT EXISTS jobs_state ON jobs(state,created_at);
+      CREATE TABLE IF NOT EXISTS job_leases (job_id TEXT PRIMARY KEY REFERENCES jobs(id), token TEXT NOT NULL, generation INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS recovery_actors (kind TEXT NOT NULL, resource_id TEXT NOT NULL, actor_json TEXT NOT NULL, trace_id TEXT NOT NULL, PRIMARY KEY(kind,resource_id));
       CREATE TABLE IF NOT EXISTS audit (id TEXT PRIMARY KEY, actor TEXT NOT NULL, owner_id TEXT NOT NULL, action TEXT NOT NULL, resource_id TEXT NOT NULL, trace_id TEXT NOT NULL, detail_json TEXT NOT NULL, created_at TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS audit_owner ON audit(owner_id,created_at);
       CREATE TABLE IF NOT EXISTS idempotency (actor TEXT NOT NULL, operation TEXT NOT NULL, key TEXT NOT NULL, digest TEXT NOT NULL, resource_id TEXT NOT NULL, PRIMARY KEY(actor,operation,key));

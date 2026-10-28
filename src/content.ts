@@ -83,10 +83,18 @@ export class ContentService {
     const owner = await this.policy.owner(actor, ownerId);
     requireValue(Number.isInteger(limit) && limit > 0 && limit <= 100 && Number.isInteger(offset) && offset >= 0, 400, 'INVALID_INPUT', 'Invalid pagination');
     const publisher = await this.policy.canPublish(actor, owner);
-    const rows = this.store.all(`SELECT a.* FROM articles a WHERE a.owner_id=? AND (a.creator=? OR (?=1 AND EXISTS(SELECT 1 FROM submissions s WHERE s.article_id=a.id)) OR EXISTS(SELECT 1 FROM releases r WHERE r.article_id=a.id AND r.state='published')) ORDER BY a.created_at DESC,a.rowid DESC LIMIT ? OFFSET ?`, ownerId, actor.subject, publisher ? 1 : 0, limit, offset);
-    const views = await Promise.all(rows.map(a => this.get(actor, a.id)));
-    // Search only authorized revision bodies; never search unseen working drafts.
-    return views.filter(a => `${a.revision.title}\n${a.revision.markdown}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+    requireValue(query.length <= 500, 400, 'INVALID_INPUT', 'Search query exceeds 500 characters');
+    // Resolve one authorized revision per article before searching and paging. In
+    // particular, another author's newer working draft is never in this relation.
+    const rows = this.store.all(`WITH visible AS (
+      SELECT a.*,a.rowid AS ordering,CASE WHEN a.creator=? THEN a.current_revision
+        WHEN ?=1 AND s.revision_id IS NOT NULL THEN s.revision_id
+        ELSE (SELECT r.revision_id FROM releases r WHERE r.article_id=a.id AND r.state='published' ORDER BY r.rowid DESC LIMIT 1) END AS visible_revision
+      FROM articles a LEFT JOIN submissions s ON s.article_id=a.id WHERE a.owner_id=?
+    ) SELECT v.id,v.visible_revision FROM visible v JOIN revisions r ON r.id=v.visible_revision
+      WHERE instr(lower(r.title||char(10)||CAST(r.markdown AS TEXT)),lower(?))>0
+      ORDER BY v.created_at DESC,v.ordering DESC LIMIT ? OFFSET ?`, actor.subject, publisher ? 1 : 0, ownerId, query, limit, offset);
+    return Promise.all(rows.map(a => this.get(actor, a.id, a.visible_revision)));
   }
   async linkTranslation(actor: Actor, id: string, sourceId: string, sourceRevision: string, trace: string) {
     const article = this.article(id), source = this.article(sourceId);

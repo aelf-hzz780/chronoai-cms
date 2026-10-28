@@ -4,11 +4,13 @@ import type { Actor } from './policy.ts';
 import { Vault } from './vault.ts';
 import { AppError, requireValue, text } from './errors.ts';
 import { RemoteError } from './http-client.ts';
+import { Queue, type Lease } from './queue.ts';
 
 export interface OriginalInput {
   releaseId: string; articleId: string; revisionId: string; ownerId: string; language: string;
   title: string; markdown: string; digest: string; creditedAuthor: string;
   site: Record<string, any>; remoteId?: string; url?: string; action: string;
+  guard?: () => void; beforeWrite?: () => Promise<void>;
 }
 export interface OriginalResult { remoteId: string; url: string; }
 export interface OriginalAdapter {
@@ -72,67 +74,71 @@ export class PublishingService {
     await this.content.policy.publish(actor, row.owner_id);
     requireValue(['uncertain', 'verifying'].includes(row.state), 409, 'PUBLICATION_STATE', 'Only uncertain or unverified originals require reconciliation');
     this.content.store.transaction(() => {
-      this.content.store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE kind='release' AND resource_id=? AND state<>'running'", id);
+      const current = this.content.store.get('SELECT state FROM releases WHERE id=?', id)!;
+      requireValue(['uncertain','verifying'].includes(current.state), 409, 'PUBLICATION_STATE', 'Original no longer requires recovery');
+      const updated = this.content.store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE kind='release' AND resource_id=? AND state<>'running'", id);
+      requireValue(Number(updated.changes) === 1, 409, 'IN_PROGRESS', 'Current worker still owns this operation');
+      this.content.store.run('INSERT INTO recovery_actors VALUES (?,?,?,?) ON CONFLICT(kind,resource_id) DO UPDATE SET actor_json=excluded.actor_json,trace_id=excluded.trace_id', 'release', id, this.vault.seal(actor), trace);
       this.content.store.audit(actor.subject, row.owner_id, 'original.reconcile.request', id, trace);
     }); return { id, state: row.state };
   }
 }
 export class ReleaseWorker {
-  service: PublishingService; adapter: OriginalAdapter;
-  constructor(service: PublishingService, adapter: OriginalAdapter) { this.service = service; this.adapter = adapter; }
+  service: PublishingService; adapter: OriginalAdapter; queue: Queue;
+  constructor(service: PublishingService, adapter: OriginalAdapter) { this.service = service; this.adapter = adapter; this.queue = new Queue(service.content.store); }
   async once(): Promise<boolean> {
     const store = this.service.content.store;
-    if (store.get("SELECT value FROM settings WHERE key='outbound_paused'")?.value !== 'false') return false;
-    const now = new Date().toISOString();
-    const job = store.transaction(() => {
-      for (const expired of store.all("SELECT * FROM jobs WHERE kind='release' AND state='running' AND lease_until<?", now)) {
-        store.run("UPDATE releases SET state='uncertain',error_code='WORKER_INTERRUPTED',updated_at=? WHERE id=?", now, expired.resource_id);
-        store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE id=?", expired.id);
-      }
-      const row = store.get("SELECT * FROM jobs WHERE kind='release' AND state='queued' ORDER BY created_at,rowid LIMIT 1");
-      if (row) store.run("UPDATE jobs SET state='running',lease_until=? WHERE id=?", new Date(Date.now() + 120_000).toISOString(), row.id);
-      return row;
+    const lease = this.queue.claim('release', id => {
+      store.run("UPDATE releases SET state='uncertain',error_code='WORKER_INTERRUPTED',updated_at=? WHERE id=?", new Date().toISOString(), id);
     });
-    if (!job) return false;
-    const row = store.get('SELECT * FROM releases WHERE id=?', job.resource_id)!;
-    let state = 'failed', code: string | null = null;
+    if (!lease) return false;
+    const row = store.get('SELECT * FROM releases WHERE id=?', lease.resourceId)!;
+    const recovering = ['uncertain','verifying'].includes(row.state);
+    let state = 'failed', code: string | null = null, acknowledged = false;
     try {
-      const actor = this.service.vault.open<Actor>(row.actor_json);
+      const recovery = recovering ? store.get("SELECT * FROM recovery_actors WHERE kind='release' AND resource_id=?", row.id) : undefined;
+      const actor = this.service.vault.open<Actor>(recovery?.actor_json ?? row.actor_json);
       await this.service.content.policy.publish(actor, row.owner_id);
       const input = this.service.input(row);
-      if (['uncertain', 'verifying'].includes(row.state)) {
+      input.guard = () => this.queue.guard(lease);
+      input.beforeWrite = async () => {
+        requireValue(!recovering, 409, 'RECOVERY_READ_ONLY', 'Recovery may inspect existing results but cannot resend');
+        await this.service.content.policy.publish(actor, row.owner_id); this.queue.guard(lease);
+      };
+      if (recovering) {
         const result = await this.adapter.reconcile(input);
-        if (result && await this.adapter.verify(input, result)) { this.complete(row, result); return true; }
+        if (result && await this.adapter.verify(input, result)) { this.complete(row, result, lease); return true; }
         state = 'uncertain'; code = 'REMOTE_RESULT_UNPROVEN';
       } else {
-        store.run("UPDATE releases SET state='publishing',updated_at=? WHERE id=?", now, row.id);
+        if (!this.queue.mutate(lease, () => store.run("UPDATE releases SET state='publishing',updated_at=? WHERE id=?", new Date().toISOString(), row.id))) return true;
         if (row.action === 'unpublish') {
           await this.adapter.unpublish(input);
-          this.complete(row, { remoteId: row.remote_id, url: row.url }); return true;
+          acknowledged = true;
+          if (await this.adapter.verify(input, { remoteId: row.remote_id, url: row.url })) { this.complete(row, { remoteId: row.remote_id, url: row.url }, lease); return true; }
+          state = 'verifying'; code = 'UNPUBLISH_NOT_VERIFIED';
+        } else {
+          const result = await this.adapter.publish(input); acknowledged = true;
+          if (!this.queue.mutate(lease, () => store.run('UPDATE releases SET remote_id=?,url=? WHERE id=?', result.remoteId, result.url, row.id))) return true;
+          if (await this.adapter.verify(input, result)) { this.complete(row, result, lease); return true; }
+          state = 'verifying'; code = 'ORIGINAL_NOT_VERIFIED';
         }
-        const result = await this.adapter.publish(input);
-        store.run('UPDATE releases SET remote_id=?,url=? WHERE id=?', result.remoteId, result.url, row.id);
-        if (await this.adapter.verify(input, result)) { this.complete(row, result); return true; }
-        state = 'verifying'; code = 'ORIGINAL_NOT_VERIFIED';
       }
     } catch (error) {
       code = error instanceof AppError ? error.code : 'INTERNAL';
-      state = error instanceof RemoteError && error.uncertain ? 'uncertain' : error instanceof AppError && [401, 403, 409, 503].includes(error.status) ? 'blocked' : 'failed';
-    } finally {
-      store.run("UPDATE jobs SET state='done',lease_until=NULL WHERE id=?", job.id);
+      state = recovering ? row.state : acknowledged ? 'verifying' : error instanceof RemoteError && error.uncertain ? 'uncertain' : error instanceof AppError && [401, 403, 409, 503].includes(error.status) ? 'blocked' : 'failed';
     }
-    store.transaction(() => {
+    this.queue.mutate(lease, () => {
       store.run('UPDATE releases SET state=?,error_code=?,updated_at=? WHERE id=?', state, code, new Date().toISOString(), row.id);
       store.audit('worker', row.owner_id, `original.${state}`, row.id, row.trace_id, { code });
-    });
+    }, true);
     return true;
   }
-  complete(row: Record<string, any>, result: OriginalResult) {
+  complete(row: Record<string, any>, result: OriginalResult, lease: Lease) {
     const store = this.service.content.store, now = new Date().toISOString();
-    store.transaction(() => {
+    this.queue.mutate(lease, () => {
       store.run("UPDATE releases SET state='superseded',updated_at=? WHERE article_id=? AND state='published' AND id<>?", now, row.article_id, row.id);
       store.run('UPDATE releases SET state=?,remote_id=?,url=?,error_code=NULL,updated_at=? WHERE id=?', row.action === 'unpublish' ? 'unpublished' : 'published', result.remoteId, result.url, now, row.id);
       store.audit('worker', row.owner_id, `original.${row.action === 'unpublish' ? 'unpublished' : 'published'}`, row.id, row.trace_id, { revisionId: row.revision_id, url: result.url });
-    });
+    }, true);
   }
 }

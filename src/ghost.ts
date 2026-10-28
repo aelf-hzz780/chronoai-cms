@@ -7,21 +7,30 @@ import { remote, remoteJson, RemoteError } from './http-client.ts';
 import { requireValue } from './errors.ts';
 import { render } from './render.ts';
 import { safeUrl } from './config.ts';
+import { provesBody } from './html-proof.ts';
 
 function escapeHtml(value: string) { return value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!); }
 export class GhostAdapter implements OriginalAdapter {
   store: Store; mediaRoot: string; allowLoopback: boolean; environment: NodeJS.ProcessEnv;
   constructor(store: Store, mediaRoot: string, allowLoopback = false, environment = process.env) { this.store = store; this.mediaRoot = mediaRoot; this.allowLoopback = allowLoopback; this.environment = environment; }
   async call(input: OriginalInput, path: string, method = 'GET', body?: unknown) {
+    input.guard?.();
     safeUrl(input.site.url, this.allowLoopback);
     const key = this.environment[input.site.key_ref];
     requireValue(key && /^[a-f0-9]+:[a-f0-9]{64}$/.test(key), 409, 'GHOST_CREDENTIAL_REQUIRED', 'Operator must configure the Ghost integration key');
     const [id, secret] = key.split(':');
     const token = await new SignJWT({}).setProtectedHeader({ alg: 'HS256', kid: id, typ: 'JWT' }).setIssuedAt().setExpirationTime('5m').setAudience('/admin/').sign(Buffer.from(secret, 'hex'));
+    if (!['GET','HEAD'].includes(method)) await input.beforeWrite?.();
+    input.guard?.();
     return remoteJson(`${input.site.url}/ghost/api/admin/${path}`, { method, headers: { authorization: `Ghost ${token}`, 'content-type': 'application/json', 'accept-version': 'v6.0' }, ...(body ? { body: JSON.stringify(body) } : {}) });
   }
   slug(input: OriginalInput) { return `chrono-${input.articleId}`; }
   marker(input: OriginalInput) { return `chrono-revision:${input.revisionId}:${input.digest}`; }
+  controlledHtml(input: OriginalInput) {
+    const images = this.images(input); let source = input.markdown;
+    for (const image of images) source = source.replaceAll(image.reference,image.url);
+    return `<div data-chrono-revision="${this.marker(input)}">${render(source,new Set(images.map(image => image.url)))}</div>`;
+  }
   images(input: OriginalInput): Array<Row & {reference:string;filename:string;url:string}> {
     return [...new Set(input.markdown.match(/asset:[a-f0-9-]{36}/g) ?? [])].map(reference => {
       const id = reference.slice(6); const asset = this.store.get('SELECT * FROM assets WHERE id=? AND article_id=? AND owner_id=?', id, input.articleId, input.ownerId);
@@ -43,9 +52,7 @@ export class GhostAdapter implements OriginalAdapter {
       return { remoteId: existing.id, url: existing.url };
     }
     requireValue(input.action !== 'update' || existing?.id === input.remoteId, 409, 'REMOTE_CONFLICT', 'Original remote mapping changed');
-    const images = this.images(input); let source = input.markdown;
-    for (const image of images) source = source.replaceAll(image.reference, image.url);
-    const html = `<!--kg-card-begin: html--><div data-chrono-revision="${this.marker(input)}">${render(source, new Set(images.map(i => i.url)))}</div><!--kg-card-end: html-->`;
+    const html = `<!--kg-card-begin: html-->${this.controlledHtml(input)}<!--kg-card-end: html-->`;
     const post = { title: input.title, slug: this.slug(input), html, status: 'published', authors: [author.ghost_author_id], meta_title: input.title, meta_description: input.markdown.replace(/[#*`|\[\]]/g, '').slice(0, 155), tags: [{ name: `#owner-${input.ownerId}` }, { name: `#language-${input.language}` }], ...(existing ? { updated_at: existing.updated_at } : {}) };
     const result = await this.call(input, existing ? `posts/${existing.id}/?source=html` : 'posts/?source=html', existing ? 'PUT' : 'POST', { posts: [post] });
     const saved = result.posts?.[0]; requireValue(saved?.id && saved?.url, 502, 'GHOST_CONTRACT', 'Missing Ghost publication result');
@@ -63,13 +70,17 @@ export class GhostAdapter implements OriginalAdapter {
     let page: string;
     try { page = (await remote(url)).text; } catch { return false; }
     if (!page.includes(this.marker(input)) || !page.includes(escapeHtml(input.title)) || !new RegExp(`lang=["']${input.language}(?:-[^"']+)?["']`).test(page)) return false;
+    if (!provesBody(this.controlledHtml(input),post.html,page,this.marker(input))) return false;
+    input.guard?.();
     // The exact original is now demonstrably public. Only now materialize public images
     // in a directory served by Ghost itself, independently of the application process.
     for (const image of this.images(input)) {
       const directory = join(this.mediaRoot, input.site.id); await mkdir(directory, { recursive: true, mode: 0o755 });
+      input.guard?.();
       const target = join(directory, image.filename), temporary = `${target}.${input.releaseId}.tmp`;
       await writeFile(temporary, image.content, { mode: 0o644 }); await rename(temporary, target);
       try { const response = await remote(image.url); if (!response.response.headers.get('content-type')?.startsWith(image.mime)) return false; } catch { return false; }
+      input.guard?.();
       this.store.run('INSERT OR IGNORE INTO asset_publications VALUES (?,?,?)', image.id, input.releaseId, target);
     }
     return true;
@@ -84,6 +95,5 @@ export class GhostAdapter implements OriginalAdapter {
     const existing = await this.current(input);
     requireValue(existing?.id === input.remoteId, 409, 'REMOTE_CONFLICT', 'Original remote mapping unavailable');
     await this.call(input, `posts/${existing.id}/`, 'PUT', { posts: [{ updated_at: existing.updated_at, status: 'draft' }] });
-    requireValue(await this.verify(input, { remoteId: existing.id, url: input.url! }), 502, 'UNPUBLISH_UNVERIFIED', 'Original removal needs reconciliation');
   }
 }

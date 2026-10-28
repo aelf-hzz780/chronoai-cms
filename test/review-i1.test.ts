@@ -1,0 +1,112 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fixture } from './helpers.ts';
+import { Vault } from '../src/vault.ts';
+import { PublishingService, ReleaseWorker, type OriginalAdapter } from '../src/publishing.ts';
+import { GhostAdapter } from '../src/ghost.ts';
+import { RemoteError } from '../src/http-client.ts';
+import { createApp } from '../src/app.ts';
+import { provesBody } from '../src/html-proof.ts';
+
+async function setup(owner = 'solo') {
+  const f = fixture(), actor = owner === 'solo' ? f.actors.solo : f.actors.admin;
+  const service = new PublishingService(f.content, new Vault('ab'.repeat(32)));
+  f.store.run('INSERT INTO sites VALUES (?,?,?,?,?)', 'site', owner, 'en', 'http://localhost:3999', 'KEY');
+  f.store.run('INSERT INTO author_mappings VALUES (?,?,?)', 'site', actor.subject, 'ghost-author');
+  const article = await f.content.create(actor, { ownerId: owner, language: 'en', title: 'Confirmed title', markdown: 'THE ONLY CONFIRMED BODY', creditedAuthor: actor.subject }, 'trace');
+  const input = { ownerId: owner, revisionId: article.revision.id, creditedAuthor: actor.subject, action: 'publish', rightsConfirmed: true, idempotencyKey: 'one' };
+  const release = await service.confirm(actor, article.id, input, 'trace');
+  return { ...f, service, actor, article, input, release };
+}
+const result = { remoteId: 'remote', url: 'http://localhost:3999/post/' };
+function adapter(overrides: Partial<OriginalAdapter> = {}): OriginalAdapter { return { async publish() { return result; }, async verify() { return true; }, async reconcile() { return result; }, async unpublish() {}, ...overrides }; }
+function deferred<T>() { let resolve!: (value:T)=>void, reject!: (error:Error)=>void; const promise = new Promise<T>((yes,no) => { resolve=yes; reject=no; }); return {promise,resolve,reject}; }
+
+test('R002: controlled DOM proof accepts equivalent markup and preserves code whitespace', () => {
+  const html = '<div data-chrono-revision="proof"><p>Confirmed &amp; original.</p><pre><code>  indented\n</code></pre></div>';
+  assert.equal(provesBody(html,`<!-- Ghost card -->${html}`,`<html><body>${html}</body></html>`,'proof'),true);
+  assert.equal(provesBody(html,html,`<body>${html.replace('  indented','indented')}</body>`,'proof'),false);
+  assert.equal(provesBody(html,html,`<body>${html}${html}</body>`,'proof'),false);
+});
+
+for (const late of ['success','false','exception']) test(`R001: expired worker ${late} cannot supersede a newer release`, async t => {
+  const f = await setup(); t.after(() => f.store.close());
+  const started = deferred<void>(), old = deferred<boolean>();
+  const stale = new ReleaseWorker(f.service, adapter({ async verify() { started.resolve(); return old.promise; } }));
+  const running = stale.once(); await started.promise;
+  f.store.run("UPDATE jobs SET lease_until='2000-01-01T00:00:00.000Z' WHERE resource_id=?", f.release.id);
+  const replacement = new ReleaseWorker(f.service, adapter()); await replacement.once();
+  const edited = await f.content.edit(f.actor, f.article.id, f.article.revision.id, { markdown: 'NEW CONFIRMED BODY' }, 'trace');
+  const next = await f.service.confirm(f.actor, f.article.id, { ...f.input, revisionId: edited.revision.id, action: 'update', idempotencyKey: 'two' }, 'trace');
+  await replacement.once();
+  if (late === 'exception') old.reject(new RemoteError('REMOTE_FAILURE','late read failed')); else old.resolve(late === 'success');
+  await running;
+  assert.equal(f.store.get('SELECT state FROM releases WHERE id=?', f.release.id)?.state, 'superseded');
+  assert.equal(f.store.get('SELECT state FROM releases WHERE id=?', next.id)?.state, 'published');
+});
+
+test('R001: stale finally cannot complete a job while a replacement lease is running', async t => {
+  const f = await setup(); t.after(() => f.store.close());
+  const started = deferred<void>(), old = deferred<boolean>(), replacing = deferred<void>(), recovered = deferred<typeof result>();
+  const first = new ReleaseWorker(f.service, adapter({ async verify() { started.resolve(); return old.promise; } })).once(); await started.promise;
+  f.store.run("UPDATE jobs SET lease_until='2000-01-01T00:00:00.000Z' WHERE resource_id=?", f.release.id);
+  const second = new ReleaseWorker(f.service, adapter({ async reconcile() { replacing.resolve(); return recovered.promise; } })).once(); await replacing.promise;
+  old.resolve(true); await first;
+  assert.equal(f.store.get('SELECT state FROM jobs WHERE resource_id=?', f.release.id)?.state, 'running');
+  recovered.resolve(result); await second;
+});
+
+for (const corruption of ['admin','public']) test(`R002: altered ${corruption} body with valid marker never verifies or exposes media`, async t => {
+  const f = await setup(); const directory = await mkdtemp(join(tmpdir(), 'chrono-review-'));
+  t.after(async () => { f.store.close(); await rm(directory,{recursive:true,force:true}); });
+  const ghost = new GhostAdapter(f.store, directory, true);
+  const input = f.service.input(f.store.get('SELECT * FROM releases WHERE id=?', f.release.id)!);
+  const correct = `<div data-chrono-revision="${ghost.marker(input)}"><p>THE ONLY CONFIRMED BODY</p>\n</div>`;
+  const wrong = `<div data-chrono-revision="${ghost.marker(input)}">UNAPPROVED REPLACEMENT</div>`;
+  ghost.current = async () => ({ id: 'remote', status: 'published', html: corruption === 'admin' ? wrong : correct, authors: [{ id: 'ghost-author', name: 'solo' }] });
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(`<html lang="en"><h1>Confirmed title</h1><p>solo</p>${corruption === 'public' ? wrong : correct}</html>`);
+  t.after(() => { globalThis.fetch = originalFetch; });
+  assert.equal(await ghost.verify(input,result), false);
+  assert.deepEqual(await readdir(directory), []);
+});
+
+for (const action of ['publish','unpublish']) test(`R003: ${action} write followed by failed GET remains recoverable without another write`, async t => {
+  const f = await setup(); t.after(() => f.store.close()); let writes = 0, readsFail = true;
+  const worker = new ReleaseWorker(f.service, adapter({ async publish() { writes++; return result; }, async unpublish() { writes++; }, async verify() { if (readsFail) throw new RemoteError('REMOTE_FAILURE','read outage'); return true; } }));
+  let release = f.release;
+  if (action === 'unpublish') { readsFail = false; await worker.once(); release = await f.service.confirm(f.actor, f.article.id, { ...f.input, action, idempotencyKey: 'remove' }, 'trace'); readsFail = true; }
+  await worker.once(); const writesBefore = writes;
+  assert.ok(['verifying','uncertain'].includes(f.store.get('SELECT state FROM releases WHERE id=?',release.id)?.state));
+  readsFail = false; await f.service.reconcile(f.actor,release.id,'recovery-trace'); await worker.once();
+  assert.equal(writes,writesBefore);
+  assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',release.id)?.state,action === 'unpublish' ? 'unpublished' : 'published');
+});
+
+test('R004: current Admin recovers a departed publisher result, preserving the original confirmation actor', async t => {
+  const f = await setup('org'); t.after(() => f.store.close()); let reconciliations = 0, writes = 0;
+  const worker = new ReleaseWorker(f.service, adapter({ async publish() { writes++; throw new RemoteError('REMOTE_UNCERTAIN','lost response',true); }, async reconcile() { reconciliations++; return result; } }));
+  await worker.once(); f.memberships.delete('admin:org'); f.memberships.set('outsider:org','admin');
+  await f.service.reconcile(f.actors.outsider,f.release.id,'new-admin-trace'); await worker.once();
+  assert.equal(reconciliations,1); assert.equal(writes,1);
+  assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',f.release.id)?.state,'published');
+  assert.equal(f.service.vault.open<any>(f.store.get('SELECT actor_json FROM releases WHERE id=?',f.release.id)!.actor_json).subject,'admin');
+});
+
+test('R005: both routes paginate matched authorized revisions, never unseen working drafts', async t => {
+  const f=fixture(); const app=await createApp({...f,vault:new Vault('ab'.repeat(32)),publicUrl:'https://cms.example',authenticate:async()=>f.actors.admin});
+  t.after(async()=>{await app.close();f.store.close();});
+  const first=await f.content.create(f.actors.admin,{ownerId:'org',language:'en',title:'unique-old-needle',markdown:'old match',creditedAuthor:'Admin'},'trace');
+  for(let i=0;i<3;i++) await f.content.create(f.actors.admin,{ownerId:'org',language:'en',title:`unrelated-${i}`,markdown:'nothing',creditedAuthor:'Admin'},'trace');
+  const member=await f.content.create(f.actors.member,{ownerId:'org',language:'en',title:'Submitted title',markdown:'public-to-publishers',creditedAuthor:'Member'},'trace');
+  await f.content.submit(f.actors.member,member.id,member.revision.id,'trace');
+  await f.content.edit(f.actors.member,member.id,member.revision.id,{markdown:'unique-private-secret'},'trace');
+  for(const entry of ['cms','service']) {
+    const response=await app.inject({url:`/api/${entry}/articles?ownerId=org&q=unique-old-needle&limit=2&offset=0`});
+    assert.deepEqual(response.json().map((a:any)=>a.id),[first.id]);
+    assert.deepEqual((await app.inject({url:`/api/${entry}/articles?ownerId=org&q=unique-private-secret&limit=2&offset=0`})).json(),[]);
+  }
+});

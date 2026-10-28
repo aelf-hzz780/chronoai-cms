@@ -1,7 +1,7 @@
 # 交付状态（开发台账，不是独立验收结论）
 
 分支：`codex/003-blogsystem-delivery`；工作树：`/Users/richardhuang/.codex/worktrees/6898/BlogSystem`。
-基点：019222c。增量 I1 为本提交，commit 交付后由下一次台账更新登记 SHA。
+基点：019222c。增量 I1：5eb51a7。原任务独立结论 CHANGES_REQUESTED；R001–R005 修复见 review-i1-fixes.md，待独立复验。
 
 状态含义：not_started / implemented / verified / blocked。implemented 表示已有部分实现，不代表整个场景完成；verified 必须注明证据范围。Document / local / live 分层互不替代。**D1–D9 独立验收仍全部未通过。**
 
