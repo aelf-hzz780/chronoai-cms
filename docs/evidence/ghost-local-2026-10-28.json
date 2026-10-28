@@ -1,0 +1,109 @@
+{
+  "experiment_id": "E02",
+  "related_experiment_ids": [
+    "E06"
+  ],
+  "requirement_ids": [
+    "R1",
+    "R6"
+  ],
+  "deliverable_ids": [
+    "D1",
+    "D5"
+  ],
+  "claim": "Unmodified local Ghost language sites can publish synthetic HTML fixtures through the integration Admin API, render expected markers, keep sites separate, and remain readable after restart.",
+  "evidence_level": "local",
+  "status": "passed",
+  "timezone": "Asia/Shanghai",
+  "environment": {
+    "compose_project": "blogsystem-phase0",
+    "ghost_version": "6.73.0",
+    "ghost_image": "ghost@sha256:4195f6c405e40230cd10c0770425cf500c1f542a96e9f6584c11649c150e5a89",
+    "mysql_version": "8.0.44",
+    "mysql_image": "mysql@sha256:f37951fc3753a6a22d6c7bf6978c5e5fefcf6f31814d98c582524f98eae52b21",
+    "docker_engine": "29.1.5",
+    "compose_version": "5.0.1",
+    "exposure": "127.0.0.1 only",
+    "ghost_instances": 2,
+    "mysql_instances": 2,
+    "volumes": "Separate content and database volumes for each language"
+  },
+  "initialization": {
+    "status": "passed",
+    "evidence_level": "local",
+    "run_id": "4024309e1248",
+    "performed_at": "2026-10-28T08:52:06.992643+00:00",
+    "mode": "initialize",
+    "sites": [
+      {
+        "language": "en",
+        "url": "http://localhost:2468/phase0-en-4024309e1248/",
+        "published": true,
+        "author_verified": true,
+        "html_language_verified": true,
+        "code_and_table_rendered": true,
+        "sitemap_accessible": true,
+        "other_site_returns_404": true,
+        "fixture_sha256": "e327586bb3051600479fa71e84fcdf6d8ede3e96391e49e4072e77d2a6f9c66b"
+      },
+      {
+        "language": "zh",
+        "url": "http://localhost:2469/phase0-zh-4024309e1248/",
+        "published": true,
+        "author_verified": true,
+        "html_language_verified": true,
+        "code_and_table_rendered": true,
+        "sitemap_accessible": true,
+        "other_site_returns_404": true,
+        "fixture_sha256": "3ce319d9d07b17bc7aaf20ccd39c5e9be718cac348924214fce342909a2bdc46"
+      }
+    ]
+  },
+  "after_restart": {
+    "status": "passed",
+    "evidence_level": "local",
+    "run_id": "4024309e1248",
+    "performed_at": "2026-10-28T08:53:52.037506+00:00",
+    "mode": "verify",
+    "sites": [
+      {
+        "language": "en",
+        "url": "http://localhost:2468/phase0-en-4024309e1248/",
+        "published": true,
+        "author_verified": true,
+        "html_language_verified": true,
+        "code_and_table_rendered": true,
+        "sitemap_accessible": true,
+        "other_site_returns_404": true,
+        "fixture_sha256": "e327586bb3051600479fa71e84fcdf6d8ede3e96391e49e4072e77d2a6f9c66b"
+      },
+      {
+        "language": "zh",
+        "url": "http://localhost:2469/phase0-zh-4024309e1248/",
+        "published": true,
+        "author_verified": true,
+        "html_language_verified": true,
+        "code_and_table_rendered": true,
+        "sitemap_accessible": true,
+        "other_site_returns_404": true,
+        "fixture_sha256": "3ce319d9d07b17bc7aaf20ccd39c5e9be718cac348924214fce342909a2bdc46"
+      }
+    ]
+  },
+  "additional_checks": [
+    "Compose config validation passed",
+    "All four containers healthy after restart",
+    "MySQL ports not published to host",
+    "Credential file permissions 0600",
+    "Preparation refuses to overwrite existing credentials",
+    "Non-loopback experiment target rejected before network operations"
+  ],
+  "limitations": [
+    "One synthetic publication only; no personal/organization business isolation implementation",
+    "HTML-card fixture, not a Markdown round-trip test; fixture SHA is the input fixture hash",
+    "No image upload/privacy, translation links, production domains, SMTP, NyxID or external publishing verification",
+    "Restart persistence is not backup/restore evidence",
+    "Ghost Admin bootstrap endpoints are test-only and version-bound",
+    "No D1–D9 deliverable is marked complete"
+  ]
+}

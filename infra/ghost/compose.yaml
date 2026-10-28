@@ -1,0 +1,95 @@
+x-ghost-healthcheck: &ghost-healthcheck
+  test: [CMD, node, -e, "require('http').get('http://127.0.0.1:2368/ghost/api/admin/site/', r => {r.resume(); process.exit(r.statusCode === 200 ? 0 : 1)}).on('error', () => process.exit(1))"]
+  interval: 5s
+  timeout: 3s
+  start_period: 30s
+  retries: 40
+
+services:
+  ghost-en:
+    image: ${GHOST_IMAGE:?Run prepare.py with a pulled official Ghost image}
+    restart: unless-stopped
+    healthcheck: *ghost-healthcheck
+    ports:
+      - "127.0.0.1:${GHOST_EN_PORT:?Set GHOST_EN_PORT}:2368"
+    environment:
+      NODE_ENV: production
+      url: ${GHOST_EN_URL:?Set GHOST_EN_URL}
+      database__client: mysql
+      database__connection__host: db-en
+      database__connection__user: ${DATABASE_USER:?Set DATABASE_USER}
+      database__connection__password: ${DATABASE_EN_PASSWORD:?Set DATABASE_EN_PASSWORD}
+      database__connection__database: ghost
+    volumes:
+      - content-en:/var/lib/ghost/content
+    depends_on:
+      db-en:
+        condition: service_healthy
+    networks: [en]
+
+  ghost-zh:
+    image: ${GHOST_IMAGE:?Run prepare.py with a pulled official Ghost image}
+    restart: unless-stopped
+    healthcheck: *ghost-healthcheck
+    ports:
+      - "127.0.0.1:${GHOST_ZH_PORT:?Set GHOST_ZH_PORT}:2368"
+    environment:
+      NODE_ENV: production
+      url: ${GHOST_ZH_URL:?Set GHOST_ZH_URL}
+      database__client: mysql
+      database__connection__host: db-zh
+      database__connection__user: ${DATABASE_USER:?Set DATABASE_USER}
+      database__connection__password: ${DATABASE_ZH_PASSWORD:?Set DATABASE_ZH_PASSWORD}
+      database__connection__database: ghost
+    volumes:
+      - content-zh:/var/lib/ghost/content
+    depends_on:
+      db-zh:
+        condition: service_healthy
+    networks: [zh]
+
+  db-en:
+    image: ${MYSQL_IMAGE:?Run prepare.py with a pulled supported MySQL image}
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ${DATABASE_USER:?Set DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_EN_PASSWORD:?Set DATABASE_EN_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_EN_ROOT_PASSWORD:?Set DATABASE_EN_ROOT_PASSWORD}
+    volumes:
+      - database-en:/var/lib/mysql
+    healthcheck:
+      test: [CMD-SHELL, "mysqladmin ping -h 127.0.0.1 --silent"]
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
+      retries: 40
+    networks: [en]
+
+  db-zh:
+    image: ${MYSQL_IMAGE:?Run prepare.py with a pulled supported MySQL image}
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ghost
+      MYSQL_USER: ${DATABASE_USER:?Set DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_ZH_PASSWORD:?Set DATABASE_ZH_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ZH_ROOT_PASSWORD:?Set DATABASE_ZH_ROOT_PASSWORD}
+    volumes:
+      - database-zh:/var/lib/mysql
+    healthcheck:
+      test: [CMD-SHELL, "mysqladmin ping -h 127.0.0.1 --silent"]
+      interval: 5s
+      timeout: 3s
+      start_period: 30s
+      retries: 40
+    networks: [zh]
+
+volumes:
+  content-en:
+  content-zh:
+  database-en:
+  database-zh:
+
+networks:
+  en:
+  zh:

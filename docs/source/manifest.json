@@ -1,0 +1,22 @@
+{
+  "version": "0.7",
+  "gist_id": "eea0b7fc47d09d4c891adfbb1c4684af",
+  "url": "https://gist.github.com/ctkm-aelf/eea0b7fc47d09d4c891adfbb1c4684af",
+  "gist_revision": "79e69842f5bacba7f8204f62d151018bacf98d91",
+  "source_updated_at": "2026-10-28T03:57:39Z",
+  "captured_date": "2026-10-28",
+  "timezone": "Asia/Shanghai",
+  "source_policy": "Original files preserved byte-for-byte; changes require explicit baseline review.",
+  "files": [
+    {
+      "filename": "requirements.md",
+      "sha256": "2d90ca6a258456cd2fdd0f07a6a695a3204fa4752fadd34c766ead37fea0c3d5",
+      "bytes": 12794
+    },
+    {
+      "filename": "supporting-deliverables.md",
+      "sha256": "7b5e91deaad61d23233a834dac68aa7f8ced77e36c7676f3fa34143e8c001cc4",
+      "bytes": 7747
+    }
+  ]
+}

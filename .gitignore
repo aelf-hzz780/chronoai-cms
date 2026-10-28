@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+node_modules/
+.runtime/
+data/
+backups/
+coverage/
+dist/
+.DS_Store
+*.log
+__pycache__/
+*.pyc
