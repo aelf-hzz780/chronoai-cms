@@ -32,6 +32,14 @@ test('R002: controlled DOM proof accepts equivalent markup and preserves code wh
   assert.equal(provesBody(html,html,`<body>${html}${html}</body>`,'proof'),false);
 });
 
+test('R002: official Ghost outbound ref tagging permits only the exact confirmed destination', () => {
+  const html='<div data-chrono-revision="proof"><a href="https://example.com/path?a=/x#part">Source</a></div>';
+  const tagged=html.replace('?a=/x#part','?a=/x&amp;ref=blog.example#part');
+  assert.equal(provesBody(html,html,tagged,'proof','https://www.blog.example'),true);
+  for(const corrupted of [tagged.replace('blog.example','other.example'),tagged.replace('example.com/path','evil.example/path'),tagged.replace('/x&amp;','/y&amp;'),tagged.replace('Source','Altered')]) assert.equal(provesBody(html,html,corrupted,'proof','https://www.blog.example'),false);
+  assert.equal(provesBody(html,tagged,tagged,'proof','https://www.blog.example'),false);
+});
+
 for (const late of ['success','false','exception']) test(`R001: expired worker ${late} cannot supersede a newer release`, async t => {
   const f = await setup(); t.after(() => f.store.close());
   const started = deferred<void>(), old = deferred<boolean>();
@@ -66,9 +74,9 @@ for (const corruption of ['admin','public']) test(`R002: altered ${corruption} b
   const input = f.service.input(f.store.get('SELECT * FROM releases WHERE id=?', f.release.id)!);
   const correct = `<div data-chrono-revision="${ghost.marker(input)}"><p>THE ONLY CONFIRMED BODY</p>\n</div>`;
   const wrong = `<div data-chrono-revision="${ghost.marker(input)}">UNAPPROVED REPLACEMENT</div>`;
-  ghost.current = async () => ({ id: 'remote', status: 'published', html: corruption === 'admin' ? wrong : correct, authors: [{ id: 'ghost-author', name: 'solo' }] });
+  ghost.current = async () => ({ id: 'remote', title:input.title,status: 'published', html: corruption === 'admin' ? wrong : correct, authors: [{ id: 'ghost-author', name: 'solo' }] });
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () => new Response(`<html lang="en"><h1>Confirmed title</h1><p>solo</p>${corruption === 'public' ? wrong : correct}</html>`);
+  globalThis.fetch = async () => new Response(`<html lang="en"><h1>Confirmed title</h1><p>solo</p>${ghost.publisherHtml(input)}${corruption === 'public' ? wrong : correct}</html>`);
   t.after(() => { globalThis.fetch = originalFetch; });
   assert.equal(await ghost.verify(input,result), false);
   assert.deepEqual(await readdir(directory), []);
@@ -109,4 +117,14 @@ test('R005: both routes paginate matched authorized revisions, never unseen work
     assert.deepEqual(response.json().map((a:any)=>a.id),[first.id]);
     assert.deepEqual((await app.inject({url:`/api/${entry}/articles?ownerId=org&q=unique-private-secret&limit=2&offset=0`})).json(),[]);
   }
+});
+test('HTTPS public sites use only explicitly provisioned loopback HTTP Admin routes',async t=>{
+  const f=await setup();t.after(()=>f.store.close());f.store.run("UPDATE sites SET url='https://public.example' WHERE id='site'");
+  f.store.run("INSERT INTO site_admin_routes VALUES ('site','http://127.0.0.1:2578')");
+  const urls:string[]=[];t.mock.method(globalThis,'fetch',async(url:any)=>{urls.push(String(url));return Response.json({posts:[]});});
+  const ghost=new GhostAdapter(f.store,'/unused',false,{KEY:`aa:${'ab'.repeat(32)}`});
+  const input=f.service.input(f.store.get('SELECT * FROM releases WHERE id=?',f.release.id)!);
+  await ghost.current(input);assert.ok(urls[0].startsWith('http://127.0.0.1:2578/ghost/api/admin/'));
+  f.store.run("UPDATE site_admin_routes SET base_url='http://remote.example'");
+  await assert.rejects(ghost.current(input),{code:'CONFIGURATION'});assert.equal(urls.length,1);
 });

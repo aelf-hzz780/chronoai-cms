@@ -4,7 +4,7 @@ export class RemoteError extends AppError {
   uncertain: boolean;
   constructor(code: string, message: string, uncertain = false) { super(502, code, message); this.uncertain = uncertain; }
 }
-export async function remote(url: string | URL, options: RequestInit = {}, maxBytes = 4_000_000): Promise<{ response: Response; text: string }> {
+export async function remote(url: string | URL, options: RequestInit = {}, maxBytes = 4_000_000): Promise<{ response: Response; text: string; bytes: Buffer }> {
   const writing = !['GET', 'HEAD'].includes(options.method ?? 'GET');
   let response: Response;
   try { response = await fetch(url, { ...options, redirect: 'error', signal: AbortSignal.timeout(12_000) }); }
@@ -20,7 +20,8 @@ export async function remote(url: string | URL, options: RequestInit = {}, maxBy
   } catch { throw new RemoteError('REMOTE_UNCERTAIN', 'Remote response unavailable; reconcile before retrying', writing); }
   finally { reader?.releaseLock(); }
   if (!response.ok) throw new RemoteError(response.status === 401 || response.status === 403 ? 'REMOTE_AUTHORIZATION' : response.status === 429 ? 'REMOTE_RATE_LIMIT' : response.status === 404 ? 'REMOTE_NOT_FOUND' : response.status === 410 ? 'REMOTE_GONE' : 'REMOTE_FAILURE', `Remote service returned HTTP ${response.status}`, writing && response.status >= 500);
-  return { response, text: Buffer.concat(chunks).toString('utf8') };
+  const bytes=Buffer.concat(chunks);
+  return { response, text: bytes.toString('utf8'), bytes };
 }
 export async function remoteJson(url: string | URL, options: RequestInit = {}): Promise<any> {
   const { text } = await remote(url, options);

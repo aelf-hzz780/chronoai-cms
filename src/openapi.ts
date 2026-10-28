@@ -1,0 +1,46 @@
+/** Shared operation catalog: service schemas describe the same business routes as CMS. */
+const string={type:'string'},id=string,boolean={type:'boolean'};
+const object=(properties:Record<string,any>,required=Object.keys(properties))=>({type:'object',properties,required,additionalProperties:false});
+export function openApi(publicUrl:string) {
+  const paths:Record<string,any>={};
+  function route(method:string,path:string,name:string,summary:string,body?:any,query:Record<string,any>={},binary=false) {
+    const parameters=[...Array.from(path.matchAll(/\{([^}]+)\}/g),m=>({name:m[1],in:'path',required:true,schema:id})),...Object.entries(query).map(([name,schema]:any)=>({name,in:'query',required:name==='ownerId'||path.endsWith('/markdown')&&name==='revision',schema}))];
+    const operation:any={operationId:name,summary,parameters,security:[{NyxIdentity:[],NyxDelegation:[]},{Bearer:[]}],responses:{'200':{description:'Authorized result',content:{[binary?'text/markdown':'application/json']:{schema:binary?{type:'string',format:'binary'}:{type:'object'}}}},'401':{description:'Identity unavailable, revoked or invalid'},'403':{description:'Current scope, owner or publishing authority denied'},'409':{description:'Revision, confirmation, destination or execution state requires action'}}};
+    if(body)operation.requestBody={required:true,content:{'application/json':{schema:body}}};
+    (paths[`/api/service${path}`]??={})[method]=operation;
+  }
+  route('get','/me','getWorkspaces','Read current caller and authorized workspaces');
+  route('get','/articles','listArticles','List/search authorized revisions',undefined,{ownerId:id,q:string,limit:{type:'integer',minimum:1,maximum:100},offset:{type:'integer',minimum:0}});
+  route('post','/articles','createArticle','Create original English or Chinese Markdown',object({ownerId:id,language:{type:'string',enum:['en','zh']},title:{type:'string',maxLength:250},markdown:{type:'string',maxLength:2000000},creditedAuthor:string}));
+  route('post','/articles/import','importMarkdownFile','Import an original UTF-8 .md file preserving BOM, CRLF and source bytes',undefined,{ownerId:id,language:{type:'string',enum:['en','zh']},title:string,creditedAuthor:string});
+  route('put','/articles/{id}/markdown','replaceMarkdownFile','Replace a draft from a UTF-8 .md file with revision conflict protection',undefined,{expectedRevision:id});
+  for(const [path,method]of [['/api/service/articles/import','post'],['/api/service/articles/{id}/markdown','put']]) {paths[path][method].requestBody={required:true,content:{'text/markdown':{schema:{type:'string',format:'binary'}}}};for(const p of paths[path][method].parameters)p.required=true;}
+  route('get','/articles/{id}','getArticle','Read an authorized article revision',undefined,{revision:{type:'string',description:'Optional authorized revision'}});
+  route('patch','/articles/{id}','editArticle','Save an immutable revision with conflict protection',object({expectedRevision:id,title:string,markdown:string,creditedAuthor:string},['expectedRevision']));
+  route('post','/articles/{id}/submit','submitDraft','Submit this exact draft revision',object({revisionId:id}));
+  route('get','/articles/{id}/markdown','downloadMarkdown','Download byte-preserved original Markdown',undefined,{revision:id},true);
+  route('get','/articles/{id}/revisions','listRevisions','List only authorized revision history');
+  route('get','/articles/{id}/preview','previewArticle','Privately preview an authorized saved revision');
+  route('post','/articles/{id}/translation','linkTranslation','Link a translation to an authorized source revision',object({sourceArticleId:id,sourceRevisionId:id}));
+  route('post','/articles/{id}/assets','uploadPrivateImage','Upload a private PNG/JPEG/GIF/WebP asset',object({mime:{type:'string',enum:['image/png','image/jpeg','image/gif','image/webp']},base64:string}));
+  route('get','/assets/{id}','getPrivateImage','Read an image only through an authorized corresponding revision');
+  route('post','/articles/{id}/releases','confirmOriginal','Confirm exact revision, author, owner, rights and Ghost action',object({ownerId:id,revisionId:id,creditedAuthor:string,action:{type:'string',enum:['publish','update','unpublish']},rightsConfirmed:{const:true,type:'boolean'},idempotencyKey:string}));
+  route('get','/articles/{id}/releases','listOriginals','Read original publication history');
+  for(const action of ['cancel','reconcile'])route('post',`/releases/{id}/${action}`,`${action}Original`,`${action==='cancel'?'Cancel unsent original':'Read-only reconciliation of uncertain original'}`,object({}));
+  route('get','/targets','listDestinations','Read enabled destinations and automatic/assisted capability');
+  route('get','/owners/{id}/connections','listOwnerConnections','List only configured exact owner connections and current availability');
+  route('post','/releases/{id}/deliveries','confirmDistribution','Confirm destination, exact owner connection and full/excerpt copy',object({ownerId:id,target:{type:'string',enum:['dev','hashnode','medium','hackernoon']},connectionId:id,action:{type:'string',enum:['create','update','remove']},format:{type:'string',enum:['full','excerpt']},excerpt:string,copyId:id,rightsConfirmed:{type:'boolean',const:true},idempotencyKey:string},['target','connectionId','action','format','rightsConfirmed','idempotencyKey']));
+  route('get','/articles/{id}/deliveries','listDistribution','Read per-target status, URLs, source verification and history');
+  route('get','/deliveries/{id}/package','getAssistedPackage','Retrieve content/images/source attribution and submission instructions');
+  route('post','/deliveries/{id}/request-approval','requestExactApproval','Create native NyxID exact request for Admin authorization',object({}));
+  route('post','/deliveries/{id}/authorize','attachExactApproval','Check and queue exact approved content/action/connection',object({approvalRef:id}));
+  for(const action of ['cancel','reconcile'])route('post',`/deliveries/{id}/${action}`,`${action}Distribution`,`${action} a delivery; uncertain recovery never re-sends`,object({}));
+  route('post','/deliveries/{id}/report','reportAssistedSubmission','Record submitted/reviewing/rejected; published requires public verification',object({state:{type:'string',enum:['submitted','reviewing','rejected','manual_action_needed','published']},url:{type:['string','null']}},['state']));
+  route('post','/deliveries/{id}/metrics/refresh','refreshExternalMetrics','Read supported authorized provider counters for this exact known copy',object({}));
+  route('get','/metrics','queryMetrics','Query the same workspace metrics as CMS with availability/source/update time',undefined,{ownerId:id,from:{type:'string',format:'date'},to:{type:'string',format:'date'},article:id,language:{type:'string',enum:['en','zh']},destination:{type:'string',enum:['ghost','dev','hashnode','medium','hackernoon']}});
+  route('put','/owners/{ownerId}/publishers/{subject}','setPublishingPermission','Current organization Admin grants or revokes Can publish',object({enabled:boolean}));
+  route('get','/owners/{id}/audit','readAudit','Owner or current organization Admin reads access/action audit');
+  route('post','/articles/{id}/sync-links','syncPublishedAlternates','Retry published-only translation metadata projection',object({}));
+  route('get','/articles/{id}/link-status','getPublishedAlternatesStatus','Read translation metadata projection status');
+  return {openapi:'3.1.0',info:{title:'ChronoAI CMS / NyxID publishing service',version:'0.1.0',description:'CMS and service share current identity, owner and publishing policy. No account or default connection fallback.'},servers:[{url:publicUrl}],paths,components:{securitySchemes:{Bearer:{type:'http',scheme:'bearer',bearerFormat:'JWT'},NyxIdentity:{type:'apiKey',in:'header',name:'X-NyxID-Identity-Token'},NyxDelegation:{type:'apiKey',in:'header',name:'X-NyxID-Delegation-Token'}}}};
+}

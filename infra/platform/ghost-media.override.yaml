@@ -1,0 +1,20 @@
+# Use once per owner group together with infra/ghost/compose.yaml.
+# PLATFORM_MEDIA_ROOT must match PUBLIC_MEDIA_DIRECTORY in platform.env.
+# Pre-create these two directories, owned by the platform Unix account (0755).
+services:
+  ghost-en:
+    volumes:
+      - type: bind
+        source: ${PLATFORM_MEDIA_ROOT:?Set absolute platform media root}/${PLATFORM_EN_SITE_ID:?Set exact English site ID}
+        target: /var/lib/ghost/content/images/chrono
+        read_only: true
+        bind:
+          create_host_path: false
+  ghost-zh:
+    volumes:
+      - type: bind
+        source: ${PLATFORM_MEDIA_ROOT:?Set absolute platform media root}/${PLATFORM_ZH_SITE_ID:?Set exact Chinese site ID}
+        target: /var/lib/ghost/content/images/chrono
+        read_only: true
+        bind:
+          create_host_path: false

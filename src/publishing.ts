@@ -41,6 +41,8 @@ export class PublishingService {
     this.content.store.transaction(() => {
       requireValue(!this.content.store.get("SELECT 1 FROM releases WHERE article_id=? AND state IN ('queued','publishing','verifying','uncertain')", articleId), 409, 'PENDING_RELEASE', 'Resolve the pending original before another release');
       this.content.store.run('INSERT INTO releases VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', id, articleId, revisionId, article.owner_id, this.vault.seal(actor), input.action as string, 'queued', live?.remote_id ?? null, live?.url ?? null, null, trace, now, now);
+      const translation=this.content.store.get('SELECT * FROM translations WHERE article_id=?',articleId);
+      if(translation) this.content.store.run('INSERT INTO release_links VALUES (?,?,?)',id,translation.source_article,translation.source_revision);
       this.content.store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)', randomUUID(), 'release', id, 'queued', null, now);
       this.content.store.run('INSERT INTO idempotency VALUES (?,?,?,?,?)', actorKey, 'original', key, fingerprint, id);
       this.content.store.audit(actor.subject, article.owner_id, `original.confirm.${input.action}`, id, trace, { revisionId, digest: revision.digest, creditedAuthor: revision.credited_author, site: site.id, rightsConfirmed: true });
@@ -139,6 +141,9 @@ export class ReleaseWorker {
       store.run("UPDATE releases SET state='superseded',updated_at=? WHERE article_id=? AND state='published' AND id<>?", now, row.article_id, row.id);
       store.run('UPDATE releases SET state=?,remote_id=?,url=?,error_code=NULL,updated_at=? WHERE id=?', row.action === 'unpublish' ? 'unpublished' : 'published', result.remoteId, result.url, now, row.id);
       store.audit('worker', row.owner_id, `original.${row.action === 'unpublish' ? 'unpublished' : 'published'}`, row.id, row.trace_id, { revisionId: row.revision_id, url: result.url });
+      const projection=randomUUID(),recovery=store.get("SELECT actor_json FROM recovery_actors WHERE kind='release' AND resource_id=?",row.id);
+      store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',projection,row.article_id,row.owner_id,recovery?.actor_json??row.actor_json,'queued',null,row.trace_id);
+      store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',projection,'queued',null,now);
     }, true);
   }
 }

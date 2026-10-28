@@ -1,42 +1,45 @@
 # 开发运行与验证
 
-需要 Node.js 24.18.x、npm，Ghost 本地联调另外需要专用 Docker context。先执行 `npm ci`，然后 `npm run check`。测试不连接真实账号、不发布外部文章，不需要秘密配置；测试中的注入身份只存在测试构造器，生产入口没有测试登录开关。
+范围以 `docs/source/` v0.7 原文为准。Node.js 24.18.x、npm；先 `npm ci`，再 `npm run check`。生产没有测试登录开关，合成身份仅通过测试构造器注入。当前项目没有 Spec Kitty。
 
-## 运行平台
+## 本地运行
 
-复制根目录 `.env.example` 为 `.env` 并设置 0600，填写目标 NyxID 环境与随机密钥后：
+复制 `.env.example` 为私有 `.env`（0600），填写实际 NyxID 注册参数、独立随机 ENCRYPTION_KEY / TRACKING_SECRET。启动：
 
 ```bash
 npm run dev
 npm run worker
 ```
 
-API 默认监听 127.0.0.1:3100。生产使用 HTTPS，关闭 `ALLOW_LOOPBACK_HTTP`，配置受控反向代理。CMS `/` 与 `/api/cms/*` 使用 NyxID 会话和 CSRF；NyxID 服务 `/api/service/*` 使用签名 `at+jwt` 和独立 audience。所有受保护用例重新验证当前授权，不信任裸身份头。
+API 默认 127.0.0.1:3100，CMS `/`，机器可读契约 `/openapi.json`。CMS `/api/cms/*` 使用 NyxID OIDC 会话与 CSRF；服务 `/api/service/*` 接受人类 access token，或同时验证签名 identity assertion + delegated access token。原生 NyxID access JWT 使用 payload `token_type:access`；不要求虚构的 `at+jwt` header。ID token、裸身份头、service-account、relay token 不能替代调用人。当前成员、原 scope、连接来源与精确批准都在线检查，失败即拒绝。
 
-真实 issuer/token 类型、scope 和 Authority bridge 尚待目标环境确认；如果目标 NyxID 提供不同正式机制，应在 Adapter 中按已验证契约接入，不能关闭验签或绕过批准。没有这些配置时不能宣称完成 NyxID Live 登录／服务验收。
+NyxID 已按官方 revision `38bae2f7825bfa70d8a9e4e837118d7d9658e6a5` 实现 native API 契约，详见 `nyxid-registration.md`。尚无目标实例 Live 注册／登录／批准证据，本地签名与契约回归不能替代 Live。
 
-## 运维协助开通
+## 站点与素材
 
-个人账号首次 OIDC 登录自动建立相同 issuer+subject 的个人 owner。组织由运维按权威组织标识配置，业务角色仍实时由 NyxID 查询。CLI 从环境读取数据库路径；示例全为占位值：
+个人首次 OIDC 登录建立相同 issuer+subject 的个人 owner；组织 owner 由运维绑定权威组织 ID。以下占位值不包含秘密：
 
 ```bash
-node --env-file=.env scripts/provision.ts owner org-demo organization https://issuer.example org-subject
-node --env-file=.env scripts/provision.ts site org-en org-demo en http://localhost:2568 GHOST_ORG_EN_KEY
-node --env-file=.env scripts/provision.ts author org-en 'Example Author' ghost-staff-id
+node --env-file=.env scripts/provision.ts owner org-demo organization nyxid actual-org-id
+node --env-file=.env scripts/provision.ts owner-name org-demo 'Example Organization'
+node --env-file=.env scripts/provision.ts site org-en org-demo en https://en.example GHOST_ORG_EN_KEY
+node --env-file=.env scripts/provision.ts admin-site org-en http://127.0.0.1:2578
+node --env-file=.env scripts/provision.ts author org-en 'Example Author' actual-ghost-staff-id
 ```
 
-每个 owner×language 都必须独立配置 Ghost。`keyRef` 只保存环境变量名；真实 integration key 留在私有环境／secret manager。署名需要映射到该 Ghost 的实际 staff author，缺映射明确阻止发布，不冒用运维作者。
+每个 owner×language 独立 Ghost 安装。署名必须映射真实 Ghost staff author；密钥仅从 keyRef 对应环境变量读取。公开 HTTPS 与私有 loopback Admin route 分开；普通业务用户不获得 Ghost Admin。详见 `operations.md`。
 
-私有图片保存在平台数据库。公开图片目录 `${PUBLIC_MEDIA_DIRECTORY}/<siteId>` 必须另行挂载到对应 Ghost 的 `/var/lib/ghost/content/images/chrono`；正文确认实际上线之后才物化公开图片。Ghost 直接提供公开素材，不依赖业务 API 存活。未配置挂载时图片核验失败，发布不能被标为完整成功。
+私有图片在 SQLite BLOB 中。`${PUBLIC_MEDIA_DIRECTORY}/<siteId>` 通过 `infra/platform/ghost-media.override.yaml` 挂入对应 Ghost `content/images/chrono`。正文经 Admin 与公开页完整核验后才物化图片，随后校验公开 MIME 和 SHA-256。业务进程关闭后，公开正文与图片仍由 Ghost 提供。
 
-## 当前测试边界
+## 验证分层
 
-`test/content.test.ts`：个人／组织权限、角色管理、退组、scope、原文字节、不可变 revision、冲突和冻结提交。
+```bash
+npm run check
+node --check web/app.js
+node scripts/test-local-four-ghost.mjs
+node scripts/source-fingerprint.ts
+```
 
-`test/auth.test.ts`：真实本地签名验证反例、加密会话、CSRF、删除会话重放；未替代目标 NyxID OIDC 流程。
+前两项不连接真实账号。四站 harness 仅用于本任务已准备的 `colima-blogsystem`，不自动启动 Docker、不拉镜像、不改默认 context；临时 helper 使用缓存官方 Ghost 内置 Node22.23.4，真实应用支持运行时仍是主机 Node24.18。默认 Ghost Adapter 和共享文件系统未替换，覆盖 personal/organization × en/zh × CMS/service 八组合及素材、指标、译文互链、下线。证据生成于 `.runtime/blogsystem-integration-*/evidence.json`，含源码逐文件指纹，不含账号秘密。
 
-`test/http.test.ts`：CMS／service 内容路由参数化，下载、越权、冲突、分页和预览净化。
-
-`test/publishing.test.ts`：确认版本、幂等、执行前撤权、核验失败和 uncertain 不盲重发。Ghost Adapter 实机证据尚未执行；现有阶段 0 证据只覆盖旧实验脚本。
-
-完整状态见 delivery-status.md；独立验收由原任务负责。
+恢复 CLI 与隔离演练见 `operations.md`。`test/*.integration.ts` 不是默认单测的一部分。已完成局部不等于 A01–A52 所有参数组合完成；独立验收由原任务执行，状态见 `delivery-status.md`。

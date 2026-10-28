@@ -7,7 +7,7 @@
 - Node.js 24.18.x + TypeScript strict，Fastify 负责 HTTP、输入边界与统一 Trace ID。采用模块化单体与独立 Worker，共享应用用例，避免双入口复制业务判断。
 - SQLite（Node 内置 `node:sqlite`）保存平台数据，使用 WAL、外键、事务、唯一约束和迁移版本。首个部署为单主机持久卷，API 与 Worker 同盘；不支持跨主机共享数据库或无限并发。相较 PostgreSQL，可减少本地和初期运维依赖；扩容前须压测并迁移数据库 Adapter。Ghost 继续各自使用官方支持的 MySQL。Node SQLite 当前实验性警告计入运维限制。
 - 浏览器 CMS 使用原生表单与独立 JavaScript 模块，Markdown textarea 提供导入、导出与鉴权预览；不把编辑器状态当作源文。`markdown-it` 渲染并经 `sanitize-html` 净化，禁止原始 HTML、危险协议和远端图片抓取。
-- `jose` 验证 OIDC／服务 JWT；生产没有本地登录或测试身份头。当前成员、委托、连接和精确批准经 NyxID Authority Adapter 查询；目标实例未确认的契约须标为候选并保持 Live blocked。
+- `jose` 验证 OIDC／服务 JWT；生产没有本地登录或测试身份头。当前成员、委托、连接和精确批准经 NyxID Authority Adapter 查询；使用固定官方 native 契约；目标实例 Live 尚未验证，保持 blocked。
 - Node test runner 进行业务与 HTTP 参数化测试；TypeScript 检查协议边界；正式外部 Adapter 用可控 HTTP 服务器验证契约与不确定结果。Mock 证据仅为 local。
 
 ## 边界与模式
@@ -30,3 +30,17 @@ owner、credited author、actor 分开保存。组织 Admin 不自动获得未�
 保留现有实验、数据卷及官方 Ghost 镜像；开发采用独立端口／project／凭证。应用回滚先暂停准入与出站，保留审计／远端映射，对 uncertain 记录只读对账，外部副本通过生命周期动作处理。数据库迁移与 Ghost 升级必须先备份并在隔离环境演练。
 
 Live 仍需：真实 NyxID issuer、应用／服务注册和调用人契约、测试角色及组织、精确连接与批准；DEV 个人／组织账号、Hashnode 组织 Pro；具体测试内容与外部发文授权；Medium／HackerNoon 人工负责人；HTTPS 域名、付款责任及生产 RPO／RTO。缺失项不以文档或 Mock 宣称完成。
+
+## I2 实现决策
+
+NyxID bridge 已替换为官方 native introspection/orgs/user-services/catalog/exact request/redeem；payload token_type与双签名委托按固定官方源码契约校验。Adapter模式隔离NyxID与Ghost；Target Strategy隔离DEV/Hashnode/辅助流程，feature flag停用新写但保留已知copy人工跟进。组织redeem已经执行effect，不再proxy重复写。Live注册与真实账号仍缺失。
+
+事务outbox + lease token/generation fencing 使迟到Worker不能结算新holder或覆盖新版；已知write后read失败保持verifying/uncertain，恢复只读。DOM完整正文证明独立于marker，只有官方Ghost精确ref参数转换被允许。公开图片在正文证明后落共享卷，MIME/hash再次核验。author、owner可见归属与title同时核验。
+
+译文采用投影：发布时冻结release_links，Worker只修改metadata codeinjection，正文保持不变；已下线/私有译文不参与导航。取舍是投影最终一致性，link-status/sync-links暴露失败与重试，不暗示瞬时跨站事务。
+
+指标使用第一方显式consent collector；daily HMAC估算UV，既不保存rawIP，也不承诺跨日/平台去重。外部counter为授权API累计快照，缺值null；不会把采集时间过滤冒充流量时间窗。collector失败不阻断发布。proxy信任范围由配置明确限定。
+
+恢复使用SQLite在线snapshot + Ghost各自MySQL dump/content，加密manifest包，新project恢复；期间需业务维护窗口，避免跨库不一致。采用独立backup key、GCM认证与源码指纹；恢复默认暂停出站与清session。单主机与跨库一致性边界详见operations.md。
+
+CMS使用原生select选择有权文章/版本/连接/副本，保留服务器强制授权；未保存编辑阻止原文确认。指标卡片和表格标注source、更新时间及Unavailable。合成浏览器已实测保存/预览/查询，不能替代NyxID Live或完整交互验收。

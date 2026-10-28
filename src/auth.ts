@@ -16,7 +16,7 @@ export class AuthManager {
   constructor(config: Config, store: Store, vault: Vault, policy: Policy) { this.config = config; this.store = store; this.vault = vault; this.policy = policy; }
   async discover() {
     if (this.discovery) return this.discovery;
-    const discovery = await remoteJson(`${this.config.issuer}/.well-known/openid-configuration`);
+    const discovery = await remoteJson(this.config.discoveryUrl ?? `${this.config.issuer}/.well-known/openid-configuration`);
     requireValue(discovery.issuer === this.config.issuer, 502, 'OIDC_ISSUER', 'Discovery issuer mismatch');
     for (const key of ['authorization_endpoint', 'token_endpoint', 'jwks_uri']) safeUrl(discovery[key], this.config.allowLoopback);
     requireValue(discovery.code_challenge_methods_supported?.includes('S256'), 502, 'OIDC_PKCE', 'Issuer must support PKCE S256');
@@ -25,18 +25,25 @@ export class AuthManager {
   }
   actor(payload: JWTPayload, credential: string): Actor {
     requireValue(payload.iss === this.config.issuer && typeof payload.sub === 'string' && typeof payload.exp === 'number' && payload.exp * 1000 > Date.now() && typeof payload.scope === 'string', 401, 'INVALID_TOKEN', 'Invalid caller token');
-    return { issuer: payload.iss, subject: payload.sub, scopes: payload.scope.split(' ').filter(Boolean), credential };
+    const sourceScopes = payload.scope.split(' ').filter(Boolean);
+    const scopes = this.config.operationScopes ? Object.entries(this.config.operationScopes).filter(([,required]) => required.every(scope => sourceScopes.includes(scope))).map(([operation]) => operation) : sourceScopes;
+    return { issuer: payload.iss, subject: payload.sub, scopes, sourceScopes, credential };
   }
   async accessToken(token: string, audience: string) {
     await this.discover();
     try {
       const result = await jwtVerify(token, this.keys!, { issuer: this.config.issuer, audience, algorithms: ['RS256', 'ES256'], requiredClaims: ['sub', 'exp', 'iat'] });
-      requireValue(result.protectedHeader.typ === 'at+jwt', 401, 'INVALID_TOKEN', 'Access token required; ID tokens cannot authorize service calls');
+      requireValue(result.payload.token_type === 'access' && result.payload.sa !== true && result.payload.relay !== true, 401, 'INVALID_TOKEN', 'Human access token required; ID and service-account tokens cannot authorize user actions');
       const actor = this.actor(result.payload, token); await this.policy.scope(actor, 'content:read'); return actor;
     } catch { throw new AppError(401, 'INVALID_TOKEN', 'Caller token could not be verified'); }
   }
   async authenticate(request: FastifyRequest): Promise<Actor | null> {
     if (request.url.startsWith('/api/service/')) {
+      const identity=request.headers['x-nyxid-identity-token'], delegation=request.headers['x-nyxid-delegation-token'];
+      if (identity || delegation) {
+        requireValue(typeof identity === 'string' && typeof delegation === 'string',401,'INVALID_TOKEN','Both signed identity and delegated authority are required');
+        return this.propagated(identity,delegation);
+      }
       const header = request.headers.authorization;
       if (!header?.startsWith('Bearer ')) return null;
       return this.accessToken(header.slice(7), this.config.serviceAudience);
@@ -52,6 +59,17 @@ export class AuthManager {
     await this.policy.scope(actor, 'content:read');
     return actor;
   }
+  async propagated(identity: string, delegation: string) {
+    await this.discover();
+    requireValue(this.config.serviceId && this.config.serviceSlug && this.config.nyxAudience,503,'SERVICE_IDENTITY_CONFIGURATION','Registered service identity configuration required');
+    try {
+      const assertion=await jwtVerify(identity,this.keys!,{issuer:this.config.issuer,audience:this.config.serviceAudience,algorithms:['RS256'],requiredClaims:['sub','iat','exp','jti','nyx_service_id']});
+      const delegated=await jwtVerify(delegation,this.keys!,{issuer:this.config.issuer,audience:this.config.nyxAudience,algorithms:['RS256'],requiredClaims:['sub','iat','exp','jti','scope']});
+      const p=delegated.payload;
+      requireValue(assertion.payload.nyx_service_id === this.config.serviceId && Number(assertion.payload.exp)-Number(assertion.payload.iat)<=60 && Number(assertion.payload.iat)<=Date.now()/1000 && assertion.payload.sub === p.sub && p.token_type === 'access' && p.delegated === true && p.sa !== true && p.relay !== true && (p.act as {sub?:string})?.sub === this.config.serviceSlug,401,'INVALID_TOKEN','Identity and delegated authority binding mismatch');
+      const actor=this.actor(p,delegation);await this.policy.scope(actor,'content:read');return actor;
+    } catch { throw new AppError(401,'INVALID_TOKEN','Propagated caller could not be verified'); }
+  }
   install(app: FastifyInstance) {
     const cookie = { httpOnly: true, secure: this.config.publicUrl.startsWith('https:'), sameSite: 'lax' as const, path: '/' };
     app.get('/auth/login', async (_request, reply) => {
@@ -60,7 +78,7 @@ export class AuthManager {
       this.store.run('INSERT INTO oidc_states VALUES (?,?,?,?)', digest(state), nonce, verifier, new Date(Date.now() + 300_000).toISOString());
       const url = new URL(discovery.authorization_endpoint);
       const challenge = Buffer.from(digest(verifier), 'hex').toString('base64url');
-      url.search = new URLSearchParams({ client_id: this.config.clientId, response_type: 'code', redirect_uri: `${this.config.publicUrl}/auth/callback`, scope: 'openid profile content:read content:write publish metrics:read roles:write connections:read', state, nonce, code_challenge: challenge, code_challenge_method: 'S256' }).toString();
+      url.search = new URLSearchParams({ client_id: this.config.clientId, response_type: 'code', redirect_uri: `${this.config.publicUrl}/auth/callback`, scope: this.config.oauthScopes ?? 'openid profile content:read content:write publish metrics:read roles:write connections:read', state, nonce, code_challenge: challenge, code_challenge_method: 'S256' }).toString();
       reply.setCookie('chrono_oidc', state, { ...cookie, maxAge: 300 }); return reply.redirect(url.href);
     });
     app.get('/auth/callback', async (request, reply) => {
@@ -76,6 +94,7 @@ export class AuthManager {
       const tokens = await remoteJson(discovery.token_endpoint, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body });
       const id = await jwtVerify(tokens.id_token, this.keys!, { issuer: this.config.issuer, audience: this.config.clientId, algorithms: ['RS256', 'ES256'], requiredClaims: ['exp', 'iat', 'sub', 'nonce'] }).catch(() => { throw new AppError(401, 'OIDC_ID_TOKEN', 'Invalid sign-in response'); });
       requireValue(id.payload.nonce === saved.nonce, 401, 'OIDC_NONCE', 'Invalid login nonce');
+      if (id.payload.at_hash) requireValue(id.payload.at_hash === Buffer.from(digest(tokens.access_token), 'hex').subarray(0, 16).toString('base64url'), 401, 'OIDC_ACCESS_HASH', 'Login access token binding mismatch');
       const actor = await this.accessToken(tokens.access_token, this.config.cmsAudience);
       requireValue(id.payload.sub === actor.subject, 401, 'OIDC_SUBJECT', 'Token subject mismatch');
       const ownerId = `personal-${digest(`${actor.issuer}\n${actor.subject}`).slice(0, 32)}`;

@@ -6,7 +6,7 @@ export interface Lease { jobId: string; resourceId: string; token: string; gener
 export class Queue {
   store: Store;
   constructor(store: Store) { this.store = store; }
-  claim(kind: 'release' | 'delivery', expire: (resourceId: string) => void): Lease | null {
+  claim(kind: 'release' | 'delivery' | 'projection', expire: (resourceId: string) => void): Lease | null {
     return this.store.transaction(() => {
       if (this.store.get("SELECT value FROM settings WHERE key='outbound_paused'")?.value !== 'false') return null;
       const now = new Date().toISOString();
