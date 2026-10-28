@@ -1,0 +1,21 @@
+import { mkdir, chmod } from 'node:fs/promises';
+import { dirname } from 'node:path';
+import { loadConfig } from './config.ts';
+import { Store } from './store.ts';
+import { Vault } from './vault.ts';
+import { Policy } from './policy.ts';
+import { ContentService } from './content.ts';
+import { NyxAuthority } from './nyxid.ts';
+import { AuthManager } from './auth.ts';
+import { createApp } from './app.ts';
+
+const config = loadConfig();
+await mkdir(dirname(config.database), { recursive: true, mode: 0o700 });
+const store = new Store(config.database), vault = new Vault(config.encryptionKey);
+await chmod(config.database, 0o600);
+const policy = new Policy(store, new NyxAuthority(config)), content = new ContentService(store, policy);
+const auth = new AuthManager(config, store, vault, policy);
+const app = await createApp({ store, policy, content, vault, publicUrl: config.publicUrl, auth, authenticate: request => auth.authenticate(request) });
+for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, async () => { await app.close(); store.close(); });
+await app.listen({ host: config.host, port: config.port });
+process.stdout.write(JSON.stringify({ event: 'server.ready', address: `${config.host}:${config.port}` }) + '\n');

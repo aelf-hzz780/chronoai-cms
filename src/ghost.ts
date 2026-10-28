@@ -1,0 +1,89 @@
+import { SignJWT } from 'jose';
+import { mkdir, writeFile, rename } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { Store, Row } from './store.ts';
+import type { OriginalAdapter, OriginalInput, OriginalResult } from './publishing.ts';
+import { remote, remoteJson, RemoteError } from './http-client.ts';
+import { requireValue } from './errors.ts';
+import { render } from './render.ts';
+import { safeUrl } from './config.ts';
+
+function escapeHtml(value: string) { return value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!); }
+export class GhostAdapter implements OriginalAdapter {
+  store: Store; mediaRoot: string; allowLoopback: boolean; environment: NodeJS.ProcessEnv;
+  constructor(store: Store, mediaRoot: string, allowLoopback = false, environment = process.env) { this.store = store; this.mediaRoot = mediaRoot; this.allowLoopback = allowLoopback; this.environment = environment; }
+  async call(input: OriginalInput, path: string, method = 'GET', body?: unknown) {
+    safeUrl(input.site.url, this.allowLoopback);
+    const key = this.environment[input.site.key_ref];
+    requireValue(key && /^[a-f0-9]+:[a-f0-9]{64}$/.test(key), 409, 'GHOST_CREDENTIAL_REQUIRED', 'Operator must configure the Ghost integration key');
+    const [id, secret] = key.split(':');
+    const token = await new SignJWT({}).setProtectedHeader({ alg: 'HS256', kid: id, typ: 'JWT' }).setIssuedAt().setExpirationTime('5m').setAudience('/admin/').sign(Buffer.from(secret, 'hex'));
+    return remoteJson(`${input.site.url}/ghost/api/admin/${path}`, { method, headers: { authorization: `Ghost ${token}`, 'content-type': 'application/json', 'accept-version': 'v6.0' }, ...(body ? { body: JSON.stringify(body) } : {}) });
+  }
+  slug(input: OriginalInput) { return `chrono-${input.articleId}`; }
+  marker(input: OriginalInput) { return `chrono-revision:${input.revisionId}:${input.digest}`; }
+  images(input: OriginalInput): Array<Row & {reference:string;filename:string;url:string}> {
+    return [...new Set(input.markdown.match(/asset:[a-f0-9-]{36}/g) ?? [])].map(reference => {
+      const id = reference.slice(6); const asset = this.store.get('SELECT * FROM assets WHERE id=? AND article_id=? AND owner_id=?', id, input.articleId, input.ownerId);
+      requireValue(asset, 409, 'PRIVATE_ASSET_MISMATCH', 'Article references an unavailable private image');
+      const extension = ({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' } as Record<string,string>)[asset.mime];
+      const filename = `${asset.digest}.${extension}`; return { ...asset, reference, filename, url: `${input.site.url}/content/images/chrono/${filename}` };
+    });
+  }
+  async current(input: OriginalInput) {
+    const result = await this.call(input, `posts/?filter=slug:${encodeURIComponent(this.slug(input))}&formats=html&include=authors`);
+    requireValue(Array.isArray(result.posts) && result.posts.length <= 1, 502, 'GHOST_CONTRACT', 'Unexpected Ghost lookup result'); return result.posts[0] ?? null;
+  }
+  async publish(input: OriginalInput): Promise<OriginalResult> {
+    const author = this.store.get('SELECT ghost_author_id FROM author_mappings WHERE site_id=? AND credited_author=?', input.site.id, input.creditedAuthor);
+    requireValue(author, 409, 'AUTHOR_MAPPING_REQUIRED', 'Operator must map the credited author to this Ghost site');
+    const existing = await this.current(input);
+    if (input.action === 'publish' && existing) {
+      requireValue(existing.html?.includes(this.marker(input)), 409, 'REMOTE_CONFLICT', 'Existing original has different content; reconcile before another write');
+      return { remoteId: existing.id, url: existing.url };
+    }
+    requireValue(input.action !== 'update' || existing?.id === input.remoteId, 409, 'REMOTE_CONFLICT', 'Original remote mapping changed');
+    const images = this.images(input); let source = input.markdown;
+    for (const image of images) source = source.replaceAll(image.reference, image.url);
+    const html = `<!--kg-card-begin: html--><div data-chrono-revision="${this.marker(input)}">${render(source, new Set(images.map(i => i.url)))}</div><!--kg-card-end: html-->`;
+    const post = { title: input.title, slug: this.slug(input), html, status: 'published', authors: [author.ghost_author_id], meta_title: input.title, meta_description: input.markdown.replace(/[#*`|\[\]]/g, '').slice(0, 155), tags: [{ name: `#owner-${input.ownerId}` }, { name: `#language-${input.language}` }], ...(existing ? { updated_at: existing.updated_at } : {}) };
+    const result = await this.call(input, existing ? `posts/${existing.id}/?source=html` : 'posts/?source=html', existing ? 'PUT' : 'POST', { posts: [post] });
+    const saved = result.posts?.[0]; requireValue(saved?.id && saved?.url, 502, 'GHOST_CONTRACT', 'Missing Ghost publication result');
+    return { remoteId: saved.id, url: saved.url };
+  }
+  async verify(input: OriginalInput, result: OriginalResult): Promise<boolean> {
+    const url = safeUrl(result.url, this.allowLoopback); requireValue(url.origin === new URL(input.site.url).origin, 502, 'GHOST_URL_MISMATCH', 'Ghost URL outside configured publication');
+    const post = await this.current(input);
+    const author = this.store.get('SELECT ghost_author_id FROM author_mappings WHERE site_id=? AND credited_author=?', input.site.id, input.creditedAuthor);
+    if (input.action === 'unpublish') {
+      if (post?.status === 'published') return false;
+      try { await remote(url); return false; } catch (error) { return error instanceof RemoteError && ['REMOTE_NOT_FOUND','REMOTE_GONE'].includes(error.code); }
+    }
+    if (post?.id !== result.remoteId || post?.status !== 'published' || !post.html?.includes(this.marker(input)) || post.authors?.[0]?.id !== author?.ghost_author_id) return false;
+    let page: string;
+    try { page = (await remote(url)).text; } catch { return false; }
+    if (!page.includes(this.marker(input)) || !page.includes(escapeHtml(input.title)) || !new RegExp(`lang=["']${input.language}(?:-[^"']+)?["']`).test(page)) return false;
+    // The exact original is now demonstrably public. Only now materialize public images
+    // in a directory served by Ghost itself, independently of the application process.
+    for (const image of this.images(input)) {
+      const directory = join(this.mediaRoot, input.site.id); await mkdir(directory, { recursive: true, mode: 0o755 });
+      const target = join(directory, image.filename), temporary = `${target}.${input.releaseId}.tmp`;
+      await writeFile(temporary, image.content, { mode: 0o644 }); await rename(temporary, target);
+      try { const response = await remote(image.url); if (!response.response.headers.get('content-type')?.startsWith(image.mime)) return false; } catch { return false; }
+      this.store.run('INSERT OR IGNORE INTO asset_publications VALUES (?,?,?)', image.id, input.releaseId, target);
+    }
+    return true;
+  }
+  async reconcile(input: OriginalInput) {
+    const post = await this.current(input);
+    if (!post) return null;
+    if (input.action !== 'unpublish' && !post.html?.includes(this.marker(input))) return null;
+    return { remoteId: post.id, url: post.url ?? input.url };
+  }
+  async unpublish(input: OriginalInput) {
+    const existing = await this.current(input);
+    requireValue(existing?.id === input.remoteId, 409, 'REMOTE_CONFLICT', 'Original remote mapping unavailable');
+    await this.call(input, `posts/${existing.id}/`, 'PUT', { posts: [{ updated_at: existing.updated_at, status: 'draft' }] });
+    requireValue(await this.verify(input, { remoteId: existing.id, url: input.url! }), 502, 'UNPUBLISH_UNVERIFIED', 'Original removal needs reconciliation');
+  }
+}
