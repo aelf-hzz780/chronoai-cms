@@ -128,3 +128,21 @@ test('HTTPS public sites use only explicitly provisioned loopback HTTP Admin rou
   f.store.run("UPDATE site_admin_routes SET base_url='http://remote.example'");
   await assert.rejects(ghost.current(input),{code:'CONFIGURATION'});assert.equal(urls.length,1);
 });
+test('R002: inert/hidden wrappers, image source selection and inline word separators cannot prove a visible original',()=>{
+  const html='<div data-chrono-revision="proof"><p><strong>Hello</strong> <em>world</em></p><img src="https://site.example/a.png"></div>';
+  assert.equal(provesBody(html,html,`<main>${html}</main>`,'proof'),true);
+  for(const page of [`<template>${html}</template><p>Unapproved</p>`,`<main hidden>${html}</main>`,`<main style="display:none">${html}</main>`,html.replace('src="https://site.example/a.png"','src="https://site.example/a.png" srcset="https://evil.example/b.png 2x"'),html.replace('</strong> <em>','</strong><em>')])assert.equal(provesBody(html,html,page,'proof'),false,page);
+});
+test('R002: template-only and changed srcset fail Ghost verification before any public image is materialized',async t=>{
+  const f=await setup(),directory=await mkdtemp(join(tmpdir(),'chrono-visible-proof-'));t.after(async()=>{f.store.close();await rm(directory,{recursive:true,force:true});});
+  const {MediaService}=await import('../src/media.ts');const asset=await new MediaService(f.content).upload(f.actor,f.article.id,'image/png',Buffer.from('89504e470d0a1a0a','hex').toString('base64'),'trace');
+  const article=await f.content.edit(f.actor,f.article.id,f.article.revision.id,{markdown:`**Hello** *world*\n\n${asset.markdown}`},'trace');
+  await f.service.cancel(f.actor,f.release.id,'trace');
+  const release=await f.service.confirm(f.actor,f.article.id,{...f.input,revisionId:article.revision.id,idempotencyKey:'image-proof'},'trace');
+  const ghost=new GhostAdapter(f.store,directory,true),input=f.service.input(release),html=ghost.controlledHtml(input);
+  ghost.current=async()=>({id:result.remoteId,title:input.title,status:'published',html,authors:[{id:'ghost-author'}]});
+  for(const body of [`<template>${html}</template>`,html.replace('<img ','<img srcset="https://evil.example/image.png 2x" ')]){
+    t.mock.method(globalThis,'fetch',async()=>new Response(`<html lang="en"><h1>${input.title}</h1>${ghost.publisherHtml(input)}${body}</html>`));assert.equal(await ghost.verify(input,result),false);
+    assert.deepEqual(await readdir(directory),[]);assert.equal(f.store.get('SELECT count(*) AS n FROM asset_publications')!.n,0);t.mock.restoreAll();
+  }
+});

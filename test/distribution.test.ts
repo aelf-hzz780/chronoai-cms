@@ -95,3 +95,19 @@ test('assisted publication cannot settle when the original is unpublished during
   await assert.rejects(f.service.report(f.actor,copy.id,'published','https://medium.com/@author/post','trace'),{code:'ORIGINAL_NOT_LIVE'});
   assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',copy.id)!.state,'manual_action_needed');
 });
+test('R008: source becomes unpublished during the last connection or native execution await; no write is allowed',async t=>{
+  for(const at of ['connection','execute']){
+    const f=await setup('solo');t.after(()=>f.store.close());let reads=0;
+    const old=f.service.connections.connection;f.service.connections.connection=async(...args)=>{const connection=await old(...args);if(++reads===3 && at==='connection')f.store.run("UPDATE releases SET state='unpublished' WHERE id=?",f.release.id);return connection;};
+    if(at==='execute')f.service.connections.execute=async(_actor,input:any)=>{f.store.run("UPDATE releases SET state='unpublished' WHERE id=?",f.release.id);input.beforeDispatch();f.calls.push(input);return {};};
+    const delivery=await f.service.request(f.actor,f.release.id,{target:'dev',connectionId:'solo-dev',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:at},'trace');await f.worker.once();
+    assert.equal(f.calls.length,0);assert.equal(f.store.get('SELECT error_code FROM deliveries WHERE id=?',delivery.id)!.error_code,'ORIGINAL_NOT_LIVE');
+  }
+});
+test('R009: an accepted provider write missing its remote identity remains uncertain and blocks another create',async t=>{
+  const f=await setup('solo');t.after(()=>f.store.close());
+  f.service.connections.execute=async(_actor,input:any)=>{f.calls.push(input);return{accountId:'account',status:201,body:{accepted:true}};};
+  const request={target:'dev',connectionId:'solo-dev',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'accepted'};
+  const delivery=await f.service.request(f.actor,f.release.id,request,'trace');await f.worker.once();assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',delivery.id)!.state,'uncertain');
+  await assert.rejects(f.service.request(f.actor,f.release.id,{...request,idempotencyKey:'new'},'trace'),{code:'DUPLICATE_TARGET'});assert.equal(f.calls.length,1);
+});

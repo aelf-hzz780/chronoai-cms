@@ -9,7 +9,7 @@ import {join,resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {Store} from '../src/store.ts';
 import {digest} from '../src/content.ts';
-import {snapshotPlatform,isolateRestoredPlatform,encryptArchive,decryptArchive} from '../src/recovery.ts';
+import {snapshotPlatform,isolateRestoredPlatform,encryptArchive,decryptArchive,validateRestoreTargets} from '../src/recovery.ts';
 import {requireValue} from '../src/errors.ts';
 import {sourceFingerprint} from './source-fingerprint.ts';
 interface Plan {dockerContext:string;databasePath:string;platformConfig:string;extraFiles?:string[];sites:Array<{project:string;envFile:string;restoreProject?:string;enPort?:number;zhPort?:number}>;}
@@ -17,6 +17,8 @@ const [mode,planPath,destination]=process.argv.slice(2),trace=randomUUID();
 requireValue(['capture','restore'].includes(mode) && planPath && destination,400,'USAGE','node scripts/recovery.ts capture|restore PLAN.json OUTPUT_OR_DIRECTORY');
 const plan=JSON.parse(await readFile(planPath,'utf8')) as Plan,key=process.env.RECOVERY_BACKUP_KEY??'';
 requireValue(plan.dockerContext && Array.isArray(plan.sites) && /^[a-f0-9]{64}$/.test(key),400,'RECOVERY_CONFIGURATION','Explicit Docker context, site groups and independent RECOVERY_BACKUP_KEY are required');
+// Validate the complete mapping before temp directories, Docker or imports.
+if(mode==='restore') validateRestoreTargets(plan.sites);
 const working=await mkdtemp(join(tmpdir(),'chrono-recovery-')),composeFile=resolve('infra/ghost/compose.yaml');
 let restoreOverride:string|undefined;
 function docker(...args:string[]) {return execFileSync('docker',['--context',plan.dockerContext,...args],{encoding:'utf8',maxBuffer:8_000_000,stdio:['ignore','pipe','pipe']});}

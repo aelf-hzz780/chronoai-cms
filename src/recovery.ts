@@ -6,6 +6,18 @@ import {pipeline} from 'node:stream/promises';
 import {Store} from './store.ts';
 import {requireValue} from './errors.ts';
 const magic=Buffer.from('CHRONO-BACKUP-01\n');
+export function validateRestoreTargets(sites:Array<{project:string;restoreProject?:string;enPort?:number;zhPort?:number}>) {
+  const projects=new Set<string>(),ports=new Set<number>(),sources=new Set(sites.map(site=>site.project));
+  for(const site of sites) {
+    const project=site.restoreProject;
+    requireValue(project && /^blogsystem-restore-[a-z0-9-]+$/.test(project) && !sources.has(project) && !projects.has(project),400,'RESTORE_ISOLATION','Every owner requires a distinct new restore project and volumes');
+    projects.add(project);
+    for(const port of [site.enPort,site.zhPort]) {
+      requireValue(port && Number.isInteger(port) && port>1023 && port<65536 && !ports.has(port),400,'RESTORE_ISOLATION','Every restored site requires a distinct unprivileged port');
+      ports.add(port);
+    }
+  }
+}
 function key(value:string){requireValue(/^[a-f0-9]{64}$/.test(value),400,'BACKUP_KEY','An independent 32-byte hex backup key is required');return Buffer.from(value,'hex');}
 export async function encryptArchive(source:string,destination:string,secret:string) {
   const iv=randomBytes(12),cipher=createCipheriv('aes-256-gcm',key(secret),iv);cipher.setAAD(magic);

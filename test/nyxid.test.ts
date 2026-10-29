@@ -41,11 +41,20 @@ test('native NyxID inventory, exact approval and redemption never use a fallback
   await assert.rejects(authority.approval(f.actors.admin,owner,'native-ref','different-digest','org-dev','create'),{code:'APPROVAL_NEEDED'});
   await assert.rejects(authority.approval(f.actors.admin,owner,'native-ref','confirmed-digest','org-dev','create'),{code:'APPROVAL_NEEDED'});
   approvalState='approved';
-  const input={owner,connectionId:'org-dev',target:'dev',request,digest:'confirmed-digest',action:'create',approvalRef:'native-ref',readOnly:false};
+  const {connectionFingerprint}=await import('../src/connection-proof.ts');
+  const input={connectionFingerprint:connectionFingerprint(await authority.connection(f.actors.admin,owner,'org-dev','dev')),owner,connectionId:'org-dev',target:'dev',request,digest:'confirmed-digest',action:'create',approvalRef:'native-ref',readOnly:false};
   await assert.rejects(authority.execute(f.actors.admin,{...input,request:{...request,body:{article:{title:'Changed'}}}}),{code:'APPROVAL_NEEDED'});
   assert.equal((await authority.execute(f.actors.admin,input)).body.id,123);
   assert.equal((await authority.execute(f.actors.admin,input)).body.id,123);
   assert.equal(calls.filter(c=>c.path.endsWith('/redeem')).length,1);
   assert.equal(calls.filter(c=>c.path.startsWith('/api/v1/proxy/')).length,0);
   assert.throws(()=>authority.path(binding,{...request,url:'https://evil.example/articles'}),{code:'DESTINATION_ROUTE'});
+});
+test('R007: native execute rejects a resolved binding different from the frozen connection before proxy dispatch',async t=>{
+  const f=fixture();t.after(()=>f.store.close());const owner={kind:'personal',issuer:f.actors.solo.issuer,subject:'solo'};
+  const authority=new NyxAuthority({authorityUrl:'https://nyx.example'} as Config,f.store);
+  const base={id:'solo-dev',target:'dev',slug:'dev',owner,remoteBaseUrl:'https://dev.to/api',accountId:'A',generation:'1'};
+  const {connectionFingerprint}=await import('../src/distribution.ts');let writes=0;
+  authority.connection=async()=>({...base,accountId:'B',generation:'2',active:true});authority.call=async()=>{writes++;return{};};
+  await assert.rejects(authority.execute(f.actors.solo,{owner,connectionId:base.id,target:'dev',request:{method:'POST',url:'https://dev.to/api/articles'},connectionFingerprint:connectionFingerprint(base),beforeDispatch:()=>{},readOnly:false}),{code:'CONNECTION_CHANGED'});assert.equal(writes,0);
 });

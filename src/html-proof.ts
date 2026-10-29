@@ -2,17 +2,23 @@ import { parseDocument } from 'htmlparser2';
 import { findAll } from 'domutils';
 
 type HtmlNode = ReturnType<typeof parseDocument>['children'][number];
+const blocks=new Set(['div','p','section','article','main','ul','ol','li','table','thead','tbody','tr','td','th','blockquote','pre','h1','h2','h3','h4','h5','h6','hr']);
 function canonical(nodes: HtmlNode[], preserveWhitespace = false, hrefAliases = new Map<string,string>()): unknown[] {
-  return nodes.flatMap(node => {
+  return nodes.flatMap((node,index) => {
     if (node.type === 'text') {
       const value = preserveWhitespace ? node.data.replace(/\r\n/g,'\n') : node.data.replace(/\s+/g,' ');
-      return !preserveWhitespace && !value.trim() ? [] : [['text',value]];
+      if (!preserveWhitespace && !value.trim()) {
+        const before=nodes[index-1],after=nodes[index+1];
+        const inline=(n:HtmlNode|undefined)=>n && (n.type==='text' && !!n.data.trim() || 'name' in n && !blocks.has(n.name));
+        if(!inline(before)||!inline(after))return [];
+      }
+      return [['text',value]];
     }
     if (node.type === 'comment' || node.type === 'directive') return [];
     if ('name' in node && 'attribs' in node) {
       // Ignore only documented non-content image optimizations; arbitrary injected
       // styles/handlers/elements still change the proof and invalidate the readback.
-      const attributes = Object.fromEntries(Object.entries(node.attribs).filter(([key]) => !(node.name === 'img' && ['loading','decoding','srcset','sizes','width','height'].includes(key))).map(([key,value]) => [key,node.name === 'a' && key === 'href' ? hrefAliases.get(value) ?? value : value]).sort(([a],[b]) => a!.localeCompare(b!)));
+      const attributes = Object.fromEntries(Object.entries(node.attribs).filter(([key]) => !(node.name === 'img' && ['loading','decoding','width','height'].includes(key))).map(([key,value]) => [key,node.name === 'a' && key === 'href' ? hrefAliases.get(value) ?? value : value]).sort(([a],[b]) => a!.localeCompare(b!)));
       return [[node.name,attributes,canonical(node.children,preserveWhitespace || ['pre','code'].includes(node.name),hrefAliases)]];
     }
     return 'children' in node ? canonical(node.children,preserveWhitespace,hrefAliases) : [];
@@ -39,5 +45,13 @@ export function provesBody(expectedHtml: string, adminHtml: string, publicHtml: 
     }
   }
   const wrappers = findAll(element => element.attribs['data-chrono-revision'] === marker, page.children);
+  const hidden=(node:HtmlNode):boolean=>{
+    if('name' in node && 'attribs' in node){const a=node.attribs;
+      if(['template','noscript','script','style'].includes(node.name)||'hidden' in a||'inert' in a||a['aria-hidden']==='true'||/display\s*:\s*none|visibility\s*:\s*(hidden|collapse)|opacity\s*:\s*0(?:\D|$)|content-visibility\s*:\s*hidden/i.test(a.style??''))return true;
+    }return false;
+  };
+  if(wrappers.length!==1)return false;
+  for(let ancestor:HtmlNode|null=wrappers[0]!;ancestor;ancestor=ancestor.parent)if(hidden(ancestor))return false;
+  if(findAll(element=>hidden(element)||element.name==='source'||element.name==='picture',wrappers).length)return false;
   return wrappers.length === 1 && JSON.stringify(canonical(wrappers,false,aliases)) === expectedProof;
 }

@@ -15,7 +15,8 @@ export interface Connections {
   prepareApproval?(actor:Actor,owner:any,connectionId:string,target:string,request:RemoteRequest,deliveryId:string,digest:string,action:string):Promise<{reference:string;state:string;expiresAt:string}>;
   listConnections?(actor:Actor,owner:any):Promise<any[]>;
 }
-export function connectionFingerprint(connection: any) { return digest(JSON.stringify({ accountId: connection.accountId, organizationId: connection.organizationId, publicationId: connection.publicationId, generation: connection.generation })); }
+import {connectionFingerprint} from './connection-proof.ts';
+export {connectionFingerprint} from './connection-proof.ts';
 export class DistributionService {
   originals: PublishingService; connections: Connections; targets: TargetRegistry;
   constructor(originals: PublishingService, connections: Connections, targets: TargetRegistry) { this.originals = originals; this.connections = connections; this.targets = targets; }
@@ -208,13 +209,20 @@ export class DeliveryWorker {
     const snapshot = store.get('SELECT actor_json FROM delivery_payloads WHERE delivery_id=?', lease.resourceId)!;
     const recovering = store.get('SELECT state FROM deliveries WHERE id=?',lease.resourceId)?.state === 'uncertain';
     const recovery = recovering ? store.get("SELECT actor_json FROM recovery_actors WHERE kind='delivery' AND resource_id=?",lease.resourceId) : undefined;
-    let sent = false, knownWrite = false;
+    let sent = false, knownWrite = false, acceptedWrite = false;
     try {
       const actor = this.service.originals.vault.open<Actor>(recovery?.actor_json ?? snapshot.actor_json);
       const { delivery, payload, owner } = await this.service.context(actor, lease.resourceId);
       const target = this.service.targets.get(delivery.target);
       const connection = await this.service.connections.connection(actor, owner, delivery.connection_id, delivery.target);
       requireValue(connectionFingerprint(connection) === payload.connectionFingerprint, 409, 'CONNECTION_CHANGED', 'Selected account or publication configuration changed; exact confirmation and authorization must be renewed');
+      const assertDispatch = () => {
+        this.queue.guard(lease);
+        if (payload.action !== 'remove') {
+          const source=store.get("SELECT r.*,v.digest FROM releases r JOIN revisions v ON v.id=r.revision_id WHERE r.id=?",delivery.release_id);
+          requireValue(source?.state==='published' && source.digest===payload.sourceDigest && source.url===payload.sourceUrl,409,'ORIGINAL_NOT_LIVE','Confirmed original changed or was unpublished before dispatch');
+        }
+      };
       const send = async (request: RemoteRequest) => {
         this.queue.guard(lease);
         await this.service.originals.content.policy.publish(actor, delivery.owner_id);
@@ -235,10 +243,12 @@ export class DeliveryWorker {
           await this.service.originals.content.policy.publish(actor, delivery.owner_id);
           this.queue.guard(lease);
           if (!this.queue.mutate(lease,() => this.service.event(delivery.id, 'sending', delivery.trace_id))) this.queue.guard(lease);
+          assertDispatch();
           sent = true;
         }
         this.queue.guard(lease);
-        const result = await this.service.connections.execute(actor, { owner, connectionId: delivery.connection_id, target: delivery.target, digest: delivery.digest, action: delivery.action, approvalRef: delivery.approval_ref, request, readOnly: isRead(request) });
+        const result = await this.service.connections.execute(actor, { owner, connectionId: delivery.connection_id, target: delivery.target, digest: delivery.digest, action: delivery.action, approvalRef: delivery.approval_ref, request, connectionFingerprint:payload.connectionFingerprint, beforeDispatch:()=>{if(!isRead(request))assertDispatch();else this.queue.guard(lease);}, readOnly: isRead(request) });
+        if(!isRead(request) && result.status>=200 && result.status<300)acceptedWrite=true;
         requireValue(result.accountId === connection.accountId, 502, 'REMOTE_ACCOUNT_MISMATCH', 'Execution account does not match the selected connection');
         if (result.status < 200 || result.status >= 300) throw new RemoteError(result.status === 401 || result.status === 403 ? 'ACCOUNT_RIGHTS_REQUIRED' : 'DESTINATION_FAILED', 'Destination did not accept the operation', !isRead(request) && result.status >= 500);
         return result.body;
@@ -256,7 +266,7 @@ export class DeliveryWorker {
       else { const verified = result; this.queue.mutate(lease,() => { store.run('UPDATE deliveries SET remote_id=?,url=?,source_verified=? WHERE id=?', verified.remoteId, verified.url, verified.sourceVerified ? 1 : 0, delivery.id); this.service.settleCopy(delivery,verified.remoteId,verified.state,delivery.trace_id); this.service.event(delivery.id, verified.state, delivery.trace_id); },true); }
     } catch (error) {
       const code = error instanceof AppError ? error.code : 'INTERNAL';
-      const state = recovering || knownWrite || error instanceof RemoteError && error.uncertain || (!(error instanceof AppError) && sent) ? 'uncertain' : ['MANUAL_REMOVAL_REQUIRED', 'ACCOUNT_RIGHTS_REQUIRED', 'CONNECTION_DISABLED','REMOTE_AUTHORIZATION'].includes(code) ? 'manual_action_needed' : code === 'APPROVAL_NEEDED' ? 'approval_needed' : error instanceof AppError && [401,403,409,503].includes(error.status) ? 'blocked' : 'failed';
+      const state = recovering || knownWrite || acceptedWrite || sent && ['REMOTE_CONTRACT','NYXID_CONTRACT'].includes(code) || error instanceof RemoteError && error.uncertain || (!(error instanceof AppError) && sent) ? 'uncertain' : ['MANUAL_REMOVAL_REQUIRED', 'ACCOUNT_RIGHTS_REQUIRED', 'CONNECTION_DISABLED','REMOTE_AUTHORIZATION'].includes(code) ? 'manual_action_needed' : code === 'APPROVAL_NEEDED' ? 'approval_needed' : error instanceof AppError && [401,403,409,503].includes(error.status) ? 'blocked' : 'failed';
       this.queue.mutate(lease,() => this.service.event(lease.resourceId, state, 'worker', code),true);
     }
     return true;
