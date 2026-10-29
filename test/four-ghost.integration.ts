@@ -118,7 +118,14 @@ try {
     assert.equal(store.get('SELECT count(*) AS n FROM asset_publications WHERE release_id=?',release.id)!.n,0);
     privateResults.push({action,publicImage404:true,noPromotionRecord:true});
   }
-  const evidence={schema_version:1,run_id:runId,performed_at:new Date().toISOString(),evidence_level:'local',claim:'Current platform HTTP content/confirmation and real Ghost Adapter across two owners, two languages and two entries',build_revision:process.env.INTEGRATION_BUILD_REVISION??execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),worktree_dirty:process.env.INTEGRATION_WORKTREE_DIRTY?process.env.INTEGRATION_WORKTREE_DIRTY==='true':execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim().length>0,runtime:process.version,authority:'synthetic injected local authority; NOT NyxID Live',cases:['A07','A10','A11','A17','A20','A23','A24','A25','A41','A42','A43','A44','A45'],results,not_verified:['real NyxID',...(!process.env.INTEGRATION_MEDIA_ROOT?['private image promotion']:[]),'translation alternate links','external platforms','backup/restore','production RPO/RTO']};
+  await app.close();
+  for(const row of results) {
+    const live=store.get("SELECT state FROM releases WHERE article_id=? ORDER BY rowid DESC LIMIT 1",row.articleId)!;
+    const response=await fetch(row.url);assert.equal(response.status,live.state==='unpublished'?404:200);
+    if(live.state!=='unpublished')assert.ok((await response.text()).includes(`chrono-revision:${row.revisionId}:${row.sourceSha256}`));
+    row.publicPageIndependentOfClosedApi=true;
+  }
+  const evidence={schema_version:1,run_id:runId,performed_at:new Date().toISOString(),evidence_level:'local',claim:'Current platform HTTP content/confirmation and real Ghost Adapter across two owners, two languages and two entries',build_revision:process.env.INTEGRATION_BUILD_REVISION??execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),worktree_dirty:process.env.INTEGRATION_WORKTREE_DIRTY?process.env.INTEGRATION_WORKTREE_DIRTY==='true':execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim().length>0,runtime:process.version,authority:'synthetic injected local authority; NOT NyxID Live',cases:['A07','A10','A11','A17','A20','A23','A24','A25','A26','A41','A42','A43','A44','A45'],results,not_verified:['real NyxID',...(!process.env.INTEGRATION_MEDIA_ROOT?['private image promotion']:[]),'translation alternate links','external platforms','backup/restore','production RPO/RTO']};
   Object.assign(evidence,{translations:translationResults,privateFailureCases:privateResults});evidence.not_verified=evidence.not_verified.filter(x=>x!=='translation alternate links');
   await writeFile(join(directory,'evidence.json'),JSON.stringify(evidence,null,2));
   await writeFile(join(runtime,'four-ghost-evidence.json'),JSON.stringify(evidence,null,2));
