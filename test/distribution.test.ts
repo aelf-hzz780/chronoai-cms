@@ -91,7 +91,7 @@ test('disabled destination keeps exact known-copy removal follow-up and settles 
 test('assisted publication cannot settle when the original is unpublished during remote verification',async t=>{
   const f=await setup('solo');t.after(()=>f.store.close());
   const copy=await f.service.request(f.actor,f.release.id,{target:'medium',connectionId:'solo-medium',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'race'},'trace');
-  t.mock.method(globalThis,'fetch',async()=>{f.store.run("UPDATE releases SET state='unpublished' WHERE id=?",f.release.id);return new Response('Distribute http://localhost:3999/original/');});
+  t.mock.method(globalThis,'fetch',async()=>{f.store.run("UPDATE releases SET state='unpublished' WHERE id=?",f.release.id);return new Response(`<article><h1>Distribute</h1><p>Exact confirmed content</p><p>Author: solo</p><p>Original: <a href="http://localhost:3999/original/">http://localhost:3999/original/</a></p></article>`);});
   await assert.rejects(f.service.report(f.actor,copy.id,'published','https://medium.com/@author/post','trace'),{code:'ORIGINAL_NOT_LIVE'});
   assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',copy.id)!.state,'manual_action_needed');
 });
@@ -110,4 +110,22 @@ test('R009: an accepted provider write missing its remote identity remains uncer
   const request={target:'dev',connectionId:'solo-dev',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'accepted'};
   const delivery=await f.service.request(f.actor,f.release.id,request,'trace');await f.worker.once();assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',delivery.id)!.state,'uncertain');
   await assert.rejects(f.service.request(f.actor,f.release.id,{...request,idempotencyKey:'new'},'trace'),{code:'DUPLICATE_TARGET'});assert.equal(f.calls.length,1);
+});
+test('R011: assisted verification requires visible approved content, credited author and source anchor, never metadata/comments',async t=>{
+  const f=await setup('solo');t.after(()=>f.store.close());
+  const copy=await f.service.request(f.actor,f.release.id,{target:'medium',connectionId:'solo-medium',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'manual-proof'},'trace');
+  const good='<article><h1>Distribute</h1><p>Exact confirmed content</p><p>Author: solo</p><p>Original: <a href="http://localhost:3999/original/">http://localhost:3999/original/</a></p></article>';
+  for(const body of ['<title>Distribute</title><!-- http://localhost:3999/original/ --><article>Unrelated body by another author</article>',good.replace('Author: solo','Author: other'),`<template>${good}</template>`,good.replace('Exact confirmed content','Unrelated body')]){
+    t.mock.method(globalThis,'fetch',async()=>new Response(body));await assert.rejects(f.service.report(f.actor,copy.id,'published','https://medium.com/@author/test','trace'),{code:'PUBLICATION_UNVERIFIED'});assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',copy.id)!.state,'manual_action_needed');t.mock.restoreAll();
+  }
+  t.mock.method(globalThis,'fetch',async()=>new Response(good));assert.equal((await f.service.report(f.actor,copy.id,'published','https://medium.com/@author/test','trace'))!.state,'published');
+});
+test('R014: paused outbound admits explicit uncertain delivery reconciliation but cannot execute new creates',async t=>{
+  const f=await setup('solo');t.after(()=>f.store.close());f.makeUncertain();
+  const input={target:'dev',connectionId:'solo-dev',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'pause'};
+  const delivery=await f.service.request(f.actor,f.release.id,input,'trace');await f.worker.once();const writes=f.calls.length;
+  f.store.run("UPDATE settings SET value='true' WHERE key='outbound_paused'");await f.service.reconcile(f.actor,delivery.id,'recovery');assert.equal(await f.worker.once(),true);assert.equal(f.calls.length,writes+1);assert.equal(f.calls.at(-1).readOnly,true);
+  const fresh=await f.content.create(f.actor,{ownerId:'solo',language:'en',title:'Queued',markdown:'body',creditedAuthor:'solo'},'trace');
+  const queued=await f.service.originals.confirm(f.actor,fresh.id,{ownerId:'solo',revisionId:fresh.revision.id,creditedAuthor:'solo',action:'publish',rightsConfirmed:true,idempotencyKey:'new-original'},'trace');
+  assert.equal(await new ReleaseWorker(f.service.originals,{async publish(){throw Error('Must not send');},async verify(){return true;},async reconcile(){return null;},async unpublish(){throw Error('Must not send');}}).once(),false);assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',queued.id)!.state,'queued');
 });

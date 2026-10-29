@@ -69,3 +69,5 @@ node scripts/recovery.ts restore /private/plan.json /private/fresh-restore
 ## 责任与容量待定
 
 单机故障是当前共同失效域，没有HA承诺。四MySQL/Ghost、API/Worker、SQLite、媒体与加密备份需要测量真实CPU/RAM/IO/增长量；本地4CPU/约6GB只用于测试，不作为生产容量承诺。费用项包括VPS/磁盘/离机备份/域名/TLS运维/NyxID/Hashnode Pro/投稿账户。付款人、订阅责任人、维护窗口、值班与人工投稿负责人尚未指定，均列上线blocker；不生成虚构预算或SLA。
+
+恢复暂停出站时，仅显式授权请求、处于uncertain/verifying的原文或uncertain的delivery可被Worker认领做只读远端reconcile；新写任务及metadata投影继续暂停。实际写入边界再次检查pause，不能通过恢复身份变相发文。原文核验后可能恢复本地公开素材及账本，但不调用远端发布API。采集故障覆盖缺口记录在collection_gaps；若数据库整体不可写，当前API进程保留每日缺口并记录Trace日志，进程重启前需由运维保存故障窗口。完整数据库故障同时导致审计/health异常，不能宣称持久故障记录必然可写。

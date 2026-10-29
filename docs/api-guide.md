@@ -22,3 +22,7 @@
 `GET /metrics?ownerId=...&from=YYYY-MM-DD&to=...&article=...&language=...&destination=ghost` 返回 PV、每日估算 UV、热门、趋势、来源与分发。外部支持目标先 `POST /deliveries/:id/metrics/refresh`；缺失授权或数据为 Unavailable/null，不能填0。外部是累计计数快照，日期选择采集时间，不冒充区间流量；不计算跨平台唯一人数。
 
 每个错误含 code/message/traceId，HTTP响应有 x-trace-id。遇到409需读取当前状态和修订后重新确认；遇到 unknown effect 不自动重复发送。角色管理仅当前组织 Admin 可用，业务账号没有 Ghost Admin 权限。
+
+分发状态日期以该 delivery 的确认创建时间（UTC，d.created_at）筛选；Ghost 原文状态以原文确认时间（r.created_at）筛选。它们不是按状态变更的事件时间过滤。外部counter仍按snapshot采集时间过滤，各口径随响应dateBasis/coverage返回。
+
+辅助公开核验要求唯一可见article、匹配h1、已准备的正文/摘要、可见Author与准确Original锚点和图片。无法可靠定位内容、被遮蔽或格式不同到无法证明时返回PUBLICATION_UNVERIFIED，保留人工待核状态；不能据此保证编辑部接受。采集写入失败记coverage gap，所选owner/文章/语言/日期内总量为Unavailable而非零，后续成功不抹去历史缺口。

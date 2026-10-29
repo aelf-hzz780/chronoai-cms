@@ -20,6 +20,10 @@ export class AlternateService {
   affected(articleId:string,ownerId:string) {
     return this.originals.content.store.all(`SELECT r.* FROM releases r JOIN articles a ON a.id=r.article_id WHERE r.state='published' AND a.owner_id=? AND (a.id=? OR a.id IN (SELECT l.peer_article_id FROM release_links l JOIN releases s ON s.id=l.release_id WHERE s.article_id=?) OR a.id IN (SELECT s.article_id FROM release_links l JOIN releases s ON s.id=l.release_id WHERE l.peer_article_id=?))`,ownerId,articleId,articleId,articleId);
   }
+  snapshot(ownerId:string) {
+    const store=this.originals.content.store;
+    return JSON.stringify(store.all("SELECT r.id,r.article_id,r.revision_id,r.url,l.peer_article_id,l.source_revision FROM releases r LEFT JOIN release_links l ON l.release_id=r.id WHERE r.owner_id=? AND r.state='published' ORDER BY r.id",ownerId));
+  }
   links(articleId:string,ownerId:string):Alternate[] {
     const store=this.originals.content.store;
     const rows=store.all(`SELECT DISTINCT a.id,a.language,r.url FROM releases r JOIN articles a ON a.id=r.article_id WHERE r.state='published' AND a.owner_id=? AND a.id<>? AND (a.id IN (SELECT l.peer_article_id FROM release_links l JOIN releases s ON s.id=l.release_id WHERE s.article_id=? AND s.state='published') OR a.id IN (SELECT s.article_id FROM release_links l JOIN releases s ON s.id=l.release_id WHERE l.peer_article_id=? AND s.state='published')) ORDER BY a.language,a.id`,ownerId,articleId,articleId,articleId);
@@ -37,12 +41,18 @@ export class AlternateWorker {
     try {
       const actor=this.service.originals.vault.open<Actor>(row.actor_json);await this.service.originals.content.policy.publish(actor,row.owner_id);
       for(const release of this.service.affected(row.article_id,row.owner_id)) {
-        const input=this.service.originals.input(release);input.guard=()=>this.queue.guard(lease);
-        input.beforeWrite=async()=>{await this.service.originals.content.policy.publish(actor,row.owner_id);this.queue.guard(lease);requireValue(store.get('SELECT state FROM releases WHERE id=?',release.id)?.state==='published',409,'PUBLICATION_CHANGED','Original changed during metadata projection');};
-        await this.adapter.alternates(input,this.service.links(release.article_id,row.owner_id));
+        const input=this.service.originals.input(release),links=this.service.links(release.article_id,row.owner_id),snapshot=this.service.snapshot(row.owner_id);
+        const guard=()=>{this.queue.guard(lease);this.queue.assertWritable();requireValue(store.get('SELECT state FROM releases WHERE id=?',release.id)?.state==='published' && this.service.snapshot(row.owner_id)===snapshot,409,'PUBLICATION_CHANGED','Original or translation targets changed during metadata projection');};
+        input.guard=guard;
+        input.beforeWrite=async()=>{await this.service.originals.content.policy.publish(actor,row.owner_id);guard();};
+        await this.adapter.alternates(input,links);guard();
       }
       this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='complete',error_code=NULL WHERE id=?",row.id);store.audit(actor.subject,row.owner_id,'alternates.complete',row.id,row.trace_id);},true);
-    }catch(error){const code=error instanceof AppError?error.code:'INTERNAL';this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='failed',error_code=? WHERE id=?",code,row.id);store.audit('worker',row.owner_id,'alternates.failed',row.id,row.trace_id,{code});},true);}
+    }catch(error){const code=error instanceof AppError?error.code:'INTERNAL';this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='failed',error_code=? WHERE id=?",code,row.id);
+      if(code==='PUBLICATION_CHANGED') {
+        const correction=randomUUID();store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',correction,row.article_id,row.owner_id,row.actor_json,'queued',null,row.trace_id);
+        store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',correction,'queued',null,new Date().toISOString());
+      }store.audit('worker',row.owner_id,'alternates.failed',row.id,row.trace_id,{code});},true);}
     return true;
   }
 }

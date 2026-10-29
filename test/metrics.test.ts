@@ -42,3 +42,18 @@ test('real-length tracker URLs are accepted and missing external counters stay U
   const result=await metrics.query(f.actors.solo,'solo',{destination:'dev'});assert.equal(result.readership.pageViews.value,9);assert.equal(result.externalEngagement.comments,0);assert.match(result.externalEngagement.metrics.views.coverage.counter_window,/lifetime/);
   f.store.run('UPDATE external_metrics SET views=NULL WHERE delivery_id=?','copy');assert.equal((await metrics.query(f.actors.solo,'solo',{destination:'dev'})).readership.pageViews.value,null);
 });
+test('R015/R016: delivery dates differ from original dates, and collection gaps expose unavailable coverage without blocking GIF',async t=>{
+  const f=fixture(),vault=new Vault('ab'.repeat(32));t.after(()=>f.store.close());
+  f.store.run('INSERT INTO sites VALUES (?,?,?,?,?)','site','solo','en','http://localhost:3999','KEY');
+  const a=await f.content.create(f.actors.solo,{ownerId:'solo',language:'en',title:'Dates',markdown:'body',creditedAuthor:'Solo'},'trace');const service=new PublishingService(f.content,vault);
+  const release=await service.confirm(f.actors.solo,a.id,{ownerId:'solo',revisionId:a.revision.id,creditedAuthor:'Solo',action:'publish',rightsConfirmed:true,idempotencyKey:'dates'},'trace');
+  f.store.run("UPDATE releases SET state='published',created_at='2026-10-01T12:00:00.000Z' WHERE id=?",release.id);
+  f.store.run('INSERT INTO deliveries(id,release_id,owner_id,connection_id,target,action,format,digest,state,remote_id,trace_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)','date-copy',release.id,'solo','connection','dev','create','full','digest','published','remote','trace','2026-10-02T12:00:00.000Z','2026-10-02T12:00:00.000Z');
+  const metrics=new MetricsService(f.content,{enabled:true,requireConsent:true,secret:'test'});
+  assert.deepEqual((await metrics.query(f.actors.solo,'solo',{destination:'dev',from:'2026-10-02',to:'2026-10-02'})).distribution.value.map(row=>({...row})),[{state:'published',count:1}]);assert.equal((await metrics.query(f.actors.solo,'solo',{destination:'dev',from:'2026-10-01',to:'2026-10-01'})).distribution.value.length,0);
+  const {createApp}=await import('../src/app.ts');const app=await createApp({...f,vault,metrics,publicUrl:'https://cms.example',authenticate:async()=>f.actors.solo});t.after(()=>app.close());
+  const run=f.store.run.bind(f.store);f.store.run=(sql,...args)=>{if(sql.startsWith('INSERT INTO observations'))throw Error('write failed');return run(sql,...args);};
+  assert.equal((await app.inject({url:`/track/${metrics.token(a.id,release.id)}.gif?consent=1`})).statusCode,200);f.store.run=run;
+  const result=await metrics.query(f.actors.solo,'solo',{});assert.equal(result.readership.pageViews.value,null);assert.equal(result.readership.pageViews.availability,'Unavailable');assert.match(result.readership.pageViews.reason!,/incomplete/);assert.ok('collectionGaps' in result.readership.pageViews.coverage);assert.equal(result.readership.pageViews.coverage.collectionGaps,1);
+  assert.equal((await metrics.query(f.actors.solo,'solo',{language:'zh'})).readership.pageViews.availability,'Available');
+});

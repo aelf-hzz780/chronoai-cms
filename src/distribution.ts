@@ -6,6 +6,7 @@ import { AppError, requireValue, text } from './errors.ts';
 import { RemoteError, remote } from './http-client.ts';
 import { TargetRegistry, isRead, type CopyPayload, type RemoteRequest } from './targets.ts';
 import { render } from './render.ts';
+import {assistedMarkdown,provesAssistedCopy} from './assisted-proof.ts';
 import { Queue } from './queue.ts';
 
 export interface Connections {
@@ -144,7 +145,7 @@ export class DistributionService {
     const { delivery, payload } = await this.context(actor, id);
     requireValue(this.manualWorkflow(delivery), 409, 'AUTOMATIC_TARGET', 'This target uses automatic publishing');
     requireValue(payload.action === 'remove' || this.store.get("SELECT 1 FROM releases WHERE id=? AND state='published'", delivery.release_id), 409, 'ORIGINAL_NOT_LIVE', 'Original changed or was unpublished; prepare a new confirmed submission');
-    const markdown = `${payload.markdown}\n\nOriginal: [${payload.sourceUrl}](${payload.sourceUrl})`;
+    const markdown = assistedMarkdown(payload);
     return { title: payload.title, markdown, html: render(markdown, new Set([...markdown.matchAll(/!\[[^\]]*\]\((https?:[^)]+)\)/g)].map(m => m[1]))), sourceUrl: payload.sourceUrl, creditedAuthor: payload.creditedAuthor, state: delivery.state, knownCopyUrl:delivery.url, instructions: payload.action==='remove'?'Request removal of this known copy using its original author account or the platform support team; reconnect the exact selected account if access was lost. Record the result only after public verification.': delivery.target === 'medium' ? 'Use Medium import with the original URL, review formatting, images and attribution, and record submission separately from publication.' : 'Submit via HackerNoon with source attribution; company-domain originals normally require a company account. Track editorial review; acceptance is controlled by HackerNoon.', accountConnectionId: delivery.connection_id };
   }
   async report(actor: Actor, id: string, state: string, url: string | null, trace: string) {
@@ -162,7 +163,7 @@ export class DistributionService {
       requireValue(url, 400, 'URL_REQUIRED', 'Public URL required');
       const { payload } = await this.context(actor, id);
       const page = (await remote(url)).text;
-      requireValue(page.includes(payload.sourceUrl) && page.includes(payload.title.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!))), 409, 'PUBLICATION_UNVERIFIED', 'Public article and source attribution could not be verified; keep submitted/reviewing status');
+      requireValue(provesAssistedCopy(page,payload),409,'PUBLICATION_UNVERIFIED','Visible full/excerpt content, title, credited author and source link could not be verified; retain submitted/reviewing follow-up');
     }
     if(state==='removed') {
       requireValue(delivery.url && delivery.remote_id && (!url||url===delivery.url),409,'COPY_MISMATCH','Verify removal at the exact known copy URL');
@@ -217,7 +218,7 @@ export class DeliveryWorker {
       const connection = await this.service.connections.connection(actor, owner, delivery.connection_id, delivery.target);
       requireValue(connectionFingerprint(connection) === payload.connectionFingerprint, 409, 'CONNECTION_CHANGED', 'Selected account or publication configuration changed; exact confirmation and authorization must be renewed');
       const assertDispatch = () => {
-        this.queue.guard(lease);
+        this.queue.guard(lease);this.queue.assertWritable();
         if (payload.action !== 'remove') {
           const source=store.get("SELECT r.*,v.digest FROM releases r JOIN revisions v ON v.id=r.revision_id WHERE r.id=?",delivery.release_id);
           requireValue(source?.state==='published' && source.digest===payload.sourceDigest && source.url===payload.sourceUrl,409,'ORIGINAL_NOT_LIVE','Confirmed original changed or was unpublished before dispatch');

@@ -27,3 +27,8 @@ test('provider metrics read only supported authorized counters; absent views rem
   assert.deepEqual([metrics.views,metrics.reactions,metrics.comments],[12,3,0]);assert.ok(calls.every(c=>c.method==='GET'));
   const hash=new HashnodeAdapter('https://gql-beta.hashnode.com');const unavailable=await hash.metrics({...payload,remoteId:'p'},connection,async request=>{assert.match(request.body!.query,/^query/);return{data:{post:{id:'p',publication:{id:'publication'},author:{id:'account'},views:null,reactionCount:2,responseCount:1}}};});assert.equal(unavailable.views,null);assert.equal(unavailable.reactions,2);
 });
+test('R012: known DEV and Hashnode copy identities never drift on otherwise valid readback',async()=>{
+  const known={...payload,remoteId:'expected'};
+  const dev=new DevAdapter('https://dev.to/api');assert.equal(await dev.reconcile(known,connection,async()=>({id:'other',url:'https://dev.to/a/post',title:payload.title,published:true,user:{user_id:'account'},organization:{id:'org'},canonical_url:payload.sourceUrl,body_markdown:copyBody(payload)})),null);
+  const hash=new HashnodeAdapter('https://gql-beta.hashnode.com');assert.equal(await hash.reconcile(known,connection,async()=>({data:{post:{id:'other',url:'https://publication.hashnode.dev/post',title:payload.title,canonicalUrl:payload.sourceUrl,publishedAt:new Date().toISOString(),author:{id:'account'},publication:{id:'publication'},content:{markdown:copyBody(payload)}}}})),null);
+});

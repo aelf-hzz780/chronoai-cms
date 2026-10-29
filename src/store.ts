@@ -44,6 +44,8 @@ export class Store {
       CREATE TABLE IF NOT EXISTS sessions (id TEXT PRIMARY KEY, actor_json TEXT NOT NULL, csrf TEXT NOT NULL, expires_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS oidc_states (state TEXT PRIMARY KEY, nonce TEXT NOT NULL, verifier TEXT NOT NULL, expires_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS observations (id TEXT PRIMARY KEY, article_id TEXT NOT NULL REFERENCES articles(id), owner_id TEXT NOT NULL REFERENCES owners(id), language TEXT NOT NULL, visitor TEXT NOT NULL, referral TEXT NOT NULL, campaign TEXT, observed_at TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS collection_gaps (id TEXT PRIMARY KEY,owner_id TEXT NOT NULL REFERENCES owners(id),article_id TEXT NOT NULL REFERENCES articles(id),language TEXT NOT NULL,occurred_at TEXT NOT NULL);
+      CREATE INDEX IF NOT EXISTS gaps_owner_date ON collection_gaps(owner_id,occurred_at);
       CREATE TABLE IF NOT EXISTS external_metrics (delivery_id TEXT PRIMARY KEY REFERENCES deliveries(id), views INTEGER, reactions INTEGER, comments INTEGER, source TEXT NOT NULL, updated_at TEXT NOT NULL, error_code TEXT);
       CREATE INDEX IF NOT EXISTS observations_owner_date ON observations(owner_id,observed_at,article_id,language);
       CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);

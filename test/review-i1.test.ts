@@ -146,3 +146,20 @@ test('R002: template-only and changed srcset fail Ghost verification before any 
     assert.deepEqual(await readdir(directory),[]);assert.equal(f.store.get('SELECT count(*) AS n FROM asset_publications')!.n,0);t.mock.restoreAll();
   }
 });
+for(const action of ['publish','update'])for(const missing of ['id','url'])test(`R006: Ghost ${action} HTTP201 missing ${missing} reconciles without resending`,async t=>{
+  const f=await setup();t.after(()=>f.store.close());const ghost=new GhostAdapter(f.store,'/unused',true,{KEY:`aa:${'ab'.repeat(32)}`});let remotePost:any=null,writes=0;
+  ghost.current=async()=>remotePost;
+  let release=f.release;
+  if(action==='update'){
+    await new ReleaseWorker(f.service,adapter()).once();remotePost={id:'remote',url:result.url,updated_at:'v1'};
+    release=await f.service.confirm(f.actor,f.article.id,{...f.input,action,idempotencyKey:'update-contract'},'trace');
+  }
+  t.mock.method(globalThis,'fetch',async(_url:any,options:any)=>{assert.ok(['POST','PUT'].includes(String(options?.method)));writes++;const body=JSON.parse(String(options?.body));remotePost={...body.posts[0],id:'remote',url:result.url};const returned={...remotePost};delete returned[missing];return Response.json({posts:[returned]},{status:201});});
+  ghost.verify=async()=>true;const worker=new ReleaseWorker(f.service,ghost);await worker.once();assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',release.id)!.state,'uncertain');
+  await f.service.reconcile(f.actor,release.id,'recovery');await worker.once();assert.equal(writes,1);assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',release.id)!.state,'published');
+});
+test('R014: restored outbound pause allows an authorized original read reconciliation with zero writes',async t=>{
+  const f=await setup();t.after(()=>f.store.close());f.store.run("UPDATE releases SET state='uncertain' WHERE id=?",f.release.id);f.store.run("UPDATE jobs SET state='done' WHERE resource_id=?",f.release.id);
+  const {isolateRestoredPlatform}=await import('../src/recovery.ts');isolateRestoredPlatform(f.store,'restore');await f.service.reconcile(f.actor,f.release.id,'request');let reads=0;
+  const worker=new ReleaseWorker(f.service,adapter({async publish(){throw Error('Must not write');},async unpublish(){throw Error('Must not write');},async reconcile(){reads++;return result;}}));assert.equal(await worker.once(),true);assert.equal(reads,1);assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',f.release.id)!.state,'published');assert.equal(f.store.get("SELECT value FROM settings WHERE key='outbound_paused'")!.value,'true');
+});

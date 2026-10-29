@@ -39,7 +39,7 @@ export class DevAdapter implements Target {
   name = 'dev'; automatic = true; automaticActions=['create','update']; endpoint: string;
   constructor(endpoint: string) { this.endpoint = safeUrl(endpoint).href.replace(/\/$/, ''); }
   normalize(post: any, payload: CopyPayload, connection: any): CopyResult | null {
-    if (!post || String(post.user?.user_id ?? post.user_id) !== String(connection.accountId) || (payload.ownerKind === 'organization' && String(post.organization?.id ?? post.organization_id) !== String(connection.organizationId))) return null;
+    if (!post || payload.remoteId && String(post.id)!==payload.remoteId || String(post.user?.user_id ?? post.user_id) !== String(connection.accountId) || (payload.ownerKind === 'organization' && String(post.organization?.id ?? post.organization_id) !== String(connection.organizationId))) return null;
     const content = post.body_markdown ?? '';
     if (post.canonical_url !== payload.sourceUrl || post.title!==payload.title || (!post.published_at && post.published!==true) || !sameBody(content,payload)) return null;
     return { state: 'published', remoteId: String(post.id), url: post.url, sourceVerified: true };
@@ -110,7 +110,7 @@ export class HashnodeAdapter implements Target {
       : await this.gql(send, 'query ChronoFind($publication:ObjectId!,$slug:String!){publication(id:$publication){post(slug:$slug){id url title canonicalUrl publishedAt content{markdown} publication{id} author{id}}}}', { publication: connection.publicationId, slug: `chrono-${payload.deliveryId}` });
     const post = payload.remoteId ? result.post : result.publication?.post;
     if (payload.action === 'remove' && !post && payload.remoteId) return { state: 'removed', remoteId: payload.remoteId, url: payload.remoteUrl ?? '', sourceVerified: true };
-    if (!post || post.publication?.id !== connection.publicationId || post.author?.id!==connection.accountId || post.title!==payload.title || post.canonicalUrl!==payload.sourceUrl || !post.publishedAt || Date.parse(post.publishedAt)>Date.now() || !sameBody(post.content?.markdown,payload)) return null;
+    if (!post || payload.remoteId && post.id!==payload.remoteId || post.publication?.id !== connection.publicationId || post.author?.id!==connection.accountId || post.title!==payload.title || post.canonicalUrl!==payload.sourceUrl || !post.publishedAt || Date.parse(post.publishedAt)>Date.now() || !sameBody(post.content?.markdown,payload)) return null;
     return { state: 'published', remoteId: post.id, url: post.url, sourceVerified: true };
   }
   async metrics(payload:CopyPayload,connection:any,send:Send):Promise<Engagement> {

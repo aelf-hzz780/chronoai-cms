@@ -105,7 +105,7 @@ export class ReleaseWorker {
       input.guard = () => this.queue.guard(lease);
       input.beforeWrite = async () => {
         requireValue(!recovering, 409, 'RECOVERY_READ_ONLY', 'Recovery may inspect existing results but cannot resend');
-        await this.service.content.policy.publish(actor, row.owner_id); this.queue.guard(lease);
+        await this.service.content.policy.publish(actor, row.owner_id); this.queue.guard(lease);this.queue.assertWritable();
       };
       if (recovering) {
         const result = await this.adapter.reconcile(input);

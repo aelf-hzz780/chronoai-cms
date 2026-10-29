@@ -67,7 +67,7 @@ export class GhostAdapter implements OriginalAdapter {
     const tracker = this.tracking?.metrics.config.enabled ? `<script defer src="${escapeHtml(this.tracking.publicUrl)}/tracker.js" data-endpoint="${escapeHtml(this.tracking.publicUrl)}/track/${this.tracking.metrics.token(input.articleId,input.releaseId)}.gif" data-require-consent="${this.tracking.requireConsent}"></script>` : '';
     const post = { title: input.title, slug: this.slug(input), html, status: 'published', authors: [author.ghost_author_id], meta_title: input.title, meta_description: input.markdown.replace(/[#*`|\[\]]/g, '').slice(0, 155), codeinjection_foot: this.publisherHtml(input)+tracker, tags: [{ name: `#owner-${input.ownerId}` }, { name: `#language-${input.language}` }], ...(existing ? { updated_at: existing.updated_at } : {}) };
     const result = await this.call(input, existing ? `posts/${existing.id}/?source=html` : 'posts/?source=html', existing ? 'PUT' : 'POST', { posts: [post] });
-    const saved = result.posts?.[0]; requireValue(saved?.id && saved?.url, 502, 'GHOST_CONTRACT', 'Missing Ghost publication result');
+    const saved = result.posts?.[0]; if(!saved?.id || !saved?.url)throw new RemoteError('GHOST_CONTRACT','Accepted Ghost write has no complete identity; reconcile the existing slug before retrying',true);
     return { remoteId: saved.id, url: saved.url };
   }
   async verify(input: OriginalInput, result: OriginalResult): Promise<boolean> {
