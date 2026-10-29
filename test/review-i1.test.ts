@@ -187,3 +187,11 @@ test('R002: browser-rendered public body rejects stylesheet concealment and zero
   const image='<div data-chrono-revision="proof"><img src="https://example.com/image.png" alt="image"></div>';
   assert.equal(provesBody(image,image,image.replace('<img ','<img width="0" height="0" '),'proof'),false);
 });
+
+test('R002: rendered image proof requires visible geometry and rejects clipping or offscreen placement',async()=>{
+  const {BrowserRenderProof}=await import('../src/render-proof.ts'),renderer=new BrowserRenderProof();
+  const image='<div data-chrono-revision="proof"><p>Body</p><img width="80" height="40" alt="Confirmed image"></div>';
+  assert.equal(await renderer.verify('http://localhost:3999/post/',image,'proof'),true);
+  for(const css of ['img{position:fixed;left:-10000px}','[data-chrono-revision]{clip-path:inset(100%)}','img{width:0;height:0}'])assert.equal(await renderer.verify('http://localhost:3999/post/',`<style>${css}</style>${image}`,'proof'),false,css);
+  await assert.rejects(new BrowserRenderProof({RENDER_BROWSER_EXECUTABLE:'/missing/chrono-renderer'}).verify('http://localhost:3999/post/',image,'proof'),{code:'RENDERER_REQUIRED'});
+});

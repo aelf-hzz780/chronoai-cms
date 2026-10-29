@@ -40,15 +40,18 @@ export class BrowserRenderProof implements RenderProof {
         const captured=[...original.querySelectorAll(selector)].find(node=>!marker||node.getAttribute('data-chrono-revision')===marker);
         if(!captured||captured.outerHTML!==wrapper.outerHTML)return false;
         function shown(element:Element) {
-          for(let node:Element|null=element;node;node=node.parentElement){const style=getComputedStyle(node);if(style.display==='none'||style.visibility==='hidden'||style.visibility==='collapse'||Number(style.opacity)===0||style.contentVisibility==='hidden'||node.hasAttribute('hidden')||node.hasAttribute('inert'))return false;}
+          for(let node:Element|null=element;node;node=node.parentElement){const style=getComputedStyle(node);if(style.display==='none'||style.visibility==='hidden'||style.visibility==='collapse'||Number(style.opacity)===0||style.contentVisibility==='hidden'||style.clipPath!=='none'||style.clip!=='auto'||node.hasAttribute('hidden')||node.hasAttribute('inert'))return false;}
           return true;
         }
         const elements=[wrapper,...wrapper.querySelectorAll('*')];
         for(const element of elements){
           if(!shown(element))return false;
           if(element.tagName==='IMG'){
-            const rect=element.getBoundingClientRect(),style=getComputedStyle(element);
-            if(rect.width<1||rect.height<1||style.clipPath!=='none'||(element as HTMLImageElement).srcset)return false;
+            element.scrollIntoView({block:'center',inline:'center'});
+            const rect=element.getBoundingClientRect();
+            if(rect.width<1||rect.height<1||(element as HTMLImageElement).srcset)return false;
+            const x=Math.max(0,Math.min(innerWidth-1,rect.left+rect.width/2)),y=Math.max(0,Math.min(innerHeight-1,rect.top+rect.height/2));
+            const hit=document.elementFromPoint(x,y);if(!hit||!(hit===element||element.contains(hit)))return false;
           }
           for(const node of element.childNodes){if(node.nodeType!==Node.TEXT_NODE||!node.textContent?.trim())continue;
             const range=document.createRange();range.selectNodeContents(node);const rect=[...range.getClientRects()].find(rect=>rect.width>0&&rect.height>0);if(!rect)return false;
