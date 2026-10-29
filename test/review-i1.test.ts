@@ -222,3 +222,21 @@ test('R018: a normal 129-paragraph body completes pixel proof; unsupported publi
   assert.equal(f.store.get('SELECT error_code FROM releases WHERE id=?',blocked.id)!.error_code,'PUBLICATION_RENDER_LIMIT');
   assert.equal(calls,0);assert.equal((await f.content.get(f.actor,f.article.id)).revision.markdown.length,50001);
 });
+
+test('R019: scroll-time content changes invalidate the entire proof, including changes restored before the final comparison',async()=>{
+  const {BrowserRenderProof}=await import('../src/render-proof.ts'),renderer=new BrowserRenderProof();
+  const body='<div data-chrono-revision="approved"><p>APPROVED</p></div>';
+  const page=(script:string)=>`<div style="height:1800px"></div>${body}<div style="height:1800px"></div><script>addEventListener('scroll',()=>{if(scrollY>200&&!window.changed){window.changed=true;const node=document.querySelector('[data-chrono-revision] p').firstChild;${script}}});</script>`;
+  assert.equal(await renderer.verify('http://localhost:3999/post/',page(''),'approved'),true);
+  for(const mutation of [
+    "node.data='ALTERED!'",
+    "node.data='ALTERED!';node.data='APPROVED'",
+    "node.replaceWith(document.createTextNode('APPROVED'))",
+    "document.querySelector('[data-chrono-revision]').setAttribute('data-chrono-revision','other')",
+  ])assert.equal(await renderer.verify('http://localhost:3999/post/',page(mutation),'approved'),false,mutation);
+  assert.equal(await renderer.verify('http://localhost:3999/post/',page("document.body.dataset.unrelated='changed'"),'approved'),true,'Unrelated theme changes outside the confirmed wrapper remain allowed');
+  for(const restore of [false,true]){
+    const script=`<script>const root=document.querySelector('[data-chrono-revision]');let changed=false;new MutationObserver(()=>{const node=root.querySelector('span')?.firstChild;if(!changed&&node){changed=true;node.data='ALTERED!';${restore?"node.data='APPROVED';":''}}}).observe(root,{subtree:true,childList:true});</script>`;
+    assert.equal(await renderer.verify('http://localhost:3999/post/',`${body}${script}`,'approved'),false,`Page observer changes text during verifier wrapping; restored=${restore}`);
+  }
+});

@@ -1,5 +1,6 @@
 import type {Page} from 'playwright-core';
 import {PNG} from 'pngjs';
+import type {RenderIntegrity} from './render-integrity.ts';
 interface Glyph {offset:number;left:number;top:number;width:number;height:number;}
 function glyphPixels(before:Buffer,hidden:Buffer,glyphs:Glyph[],painted:boolean) {
   const a=PNG.sync.read(before),b=PNG.sync.read(hidden);if(a.width!==b.width||a.height!==b.height)return false;
@@ -18,7 +19,7 @@ function glyphPixels(before:Buffer,hidden:Buffer,glyphs:Glyph[],painted:boolean)
 // Group text nodes whose rectangles do not overlap. Hiding the group together
 // cannot attribute one node's glyph pixels to another, and avoids four screenshots
 // per short paragraph when many paragraphs fit in the same viewport.
-export async function provesTextPaint(page:Page,marker?:string) {
+export async function provesTextPaint(page:Page,integrity:RenderIntegrity,marker?:string) {
   const state=await page.evaluateHandle(marker=>{
     const root=marker?[...document.querySelectorAll('[data-chrono-revision]')].find(node=>node.getAttribute('data-chrono-revision')===marker):document.querySelector('article');
     const result:Array<{node:Text;parts:Array<{offset:number;length:number}>;pending:Set<number>}>=[ ];
@@ -30,9 +31,11 @@ export async function provesTextPaint(page:Page,marker?:string) {
     return {nodes:result,imageOnly:result.length===0&&!!root.querySelector('img')};
   },marker);
   try {
+    if(!await integrity.evaluate(guard=>guard?.valid()??false))return false;
     if(await state.evaluate(state=>state.imageOnly))return true;
     const deadline=Date.now()+60000;let captures=0;
     while(await state.evaluate(state=>state.nodes.some(node=>node.pending.size))){
+      if(!await integrity.evaluate(guard=>guard?.valid()??false))return false;
       if(++captures>128||Date.now()>deadline)return false;
       const group=await state.evaluate(state=>{
         const range=(item:typeof state.nodes[number],part:typeof item.parts[number])=>{const range=document.createRange();range.setStart(item.node,part.offset);range.setEnd(item.node,part.offset+part.length);return range.getBoundingClientRect();};
@@ -49,21 +52,22 @@ export async function provesTextPaint(page:Page,marker?:string) {
         }
         return selected;
       });
-      if(!group.length)return false;
+      if(!group.length||!await integrity.evaluate(guard=>guard?.valid()??false))return false;
       const glyphs=group.flatMap(item=>item.glyphs),original=await page.screenshot({animations:'disabled',caret:'hide'});
-      const spans=await state.evaluateHandle((state,indexes)=>indexes.map(index=>{
-        const node=state.nodes[index]!.node,span=document.createElement('span');node.replaceWith(span);span.append(node);return span;
-      }),group.map(item=>item.index));
+      const spans=await state.evaluateHandle((state,{indexes,guard})=>guard!.wrap(indexes.map(index=>state.nodes[index]!.node)),{indexes:group.map(item=>item.index),guard:integrity});
       let hidden:Buffer;
       try {
         const wrapped=await page.screenshot({animations:'disabled',caret:'hide'});if(!glyphPixels(original,wrapped,glyphs,false))return false;
-        await spans.evaluate(spans=>spans.forEach(span=>span.style.setProperty('opacity','0','important')));
+        await integrity.evaluate((guard,spans)=>guard!.hide(spans),spans);
         hidden=await page.screenshot({animations:'disabled',caret:'hide'});
-      }finally{await spans.evaluate(spans=>spans.forEach(span=>span.replaceWith(span.firstChild!)));await spans.dispose();}
+      }finally{await integrity.evaluate((guard,spans)=>guard!.restore(spans),spans);await spans.dispose();}
       const restored=await page.screenshot({animations:'disabled',caret:'hide'});
-      if(!glyphPixels(original,restored,glyphs,false)||!glyphPixels(original,hidden,glyphs,true))return false;
+      if(!await integrity.evaluate(guard=>guard?.valid()??false)||!glyphPixels(original,restored,glyphs,false)||!glyphPixels(original,hidden,glyphs,true))return false;
       await state.evaluate((state,group)=>{for(const item of group)for(const glyph of item.glyphs)state.nodes[item.index]!.pending.delete(glyph.offset);},group);
     }
-    return Date.now()<=deadline && await state.evaluate(state=>state.nodes.length>0);
+    return Date.now()<=deadline && await state.evaluate(state=>state.nodes.length>0) && await integrity.evaluate(guard=>guard?.valid()??false);
+  }catch(error){
+    if(!await integrity.evaluate(guard=>guard?.valid()??false))return false;
+    throw error;
   }finally{await state.dispose();}
 }

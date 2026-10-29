@@ -2,6 +2,7 @@ import {chromium} from 'playwright-core';
 import {access} from 'node:fs/promises';
 import {AppError} from './errors.ts';
 import {provesTextPaint} from './paint-proof.ts';
+import {beginRenderIntegrity} from './render-integrity.ts';
 export interface RenderProof {verify(url:string,html:string,marker?:string):Promise<boolean>;}
 export class BrowserRenderProof implements RenderProof {
   environment:NodeJS.ProcessEnv;ignoredScripts:string[];
@@ -35,6 +36,9 @@ export class BrowserRenderProof implements RenderProof {
       await page.goto(url,{waitUntil:'networkidle',timeout:20000});
       if(unavailable)return false;
       await page.clock.pauseAt(new Date(Date.now()+1000));
+      const integrity=await beginRenderIntegrity(page,html,marker);
+      try {
+      if(!await integrity.evaluate(guard=>guard?.valid()??false))return false;
       const visible=await page.evaluate(({marker,html})=>{
         const selector=marker?'[data-chrono-revision]':'article';
         const matches=[...document.querySelectorAll(selector)].filter(node=>!marker||node.getAttribute('data-chrono-revision')===marker);
@@ -66,7 +70,8 @@ export class BrowserRenderProof implements RenderProof {
         }
         return true;
       },{marker,html});
-      return visible && await provesTextPaint(page,marker);
+      return visible && await integrity.evaluate(guard=>guard?.valid()??false) && await provesTextPaint(page,integrity,marker) && !unavailable && await integrity.evaluate(guard=>guard?.valid()??false);
+      }finally{await integrity.evaluate(guard=>guard?.close());await integrity.dispose();}
     }finally{await browser.close();}
   }
 }
