@@ -1,6 +1,7 @@
 import {chromium} from 'playwright-core';
 import {access} from 'node:fs/promises';
 import {AppError} from './errors.ts';
+import {provesTextPaint} from './paint-proof.ts';
 export interface RenderProof {verify(url:string,html:string,marker?:string):Promise<boolean>;}
 export class BrowserRenderProof implements RenderProof {
   environment:NodeJS.ProcessEnv;ignoredScripts:string[];
@@ -16,6 +17,7 @@ export class BrowserRenderProof implements RenderProof {
     try {
       const context=await browser.newContext({viewport:{width:1280,height:900},serviceWorkers:'block',acceptDownloads:false});
       const page=await context.newPage();let unavailable=false;
+      await page.routeWebSocket('**',socket=>{unavailable=true;socket.close();});
       await page.route('**/*',async route=>{
         const request=route.request(),resource=request.resourceType(),address=request.url();
         if(resource==='document' && address===url && request.isNavigationRequest())return route.fulfill({status:200,contentType:'text/html',body:html});
@@ -32,7 +34,8 @@ export class BrowserRenderProof implements RenderProof {
       page.on('requestfailed',request=>{if(['stylesheet','script'].includes(request.resourceType())&&!this.ignoredScripts.includes(request.url()))unavailable=true;});
       await page.goto(url,{waitUntil:'networkidle',timeout:20000});
       if(unavailable)return false;
-      return await page.evaluate(({marker,html})=>{
+      await page.clock.pauseAt(new Date(Date.now()+1000));
+      const visible=await page.evaluate(({marker,html})=>{
         const selector=marker?'[data-chrono-revision]':'article';
         const matches=[...document.querySelectorAll(selector)].filter(node=>!marker||node.getAttribute('data-chrono-revision')===marker);
         if(matches.length!==1)return false;const wrapper=matches[0]!;
@@ -62,6 +65,7 @@ export class BrowserRenderProof implements RenderProof {
         }
         return true;
       },{marker,html});
+      return visible && await provesTextPaint(page,marker);
     }finally{await browser.close();}
   }
 }

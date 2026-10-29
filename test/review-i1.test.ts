@@ -195,3 +195,12 @@ test('R002: rendered image proof requires visible geometry and rejects clipping 
   for(const css of ['img{position:fixed;left:-10000px}','[data-chrono-revision]{clip-path:inset(100%)}','img{width:0;height:0}'])assert.equal(await renderer.verify('http://localhost:3999/post/',`<style>${css}</style>${image}`,'proof'),false,css);
   await assert.rejects(new BrowserRenderProof({RENDER_BROWSER_EXECUTABLE:'/missing/chrono-renderer'}).verify('http://localhost:3999/post/',image,'proof'),{code:'RENDERER_REQUIRED'});
 });
+
+
+test('R002/R011: actual glyph pixels prove long scrolling text and reject transparency, matching background and clipped lines',async()=>{
+  const {BrowserRenderProof}=await import('../src/render-proof.ts'),renderer=new BrowserRenderProof();
+  const body=Array.from({length:50},(_,i)=>`Line ${i}: approved text with visible words.`).join(' ');
+  const html=`<style>p{width:300px;font:18px/1.4 sans-serif}</style><article><h1>Approved title</h1><p>${body}</p></article>`;
+  assert.equal(await renderer.verify('http://localhost:3999/post/',html),true,'All lines can be read by scrolling');
+  for(const css of ['article,article *{color:transparent!important}','article,article *{color:white!important;background:white!important}','p{max-height:1.4em;overflow:hidden}','p{-webkit-line-clamp:1;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}'])assert.equal(await renderer.verify('http://localhost:3999/post/',`<style>${css}</style>${html}`),false,css);
+});
