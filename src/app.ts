@@ -95,7 +95,7 @@ export async function createApp(deps: AppDependencies) {
       api.post('/releases/:id/cancel', async request => publishing.cancel(request.actor, (request.params as {id:string}).id, request.id));
       api.post('/releases/:id/reconcile', async request => publishing.reconcile(request.actor, (request.params as {id:string}).id, request.id));
       api.post('/articles/:id/sync-links',async request=>new AlternateService(publishing).request(request.actor,(request.params as {id:string}).id,request.id));
-      api.get('/articles/:id/link-status',async request=>{const article=await deps.content.get(request.actor,(request.params as {id:string}).id);return deps.store.all('SELECT id,state,error_code,trace_id FROM projections WHERE article_id=? ORDER BY rowid DESC LIMIT 20',article.id);});
+      api.get('/articles/:id/link-status',async request=>{const article=await deps.content.get(request.actor,(request.params as {id:string}).id);return deps.store.all('SELECT p.id,p.state,p.error_code,p.trace_id,r.attempts,r.next_attempt_at FROM projections p LEFT JOIN projection_retries r ON r.projection_id=p.id WHERE p.article_id=? ORDER BY p.rowid DESC LIMIT 20',article.id);});
       api.get('/targets', async request => { await deps.policy.scope(request.actor, 'publish'); return distribution().targets.list(); });
       api.get('/owners/:id/connections',async request=>distribution().availableConnections(request.actor,(request.params as {id:string}).id));
       api.post('/releases/:id/deliveries', async (request, reply) => reply.code(202).send(await distribution().request(request.actor, (request.params as {id:string}).id, object(request.body), request.id)));

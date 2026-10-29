@@ -39,6 +39,7 @@ export class AlternateWorker {
     if(!lease)return false;
     const row=store.get('SELECT * FROM projections WHERE id=?',lease.resourceId)!;
     let attemptedWrite=false;
+    const correction=store.get('SELECT * FROM projection_retries WHERE projection_id=?',row.id);
     try {
       const actor=this.service.originals.vault.open<Actor>(row.actor_json);await this.service.originals.content.policy.publish(actor,row.owner_id);
       for(const release of this.service.affected(row.article_id,row.owner_id)) {
@@ -48,12 +49,31 @@ export class AlternateWorker {
         input.beforeWrite=async()=>{await this.service.originals.content.policy.publish(actor,row.owner_id);guard();attemptedWrite=true;};
         await this.adapter.alternates(input,links);guard();
       }
-      this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='complete',error_code=NULL WHERE id=?",row.id);store.audit(actor.subject,row.owner_id,'alternates.complete',row.id,row.trace_id);},true);
-    }catch(error){const code=error instanceof AppError?error.code:'INTERNAL';this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='failed',error_code=? WHERE id=?",code,row.id);
-      if(code==='PUBLICATION_CHANGED'||attemptedWrite) {
-        const correction=randomUUID();store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',correction,row.article_id,row.owner_id,row.actor_json,'queued',null,row.trace_id);
-        store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',correction,'queued',null,new Date().toISOString());
-      }store.audit('worker',row.owner_id,'alternates.failed',row.id,row.trace_id,{code});},true);}
+      this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='complete',error_code=NULL WHERE id=?",row.id);store.run('DELETE FROM projection_retries WHERE projection_id=?',row.id);store.audit(actor.subject,row.owner_id,'alternates.complete',row.id,row.trace_id);},true);
+    }catch(error){
+      const code=error instanceof AppError?error.code:'INTERNAL';
+      this.queue.mutate(lease,()=>{
+        if(correction){
+          const attempts=correction.attempts+1;
+          const retryable=code==='PUBLICATION_CHANGED'||code==='OUTBOUND_PAUSED'||code==='INTERNAL'||error instanceof AppError && error.status>=500;
+          const automatic=retryable && attempts<6;
+          const due=automatic?new Date(Date.now()+Math.min(300000,5000*2**(attempts-1))).toISOString():null;
+          store.run('UPDATE projection_retries SET attempts=?,next_attempt_at=? WHERE projection_id=?',attempts,due,row.id);
+          store.run('UPDATE projections SET state=?,error_code=? WHERE id=?',automatic?'retry_wait':'manual_action_needed',code,row.id);
+          store.run('UPDATE jobs SET state=?,lease_until=NULL WHERE id=?',automatic?'queued':'done',lease.jobId);
+          store.audit('worker',row.owner_id,'alternates.correction.pending',row.id,row.trace_id,{code,attempts,nextAttemptAt:due,manualActionNeeded:!automatic});
+        }else{
+          store.run("UPDATE projections SET state='failed',error_code=? WHERE id=?",code,row.id);
+          store.run("UPDATE jobs SET state='done',lease_until=NULL WHERE id=?",lease.jobId);
+          if(code==='PUBLICATION_CHANGED'||attemptedWrite){
+            const id=randomUUID();store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',id,row.article_id,row.owner_id,row.actor_json,'queued',null,row.trace_id);
+            store.run('INSERT INTO projection_retries VALUES (?,?,?)',id,0,new Date().toISOString());
+            store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',id,'queued',null,new Date().toISOString());
+          }
+          store.audit('worker',row.owner_id,'alternates.failed',row.id,row.trace_id,{code});
+        }
+      });
+    }
     return true;
   }
 }

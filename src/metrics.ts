@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual, randomUUID } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { Actor } from './policy.ts';
 import { ContentService } from './content.ts';
 import { requireValue } from './errors.ts';
@@ -33,10 +33,10 @@ export class MetricsService {
     // Daily salted estimates, not a cross-day or cross-platform person identifier.
     const visitor = this.mac(`${now.slice(0, 10)}\n${visit.ip}\n${visit.userAgent.slice(0, 512)}`);
     this.content.store.transaction(()=>{
-      this.content.store.run('INSERT INTO observations VALUES (?,?,?,?,?,?,?,?)',randomUUID(),live.article,live.owner_id,live.language,visitor,referral,campaign,now);
-      if(!attempt.sidecar)this.coverage.complete(attempt);
+      this.content.store.run('INSERT INTO observations VALUES (?,?,?,?,?,?,?,?)',attempt.id,live.article,live.owner_id,live.language,visitor,referral,campaign,now);
+      this.coverage.completeDatabase(attempt);
     });
-    if(attempt.sidecar)this.coverage.complete(attempt);
+    this.coverage.completeSidecar(attempt);
     return true;
   }
   async query(actor: Actor, ownerId: string, filters: Record<string, string | undefined>) {

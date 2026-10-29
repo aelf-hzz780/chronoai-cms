@@ -29,6 +29,7 @@ export class Store {
       CREATE INDEX IF NOT EXISTS releases_article ON releases(article_id,created_at);
       CREATE TABLE IF NOT EXISTS release_links (release_id TEXT PRIMARY KEY REFERENCES releases(id), peer_article_id TEXT NOT NULL REFERENCES articles(id), source_revision TEXT NOT NULL REFERENCES revisions(id));
       CREATE TABLE IF NOT EXISTS projections (id TEXT PRIMARY KEY, article_id TEXT NOT NULL REFERENCES articles(id), owner_id TEXT NOT NULL REFERENCES owners(id), actor_json TEXT NOT NULL, state TEXT NOT NULL, error_code TEXT, trace_id TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS projection_retries (projection_id TEXT PRIMARY KEY REFERENCES projections(id),attempts INTEGER NOT NULL,next_attempt_at TEXT);
       CREATE TABLE IF NOT EXISTS deliveries (id TEXT PRIMARY KEY, release_id TEXT NOT NULL REFERENCES releases(id), owner_id TEXT NOT NULL REFERENCES owners(id), connection_id TEXT NOT NULL, target TEXT NOT NULL, action TEXT NOT NULL, format TEXT NOT NULL, digest TEXT NOT NULL, state TEXT NOT NULL, remote_id TEXT, url TEXT, approval_ref TEXT, error_code TEXT, source_verified INTEGER, trace_id TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS deliveries_owner_state ON deliveries(owner_id,state);
       CREATE TABLE IF NOT EXISTS delivery_payloads (delivery_id TEXT PRIMARY KEY REFERENCES deliveries(id), actor_json TEXT NOT NULL, payload_json TEXT NOT NULL);

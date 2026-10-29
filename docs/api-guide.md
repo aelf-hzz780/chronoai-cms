@@ -26,3 +26,5 @@
 分发状态日期以该 delivery 的确认创建时间（UTC，d.created_at）筛选；Ghost 原文状态以原文确认时间（r.created_at）筛选。它们不是按状态变更的事件时间过滤。外部counter仍按snapshot采集时间过滤，各口径随响应dateBasis/coverage返回。
 
 辅助公开核验要求唯一可见article、匹配h1、已准备的正文/摘要、可见Author与准确Original锚点和图片。无法可靠定位内容、被遮蔽或格式不同到无法证明时返回PUBLICATION_UNVERIFIED，保留人工待核状态；不能据此保证编辑部接受。采集写入失败记coverage gap，所选owner/文章/语言/日期内总量为Unavailable而非零，后续成功不抹去历史缺口。
+
+译文纠正的`link-status`记录包含`attempts`和`next_attempt_at`。`retry_wait`表示保留纠正职责并等待指数退避；第6次自动失败或终止错误进入`manual_action_needed`。排障后使用当前授权调用`POST /api/{entry}/articles/:id/sync-links`重新同步，再验证公开链接；paused期间不会执行metadata写入。

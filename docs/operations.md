@@ -83,3 +83,11 @@ Worker和辅助发布report所在API都需系统安装Chromium，并以RENDER_BR
 ## 采集覆盖持久性
 
 每个合法、已同意的采集请求在查询published状态前，先持久写入collection_attempts；成功观察写入与清除attempt在同一SQLite事务中。查询或写入失败、进程中断保留pending，按文章／语言／UTC日期显示Unavailable。若SQLite连首条attempt都不能写，使用数据库旁的`.collection-pending/`目录：0600记录仅含随机id、article id、时间，文件及目录fsync；成功后清理。该目录必须与DATABASE_PATH一起保留在持久盘上，重启时重读。加密备份先把sidecar导入数据库attempts再snapshot，隔离恢复继续保留缺口；旧collection_gaps仍兼容。若持久盘与SQLite同时完全不可写，采集失败并记录Trace日志，不能声称已持久采集。
+
+## 译文链接纠正重试
+
+已尝试metadata写入后出现漂移／不确定读回时，单独持久保存projection_retries纠正职责。纠正的前置GET失败也保留同一任务，按5、10、20、40、80秒退避；每次认领重新读取当前发布关系。第6次失败或权限等终止错误进入manual_action_needed，不立即生成下一任务。link-status返回attempts与next_attempt_at，审计记录Trace ID、错误和升级状态。暂停期间不认领metadata任务；在途遇暂停则保留退避职责。
+
+排障后由当前有发布权限的人员调用`POST /api/cms/articles/:id/sync-links`（service同路径）重新同步，再查link-status及公开页。六次上限指每个纠正任务的自动尝试，不代表任意重复同步都能绕过权限或暂停。新任务始终按当前发布关系重算，保留原失败历史供核查。
+
+成功采集使用attempt id作为observation id，在观察写入事务中同时清除所有checkpointed attempt；sidecar在事务成功后移除。备份checkpoint使用`NOT EXISTS observations.id`防止已成功的sidecar被迟到导入。这样并发备份保留捕获时的不确定覆盖，同时源库的成功访问最终仍为Available。

@@ -23,10 +23,11 @@ export class CollectionCoverage {
       this.syncDirectory();return {...attempt,sidecar:true};
     }
   }
-  complete(attempt:Attempt & {sidecar:boolean}) {
+  completeDatabase(attempt:Attempt) {this.store.run('DELETE FROM collection_attempts WHERE id=?',attempt.id);}
+  completeSidecar(attempt:Attempt & {sidecar:boolean}) {
     if(attempt.sidecar){unlinkSync(join(this.directory(),`${attempt.id}.json`));this.syncDirectory();}
-    else this.store.run('DELETE FROM collection_attempts WHERE id=?',attempt.id);
   }
+  complete(attempt:Attempt & {sidecar:boolean}) {this.completeDatabase(attempt);this.completeSidecar(attempt);}
   sidecars():Attempt[] {
     if(this.store.path===':memory:')return [];
     let names:string[];try{names=readdirSync(this.directory());}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return [];throw error;}
@@ -45,6 +46,6 @@ export class CollectionCoverage {
     })];
   }
   checkpoint() {
-    for(const item of this.sidecars())this.store.run('INSERT OR IGNORE INTO collection_attempts VALUES (?,?,?)',item.id,item.article_id,item.occurred_at);
+    for(const item of this.sidecars())this.store.run('INSERT OR IGNORE INTO collection_attempts SELECT ?,?,? WHERE NOT EXISTS (SELECT 1 FROM observations WHERE id=?)',item.id,item.article_id,item.occurred_at,item.id);
   }
 }
