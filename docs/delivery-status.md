@@ -1,6 +1,6 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为2b5f9e2（R025；含R024 74978bc、R023 586ff1a、R022 792a7bb、R021 0649608、R020 ed1239f），R026文档为557518d；I3–I11记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md、review-i9.md、review-i10.md、review-i11.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为b1d30b2（R027；含R025 2b5f9e2、R024 74978bc、R023 586ff1a、R022 792a7bb、R021 0649608、R020 ed1239f），R026文档为557518d／fe3fd60；I3–I12记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md、review-i9.md、review-i10.md、review-i11.md、review-i12.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
@@ -41,6 +41,10 @@ ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原�
 ## 增量 I11
 
 2b5f9e2修复R025，CMS每条分发记录可展开API历史，安全显示状态、时间及存在的诊断／Trace，保留当前状态、链接与选择器。实际App＋Chrome原probe先red后green并固定SHA通过，覆盖两目的地及HTML诊断文字渲染；未改后端或重复81项suite。557518d修复R026，更新README／验收首部及运行／运维导航，phase0保留历史。独立R025固定2b5f9e2与R026固定fe3fd60均PASS并关闭，41链接／anchors有效、正式矩阵第1节后9750字节及source／phase0／baseline未变；总体仍INCOMPLETE，不提升完整D/A或Live，详见review-i11.md。
+
+## 增量 I12
+
+b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trace，actor仍worker；仅一行业务参数变化，权限／状态／fence不变。两项TDD及三个相关失败／只读对账回归共5/5和strict通过，Native HTTP fixture仅重跑D05/D15，确认精确连接禁用零出站、Trace可关联。R027独立待返回，未重跑全检／其余14分支／四Ghost，未操作资源窗口，详见review-i12.md。
 
 ## D1–D9
 
