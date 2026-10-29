@@ -10,13 +10,15 @@ import { safeUrl } from './config.ts';
 import { provesBody } from './html-proof.ts';
 import type { MetricsService } from './metrics.ts';
 import { digest } from './content.ts';
+import {BrowserRenderProof,type RenderProof} from './render-proof.ts';
 import type { Alternate } from './alternates.ts';
 
 function escapeHtml(value: string) { return value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!); }
 export class GhostAdapter implements OriginalAdapter {
   store: Store; mediaRoot: string; allowLoopback: boolean; environment: NodeJS.ProcessEnv;
+  renderer:RenderProof;
   tracking?: { metrics: MetricsService; publicUrl: string; requireConsent: boolean };
-  constructor(store: Store, mediaRoot: string, allowLoopback = false, environment = process.env, tracking?: { metrics: MetricsService; publicUrl: string; requireConsent: boolean }) { this.store = store; this.mediaRoot = mediaRoot; this.allowLoopback = allowLoopback; this.environment = environment; this.tracking = tracking; }
+  constructor(store: Store, mediaRoot: string, allowLoopback = false, environment = process.env, tracking?: { metrics: MetricsService; publicUrl: string; requireConsent: boolean }, renderer?:RenderProof) { this.store = store; this.mediaRoot = mediaRoot; this.allowLoopback = allowLoopback; this.environment = environment; this.tracking = tracking;this.renderer=renderer??new BrowserRenderProof(environment,tracking?[`${tracking.publicUrl}/tracker.js`]:[]); }
   async call(input: OriginalInput, path: string, method = 'GET', body?: unknown) {
     input.guard?.();
     const adminBase=this.store.get('SELECT base_url FROM site_admin_routes WHERE site_id=?',input.site.id)?.base_url??input.site.url;
@@ -84,6 +86,7 @@ export class GhostAdapter implements OriginalAdapter {
     if (!page.includes(this.marker(input)) || !page.includes(escapeHtml(input.title)) || !new RegExp(`lang=["']${input.language}(?:-[^"']+)?["']`).test(page)) return false;
     if(!page.includes(this.publisherHtml(input)))return false;
     if (!provesBody(this.controlledHtml(input),post.html,page,this.marker(input),input.site.url)) return false;
+    if(!await this.renderer.verify(result.url,page,this.marker(input)))return false;
     input.guard?.();
     // The exact original is now demonstrably public. Only now materialize public images
     // in a directory served by Ghost itself, independently of the application process.

@@ -4,7 +4,7 @@ import {render} from './render.ts';
 import {digest} from './content.ts';
 import {type CopyPayload} from './targets.ts';
 type Node=ReturnType<typeof parseDocument>['children'][number];
-const hidden=(node:Node)=>'name' in node && 'attribs' in node && (['template','script','style','noscript'].includes(node.name)||'hidden' in node.attribs||'inert' in node.attribs||node.attribs['aria-hidden']==='true'||/display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0(?:\D|$)/i.test(node.attribs.style??''));
+const hidden=(node:Node)=>'name' in node && 'attribs' in node && (['template','script','style','noscript'].includes(node.name)||(node.name==='dialog'&& !('open' in node.attribs))||'hidden' in node.attribs||'inert' in node.attribs||node.attribs['aria-hidden']==='true'||/display\s*:\s*none|visibility\s*:\s*(hidden|collapse)|opacity\s*:\s*0(?:\.0*)?\s*(?:;|!important|$)/i.test(node.attribs.style??''));
 const block=new Set(['article','div','section','p','h1','h2','h3','h4','ul','ol','li','pre','blockquote','br','hr']);
 function raw(nodes:Node[]):string{return nodes.map(node=>hidden(node)?'':node.type==='text'?node.data:'children' in node?raw(node.children):'').join('').replace(/\r\n/g,'\n');}
 function semantics(nodes:Node[],skipHeading=false):string {

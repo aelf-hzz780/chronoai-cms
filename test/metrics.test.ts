@@ -57,3 +57,27 @@ test('R015/R016: delivery dates differ from original dates, and collection gaps 
   const result=await metrics.query(f.actors.solo,'solo',{});assert.equal(result.readership.pageViews.value,null);assert.equal(result.readership.pageViews.availability,'Unavailable');assert.match(result.readership.pageViews.reason!,/incomplete/);assert.ok('collectionGaps' in result.readership.pageViews.coverage);assert.equal(result.readership.pageViews.coverage.collectionGaps,1);
   assert.equal((await metrics.query(f.actors.solo,'solo',{language:'zh'})).readership.pageViews.availability,'Available');
 });
+
+for(const failure of ['published-lookup','all-collection-writes','all-database-writes'])test(`R016: ${failure} coverage survives closing and reopening a disk database`,async t=>{
+  const {mkdtemp,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),{join}=await import('node:path');
+  const {backup}=await import('node:sqlite'),{Store}=await import('../src/store.ts'),{Policy}=await import('../src/policy.ts'),{ContentService}=await import('../src/content.ts');
+  const f=fixture(),directory=await mkdtemp(join(tmpdir(),'chrono-coverage-')),database=join(directory,'platform.sqlite');
+  f.store.run('INSERT INTO sites VALUES (?,?,?,?,?)','site','solo','en','http://localhost:3999','KEY');
+  const a=await f.content.create(f.actors.solo,{ownerId:'solo',language:'en',title:'Coverage',markdown:'body',creditedAuthor:'solo'},'trace');
+  const service=new PublishingService(f.content,new Vault('ab'.repeat(32))),release=await service.confirm(f.actors.solo,a.id,{ownerId:'solo',revisionId:a.revision.id,creditedAuthor:'solo',action:'publish',rightsConfirmed:true,idempotencyKey:'coverage'},'trace');
+  f.store.run("UPDATE releases SET state='published' WHERE id=?",release.id);
+  await backup(f.store.db,database);f.store.close();
+  let store=new Store(database);t.after(async()=>{store.close();await rm(directory,{recursive:true,force:true});});
+  const content=()=>new ContentService(store,new Policy(store,f.policy.authority)),config={enabled:true,requireConsent:true,secret:'test-only'},metrics=new MetricsService(content(),config);
+  const get=store.get.bind(store),run=store.run.bind(store);
+  store.get=(sql,...args)=>{if(failure==='published-lookup'&&sql.startsWith('SELECT r.id,a.id AS article'))throw Error('lookup unavailable');return get(sql,...args);};
+  store.run=(sql,...args)=>{if(failure==='all-database-writes'||failure==='all-collection-writes'&&/^INSERT INTO (observations|collection_gaps)/.test(sql))throw Error('write unavailable');return run(sql,...args);};
+  await assert.rejects(metrics.collect(metrics.token(a.id,release.id),{consent:true,ip:'127.0.0.1',userAgent:'test'}));
+  store.get=get;store.run=run;store.close();store=new Store(database);
+  const restarted=new MetricsService(content(),config),result=await restarted.query(f.actors.solo,'solo',{});
+  assert.equal(result.readership.pageViews.value,null);assert.equal(result.readership.pageViews.availability,'Unavailable');assert.ok('collectionGaps' in result.readership.pageViews.coverage);assert.equal(result.readership.pageViews.coverage.collectionGaps,1);
+  assert.equal((await restarted.query(f.actors.solo,'solo',{language:'zh'})).readership.pageViews.value,0);
+  const {snapshotPlatform}=await import('../src/recovery.ts');const destination=join(directory,'snapshot.sqlite');await snapshotPlatform(store,destination);
+  const checkpointed=(await restarted.query(f.actors.solo,'solo',{})).readership.pageViews.coverage;assert.ok('collectionGaps' in checkpointed);assert.equal(checkpointed.collectionGaps,1);
+  const restored=new Store(destination);try{assert.equal(restored.get('SELECT count(*) AS n FROM collection_attempts')!.n,1);}finally{restored.close();}
+});

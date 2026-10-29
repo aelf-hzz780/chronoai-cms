@@ -14,5 +14,8 @@ for(const [owner,language,port] of [['personal','en',2568],['personal','zh',2569
   });
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(port,'127.0.0.1',resolve);});servers.push(server);
 }
+process.env.RENDER_BROWSER_EXECUTABLE='/usr/bin/chromium';
+process.env.RENDER_BROWSER_SANDBOX='false'; // Only this isolated synthetic helper runs as root.
+process.env.RENDER_ASSET_ORIGINS='https://cdn.jsdelivr.net';
 process.env.INTEGRATION_MEDIA_ROOT='/app/.runtime/shared-media';
 try {await import('./four-ghost.integration.ts');} finally {for(const server of servers) server.closeAllConnections?.();for(const server of servers)server.close();}

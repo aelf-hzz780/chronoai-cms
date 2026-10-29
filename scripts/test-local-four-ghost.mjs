@@ -12,7 +12,7 @@ const docker=(...args)=>execFileSync('docker',['--context',context,...args],{enc
 const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),dirty=execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim().length>0;
 try {
   const mounts=[];for(const owner of ['personal','organization'])for(const language of ['en','zh'])mounts.push('--mount',`type=volume,source=blogsystem-dev-${owner}_content-${language},target=/mounted/${owner}-${language}`);
-  docker('create','--pull','never','--name',name,'--network','blogsystem-dev-personal_en',...mounts,'-e',`INTEGRATION_BUILD_REVISION=${revision}`,'-e',`INTEGRATION_WORKTREE_DIRTY=${dirty}`,'--entrypoint','sh',image,'-c','mkdir -p /app && tar -xzf /tmp/code.tgz -C /app && cd /app && exec node --experimental-strip-types test/ghost-container.mjs');
+  docker('create','--pull','never','--name',name,'--network','blogsystem-dev-personal_en',...mounts,'-e',`INTEGRATION_BUILD_REVISION=${revision}`,'-e',`INTEGRATION_WORKTREE_DIRTY=${dirty}`,'--entrypoint','sh',image,'-c','apk add --no-cache chromium >/tmp/chromium-install.log 2>&1 && mkdir -p /app && tar -xzf /tmp/code.tgz -C /app && cd /app && exec node --experimental-strip-types test/ghost-container.mjs');
   for(const network of ['blogsystem-dev-personal_zh','blogsystem-dev-organization_en','blogsystem-dev-organization_zh'])docker('network','connect',network,name);
   docker('cp',archive,`${name}:/tmp/code.tgz`);
   process.stdout.write(docker('start','--attach',name));

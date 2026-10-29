@@ -163,3 +163,27 @@ test('R014: restored outbound pause allows an authorized original read reconcili
   const {isolateRestoredPlatform}=await import('../src/recovery.ts');isolateRestoredPlatform(f.store,'restore');await f.service.reconcile(f.actor,f.release.id,'request');let reads=0;
   const worker=new ReleaseWorker(f.service,adapter({async publish(){throw Error('Must not write');},async unpublish(){throw Error('Must not write');},async reconcile(){reads++;return result;}}));assert.equal(await worker.once(),true);assert.equal(reads,1);assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',f.release.id)!.state,'published');assert.equal(f.store.get("SELECT value FROM settings WHERE key='outbound_paused'")!.value,'true');
 });
+
+
+test('R002: browser-rendered public body rejects stylesheet concealment and zero images, preserving fractional opacity and NBSP',async t=>{
+  const f=await setup(),directory=await mkdtemp(join(tmpdir(),'chrono-render-'));
+  t.after(async()=>{f.store.close();await rm(directory,{recursive:true,force:true});});
+  const ghost=new GhostAdapter(f.store,directory,true),input=f.service.input(f.store.get('SELECT * FROM releases WHERE id=?',f.release.id)!);
+  const html=ghost.controlledHtml(input);
+  ghost.current=async()=>({id:'remote',title:input.title,status:'published',html,authors:[{id:'ghost-author'}]});
+  const previous=globalThis.fetch;t.after(()=>{globalThis.fetch=previous;});
+  for(const [name,body,expected] of [
+    ['valid',html,true],
+    ['selector CSS',`<style>[data-chrono-revision]{display:none}</style>${html}`,false],
+    ['ancestor CSS',`<style>.concealed{display:none}</style><section class="concealed">${html}</section>`,false],
+    ['fractional opacity',`<section style="opacity:0.9">${html}</section>`,true],
+    ['script replaced body',`${html}<script>document.querySelector('[data-chrono-revision] p').textContent='Altered'</script>`,false],
+  ] as const){
+    globalThis.fetch=async()=>new Response(`<html lang="en"><h1>${input.title}</h1>${ghost.publisherHtml(input)}${body}</html>`);
+    assert.equal(await ghost.verify(input,result),expected,name);
+  }
+  const nbsp='<div data-chrono-revision="proof"><p>100\u00a0kg</p></div>';
+  assert.equal(provesBody(nbsp,nbsp,nbsp.replace('\u00a0',' '),'proof'),false);
+  const image='<div data-chrono-revision="proof"><img src="https://example.com/image.png" alt="image"></div>';
+  assert.equal(provesBody(image,image,image.replace('<img ','<img width="0" height="0" '),'proof'),false);
+});

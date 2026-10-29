@@ -2,13 +2,14 @@ import { createHmac, timingSafeEqual, randomUUID } from 'node:crypto';
 import type { Actor } from './policy.ts';
 import { ContentService } from './content.ts';
 import { requireValue } from './errors.ts';
+import {CollectionCoverage} from './collection-coverage.ts';
 
 export interface AnalyticsConfig { enabled: boolean; requireConsent: boolean; secret: string; }
 export interface Visit { consent: boolean; ip: string; userAgent: string; referral?: string; campaign?: string; doNotTrack?: boolean; }
 export class MetricsService {
   content: ContentService; config: AnalyticsConfig;
-  private volatileGaps=new Map<string,{owner_id:string;article_id:string;language:string;occurred_at:string}>();
-  constructor(content: ContentService, config: AnalyticsConfig) { this.content = content; this.config = config; }
+  coverage:CollectionCoverage;
+  constructor(content: ContentService, config: AnalyticsConfig) { this.content = content; this.config = config;this.coverage=new CollectionCoverage(content.store); }
   mac(value: string) { return createHmac('sha256', this.config.secret).update(value).digest('base64url'); }
   token(articleId: string, releaseId: string) {
     const payload = Buffer.from(JSON.stringify({ articleId, releaseId })).toString('base64url'); return `${payload}.${this.mac(payload)}`;
@@ -20,21 +21,22 @@ export class MetricsService {
     const expected = Buffer.from(this.mac(payload)), actual = Buffer.from(signature);
     if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return false;
     let data; try { data = JSON.parse(Buffer.from(payload, 'base64url').toString()); } catch { return false; }
+    if(!data || typeof data.articleId!=='string'||typeof data.releaseId!=='string'||data.articleId.length>200||data.releaseId.length>200)return false;
+    const now=new Date().toISOString(),attempt=this.coverage.begin(data.articleId,now);
+    // The attempt must exist before any published lookup or observation write.
+    // A crash/read/write error leaves it pending and therefore coverage unknown.
     const live = this.content.store.get("SELECT r.id,a.id AS article,a.owner_id,a.language FROM releases r JOIN articles a ON a.id=r.article_id WHERE r.id=? AND a.id=? AND r.state='published'", data.releaseId, data.articleId);
-    if (!live) return false;
+    if (!live) {this.coverage.complete(attempt);return false;}
     let referral = 'unattributed';
     if (visit.referral) { try { const url = new URL(visit.referral); if (['https:', 'http:'].includes(url.protocol)) referral = url.hostname.toLowerCase().slice(0, 253); } catch { /* Invalid referrer is explicitly unattributed. */ } }
     const campaign = visit.campaign && /^[a-zA-Z0-9_-]{1,64}$/.test(visit.campaign) ? visit.campaign : null;
-    const now = new Date().toISOString();
     // Daily salted estimates, not a cross-day or cross-platform person identifier.
     const visitor = this.mac(`${now.slice(0, 10)}\n${visit.ip}\n${visit.userAgent.slice(0, 512)}`);
-    try { this.content.store.run('INSERT INTO observations VALUES (?,?,?,?,?,?,?,?)', randomUUID(), live.article, live.owner_id, live.language, visitor, referral, campaign, now); }
-    catch(error) {
-      const gap={owner_id:live.owner_id,article_id:live.article,language:live.language,occurred_at:now};
-      try{this.content.store.run('INSERT INTO collection_gaps VALUES (?,?,?,?,?)',randomUUID(),gap.owner_id,gap.article_id,gap.language,now);}
-      catch{this.volatileGaps.set(`${live.owner_id}:${live.article}:${now.slice(0,10)}`,gap);}
-      throw error;
-    }
+    this.content.store.transaction(()=>{
+      this.content.store.run('INSERT INTO observations VALUES (?,?,?,?,?,?,?,?)',randomUUID(),live.article,live.owner_id,live.language,visitor,referral,campaign,now);
+      if(!attempt.sidecar)this.coverage.complete(attempt);
+    });
+    if(attempt.sidecar)this.coverage.complete(attempt);
     return true;
   }
   async query(actor: Actor, ownerId: string, filters: Record<string, string | undefined>) {
@@ -56,7 +58,7 @@ export class MetricsService {
     requireValue(!filters.from || !filters.to || filters.from <= filters.to, 400, 'INVALID_INPUT', 'Date range is reversed');
     const destination = filters.destination ?? 'ghost';
     requireValue(['ghost', 'dev', 'hashnode', 'medium', 'hackernoon'].includes(destination), 400, 'INVALID_INPUT', 'Unknown destination');
-    const gaps=[...this.content.store.all('SELECT owner_id,article_id,language,occurred_at FROM collection_gaps WHERE owner_id=?',ownerId),...this.volatileGaps.values()].filter(gap=>gap.owner_id===ownerId&&(!filters.article||gap.article_id===filters.article)&&(!filters.language||gap.language===filters.language)&&(!filters.from||gap.occurred_at.slice(0,10)>=filters.from)&&(!filters.to||gap.occurred_at.slice(0,10)<=filters.to));
+    const gaps=[...this.content.store.all('SELECT owner_id,article_id,language,occurred_at FROM collection_gaps WHERE owner_id=?',ownerId),...this.coverage.gaps()].filter(gap=>gap.owner_id===ownerId&&(!filters.article||gap.article_id===filters.article)&&(!filters.language||gap.language===filters.language)&&(!filters.from||gap.occurred_at.slice(0,10)>=filters.from)&&(!filters.to||gap.occurred_at.slice(0,10)<=filters.to));
     const available = this.config.enabled && destination === 'ghost' && gaps.length===0;
     const clause = where.join(' AND '), store = this.content.store;
     const total = store.get(`SELECT count(*) AS views,count(DISTINCT visitor) AS visitors,max(observed_at) AS updated FROM observations WHERE ${clause}`, ...parameters)!;

@@ -8,6 +8,7 @@ import { TargetRegistry, isRead, type CopyPayload, type RemoteRequest } from './
 import { render } from './render.ts';
 import {assistedMarkdown,provesAssistedCopy} from './assisted-proof.ts';
 import { Queue } from './queue.ts';
+import {BrowserRenderProof,type RenderProof} from './render-proof.ts';
 
 export interface Connections {
   connection(actor: Actor, owner: any, id: string, target: string): Promise<any>;
@@ -20,7 +21,8 @@ import {connectionFingerprint} from './connection-proof.ts';
 export {connectionFingerprint} from './connection-proof.ts';
 export class DistributionService {
   originals: PublishingService; connections: Connections; targets: TargetRegistry;
-  constructor(originals: PublishingService, connections: Connections, targets: TargetRegistry) { this.originals = originals; this.connections = connections; this.targets = targets; }
+  renderer:RenderProof;
+  constructor(originals: PublishingService, connections: Connections, targets: TargetRegistry, renderer:RenderProof=new BrowserRenderProof()) { this.renderer=renderer; this.originals = originals; this.connections = connections; this.targets = targets; }
   get store() { return this.originals.content.store; }
   async availableConnections(actor:Actor,ownerId:string) {
     const owner=await this.originals.content.policy.publish(actor,ownerId);await this.originals.content.policy.scope(actor,'connections:read');
@@ -163,7 +165,7 @@ export class DistributionService {
       requireValue(url, 400, 'URL_REQUIRED', 'Public URL required');
       const { payload } = await this.context(actor, id);
       const page = (await remote(url)).text;
-      requireValue(provesAssistedCopy(page,payload),409,'PUBLICATION_UNVERIFIED','Visible full/excerpt content, title, credited author and source link could not be verified; retain submitted/reviewing follow-up');
+      requireValue(provesAssistedCopy(page,payload) && await this.renderer.verify(url,page),409,'PUBLICATION_UNVERIFIED','Visible full/excerpt content, title, credited author and source link could not be verified; retain submitted/reviewing follow-up');
     }
     if(state==='removed') {
       requireValue(delivery.url && delivery.remote_id && (!url||url===delivery.url),409,'COPY_MISMATCH','Verify removal at the exact known copy URL');

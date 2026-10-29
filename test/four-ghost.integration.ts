@@ -28,7 +28,7 @@ store.createOwner('personal','personal',actors.solo.issuer,'solo'); store.create
 const vaultKey=randomBytes(32).toString('hex');
 const policy = new Policy(store,authority), content = new ContentService(store,policy), vault = new Vault(vaultKey);
 await policy.setPublisher(actors.admin,'organization','publisher',true,'integration-role');
-const environment: NodeJS.ProcessEnv = {};
+const environment: NodeJS.ProcessEnv = {RENDER_BROWSER_EXECUTABLE:process.env.RENDER_BROWSER_EXECUTABLE,RENDER_BROWSER_SANDBOX:process.env.RENDER_BROWSER_SANDBOX,RENDER_ASSET_ORIGINS:process.env.RENDER_ASSET_ORIGINS};
 const sites: Array<{id:string;owner:string;language:string;url:string;author:string}> = [];
 for(const [owner,statePath,ports] of [['personal','.runtime/dev-personal-state.json',[2568,2569]],['organization','.runtime/dev-organization-state.json',[2578,2579]]] as const) {
   const state=JSON.parse(await readFile(statePath,'utf8'));

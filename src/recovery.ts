@@ -4,6 +4,7 @@ import {createReadStream,createWriteStream} from 'node:fs';
 import {open,stat} from 'node:fs/promises';
 import {pipeline} from 'node:stream/promises';
 import {Store} from './store.ts';
+import {CollectionCoverage} from './collection-coverage.ts';
 import {requireValue} from './errors.ts';
 const magic=Buffer.from('CHRONO-BACKUP-01\n');
 export function validateRestoreTargets(sites:Array<{project:string;restoreProject?:string;enPort?:number;zhPort?:number}>) {
@@ -49,6 +50,7 @@ export async function snapshotPlatform(store:Store,destination:string) {
   store.transaction(()=>{
     requireValue(!store.get("SELECT 1 FROM jobs WHERE state='running'"),409,'WORKER_ACTIVE','Pause outbound, let active operations settle, then capture again');
   });
+  new CollectionCoverage(store).checkpoint();
   await backup(store.db,destination);
 }
 export function isolateRestoredPlatform(store:Store,trace:string) {

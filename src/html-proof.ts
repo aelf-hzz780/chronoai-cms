@@ -6,7 +6,7 @@ const blocks=new Set(['div','p','section','article','main','ul','ol','li','table
 function canonical(nodes: HtmlNode[], preserveWhitespace = false, hrefAliases = new Map<string,string>()): unknown[] {
   return nodes.flatMap((node,index) => {
     if (node.type === 'text') {
-      const value = preserveWhitespace ? node.data.replace(/\r\n/g,'\n') : node.data.replace(/\s+/g,' ');
+      const value = preserveWhitespace ? node.data.replace(/\r\n/g,'\n') : node.data.replace(/[ \t\r\n\f]+/g,' ');
       if (!preserveWhitespace && !value.trim()) {
         const before=nodes[index-1],after=nodes[index+1];
         const inline=(n:HtmlNode|undefined)=>n && (n.type==='text' && !!n.data.trim() || 'name' in n && !blocks.has(n.name));
@@ -14,6 +14,7 @@ function canonical(nodes: HtmlNode[], preserveWhitespace = false, hrefAliases = 
       }
       return [['text',value]];
     }
+    if ('name' in node && node.name==='img' && 'attribs' in node && ['width','height'].some(key=>key in node.attribs && (!/^\d+(?:\.\d+)?$/.test(node.attribs[key]!)||Number(node.attribs[key])<=0)))return [['invalid-image-geometry']];
     if (node.type === 'comment' || node.type === 'directive') return [];
     if ('name' in node && 'attribs' in node) {
       // Ignore only documented non-content image optimizations; arbitrary injected
@@ -47,7 +48,7 @@ export function provesBody(expectedHtml: string, adminHtml: string, publicHtml: 
   const wrappers = findAll(element => element.attribs['data-chrono-revision'] === marker, page.children);
   const hidden=(node:HtmlNode):boolean=>{
     if('name' in node && 'attribs' in node){const a=node.attribs;
-      if(['template','noscript','script','style'].includes(node.name)||'hidden' in a||'inert' in a||a['aria-hidden']==='true'||/display\s*:\s*none|visibility\s*:\s*(hidden|collapse)|opacity\s*:\s*0(?:\D|$)|content-visibility\s*:\s*hidden/i.test(a.style??''))return true;
+      if(['template','noscript','script','style'].includes(node.name)||'hidden' in a||'inert' in a||a['aria-hidden']==='true'||/display\s*:\s*none|visibility\s*:\s*(hidden|collapse)|opacity\s*:\s*0(?:\.0*)?\s*(?:;|!important|$)|content-visibility\s*:\s*hidden/i.test(a.style??''))return true;
     }return false;
   };
   if(wrappers.length!==1)return false;

@@ -70,4 +70,16 @@ node scripts/recovery.ts restore /private/plan.json /private/fresh-restore
 
 单机故障是当前共同失效域，没有HA承诺。四MySQL/Ghost、API/Worker、SQLite、媒体与加密备份需要测量真实CPU/RAM/IO/增长量；本地4CPU/约6GB只用于测试，不作为生产容量承诺。费用项包括VPS/磁盘/离机备份/域名/TLS运维/NyxID/Hashnode Pro/投稿账户。付款人、订阅责任人、维护窗口、值班与人工投稿负责人尚未指定，均列上线blocker；不生成虚构预算或SLA。
 
-恢复暂停出站时，仅显式授权请求、处于uncertain/verifying的原文或uncertain的delivery可被Worker认领做只读远端reconcile；新写任务及metadata投影继续暂停。实际写入边界再次检查pause，不能通过恢复身份变相发文。原文核验后可能恢复本地公开素材及账本，但不调用远端发布API。采集故障覆盖缺口记录在collection_gaps；若数据库整体不可写，当前API进程保留每日缺口并记录Trace日志，进程重启前需由运维保存故障窗口。完整数据库故障同时导致审计/health异常，不能宣称持久故障记录必然可写。
+恢复暂停出站时，仅显式授权请求、处于uncertain/verifying的原文或uncertain的delivery可被Worker认领做只读远端reconcile；新写任务及metadata投影继续暂停。实际写入边界再次检查pause，不能通过恢复身份变相发文。原文核验后可能恢复本地公开素材及账本，但不调用远端发布API。采集覆盖记录机制见下文“采集覆盖持久性”；缺口跨服务重建、数据库重开及隔离恢复保留。
+
+## 公开正文渲染证明
+
+Worker和辅助发布report所在API都需系统安装Chromium，并以RENDER_BROWSER_EXECUTABLE指定可执行文件；playwright-core只提供驱动，不自动下载浏览器。Linux示例`/usr/bin/chromium`，本机macOS使用独立headless Chrome。部署时以chronoai用户验证浏览器可启动、user namespace sandbox可用；RENDER_BROWSER_SANDBOX默认true，生产保持开启。systemd模板的NoNewPrivileges/ProtectSystem必须在目标Linux完成实际启动检查，本地root helper关闭sandbox的配置只适用于合成测试。
+
+每次核验创建无用户profile/cookie/凭证的独立context，结束关闭browser。捕获的公开HTML按原URL渲染，载入同源主题CSS/script；额外资源仅允许RENDER_ASSET_ORIGINS明确列出的origin。阻断非GET、XHR/fetch、子document、service worker；已配置的本平台tracker不运行，避免证明操作产生访问计数。外部CSS/script不可达或未获准、浏览器不可用时fail closed，保留verifying或manual跟进。
+
+先按受控DOM核对正文、作者与资源，再核对渲染后的内容未变及实际computed style、文字几何和hit-test、图片非零几何。适用边界为1280×900桌面视口、无需交互即可显示的唯一正文容器；主题依赖登录、跨域动态内容、关闭的dialog/details或不受支持的图片source选择时保持未验证。Ghost公开素材仅在正文证明后materialize，再独立核验图片字节与MIME。验收保留正常主题正例，同时检查CSS selector/祖先隐藏及辅助正文隐藏反例；主题升级重新跑四站。该机制增加每次核验浏览器启动和内存成本，单机Worker串行处理并在finally关闭进程。
+
+## 采集覆盖持久性
+
+每个合法、已同意的采集请求在查询published状态前，先持久写入collection_attempts；成功观察写入与清除attempt在同一SQLite事务中。查询或写入失败、进程中断保留pending，按文章／语言／UTC日期显示Unavailable。若SQLite连首条attempt都不能写，使用数据库旁的`.collection-pending/`目录：0600记录仅含随机id、article id、时间，文件及目录fsync；成功后清理。该目录必须与DATABASE_PATH一起保留在持久盘上，重启时重读。加密备份先把sidecar导入数据库attempts再snapshot，隔离恢复继续保留缺口；旧collection_gaps仍兼容。若持久盘与SQLite同时完全不可写，采集失败并记录Trace日志，不能声称已持久采集。

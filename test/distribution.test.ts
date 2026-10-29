@@ -136,3 +136,34 @@ test('R007 follow-up: authorized metrics reads carry the same frozen connection 
   f.service.connections.execute=async(_actor,input:any)=>{assert.equal(input.connectionFingerprint,connectionFingerprint(connection));assert.equal(input.readOnly,true);reads++;return{accountId:'account',status:200,body:input.request.url.includes('/me/published')?[{id:'remote',page_views_count:7}]:{user:{user_id:'account'},public_reactions_count:2,comments_count:0}};};
   assert.equal((await f.service.refreshMetrics(f.actor,delivery.id,'trace')).availability,'Available');assert.equal(reads,2);
 });
+test('A37/A39: one destination fails independently; a verified Hashnode copy can be removed after its original is down',async t=>{
+  const f=await setup();t.after(()=>f.store.close());const {copyBody}=await import('../src/targets.ts');let removed=false;
+  f.service.connections.execute=async(_actor,input:any)=>{
+    f.calls.push(input);if(input.target==='dev')return{accountId:'account',status:400,body:{error:'Rejected'}};
+    const payload=JSON.parse(f.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=(SELECT id FROM deliveries WHERE target=? AND action=? ORDER BY rowid DESC LIMIT 1)','hashnode',input.action)!.payload_json);
+    const post={id:'hash-copy',url:'https://publication.hashnode.dev/post',title:payload.title,canonicalUrl:payload.sourceUrl,publishedAt:new Date().toISOString(),author:{id:'account'},publication:{id:'hash-publication'},content:{markdown:copyBody(payload)}};
+    if(input.request.body.query.startsWith('mutation')){removed=input.action==='remove';return{accountId:'account',status:200,body:{data:{[removed?'removePost':'publishPost']:{post}}}};}
+    return{accountId:'account',status:200,body:{data:{post:removed?null:post}}};
+  };
+  const records=[];f.approve();for(const target of ['dev','hashnode']){
+    const delivery=await f.service.request(f.actor,f.release.id,{target,connectionId:`org-${target}`,format:'full',action:'create',rightsConfirmed:true,idempotencyKey:`independent-${target}`},'trace');await f.service.authorize(f.actor,delivery.id,delivery.digest,'trace');records.push(delivery);
+  }
+  await f.worker.once();await f.worker.once();assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',records[0].id)!.state,'failed');assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',records[1].id)!.state,'published');
+  f.store.run("UPDATE releases SET state='unpublished' WHERE id=?",f.release.id);
+  const removal=await f.service.request(f.actor,f.release.id,{target:'hashnode',connectionId:'org-hashnode',format:'full',action:'remove',copyId:records[1].id,rightsConfirmed:true,idempotencyKey:'remove-down-source'},'trace');await f.service.authorize(f.actor,removal.id,removal.digest,'trace');await f.worker.once();
+  assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',removal.id)!.state,'removed');assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',records[1].id)!.state,'removed');assert.equal(f.calls.filter(call=>call.target==='hashnode'&&!call.readOnly).length,2);
+});
+
+for(const format of ['full','excerpt'])test(`R011: assisted ${format} requires rendered visibility, including closed native disclosure containers`,async t=>{
+  const f=await setup('solo');t.after(()=>f.store.close());
+    const copy=await f.service.request(f.actor,f.release.id,{target:'medium',connectionId:'solo-medium',format,excerpt:'Approved summary',action:'create',rightsConfirmed:true,idempotencyKey:format},'trace');
+    const pack=await f.service.package(f.actor,copy.id),article=`<article><h1>${pack.title}</h1>${pack.html}</article>`;
+    for(const page of [`<section style="visibility:collapse">${article}</section>`,`<dialog>${article}</dialog>`,`<details><summary>Unrelated</summary>${article}</details>`,`<style>article{display:none}</style>${article}`]){
+      t.mock.method(globalThis,'fetch',async()=>new Response(`<main>Unrelated</main>${page}`));
+      await assert.rejects(f.service.report(f.actor,copy.id,'published','https://medium.com/@author/post','trace'),{code:'PUBLICATION_UNVERIFIED'});t.mock.restoreAll();
+      assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',copy.id)!.state,'manual_action_needed');
+    }
+    t.mock.method(globalThis,'fetch',async()=>new Response(article));
+    await f.service.report(f.actor,copy.id,'published','https://medium.com/@author/post','trace');t.mock.restoreAll();
+    assert.equal(f.store.get('SELECT source_verified FROM deliveries WHERE id=?',copy.id)!.source_verified,1);
+});

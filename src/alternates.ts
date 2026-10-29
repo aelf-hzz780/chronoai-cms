@@ -38,18 +38,19 @@ export class AlternateWorker {
     const store=this.service.originals.content.store,lease=this.queue.claim('projection',id=>store.run("UPDATE projections SET state='queued',error_code='WORKER_INTERRUPTED' WHERE id=?",id));
     if(!lease)return false;
     const row=store.get('SELECT * FROM projections WHERE id=?',lease.resourceId)!;
+    let attemptedWrite=false;
     try {
       const actor=this.service.originals.vault.open<Actor>(row.actor_json);await this.service.originals.content.policy.publish(actor,row.owner_id);
       for(const release of this.service.affected(row.article_id,row.owner_id)) {
         const input=this.service.originals.input(release),links=this.service.links(release.article_id,row.owner_id),snapshot=this.service.snapshot(row.owner_id);
         const guard=()=>{this.queue.guard(lease);this.queue.assertWritable();requireValue(store.get('SELECT state FROM releases WHERE id=?',release.id)?.state==='published' && this.service.snapshot(row.owner_id)===snapshot,409,'PUBLICATION_CHANGED','Original or translation targets changed during metadata projection');};
         input.guard=guard;
-        input.beforeWrite=async()=>{await this.service.originals.content.policy.publish(actor,row.owner_id);guard();};
+        input.beforeWrite=async()=>{await this.service.originals.content.policy.publish(actor,row.owner_id);guard();attemptedWrite=true;};
         await this.adapter.alternates(input,links);guard();
       }
       this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='complete',error_code=NULL WHERE id=?",row.id);store.audit(actor.subject,row.owner_id,'alternates.complete',row.id,row.trace_id);},true);
     }catch(error){const code=error instanceof AppError?error.code:'INTERNAL';this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='failed',error_code=? WHERE id=?",code,row.id);
-      if(code==='PUBLICATION_CHANGED') {
+      if(code==='PUBLICATION_CHANGED'||attemptedWrite) {
         const correction=randomUUID();store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',correction,row.article_id,row.owner_id,row.actor_json,'queued',null,row.trace_id);
         store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',correction,'queued',null,new Date().toISOString());
       }store.audit('worker',row.owner_id,'alternates.failed',row.id,row.trace_id,{code});},true);}
