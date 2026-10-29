@@ -3,7 +3,7 @@ import sanitizeHtml from 'sanitize-html';
 
 const markdown = new MarkdownIt({ html: false, linkify: false, typographer: false });
 export function render(source: string, publicImages: Set<string> = new Set()): string {
-  return sanitizeHtml(markdown.render(source.replace(/asset:([a-f0-9-]{36})/g, '/api/cms/assets/$1')), {
+  return sanitizeHtml(markdown.render(source.replace(/^\uFEFF/, '').replace(/asset:([a-f0-9-]{36})/g, '/api/cms/assets/$1')), {
     allowedTags: [...sanitizeHtml.defaults.allowedTags, 'img'],
     allowedAttributes: { a: ['href', 'title', 'rel'], img: ['src', 'alt', 'title'], code: ['class'] },
     allowedSchemes: ['https', 'http'],
