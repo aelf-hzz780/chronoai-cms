@@ -4,6 +4,8 @@
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
+最新独立恢复结果：固定74978bc获得PASS_BOUNDED_LOCAL_RECOVERY，包含完整加密capture／新卷四Ghost恢复、全字段BLOB审计、丢响应只读对账、撤权queued零写入与新稿新图发布。R001–R024登记问题已全部有界关闭（R021非门禁）；逐A分支核算及正式D/A签收仍由原任务继续。资源窗口已结束，dev八容器已由原任务恢复healthy，baseline四容器healthy，独立source／restore环境已暂停／停止且所有卷保留。详见review-local-recovery-749.md；此前暂停记录保留为历史。
+
 ## 增量 I2
 
 native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布译文投影、私有图片真实共享卷、加密备份恢复、API指南、CMS选择器和运维模板。44项本地测试通过，另有真实四Ghost八组合和新卷恢复证据，见review-i2.md。
@@ -48,7 +50,7 @@ ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原�
 | D6 | implemented | local native/供应商契约 | 真实连接、订阅、exact Admin及发文/投稿Live BLOCKED |
 | D7 | implemented | local状态/恢复/人工跟进 | 真实副本生命周期与完整UI矩阵 |
 | D8 | implemented | local真实collector+看板+API | 生产隐私/外部授权源Live与完整参数矩阵 |
-| D9 | implemented | document+local四站隔离恢复 | 生产部署/监控/责任/RPO/RTO和独立验收 |
+| D9 | implemented | document+独立74978bc完整Local四站隔离恢复 | 生产部署/监控/责任/约定RPO/RTO、外部delivery恢复及正式签收 |
 
 ## A01–A52
 
@@ -104,9 +106,9 @@ ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原�
 | A46 | implemented | tracker.test.ts / metrics.test.ts | consent/GPC/DNT/撤回/失效不阻塞局部 |
 | A47 | implemented | auth.test.ts / http.test.ts / operations.md | 密钥不回显与私有资源局部；生产审计待验证 |
 | A48 | implemented | content.test.ts / distribution.test.ts / operations.md | 写入/确认/批准/运维CLI审计；运维私有读取需工单流程 |
-| A49 | implemented | recovery.test.ts / recovery.integration.ts | 加密四站全量隔离恢复local；非生产RPO/RTO |
-| A50 | implemented | recovery.test.ts / recovery.integration.ts | 恢复出站暂停/旧session失效/unknown不重发local |
-| A51 | implemented | operations.md / recovery.integration.ts | 8828d6c四Ghost重启与四站新卷恢复local；生产RPO/RTO BLOCKED |
+| A49 | implemented | recovery.test.ts / recovery.integration.ts / review-local-recovery-749.md | 独立749完整Local四站加密恢复、13payload/72指纹/33表BLOB通过；外部delivery恢复及生产RPO/RTO未签收 |
+| A50 | implemented | recovery.test.ts / recovery.integration.ts / review-local-recovery-749.md | 独立749旧cookie401、暂停期2GET/0写对账、撤权queued零写及新稿1POST通过；真实NyxID/provider仍BLOCKED |
+| A51 | implemented | operations.md / recovery.integration.ts / review-local-recovery-749.md | 独立749源站停止时恢复20项公开读回通过；r1失败现场保留，r2成功CLI45秒非生产RPO/RTO |
 | A52 | implemented | operations.md / nyxid-registration.md / review-i2.md | 文档交接已补；真实账号、部署、责任与订阅缺口保留 |
 
 ## 外部 BLOCKED
