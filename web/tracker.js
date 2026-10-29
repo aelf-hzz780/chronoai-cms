@@ -32,10 +32,12 @@
   }
   for (const [value,label] of [['yes',zh ? '允许统计' : 'Allow analytics'],['no',zh ? '拒绝统计' : 'Decline analytics']]) {
     const button=document.createElement('button'); button.type='button';button.textContent=label;
-    button.addEventListener('click',()=>update(value)); panel.append(button);
+    button.addEventListener('click',event=>{event?.preventDefault?.();event?.stopPropagation?.();update(value);}); panel.append(button);
   }
   panel.append(status);
-  (document.querySelector('footer') || document.body).append(panel);
+  // Ghost themes may place a footer inside a related-post card link. Keep the
+  // control in the page body so changing consent cannot activate that link.
+  (document.body || document.documentElement).append(panel);
   if (choice) status.textContent = choice === 'yes' ? (zh ? ' 已允许' : ' Allowed') : (zh ? ' 已拒绝' : ' Declined');
   collect();
 })();
