@@ -16,6 +16,12 @@
 
 Local连接registry为空，未宣称恢复真实外部账号；外部provider delivery恢复、真实NyxID／组织批准、目标部署、运行责任、保留策略及数值RPO/RTO仍需外部输入和验收。R001–R024已登记问题均有界关闭（R021非门禁），正式D1–D9／A01–A52仍未签收，逐分支核算由原任务继续进行。
 
-## 资源窗口结束
+## A50非空delivery平台恢复补证
 
-原任务已暂停／停止自身source与restore App／Ghost，保留全部原卷和恢复卷；此前暂停的dev-personal／dev-organization八容器已由原任务启动并确认healthy，baseline四容器同样healthy。本任务未启动或停止这些环境。先前文档中的dev暂停是历史窗口状态，以本条资源恢复通知为准。
+固定74978bc独立报告`.runtime/acceptance-review/reviews/74978bc/delivery-recovery/review.json`为PASS_BOUNDED_LOCAL_DELIVERY_RECOVERY。通过实际业务流程生成6条delivery、6份payload、6条native approval及15条初始delivery event，再进行平台加密快照、全字段／BLOB核对和全新Store关闭／重开；没有直接seed这些业务表。恢复保持paused；显式当前Admin对uncertain副本2次GET、0次新增provider写入／redeem，原actor密文、payload和已知映射保持。resume后撤权queued为blocked、过期与漂移批准为approval_needed，均零新增出站，未批准记录同样零写入，最后再次暂停。
+
+该补证使用实际SQLite／NyxAuthority与随机loopback HTTP，OriginalAdapter、authority和provider明确为fixture，287次请求均为本地；没有真实NyxID Admin／DEV账号或外部效果，没有重新做四Ghost恢复，也没有声称整个OS进程重启。不能替代真实外部delivery恢复或生产RPO/RTO。
+
+## 资源窗口记录
+
+完整恢复窗口结束时，原任务暂停／停止自身source与restore App／Ghost，保留全部原卷和恢复卷；此前暂停的dev-personal／dev-organization八容器由原任务启动并确认healthy，baseline四容器同样healthy。随后原任务为A04／A07／A19差量安排新的短窗口：暂时停止dev八容器、使用其已保留的restored-r2四站及helper固定2b，结束后负责恢复dev并验证healthy。本任务不操作Docker或相关端口，不独立启停这些环境。实际启停状态以原任务窗口回报为准，全部卷继续保留。
