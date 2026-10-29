@@ -1,6 +1,6 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为8828d6c，I3/I4/I5记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md；实际运行证据由sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为8aa2a02，I3–I6记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
@@ -15,6 +15,10 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 ## 增量 I5
 
 8828d6c支持纯图片正文及普通129段文章，文字分组截图保留逐字形证明；公开发布前新增1024文字节点／50000 Unicode code point容量边界，超出零Ghost访问并保留原稿。strict TypeScript与76项测试通过。当前源码四站八组合、四Ghost实际重启与48秒新卷加密恢复已完成，70文件指纹完全一致，见review-i5.md。原任务已独立关闭R018，并确认R002关键6分支、R011实际report7分支保持通过；R001–R018已登记缺陷均关闭。完整Local矩阵及最新恢复工件的逐项独立核对仍在继续，完整D/A与Live门禁继续保留。
+
+## 增量 I6
+
+独立新增R019发现核验滚动时页面JS能改写同一Text.data，旧像素证明误接受变化后的文字。8aa2a02在首次滚动前绑定原始正文身份、全程监测变更并最终复查；即使恢复原文也拒绝，校验器自己的临时DOM变更逐条精确豁免。strict与77项测试通过，四站主题八组合补验通过，71文件指纹一致；首轮personal-zh未验证失败和只读诊断记录均保留，根因尚未确定。R019等待独立复验。8828d6c恢复工件已通过原任务逐项独立解密／checksum／9表全字段BLOB／16页与图片核对；历史结论不提升为当前源码或完整D/A通过。详见review-i6.md。
 
 ## D1–D9
 
