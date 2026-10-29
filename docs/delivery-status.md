@@ -1,6 +1,6 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为8aa2a02，I3–I6记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为0649608（含R020 ed1239f），I3–I7记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
@@ -18,7 +18,11 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 
 ## 增量 I6
 
-独立新增R019发现核验滚动时页面JS能改写同一Text.data，旧像素证明误接受变化后的文字。8aa2a02在首次滚动前绑定原始正文身份、全程监测变更并最终复查；即使恢复原文也拒绝，校验器自己的临时DOM变更逐条精确豁免。strict与77项测试通过，四站主题八组合补验通过，71文件指纹一致；首轮personal-zh未验证失败和只读诊断记录均保留，根因尚未确定。R019等待独立复验。8828d6c恢复工件已通过原任务逐项独立解密／checksum／9表全字段BLOB／16页与图片核对；历史结论不提升为当前源码或完整D/A通过。详见review-i6.md。
+独立新增R019发现核验滚动时页面JS能改写同一Text.data，旧像素证明误接受变化后的文字。8aa2a02在首次滚动前绑定原始正文身份、全程监测变更并最终复查；即使恢复原文也拒绝，校验器自己的临时DOM变更逐条精确豁免。R019已独立关闭，strict与77项测试独立通过。开发四站八组合补验通过，71文件指纹一致；首轮personal-zh未验证失败及正常reconcile恢复同一记录的证据保留，恢复后的数据库／页面／图片已独立核对，首次原因仍未知。8828d6c恢复工件已通过原任务逐项独立解密／checksum／9表全字段BLOB／16页与图片核对；历史结论不提升为当前源码或完整D/A通过。详见review-i6.md。
+
+## 增量 I7
+
+ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原始存储／下载保持byte exact；strict与78项测试通过。0649608另提供R021非门禁导航放弃／取消保护，10项实际Chrome检查通过，保留BOM／CRLF源跟踪。R020等待独立复验；R021不新增验收门禁。详见review-i7.md。
 
 ## D1–D9
 

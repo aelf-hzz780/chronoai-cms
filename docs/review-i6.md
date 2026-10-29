@@ -14,7 +14,7 @@
 - strict TypeScript及77项测试通过，0失败／跳过，日志`.runtime/r019-check.log`。正常长文、129段和透明／裁剪反例保持符合预期。
 - 原独立scroll-mutation.mjs仅重绑开发root／out后实际运行：正常对照true、最终APPROVED；脚本改字false、最终ALTERED!、mutationCount=1。证据`.runtime/r019-retest/scroll-mutation-results.json`；其commit字段沿用原脚本8828d6c，不用作本次源码身份声明，重绑脚本的root及固定8aa2a02才是运行绑定。
 
-R019已交原任务固定8aa2a02独立复验，结论待回。
+R019已由原任务在固定8aa2a02独立关闭。实际GhostAdapter原scroll probe、scroll改回、同文root／Text替换、marker改回、包装／隐藏阶段页面MutationObserver改字及改回均拒绝，且确认脚本触发；正常正文和wrapper外主题变化通过。纯图片、正常26行、裁剪／透明和R011实际report5分支无回退，strict及77项测试独立通过。原任务证据位于其工作树`.runtime/acceptance-review/reviews/8aa2a02/integrity/results.json`。
 
 四站真实主题八组合补验通过：`.runtime/blogsystem-integration-6aca588f/evidence.json`，build_revision=8aa2a02，71个文件指纹与当前源码逐文件相同，SHA256 manifest为`1af54663752fef7639c65378a52b46e33695148500a4ba719a6b08c44689310e`。汇总`.runtime/r019-retest/validation-manifest.json`。worktree_dirty=true对应当时待提交的交付文档；源码由逐文件指纹绑定。
 
@@ -23,6 +23,8 @@ R019已交原任务固定8aa2a02独立复验，结论待回。
 按原任务要求进一步恢复首轮的同一失败记录，而非用新文章代替：release `41b9c11e-52f1-4d02-b0ea-c380c03a3388`、article `def66581-8424-48b4-be8a-8e0dc8881f3c`。原helper数据库four-ghost-dnhNOB/platform.sqlite经正常CMS reconcile路由和实际ReleaseWorker／GhostAdapter／Alpine Chromium恢复为published、error null、job done。31个业务src文件SHA匹配8aa2a02，未修改产品或直接改release状态；当前synthetic actor通过正常recovery_actors重授权，原actor_json密文保留。
 
 初始素材记录0、文件无、HTTP404；实际renderer成功返回时仍记录0／文件无，随后才物化并读回HTTP200、image/png、SHA匹配，最终素材记录1。8次Ghost请求全部GET，POST／PUT为0，远端id／url／revision／updated_at／html不变。原Trace `0c8c64b4-16e5-4d78-8751-1a6ad1e54e4c`，恢复Trace `223fe746-fc5b-4892-a740-41302916e9cb`。证据`.runtime/r019-retest/original-release-recovery-evidence.json`；原失败副本`.runtime/r019-failed.sqlite`与恢复后副本`.runtime/r019-retest/reconciled-original.sqlite`均保留。本段为开发恢复补证，已交独立核对，不覆盖首轮失败或未知原因。
+
+原任务后续已独立比较该原失败release的before／after数据库及真实公开页／图片，确认verifying→published、原revision／remote／actor密文不变、素材记录0→1、PNG MIME／SHA通过。GET-only历史以开发录制为依据；首轮根因继续保持未知，不覆盖首次失败。
 
 ## 历史运行证据与未完成门禁
 
