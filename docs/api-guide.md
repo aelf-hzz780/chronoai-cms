@@ -32,6 +32,8 @@
 
 `GET /targets`、`GET /owners/:id/connections` 列出当前 owner 的目标和精确连接。`POST /releases/:id/deliveries` 选择 target/connectionId/create|update|remove/full|excerpt/rightsConfirmed/idempotencyKey；纠错和移除需 copyId。当前自动只启用英文；个人 DEV、组织 DEV/Hashnode。原文未核验公开时不能创建／更新副本。
 
+CMS“分发与副本管理”中，每条分发记录保留当前状态与公开链接，并可展开“状态历史”按API顺序查看各次状态、事件时间及存在的诊断码／Trace ID；同一目的地的多条记录各自保留历史。service返回同一history，历史中的submitted／reviewing不代表已published。
+
 组织自动写需 native exact request/authorize；个人不额外加组织批准。`GET /articles/:id/deliveries` 返回各目标独立状态／URL／历史。cancel 仅阻止未发送；uncertain 先 reconcile。辅助目标通过 package 准备材料，通过 report 分开记录 submitted/reviewing/rejected/manual_action_needed/published/removed；公开链接与来源可读核验后才记 published，人工回报不能证明平台 editorial acceptance 的全部过程。removed仅允许已确认的remove动作，必须保留known copy remote ID与精确URL并核验该URL为404/410；可省略url使用已记录地址，传入时必须与已知地址相同。原文下线不禁止移除。
 
 `GET /metrics?ownerId=...&from=YYYY-MM-DD&to=...&article=...&language=...&destination=ghost` 返回 PV、每日估算 UV、热门、趋势、来源与分发。外部支持目标先 `POST /deliveries/:id/metrics/refresh`；缺失授权或数据为 Unavailable/null，不能填0。外部是累计计数快照，日期选择采集时间，不冒充区间流量；不计算跨平台唯一人数。
