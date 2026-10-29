@@ -26,3 +26,9 @@ test('R010: duplicate owner restore projects are rejected by the real CLI before
   const result=spawnSync(process.execPath,['scripts/recovery.ts','restore',plan,target],{encoding:'utf8',env:{...process.env,PATH:`${bin}:${process.env.PATH}`,RECOVERY_BACKUP_KEY:'ef'.repeat(32)}});
   assert.notEqual(result.status,0);assert.match(result.stderr,/RESTORE_ISOLATION|distinct new restore project/);await assert.rejects(access(target));await assert.rejects(access(log));
 });
+test('R010: malformed JSON target/source types cannot alias normalized Docker project names',async()=>{
+  const {validateRestoreTargets}=await import('../src/recovery.ts');
+  const good={project:'source-a',restoreProject:'blogsystem-restore-a',enPort:3800,zhPort:3801};
+  for(const plan of [[],[null],[{...good,restoreProject:['blogsystem-restore-a']}],[{...good,project:['source-a']}],[good,{project:'source-b',restoreProject:['blogsystem-restore-a'],enPort:3810,zhPort:3811}],[{...good,enPort:'3800'}]])assert.throws(()=>validateRestoreTargets(plan as any),{code:'RESTORE_ISOLATION'});
+  assert.doesNotThrow(()=>validateRestoreTargets([good,{project:'source-b',restoreProject:'blogsystem-restore-b',enPort:3810,zhPort:3811}]));
+});

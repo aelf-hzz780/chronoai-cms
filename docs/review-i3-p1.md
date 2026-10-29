@@ -11,3 +11,5 @@
 | R010 | 完整恢复plan先校验project、派生卷、端口唯一且不与源project冲突 | recovery.test.ts：真实CLI+假Docker记录器，重复project失败且无Docker调用/无destination |
 
 验证：`npm run check` strict + 50/50；`git diff --check`。正文回归先在旧实现复现失败，再修改。当前未重新生成四Ghost/恢复证据，不能以旧指纹代表本批源码。R006及其余P2在下一批继续；Live外部依赖与最终D/A验收保持未通过。
+
+独立复验跟进：R010追加运行时JSON类型校验，source/restore project必须literal string且source也唯一，拒绝数组/对象被Docker隐式转换后别名冲突；新增异常JSON回归（非仅TypeScript静态约束）。
