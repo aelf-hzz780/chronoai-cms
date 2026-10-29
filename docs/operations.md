@@ -2,6 +2,8 @@
 
 当前支持：单 Linux 主机、Node24.18.x、Fastify API+独立 Worker、本地持久盘 SQLite WAL；每 owner×language 一套官方 Ghost6.73.0+MySQL8.0.44。禁止多个主机共享 SQLite/NFS。以下是部署模板；生产 DNS/HTTPS、容量、付款方、隐私 retention、RPO/RTO 尚未指定，公开部署与生产恢复验收保持 BLOCKED。
 
+首次运行与开通见[开发指南](development.md)，业务操作见[API 指南](api-guide.md)，身份与精确连接见[NyxID 注册](nyxid-registration.md)。当前证据和已知缺口以[交付台账](delivery-status.md)及[验收矩阵](acceptance.md)为入口，Local 实测不替代目标环境上线验收。
+
 ## 安装布局与开通
 
 - `/opt/node24/bin/node`：受维护的 Node24.18.x；`/opt/chronoai/releases/<commit>` 是不可变代码及 npm ci 结果；`/opt/chronoai/current` 指向当前 release。
@@ -58,7 +60,7 @@ node scripts/recovery.ts restore /private/plan.json /private/fresh-restore
 
 恢复默认使用卷内content而不是生产nested mount。切回生产布局前，把已公开素材恢复到对应平台site子目录，核对hash和最小权限，再挂载Ghost只读；私有素材继续只在DB。恢复后不自动重发，先逐项只读reconcile，重验当前NyxID权限、连接与未过期exact批准。明确审批后才 `scripts/provision.ts resume --confirmed`。不要让隔离恢复实例使用真实provider凭证执行写入。
 
-已有本地四站隔离恢复记录见 review-i2.md；原卷保留。它证明local恢复路径，不代表生产RPO/RTO。上线前由责任人给出数值目标、备份频率、离机存储和保留策略，再在生产等价环境测量恢复耗时与可丢失窗口。
+最新独立四站完整Local恢复见[74978bc恢复记录](review-local-recovery-749.md)，含加密包／全字段BLOB审计、源Ghost停止时新卷页面图片读回、旧session失效、丢响应GET-only对账和撤权queued零写入。早期开发恢复记录保留在[review-i2.md](review-i2.md)；各自原卷保留。首次r1地址池耗尽失败与r2显式网络恢复均有记录，45秒仅为成功CLI耗时；这些证据不代表真实外部delivery恢复或生产RPO/RTO。上线前由责任人给出数值目标、备份频率、离机存储和保留策略，再在生产等价环境测量恢复耗时与可丢失窗口。
 
 ## 升级、回滚与退组
 

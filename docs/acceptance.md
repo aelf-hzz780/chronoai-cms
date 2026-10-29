@@ -1,6 +1,17 @@
 # 需求追踪与验收矩阵
 
-R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 对应 [supporting-deliverables.md](source/supporting-deliverables.md) 的九项交付。A 编号为本文测试场景，不代表测试已实现。实际证据见 [phase-0.md](phase-0.md)。
+R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 对应 [supporting-deliverables.md](source/supporting-deliverables.md) 的九项交付。A 编号为必需场景索引，不能由同名测试或测试数量推断完整通过。本文的正式范围与通过条件保持 v0.7 基线，当前实现、逐项证据和外部缺口见[交付台账](delivery-status.md)。D1–D9／A01–A52 尚未整体签收。
+
+## 当前证据与交接入口
+
+| 入口 | 内容与证据边界 |
+| --- | --- |
+| [开发运行](development.md)、[API 指南](api-guide.md)、[NyxID 注册](nyxid-registration.md)、[部署运维](operations.md) | 当前运行与维护路径；目标 NyxID／provider／生产配置需真实输入，文档与模板不是 Live 证据 |
+| [交付台账](delivery-status.md)及其 I1–I10 记录 | 按固定源码记录开发自测、独立有界复验、未完成分支；Document／Local／Live 分开，不以修复关闭替代整体验收 |
+| [74978bc 独立 Local 恢复](review-local-recovery-749.md) | 实际四 Ghost 与平台加密捕获／新卷恢复、全字段审计、旧会话失效及只读对账；本地身份 fixture，不包含真实外部 delivery 恢复或生产 RPO/RTO |
+| [阶段 0](phase-0.md)、[迁移复验](local-revalidation.md) | 历史双站与基础实验；仅适用于其记录的源码和环境，不能代表当前 CMS／service 或四站完整结果 |
+
+独立 Local 已覆盖实际 CMS/service × owner × language 发布、浏览器 consent 指标、译文与恢复等有界流程；完整角色／scope／入口／时序分支仍逐项核算。真实 NyxID 注册与双入口授权、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程，以及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应 Live／生产证据。阶段 0 不再作为唯一验收证据入口。
 
 ## 1. 交付追踪
 

@@ -2,6 +2,8 @@
 
 范围以 `docs/source/` v0.7 原文为准。Node.js 24.18.x、npm；先 `npm ci`，再 `npm run check`。生产没有测试登录开关，合成身份仅通过测试构造器注入。当前项目没有 Spec Kitty。
 
+操作使用见[API 指南](api-guide.md)和[NyxID 注册](nyxid-registration.md)，部署与恢复见[运维交接](operations.md)，当前有界验证与缺口见[交付台账](delivery-status.md)和[验收矩阵](acceptance.md)。本地签名 fixture／契约测试不代表目标 NyxID 或外部 provider Live；阶段 0 实验为历史起点。
+
 ## 本地运行
 
 复制 `.env.example` 为私有 `.env`（0600），填写实际 NyxID 注册参数、独立随机 ENCRYPTION_KEY / TRACKING_SECRET。启动：
@@ -36,10 +38,11 @@ node --env-file=.env scripts/provision.ts author org-en 'Example Author' actual-
 ```bash
 npm run check
 node --check web/app.js
+node --check web/tracker.js
 node scripts/test-local-four-ghost.mjs
 node scripts/source-fingerprint.ts
 ```
 
-前两项不连接真实账号。四站 harness 仅用于本任务已准备的 `colima-blogsystem`，不自动启动 Docker、不拉镜像、不改默认 context；临时 helper 使用缓存官方 Ghost 内置 Node22.23.4，真实应用支持运行时仍是主机 Node24.18。默认 Ghost Adapter 和共享文件系统未替换，覆盖 personal/organization × en/zh × CMS/service 八组合及素材、指标、译文互链、下线。证据生成于 `.runtime/blogsystem-integration-*/evidence.json`，含源码逐文件指纹，不含账号秘密。
+前三项不连接真实账号。完整检查中的渲染测试需要本机 Chromium，安装与RENDER_BROWSER_EXECUTABLE配置见[公开正文渲染证明](operations.md#公开正文渲染证明)。四站 harness 仅用于本任务已准备的 `colima-blogsystem`，不自动启动 Docker、不拉镜像、不改默认 context；临时 helper 使用缓存官方 Ghost 内置 Node22.23.4，真实应用支持运行时仍是主机 Node24.18。默认 Ghost Adapter 和共享文件系统未替换，覆盖 personal/organization × en/zh × CMS/service 八组合及素材、指标、译文互链、下线。证据生成于 `.runtime/blogsystem-integration-*/evidence.json`，含源码逐文件指纹，不含账号秘密。
 
 恢复 CLI 与隔离演练见 `operations.md`。`test/*.integration.ts` 不是默认单测的一部分。已完成局部不等于 A01–A52 所有参数组合完成；独立验收由原任务执行，状态见 `delivery-status.md`。
