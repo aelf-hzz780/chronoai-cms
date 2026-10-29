@@ -1,6 +1,6 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为0649608（含R020 ed1239f），I3–I7记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为792a7bb（R022；含R021 0649608、R020 ed1239f），I3–I8记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
@@ -23,6 +23,10 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 ## 增量 I7
 
 ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原始存储／下载保持byte exact；strict与78项测试通过。R020独立专项报告已CLOSED，10个记录分支通过。0649608另提供R021非门禁导航放弃／取消保护，开发10项实际Chrome检查与独立8分支复验通过，保留BOM／CRLF源跟踪；R021为CLOSED_LOCAL_RETEST，不新增验收门禁。完整Local端到端审查继续单独进行，详见review-i7.md。
+
+## 增量 I8
+
+792a7bb修复R022 OpenAPI实际响应契约：201／202状态、8类数组、图片与Markdown二进制媒体、preview可选历史revision及受既有移除守卫约束的removed枚举；补34个operation的scope交接说明。实际App契约测试及原独立probe本地重跑通过，strict与80项测试通过。未修改业务权限；独立专项复验待返回，目标NyxID注册／导入兼容性仍BLOCKED。dev按资源窗口继续暂停，卷保留，详见review-i8.md。
 
 ## D1–D9
 
