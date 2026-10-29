@@ -1,6 +1,6 @@
 # I7 BOM渲染与编辑导航保护（开发记录）
 
-必需修复R020：`ed1239fb96a60d513ab3cbbc70c295282aa7f327`；非门禁R021体验改进：`0649608b2bb475b1db5f18f52c3eb759132f06dc`。分支codex/003-blogsystem-delivery。R001–R019的已登记必需缺陷保持各自固定源码上的独立关闭，R020等待独立复验；完整D1–D9/A01–A52及Live未整体通过。
+必需修复R020：`ed1239fb96a60d513ab3cbbc70c295282aa7f327`；非门禁R021体验改进：`0649608b2bb475b1db5f18f52c3eb759132f06dc`。分支codex/003-blogsystem-delivery。R001–R019保持历史独立关闭；R020专项独立报告已CLOSED，R021为CLOSED_LOCAL_RETEST且acceptance_gate=false。完整D1–D9/A01–A52及Live未整体通过。
 
 ## R020：编码BOM只在渲染输入处理
 
@@ -10,11 +10,15 @@ TDD先复现首行h1缺失，再验证实际import→个人／组织×EN／ZH四
 
 公开路径另用实际GhostAdapter＋BrowserRenderProof／Chrome和自有随机loopback HTTP核验个人／组织×EN／ZH四组合，BOM首行正确h1、verify均true、源文不变；`.runtime/r020-public/results.json`。此为合成Admin／公开页fixture，未调用真实Ghost或外部账号，不提升为Live或四站整体结论。
 
+固定ed1239f的独立专项报告已关闭R020：10个记录分支全部通过，包含四组真实浏览器文件导入、iframe h1／表格／代码和byte exact下载，以及双入口首块列表／引用／代码／表格及内部FEFF保留对照。原任务工作树证据`.runtime/acceptance-review/reviews/ed1239f/cms-browser/r020-review.json`，浏览器身份仍为synthetic；未宣称真实NyxID或Ghost／provider Live通过。
+
 ## R021：非强制的未保存编辑保护
 
 原任务明确acceptance_gate=false，不新增验收门禁。导航到另一文章、切换owner、新建文章及关联译文前，共享dirty guard提示明确放弃或取消；取消保留编辑区和preservedMarkdown，owner选择器回到原工作区。成功保存后直接回读新revision，不重复提示。干净BOM／CRLF稿用原始source比较，避免textarea换行规范化造成误提示。
 
 实际Chrome＋实际Fastify／web脚本先复现丢失，再通过10项检查：文章／new／owner取消保留，三类明确放弃动作正常，干净稿无误提示，取消后只改标题再保存／浏览器下载仍BOM／CRLF byte exact，private preview正确h1，新草稿切语言保留正文。证据`.runtime/r021-editor/results.json`及同目录browser.mjs，node --check通过。此提交仅改web/app.js，未重复无变化的后端suite；78项测试对应ed1239f，浏览器验证对应0649608的同一UI源码。
+
+固定0649608的独立浏览器专项报告为CLOSED_LOCAL_RETEST，8分支全部通过：取消／放弃、反复owner回退及后续真实保存owner、干净BOM／CRLF无误提示、标题修改后源字节保留、语言切换、POST／PATCH保存无二次提示、明确放弃不创建autosave。9个预期弹窗、0个意外弹窗／page error；证据为原任务工作树`.runtime/acceptance-review/reviews/0649608/editor/editor-review.json`。acceptance_gate继续false，不引入autosave或完整UX验收要求。
 
 ## 环境与证据边界
 

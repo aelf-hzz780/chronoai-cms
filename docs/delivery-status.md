@@ -22,7 +22,7 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 
 ## 增量 I7
 
-ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原始存储／下载保持byte exact；strict与78项测试通过。0649608另提供R021非门禁导航放弃／取消保护，10项实际Chrome检查通过，保留BOM／CRLF源跟踪。R020等待独立复验；R021不新增验收门禁。详见review-i7.md。
+ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原始存储／下载保持byte exact；strict与78项测试通过。R020独立专项报告已CLOSED，10个记录分支通过。0649608另提供R021非门禁导航放弃／取消保护，开发10项实际Chrome检查与独立8分支复验通过，保留BOM／CRLF源跟踪；R021为CLOSED_LOCAL_RETEST，不新增验收门禁。完整Local端到端审查继续单独进行，详见review-i7.md。
 
 ## D1–D9
 
