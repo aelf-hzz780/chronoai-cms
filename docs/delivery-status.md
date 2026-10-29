@@ -1,6 +1,6 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为586ff1a（R023；含R022 792a7bb、R021 0649608、R020 ed1239f），I3–I9记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md、review-i9.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为74978bc（R024；含R023 586ff1a、R022 792a7bb、R021 0649608、R020 ed1239f），I3–I10记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md、review-i9.md、review-i10.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
@@ -31,6 +31,10 @@ ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原�
 ## 增量 I9
 
 586ff1a修复R023 CMS文件选择器重复选择：图片与Markdown读取File后清空input，reset/openArticle上下文切换再次清空；图片异步完成时校验原articleId，避免切换文章污染编辑器。临时真实Chromium＋Fastify fixture验证同PNG路径跨EN／ZH文章、校验失败后重试、同Markdown路径重复导入均通过；node syntax与strict＋80项本地测试通过。R023独立专项仍OPEN，等待固定586ff1a复验；未操作3398／3399、Ghost或dev源站，详见review-i9.md。
+
+## 增量 I10
+
+74978bc修复R024 Ghost consent面板误挂到related-post card的footer导致Allow／Decline导航离开当前文章：面板固定挂到BODY，按钮阻止默认及冒泡，保留required consent、撤回、GPC/DNT和脱敏采集。tracker fixture与真实Chromium DOM fixture覆盖默认主题footer、无footer、Allow/Decline URL保持及一次采集；strict与81项测试通过。R024独立真实Ghost复验待返回，未操作3398／3399、review Ghost或dev源站，详见review-i10.md。
 
 ## D1–D9
 
