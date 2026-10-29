@@ -1,6 +1,6 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为910591d，I3/I4记录见review-i3-p1.md、review-i3-p2.md、review-i4.md；实际运行证据由sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为8828d6c，I3/I4/I5记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md；实际运行证据由sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
@@ -10,7 +10,11 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 
 ## 增量 I3／I4
 
-修复发送边界身份／原文漂移、已接受写入缺映射、恢复project类型别名、known-copy身份、paused只读恢复、分发日期与采集缺口。剩余四项增补Chromium渲染证明、迟到metadata写纠正、跨重启采集覆盖。75项测试通过；910591d四站八组合、四Ghost实际重启与新卷加密恢复已完成，三类证据指纹相同，见review-i4.md。独立复验逐项反馈见review-i4.md。
+修复发送边界身份／原文漂移、已接受写入缺映射、恢复project类型别名、known-copy身份、paused只读恢复、分发日期与采集缺口。剩余四项增补Chromium渲染证明、迟到metadata写纠正、跨重启采集覆盖。原任务已逐项关闭R001–R017，其中R002／R011在910591d真实Chromium复验关闭；结论限对应分支和固定源码。
+
+## 增量 I5
+
+8828d6c支持纯图片正文及普通129段文章，文字分组截图保留逐字形证明；公开发布前新增1024文字节点／50000 Unicode code point容量边界，超出零Ghost访问并保留原稿。strict TypeScript与76项测试通过。当前源码四站八组合、四Ghost实际重启与48秒新卷加密恢复已完成，70文件指纹完全一致，见review-i5.md。R018等待独立复验，完整D/A与Live门禁继续保留。
 
 ## D1–D9
 
@@ -57,7 +61,7 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 | A23 | implemented | four-ghost.integration.ts | 真实四Ghost安装八组合local |
 | A24 | implemented | four-ghost.integration.ts / review-i1.test.ts | 可见owner/作者/语言、正文、metadata/互链及重启后sitemap局部；完整矩阵待独立验收 |
 | A25 | implemented | publishing.test.ts / review-i1.test.ts | 全文证明失败与known-write/GET失败回归 |
-| A26 | implemented | operations.md / recovery.integration.ts | 源码独立架构与隔离恢复；910591d停API后公开页／图片保持可用；四Ghost实际重启通过 |
+| A26 | implemented | operations.md / recovery.integration.ts | 源码独立架构与隔离恢复；8828d6c停API后公开页／图片保持可用；四Ghost实际重启通过 |
 | A27 | implemented | nyxid.test.ts / distribution.test.ts | native exact连接无fallback契约；真实账号BLOCKED |
 | A28 | implemented | nyxid.test.ts / distribution.test.ts | 精确批准契约；真实NyxID Admin Live BLOCKED |
 | A29 | implemented | distribution.test.ts / nyxid.test.ts | payload/request digest与连接指纹局部 |
@@ -82,7 +86,7 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 | A48 | implemented | content.test.ts / distribution.test.ts / operations.md | 写入/确认/批准/运维CLI审计；运维私有读取需工单流程 |
 | A49 | implemented | recovery.test.ts / recovery.integration.ts | 加密四站全量隔离恢复local；非生产RPO/RTO |
 | A50 | implemented | recovery.test.ts / recovery.integration.ts | 恢复出站暂停/旧session失效/unknown不重发local |
-| A51 | implemented | operations.md / recovery.integration.ts | 910591d四Ghost重启与四站新卷恢复local；生产RPO/RTO BLOCKED |
+| A51 | implemented | operations.md / recovery.integration.ts | 8828d6c四Ghost重启与四站新卷恢复local；生产RPO/RTO BLOCKED |
 | A52 | implemented | operations.md / nyxid-registration.md / review-i2.md | 文档交接已补；真实账号、部署、责任与订阅缺口保留 |
 
 ## 外部 BLOCKED
