@@ -11,7 +11,7 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 | [74978bc 独立 Local 恢复](review-local-recovery-749.md) | 实际四 Ghost 与平台加密捕获／新卷恢复、全字段审计、旧会话失效及只读对账；本地身份 fixture，不包含真实外部 delivery 恢复或生产 RPO/RTO |
 | [阶段 0](phase-0.md)、[迁移复验](local-revalidation.md) | 历史双站与基础实验；仅适用于其记录的源码和环境，不能代表当前 CMS／service 或四站完整结果 |
 
-独立 Local 已覆盖实际 CMS/service × owner × language 发布、浏览器 consent 指标、译文与恢复等有界流程；完整角色／scope／入口／时序分支仍逐项核算。真实 NyxID 注册与双入口授权、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程，以及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应 Live／生产证据。阶段 0 不再作为唯一验收证据入口。
+独立 Local 已覆盖实际 CMS/service × owner × language 发布、浏览器 consent 指标、译文与恢复等有界流程；原始剩余角色／scope／入口／时序差量已独立核算完毕。51场景Local PASS，A05仅因缺具名目标部署／付款／运维输入而BLOCKED，可继续推进Local工作为0；Document为48 PASS／4 BLOCKED（A01/A05/A06/A52），Live为52 BLOCKED。R001–R028均有界关闭（R021非门禁），详见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。真实 NyxID 注册与双入口授权、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程，以及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应 Live／生产证据。阶段 0 不再作为唯一验收证据入口。
 
 ## 1. 交付追踪
 

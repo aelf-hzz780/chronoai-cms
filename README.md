@@ -4,6 +4,8 @@
 
 当前已实现可本地运行的 CMS、共享 NyxID service API、Markdown／私有素材／修订、四站 Ghost 原创发布、外部分发与生命周期、指标及加密备份恢复。独立 Local 验证已覆盖实际 CMS/service 发布、个人／组织 × EN/ZH 四个官方 Ghost、真实浏览器访问指标和隔离恢复；身份联调使用明确的本地签名 issuer fixture，外部分发主要为本地契约与状态测试，不能作为真实 NyxID 或 provider Live 通过。
 
+独立收尾账目确认 R001–R028 已全部有界关闭（R021 非门禁），51 场景 Local PASS；A05 因缺具名目标部署／付款／运维输入而 BLOCKED，可继续推进的 Local 工作为 0。Document 为 48 PASS／4 BLOCKED，Live 为 52 BLOCKED。
+
 **完整 D1–D9／A01–A52 尚未正式签收。** 目标 NyxID 登录／注册／委托与组织批准、真实外部账号和发文授权、生产域名／部署／责任及约定 RPO/RTO 仍有缺口。当前证据与逐项边界见[交付台账](docs/delivery-status.md)及[验收矩阵与证据入口](docs/acceptance.md)。阶段 0 记录保留为历史。
 
 ## 运行与交接入口
