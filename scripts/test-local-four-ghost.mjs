@@ -1,19 +1,28 @@
 /** Operator-only local harness: no production application receives Docker access. */
+import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {mkdir,rm,readFile,writeFile} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {sourceFingerprint} from './source-fingerprint.ts';
 const context='colima-blogsystem',image='ghost@sha256:4195f6c405e40230cd10c0770425cf500c1f542a96e9f6584c11649c150e5a89';
-const name=`blogsystem-integration-${randomUUID().slice(0,8)}`,directory=resolve('.runtime',name);await mkdir(directory,{recursive:true,mode:0o700});
+const runName=`blogsystem-integration-${randomUUID().slice(0,8)}`,reuse=process.env.INTEGRATION_REUSE_HELPER;
+if(reuse)assert.match(reuse,/^blogsystem-integration-runtime-[a-f0-9]{8}$/);
+const name=reuse??(process.env.INTEGRATION_KEEP_HELPER==='true'?runName.replace('blogsystem-integration-','blogsystem-integration-runtime-'):runName),directory=resolve('.runtime',runName);await mkdir(directory,{recursive:true,mode:0o700});
 const archive=join(directory,'code.tgz'),fingerprint=await sourceFingerprint();
-execFileSync('tar',['-czf',archive,'src','web','test','node_modules','package.json','.runtime/dev-personal-state.json','.runtime/dev-organization-state.json'],{env:{...process.env,COPYFILE_DISABLE:'1'},stdio:['ignore','ignore','pipe']});
 const docker=(...args)=>execFileSync('docker',['--context',context,...args],{encoding:'utf8',maxBuffer:4_000_000,stdio:['ignore','pipe','pipe']});
 const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),dirty=execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim().length>0;
+await writeFile(join(directory,'build.json'),JSON.stringify({revision,dirty}));
+execFileSync('tar',['-czf',archive,'src','web','test','node_modules','package.json','.runtime/dev-personal-state.json','.runtime/dev-organization-state.json','-C',directory,'build.json'],{env:{...process.env,COPYFILE_DISABLE:'1'},stdio:['ignore','ignore','pipe']});
 try {
   const mounts=[];for(const owner of ['personal','organization'])for(const language of ['en','zh'])mounts.push('--mount',`type=volume,source=blogsystem-dev-${owner}_content-${language},target=/mounted/${owner}-${language}`);
-  docker('create','--pull','never','--name',name,'--network','blogsystem-dev-personal_en',...mounts,'-e',`INTEGRATION_BUILD_REVISION=${revision}`,'-e',`INTEGRATION_WORKTREE_DIRTY=${dirty}`,'--entrypoint','sh',image,'-c','apk add --no-cache chromium >/tmp/chromium-install.log 2>&1 && mkdir -p /app && tar -xzf /tmp/code.tgz -C /app && cd /app && exec node --experimental-strip-types test/ghost-container.mjs');
+  if(reuse){
+    const saved=JSON.parse(docker('inspect',name))[0];assert.equal(saved.State.Running,false,'Reusable helper must be stopped');assert.equal(saved.Config.Image,image);
+    for(const owner of ['personal','organization'])for(const language of ['en','zh'])assert.ok(saved.Mounts.some(m=>m.Name===`blogsystem-dev-${owner}_content-${language}`&&m.Destination===`/mounted/${owner}-${language}`));
+  }else {
+  docker('create','--init','--pull','never','--name',name,'--network','blogsystem-dev-personal_en',...mounts,'-e',`INTEGRATION_BUILD_REVISION=${revision}`,'-e',`INTEGRATION_WORKTREE_DIRTY=${dirty}`,'--entrypoint','sh',image,'-c','apk add --no-cache chromium >/tmp/chromium-install.log 2>&1 && mkdir -p /app && tar -xzf /tmp/code.tgz -C /app && cd /app && exec node --experimental-strip-types test/ghost-container.mjs');
   for(const network of ['blogsystem-dev-personal_zh','blogsystem-dev-organization_en','blogsystem-dev-organization_zh'])docker('network','connect',network,name);
+  }
   docker('cp',archive,`${name}:/tmp/code.tgz`);
   process.stdout.write(docker('start','--attach',name));
   const status=docker('inspect','--format','{{.State.ExitCode}}',name).trim();
@@ -27,6 +36,6 @@ try {
   try {process.stderr.write(docker('logs',name).slice(-6000));}catch{}
   throw error;
 } finally {
-  try {docker('rm','-f',name);}catch{}
+  if(process.env.INTEGRATION_KEEP_HELPER!=='true'){try {docker('rm','-f',name);}catch{}}
   await rm(archive,{force:true});
 }
