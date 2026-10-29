@@ -1,12 +1,16 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前文档记录I2最终源码，实际证据由sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为910591d，I3/I4记录见review-i3-p1.md、review-i3-p2.md、review-i4.md；实际运行证据由sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
 ## 增量 I2
 
 native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布译文投影、私有图片真实共享卷、加密备份恢复、API指南、CMS选择器和运维模板。44项本地测试通过，另有真实四Ghost八组合和新卷恢复证据，见review-i2.md。
+
+## 增量 I3／I4
+
+修复发送边界身份／原文漂移、已接受写入缺映射、恢复project类型别名、known-copy身份、paused只读恢复、分发日期与采集缺口。剩余四项增补Chromium渲染证明、迟到metadata写纠正、跨重启采集覆盖。75项测试通过；910591d四站八组合、四Ghost实际重启与新卷加密恢复已完成，三类证据指纹相同，见review-i4.md。独立复验逐项反馈见review-i4.md。
 
 ## D1–D9
 
@@ -51,9 +55,9 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 | A21 | implemented | content.test.ts / four-ghost.integration.ts | 译文独立发布、过期标记局部 |
 | A22 | implemented | four-ghost.integration.ts | 公开译文互链与下线清链局部 |
 | A23 | implemented | four-ghost.integration.ts | 真实四Ghost安装八组合local |
-| A24 | implemented | four-ghost.integration.ts / review-i1.test.ts | 可见owner/作者/语言、正文、metadata/互链局部；完整sitemap检查待补 |
+| A24 | implemented | four-ghost.integration.ts / review-i1.test.ts | 可见owner/作者/语言、正文、metadata/互链及重启后sitemap局部；完整矩阵待独立验收 |
 | A25 | implemented | publishing.test.ts / review-i1.test.ts | 全文证明失败与known-write/GET失败回归 |
-| A26 | implemented | operations.md / recovery.integration.ts | 源码独立架构与隔离恢复；停业务/重启Ghost专项待补 |
+| A26 | implemented | operations.md / recovery.integration.ts | 源码独立架构与隔离恢复；910591d停API后公开页／图片保持可用；四Ghost实际重启通过 |
 | A27 | implemented | nyxid.test.ts / distribution.test.ts | native exact连接无fallback契约；真实账号BLOCKED |
 | A28 | implemented | nyxid.test.ts / distribution.test.ts | 精确批准契约；真实NyxID Admin Live BLOCKED |
 | A29 | implemented | distribution.test.ts / nyxid.test.ts | payload/request digest与连接指纹局部 |
@@ -64,7 +68,7 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 | A34 | implemented | distribution.test.ts / targets.test.ts | rights与能力限制局部；订阅Live BLOCKED |
 | A35 | implemented | distribution.test.ts / web/app.js | 逐目标state/history局部；完整UI矩阵待补 |
 | A36 | implemented | publishing.test.ts / distribution.test.ts / review-i1.test.ts | uncertain只读恢复/lease fencing局部 |
-| A37 | implemented | distribution.test.ts | 独立delivery状态设计；多目标故障完整矩阵待补 |
+| A37 | implemented | distribution.test.ts | 一目标失败与另一目标成功、原文下线后移除已知副本本地回归；完整矩阵待独立验收 |
 | A38 | implemented | publishing.test.ts / distribution.test.ts | cancel与迟到批准防复活局部 |
 | A39 | implemented | distribution.test.ts / targets.test.ts | 已知copy失账号/下线flag/人工移除局部 |
 | A40 | implemented | targets.test.ts / distribution.test.ts | source/canonical/owner/body与重连提示local |
@@ -78,7 +82,7 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 | A48 | implemented | content.test.ts / distribution.test.ts / operations.md | 写入/确认/批准/运维CLI审计；运维私有读取需工单流程 |
 | A49 | implemented | recovery.test.ts / recovery.integration.ts | 加密四站全量隔离恢复local；非生产RPO/RTO |
 | A50 | implemented | recovery.test.ts / recovery.integration.ts | 恢复出站暂停/旧session失效/unknown不重发local |
-| A51 | implemented | operations.md / recovery.integration.ts | 隔离恢复local；真实故障与生产RPO/RTO BLOCKED |
+| A51 | implemented | operations.md / recovery.integration.ts | 910591d四Ghost重启与四站新卷恢复local；生产RPO/RTO BLOCKED |
 | A52 | implemented | operations.md / nyxid-registration.md / review-i2.md | 文档交接已补；真实账号、部署、责任与订阅缺口保留 |
 
 ## 外部 BLOCKED
@@ -87,6 +91,6 @@ native NyxID契约、DEV/Hashnode策略与辅助投稿、指标/consent、发布
 - B2：DEV 个人／组织、Hashnode 组织 Pro 和有权账号、NyxID exact connections；关联 D6。无真实账号写入。
 - B3：Medium／HackerNoon 账号、人工提交负责人、明确获准内容和外部写入授权；关联 D6/D7。
 - B4：生产 HTTPS 域名、部署容量、付款责任、隐私保留策略及 RPO/RTO；关联 D1/D8/D9。
-- B5：目标 remote `git@github.com:aelf-hzz780/chronoai-cms.git` 先前 Repository not found，本轮尚未重测；不阻止本地开发和增量 commit。
+- B5：目标 remote `git@github.com:aelf-hzz780/chronoai-cms.git` 2026-10-29只读重试仍Repository not found；不阻止本地开发和增量 commit。
 
 以上保留未通过，不以 Mock／文档降级必需交付。不得把本地自测 verified 解释为原任务独立验收通过。
