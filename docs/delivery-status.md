@@ -1,10 +1,10 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为b1d30b2（R027；含R025 2b5f9e2、R024 74978bc、R023 586ff1a、R022 792a7bb、R021 0649608、R020 ed1239f），R026文档为557518d／fe3fd60；I3–I12记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md、review-i9.md、review-i10.md、review-i11.md、review-i12.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为804e7c4（R028；含R027 b1d30b2、R025 2b5f9e2、R024 74978bc、R023 586ff1a、R022 792a7bb、R021 0649608、R020 ed1239f），R026文档为557518d／fe3fd60；I3–I13记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md、review-i9.md、review-i10.md、review-i11.md、review-i12.md、review-i13.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
-最新独立恢复结果：固定74978bc获得PASS_BOUNDED_LOCAL_RECOVERY，包含完整加密capture／新卷四Ghost恢复、全字段BLOB审计、丢响应只读对账、撤权queued零写入与新稿新图发布；A50另完成6条非空delivery／payload／native approval的加密平台恢复与Local HTTP重验。R001–R026登记问题已全部有界关闭（R021非门禁）；逐A分支核算及正式D/A签收仍由原任务继续。上一恢复窗口结束时dev八容器和baseline四容器已由原任务恢复healthy；原任务另安排短窗口暂时停dev、使用自身restored-r2四站／helper补A04／A07／A19，结束后负责恢复dev与健康检查。所有卷保留，本任务不操作Docker及相关端口。详见review-local-recovery-749.md。
+最新独立恢复结果：固定74978bc获得PASS_BOUNDED_LOCAL_RECOVERY，包含完整加密capture／新卷四Ghost恢复、全字段BLOB审计、丢响应只读对账、撤权queued零写入与新稿新图发布；A50另完成6条非空delivery／payload／native approval的加密平台恢复与Local HTTP重验。R001–R027登记问题已全部有界关闭（R021非门禁），R028已开发修复、独立专项待返回；逐A分支核算及正式D/A签收仍由原任务继续。上一恢复窗口结束时dev八容器和baseline四容器已由原任务恢复healthy；原任务另安排短窗口暂时停dev、使用自身restored-r2四站／helper补A04／A07／A19，结束后负责恢复dev与健康检查。所有卷保留，本任务不操作Docker及相关端口。详见review-local-recovery-749.md。
 
 ## 增量 I2
 
@@ -44,7 +44,11 @@ ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原�
 
 ## 增量 I12
 
-b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trace，actor仍worker；仅一行业务参数变化，权限／状态／fence不变。两项TDD及三个相关失败／只读对账回归共5/5和strict通过，Native HTTP fixture仅重跑D05/D15，确认精确连接禁用零出站、Trace可关联。R027独立待返回，未重跑全检／其余14分支／四Ghost，未操作资源窗口，详见review-i12.md。
+b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trace，actor仍worker；仅一行业务参数变化，权限／状态／fence不变。两项TDD及三个相关失败／只读对账回归共5/5和strict通过，Native HTTP fixture仅重跑D05/D15，确认精确连接禁用零出站、Trace可关联。R027独立7/7及strict通过，CLOSED_LOCAL_RETEST；未重跑全检／其余14分支／四Ghost，未操作资源窗口，详见review-i12.md。
+
+## 增量 I13
+
+804e7c4修复R028，CMS取消／对账后以刷新GET读回的同一记录状态反馈，手动刷新清除旧queued提示；列表、历史及选择器保持。真实App＋Chrome随机loopback fixture固定SHA 6/6通过，含原文／分发对账旧POST响应与新GET读回交错；同脚本加载修复前源码稳定复现queued旧提示。node syntax及diff check通过。独立专项待返回，未重复取消安全／全检／四Ghost或操作资源窗口，详见review-i13.md。
 
 ## D1–D9
 

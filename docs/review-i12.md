@@ -1,6 +1,6 @@
 # I12 DeliveryWorker失败Trace关联（开发记录）
 
-R027修复源码：`b1d30b238b955796a40445f76d37c411c6809bae`；关联D7/D9、A48。独立专项待返回；正式D/A及Live未整体签收。
+R027修复源码：`b1d30b238b955796a40445f76d37c411c6809bae`；关联D7/D9、A48。独立专项7/7与strict通过，R027为CLOSED_LOCAL_RETEST；正式D/A及Live未整体签收。
 
 固定2b5f9e2的独立Native边界差量发现：org delivery获批排队后禁用精确连接，Worker正确进入manual_action_needed且零provider写入，但catch将常量`worker`作为Trace参数传给event，导致delivery_events与audit失去原操作关联。修复仅替换该参数，在lease保护的mutate中读取原delivery.trace_id；审计actor继续为worker，状态表达式、权限／连接／批准、pause和lease fence保持不变。
 
@@ -8,4 +8,6 @@ R027修复源码：`b1d30b238b955796a40445f76d37c411c6809bae`；关联D7/D9、A4
 
 原独立native-fixture仅抽取D05/D15最小复验，固定b1d30b2通过：实际loopback HTTP的org批准排队、精确连接禁用、manual_action_needed、个人连接仍active但没有fallback；event／audit／delivery确认Trace一致，actor仍worker，providerWriteDelta=0，53次本地HTTP且无handler error。证据为开发树Git忽略的`.runtime/r027-trace/`内probe、red／green、typecheck、native-fixed-sha.log及native-result.json。身份／authority／provider为明确Local fixture，不代表真实NyxID／DEV Live。
 
-R001–R026既有问题已独立有界关闭（R021非门禁），R027等待独立结论。原任务的A04／A07／A19短窗口仍由原任务调度；本任务未操作Docker、root/dev端口或环境，未push。完整角色／入口／时序核算与目标身份／provider／部署、运行责任和生产RPO/RTO保持未签收边界。
+R001–R026既有问题已独立有界关闭（R021非门禁），R027已独立有界关闭，新增R028单独跟进。原任务的A04／A07／A19短窗口仍由原任务调度；本任务未操作Docker、root/dev端口或环境，未push。完整角色／入口／时序核算与目标身份／provider／部署、运行责任和生产RPO/RTO保持未签收边界。
+
+独立固定b1d30b2专项报告确认7/7 PASS及strict通过：精确连接禁用、当前角色撤权、批准过期、写入丢响应、当前Admin只读失败、恢复身份不可用及正常只读恢复均可关联Trace；原payload与actor密文保持，恢复无新增provider写入。findingStatus为CLOSED_LOCAL_RETEST。报告为原任务Git忽略的`.runtime/acceptance-review/reviews/b1d30b2/trace-audit/review.json`；仍为Local Native HTTP fixture，不提升真实NyxID/provider或正式D/A结论。
