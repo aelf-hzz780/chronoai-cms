@@ -8,6 +8,7 @@ import { requireValue } from './errors.ts';
 import { render } from './render.ts';
 import { safeUrl } from './config.ts';
 import { provesBody } from './html-proof.ts';
+import {assertRenderBudget} from './render-budget.ts';
 import type { MetricsService } from './metrics.ts';
 import { digest } from './content.ts';
 import {BrowserRenderProof,type RenderProof} from './render-proof.ts';
@@ -57,6 +58,7 @@ export class GhostAdapter implements OriginalAdapter {
     requireValue(Array.isArray(result.posts) && result.posts.length <= 1, 502, 'GHOST_CONTRACT', 'Unexpected Ghost lookup result'); return result.posts[0] ?? null;
   }
   async publish(input: OriginalInput): Promise<OriginalResult> {
+    assertRenderBudget(this.controlledHtml(input));
     const author = this.store.get('SELECT ghost_author_id FROM author_mappings WHERE site_id=? AND credited_author=?', input.site.id, input.creditedAuthor);
     requireValue(author, 409, 'AUTHOR_MAPPING_REQUIRED', 'Operator must map the credited author to this Ghost site');
     const existing = await this.current(input);

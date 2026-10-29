@@ -192,7 +192,8 @@ test('R002: rendered image proof requires visible geometry and rejects clipping 
   const {BrowserRenderProof}=await import('../src/render-proof.ts'),renderer=new BrowserRenderProof();
   const image='<div data-chrono-revision="proof"><p>Body</p><img width="80" height="40" alt="Confirmed image"></div>';
   assert.equal(await renderer.verify('http://localhost:3999/post/',image,'proof'),true);
-  for(const css of ['img{position:fixed;left:-10000px}','[data-chrono-revision]{clip-path:inset(100%)}','img{width:0;height:0}'])assert.equal(await renderer.verify('http://localhost:3999/post/',`<style>${css}</style>${image}`,'proof'),false,css);
+  assert.equal(await renderer.verify('http://localhost:3999/post/',image.replace('<p>Body</p>',''),'proof'),true,'Image-only Markdown has no glyphs to prove');
+  for(const css of ['img{position:fixed;left:-10000px}','[data-chrono-revision]{clip-path:inset(100%)}','img{width:0;height:0}','img{filter:opacity(0)}','[data-chrono-revision]{mask-image:linear-gradient(transparent,transparent)}'])assert.equal(await renderer.verify('http://localhost:3999/post/',`<style>${css}</style>${image}`,'proof'),false,css);
   await assert.rejects(new BrowserRenderProof({RENDER_BROWSER_EXECUTABLE:'/missing/chrono-renderer'}).verify('http://localhost:3999/post/',image,'proof'),{code:'RENDERER_REQUIRED'});
 });
 
@@ -203,4 +204,21 @@ test('R002/R011: actual glyph pixels prove long scrolling text and reject transp
   const html=`<style>p{width:300px;font:18px/1.4 sans-serif}</style><article><h1>Approved title</h1><p>${body}</p></article>`;
   assert.equal(await renderer.verify('http://localhost:3999/post/',html),true,'All lines can be read by scrolling');
   for(const css of ['article,article *{color:transparent!important}','article,article *{color:white!important;background:white!important}','p{max-height:1.4em;overflow:hidden}','p{-webkit-line-clamp:1;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}'])assert.equal(await renderer.verify('http://localhost:3999/post/',`<style>${css}</style>${html}`),false,css);
+});
+
+test('R018: a normal 129-paragraph body completes pixel proof; unsupported publication size is rejected before any Ghost access',async t=>{
+  const {BrowserRenderProof}=await import('../src/render-proof.ts'),renderer=new BrowserRenderProof();
+  const body=Array.from({length:129},(_,i)=>`<p>Approved paragraph ${i}.</p>`).join('');
+  assert.equal(await renderer.verify('http://localhost:3999/post/',`<article>${body}</article>`),true);
+  const f=await setup();t.after(()=>f.store.close());const ghost=new GhostAdapter(f.store,'/unused',true),input=f.service.input(f.store.get('SELECT * FROM releases WHERE id=?',f.release.id)!);let calls=0;
+  ghost.current=async()=>{calls++;return null;};
+  for(const markdown of ['x'.repeat(50001),Array.from({length:1025},()=> 'short').join('\n\n')])await assert.rejects(ghost.publish({...input,markdown}),{code:'PUBLICATION_RENDER_LIMIT'});
+  assert.equal(calls,0,'Budget preflight must precede all remote access');
+  await f.service.cancel(f.actor,f.release.id,'cancel');
+  const revision=await f.content.edit(f.actor,f.article.id,f.article.revision.id,{markdown:'x'.repeat(50001)},'trace');
+  const blocked=await f.service.confirm(f.actor,f.article.id,{...f.input,revisionId:revision.revision.id,idempotencyKey:'over-render-budget'},'trace');
+  await new ReleaseWorker(f.service,ghost).once();
+  assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',blocked.id)!.state,'blocked');
+  assert.equal(f.store.get('SELECT error_code FROM releases WHERE id=?',blocked.id)!.error_code,'PUBLICATION_RENDER_LIMIT');
+  assert.equal(calls,0);assert.equal((await f.content.get(f.actor,f.article.id)).revision.markdown.length,50001);
 });

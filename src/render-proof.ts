@@ -50,6 +50,7 @@ export class BrowserRenderProof implements RenderProof {
         for(const element of elements){
           if(!shown(element))return false;
           if(element.tagName==='IMG'){
+            for(let node:Element|null=element;node;node=node.parentElement){const style=getComputedStyle(node);if(style.filter!=='none'||style.maskImage!=='none')return false;}
             element.scrollIntoView({block:'center',inline:'center'});
             const rect=element.getBoundingClientRect();
             if(rect.width<1||rect.height<1||(element as HTMLImageElement).srcset)return false;

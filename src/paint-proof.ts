@@ -15,48 +15,55 @@ function glyphPixels(before:Buffer,hidden:Buffer,glyphs:Glyph[],painted:boolean)
     return painted?changed>0:changed===0;
   });
 }
-// Measure actual raster contributions, not just DOM layout boxes. Wrap only one
-// text node, verify the wrapper has no visual effect, then hide it without
-// changing layout. Every non-whitespace grapheme must contribute visible pixels.
+// Group text nodes whose rectangles do not overlap. Hiding the group together
+// cannot attribute one node's glyph pixels to another, and avoids four screenshots
+// per short paragraph when many paragraphs fit in the same viewport.
 export async function provesTextPaint(page:Page,marker?:string) {
-  const list=await page.evaluateHandle(marker=>{
+  const state=await page.evaluateHandle(marker=>{
     const root=marker?[...document.querySelectorAll('[data-chrono-revision]')].find(node=>node.getAttribute('data-chrono-revision')===marker):document.querySelector('article');
-    const result:Text[]=[];if(!root)return result;const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-    while(walker.nextNode())if(walker.currentNode.textContent?.trim())result.push(walker.currentNode as Text);return result;
+    const result:Array<{node:Text;parts:Array<{offset:number;length:number}>;pending:Set<number>}>=[ ];
+    if(!root)return {nodes:result,imageOnly:false};const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    while(walker.nextNode())if(walker.currentNode.textContent?.trim()){
+      const node=walker.currentNode as Text,parts=[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(node.data)].filter(part=>/\S/u.test(part.segment)).map(part=>({offset:part.index,length:part.segment.length}));
+      result.push({node,parts,pending:new Set(parts.map(part=>part.offset))});
+    }
+    return {nodes:result,imageOnly:result.length===0&&!!root.querySelector('img')};
   },marker);
   try {
-  const nodes=await list.evaluate(nodes=>nodes.length),deadline=Date.now()+60000;
-  if(!nodes)return false;let captures=0;
-  for(let index=0;index<nodes;index++){
-    const text=await list.evaluateHandle((nodes,index)=>nodes[index]!,index);
-    try {
-      const offsets=await text.evaluate(node=>[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(node.data)].filter(part=>/\S/u.test(part.segment)).map(part=>part.index));
-      const remaining=new Set(offsets);
-      while(remaining.size){
-        if(++captures>128||Date.now()>deadline)return false;
-        const glyphs=await text.evaluate((node,pending)=>{
-          const wanted=new Set(pending);
-          const parts=[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(node.data)].filter(part=>wanted.has(part.index));
-          const bounds=(part:typeof parts[number])=>{const range=document.createRange();range.setStart(node,part.index);range.setEnd(node,part.index+part.segment.length);return range.getBoundingClientRect();};
-          const target=bounds(parts[0]!);window.scrollBy({left:target.left-innerWidth/2,top:target.top-innerHeight/2,behavior:'instant'});
-          return parts.map(part=>{const r=bounds(part);return {offset:part.index,left:r.left,top:r.top,width:r.width,height:r.height};}).filter(r=>r.width>0&&r.height>0&&r.left>=0&&r.top>=0&&r.left+r.width<=innerWidth&&r.top+r.height<=innerHeight);
-        },[...remaining]);
-        if(!glyphs.length)return false;
-        const original=await page.screenshot({animations:'disabled',caret:'hide'});
-        const span=await text.evaluateHandle(node=>{const span=document.createElement('span');node.replaceWith(span);span.append(node);return span;});
-        let hidden:Buffer,stable:boolean;
-        try {
-          const wrapped=await page.screenshot({animations:'disabled',caret:'hide'});
-          if(!glyphPixels(original,wrapped,glyphs,false))return false;
-          await span.evaluate(element=>element.style.setProperty('opacity','0','important'));
-          hidden=await page.screenshot({animations:'disabled',caret:'hide'});
-        }finally{await span.evaluate(element=>element.replaceWith(element.firstChild!));await span.dispose();}
-        const restored=await page.screenshot({animations:'disabled',caret:'hide'});stable=glyphPixels(original,restored,glyphs,false);
-        if(!stable||!glyphPixels(original,hidden,glyphs,true))return false;
-        for(const glyph of glyphs)remaining.delete(glyph.offset);
-      }
-    }finally{await text.dispose();}
-  }
-  return true;
-  }finally{await list.dispose();}
+    if(await state.evaluate(state=>state.imageOnly))return true;
+    const deadline=Date.now()+60000;let captures=0;
+    while(await state.evaluate(state=>state.nodes.some(node=>node.pending.size))){
+      if(++captures>128||Date.now()>deadline)return false;
+      const group=await state.evaluate(state=>{
+        const range=(item:typeof state.nodes[number],part:typeof item.parts[number])=>{const range=document.createRange();range.setStart(item.node,part.offset);range.setEnd(item.node,part.offset+part.length);return range.getBoundingClientRect();};
+        const first=state.nodes.find(item=>item.pending.size)!,part=first.parts.find(part=>first.pending.has(part.offset))!,target=range(first,part);
+        window.scrollBy({left:target.left-innerWidth/2,top:target.top-innerHeight/2,behavior:'instant'});
+        const selected:Array<{index:number;glyphs:Glyph[];box:{left:number;top:number;right:number;bottom:number}}>=[ ];
+        for(const [index,item] of state.nodes.entries()){
+          if(!item.pending.size)continue;
+          const glyphs=item.parts.filter(part=>item.pending.has(part.offset)).map(part=>{const r=range(item,part);return {offset:part.offset,left:r.left,top:r.top,width:r.width,height:r.height};}).filter(r=>r.width>0&&r.height>0&&r.left>=0&&r.top>=0&&r.left+r.width<=innerWidth&&r.top+r.height<=innerHeight);
+          if(!glyphs.length)continue;
+          const whole=document.createRange();whole.selectNodeContents(item.node);const r=whole.getBoundingClientRect(),box={left:r.left,top:r.top,right:r.right,bottom:r.bottom};
+          if(selected.some(other=>box.left<other.box.right&&box.right>other.box.left&&box.top<other.box.bottom&&box.bottom>other.box.top))continue;
+          selected.push({index,glyphs,box});
+        }
+        return selected;
+      });
+      if(!group.length)return false;
+      const glyphs=group.flatMap(item=>item.glyphs),original=await page.screenshot({animations:'disabled',caret:'hide'});
+      const spans=await state.evaluateHandle((state,indexes)=>indexes.map(index=>{
+        const node=state.nodes[index]!.node,span=document.createElement('span');node.replaceWith(span);span.append(node);return span;
+      }),group.map(item=>item.index));
+      let hidden:Buffer;
+      try {
+        const wrapped=await page.screenshot({animations:'disabled',caret:'hide'});if(!glyphPixels(original,wrapped,glyphs,false))return false;
+        await spans.evaluate(spans=>spans.forEach(span=>span.style.setProperty('opacity','0','important')));
+        hidden=await page.screenshot({animations:'disabled',caret:'hide'});
+      }finally{await spans.evaluate(spans=>spans.forEach(span=>span.replaceWith(span.firstChild!)));await spans.dispose();}
+      const restored=await page.screenshot({animations:'disabled',caret:'hide'});
+      if(!glyphPixels(original,restored,glyphs,false)||!glyphPixels(original,hidden,glyphs,true))return false;
+      await state.evaluate((state,group)=>{for(const item of group)for(const glyph of item.glyphs)state.nodes[item.index]!.pending.delete(glyph.offset);},group);
+    }
+    return Date.now()<=deadline && await state.evaluate(state=>state.nodes.length>0);
+  }finally{await state.dispose();}
 }
