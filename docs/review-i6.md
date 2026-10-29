@@ -20,6 +20,10 @@ R019已交原任务固定8aa2a02独立复验，结论待回。
 
 首轮四站在personal-zh出现verifying／ORIGINAL_NOT_VERIFIED，日志`.runtime/r019-four-ghost.log`保留。该精确源页面在host Chrome复查通过，同一Alpine Chromium helper加只读诊断连续三次visible／integrity／available均true并核验通过；未捕获正文变更或guard误拒绝。未改产品代码，恢复无诊断的固定源码后完整八组合通过；首轮根因尚未确定，不把诊断结果当成固定源码运行证据。无变化的重启／恢复演练不重复运行。
 
+按原任务要求进一步恢复首轮的同一失败记录，而非用新文章代替：release `41b9c11e-52f1-4d02-b0ea-c380c03a3388`、article `def66581-8424-48b4-be8a-8e0dc8881f3c`。原helper数据库four-ghost-dnhNOB/platform.sqlite经正常CMS reconcile路由和实际ReleaseWorker／GhostAdapter／Alpine Chromium恢复为published、error null、job done。31个业务src文件SHA匹配8aa2a02，未修改产品或直接改release状态；当前synthetic actor通过正常recovery_actors重授权，原actor_json密文保留。
+
+初始素材记录0、文件无、HTTP404；实际renderer成功返回时仍记录0／文件无，随后才物化并读回HTTP200、image/png、SHA匹配，最终素材记录1。8次Ghost请求全部GET，POST／PUT为0，远端id／url／revision／updated_at／html不变。原Trace `0c8c64b4-16e5-4d78-8751-1a6ad1e54e4c`，恢复Trace `223fe746-fc5b-4892-a740-41302916e9cb`。证据`.runtime/r019-retest/original-release-recovery-evidence.json`；原失败副本`.runtime/r019-failed.sqlite`与恢复后副本`.runtime/r019-retest/reconciled-original.sqlite`均保留。本段为开发恢复补证，已交独立核对，不覆盖首轮失败或未知原因。
+
 ## 历史运行证据与未完成门禁
 
 原任务已独立核对8828d6c恢复工件：认证解密、全部archive checksum、9张平台表全部字段／BLOB、16个源／恢复页面和图片MIME／SHA读回通过，恢复出站仍暂停。Local权限矩阵双入口各129记录分支、8个内容上下文、19个指标／隐私分支未发现失败，身份均为synthetic。以上结论限8828d6c固定源码和对应分支，不能替代本次8aa2a02渲染修复的独立复验。
