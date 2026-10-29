@@ -10,6 +10,22 @@
 4. `NYXID_OAUTH_SCOPES` 必须是实例实际授予的 scope。平台用例为 `content:read/content:write/publish/metrics:read/roles:write/connections:read`。如上游名称不同，明确设置 `NYXID_OPERATION_SCOPES_JSON`，每个 operation 映射一个非空 required-scope 数组，全部满足才授予；省略时逐字匹配。不得把缺失 scope 映射为通配权限。
 5. 配置测试用户：无组织、普通 Member、Admin、指定 Publisher、多组织、离组与撤权；分别从 CMS 和 service 验证。组织来源是 `/api/v1/orgs` 实时 `your_role`；Viewer 不获得 Member 权利。Publisher 只是本平台组织发布能力，由当前 Admin 管理。
 
+导入契约时保留各operation的201／202／200成功状态及JSON object／array／原始二进制媒体声明；私有图片按实际Content-Type处理，不能强制按JSON解码。preview的可选revision参数及report的removed枚举均应保留，removed仍受已确认remove动作和精确已知URL404／410核验约束。具体操作响应见api-guide.md；目标NyxID的OpenAPI导入兼容性仍需真实注册与脱敏导出验证，不能由本机契约测试代替。
+
+## 逐操作scope交接表
+
+真实service入口的AuthManager先要求content:read，下表列出各用例追加要求后的合并集合。它们是平台scope词汇，由NYXID_OPERATION_SCOPES_JSON映射上游实际授权；HTTP Bearer／apiKey安全方案本身不声明OAuth scope语义。scope不替代owner、实时组织角色、提交版本可见性、Publisher／Admin及精确批准检查。
+
+| operationId | 所需平台scope（全部满足） |
+|---|---|
+| getWorkspaces、listArticles、getArticle、downloadMarkdown、listRevisions、previewArticle、getPrivateImage、listOriginals、listDistribution、readAudit、getPublishedAlternatesStatus | content:read |
+| createArticle、importMarkdownFile、replaceMarkdownFile、editArticle、submitDraft、linkTranslation、uploadPrivateImage | content:read、content:write |
+| confirmOriginal、cancelOriginal、reconcileOriginal、listDestinations、confirmDistribution、getAssistedPackage、requestExactApproval、attachExactApproval、cancelDistribution、reconcileDistribution、reportAssistedSubmission、syncPublishedAlternates | content:read、publish |
+| listOwnerConnections | content:read、publish、connections:read |
+| refreshExternalMetrics | content:read、publish、metrics:read |
+| queryMetrics | content:read、metrics:read |
+| setPublishingPermission | content:read、roles:write |
+
 ## 精确连接绑定
 
 复制 `infra/platform/nyxid-connections.example.json` 到私有配置目录，填写来自 NyxID `/api/v1/user-services` 的 **UserService.id**，不是 service definition id。每个 owner×destination 精确一条可选连接，写出 issuer、subject、credential source、slug、provider account ID，以及 DEV organization ID 或 Hashnode publication ID／Pro／权限。provider secrets 只保存在 NyxID。

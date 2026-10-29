@@ -11,13 +11,28 @@
 5. `POST .../releases` 明确 ownerId/revisionId/creditedAuthor/action/rightsConfirmed/idempotencyKey；普通组织成员没有发布权限。Worker 核验正文、作者、owner、语言和图片后才 published。
 6. 查询 `/articles/:id/releases`，queued 可 cancel；verifying/uncertain 使用 `/releases/:id/reconcile`，不新建重发来绕过未知结果。update/unpublish 仍是独立确认动作。
 
+`GET /articles/:id/preview?revision=...`可预览指定的有权历史修订；省略revision时使用调用人当前可见版本。参数不扩大私人草稿／素材的访问范围。渲染时仅处理首个编码BOM，存储和下载仍保留原始字节。
+
+## 成功响应契约
+
+`/openapi.json`逐操作声明实际成功状态、顶层JSON类型与媒体类型。对象响应允许具体用例字段；调用方应读取返回的state，不将202解释为已发布。
+
+| 操作 | 成功状态 | 响应 |
+|---|---|---|
+| createArticle、importMarkdownFile、uploadPrivateImage | 201 | application/json object |
+| confirmOriginal、confirmDistribution | 202 | application/json object；后续可能等待批准、worker、公开核验或人工处理 |
+| listArticles、listRevisions、listOriginals、listDestinations、listOwnerConnections、listDistribution、readAudit、getPublishedAlternatesStatus | 200 | application/json array，元素为object；空列表为[] |
+| downloadMarkdown | 200 | text/markdown二进制原始UTF-8字节，响应可带charset=utf-8 |
+| getPrivateImage | 200 | image/png、image/jpeg、image/gif或image/webp原始二进制字节，按Content-Type解码 |
+| 其他操作 | 200 | application/json object |
+
 译文各自文章、各自发布；`POST /articles/:id/translation` 指定 sourceArticleId/sourceRevisionId。源文更新只标记过期。已发布关系冻结，投影异步同步 hreflang 和可见导航；通过 link-status 查看、sync-links 重试。
 
 ## 分发与指标
 
 `GET /targets`、`GET /owners/:id/connections` 列出当前 owner 的目标和精确连接。`POST /releases/:id/deliveries` 选择 target/connectionId/create|update|remove/full|excerpt/rightsConfirmed/idempotencyKey；纠错和移除需 copyId。当前自动只启用英文；个人 DEV、组织 DEV/Hashnode。原文未核验公开时不能创建／更新副本。
 
-组织自动写需 native exact request/authorize；个人不额外加组织批准。`GET /articles/:id/deliveries` 返回各目标独立状态／URL／历史。cancel 仅阻止未发送；uncertain 先 reconcile。辅助目标通过 package 准备材料，通过 report 分开记录 submitted/reviewing/rejected/published；公开链接与来源可读核验后才记 published，人工回报不能证明平台 editorial acceptance 的全部过程。已知副本移除必须核验原 URL404/410；原文下线不禁止移除。
+组织自动写需 native exact request/authorize；个人不额外加组织批准。`GET /articles/:id/deliveries` 返回各目标独立状态／URL／历史。cancel 仅阻止未发送；uncertain 先 reconcile。辅助目标通过 package 准备材料，通过 report 分开记录 submitted/reviewing/rejected/manual_action_needed/published/removed；公开链接与来源可读核验后才记 published，人工回报不能证明平台 editorial acceptance 的全部过程。removed仅允许已确认的remove动作，必须保留known copy remote ID与精确URL并核验该URL为404/410；可省略url使用已记录地址，传入时必须与已知地址相同。原文下线不禁止移除。
 
 `GET /metrics?ownerId=...&from=YYYY-MM-DD&to=...&article=...&language=...&destination=ghost` 返回 PV、每日估算 UV、热门、趋势、来源与分发。外部支持目标先 `POST /deliveries/:id/metrics/refresh`；缺失授权或数据为 Unavailable/null，不能填0。外部是累计计数快照，日期选择采集时间，不冒充区间流量；不计算跨平台唯一人数。
 
