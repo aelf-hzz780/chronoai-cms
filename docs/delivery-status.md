@@ -1,6 +1,6 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为792a7bb（R022；含R021 0649608、R020 ed1239f），I3–I8记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为586ff1a（R023；含R022 792a7bb、R021 0649608、R020 ed1239f），I3–I9记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md、review-i9.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
 
 状态含义：implemented仅表示部分实现，不代表完整场景通过；local只说明合成或本地实机范围，不能代替live。**D1–D9独立验收仍全部未通过，A01–A52没有宣称完整参数矩阵通过。** 原任务独立复验与开发自测分开。
 
@@ -27,6 +27,10 @@ ed1239f修复BOM导致首块Markdown语法错误：仅规范渲染输入，原�
 ## 增量 I8
 
 792a7bb修复R022 OpenAPI实际响应契约：201／202状态、8类数组、图片与Markdown二进制媒体、preview可选历史revision及受既有移除守卫约束的removed枚举；补34个operation的scope交接说明。独立专项报告CLOSED_LOCAL_RETEST：34路由及operationId、36次实际响应、移除404／410及拒绝守卫、历史revision／owner与scope均符合；完整80项测试与strict独立通过，原任务确认R022关闭。R001–R022均完成各自有界修复，R021仍非门禁，不提升正式D/A或Live。目标NyxID注册／导入兼容性仍BLOCKED。dev按独立验收资源窗口继续暂停，卷保留；没有新具体缺陷时不重复自测或启动Ghost，详见review-i8.md。
+
+## 增量 I9
+
+586ff1a修复R023 CMS文件选择器重复选择：图片与Markdown读取File后清空input，reset/openArticle上下文切换再次清空；图片异步完成时校验原articleId，避免切换文章污染编辑器。临时真实Chromium＋Fastify fixture验证同PNG路径跨EN／ZH文章、校验失败后重试、同Markdown路径重复导入均通过；node syntax与strict＋80项本地测试通过。R023独立专项仍OPEN，等待固定586ff1a复验；未操作3398／3399、Ghost或dev源站，详见review-i9.md。
 
 ## D1–D9
 
