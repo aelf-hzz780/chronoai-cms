@@ -7,7 +7,7 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 | 入口 | 内容与证据边界 |
 | --- | --- |
 | [开发运行](development.md)、[API 指南](api-guide.md)、[NyxID 注册](nyxid-registration.md)、[部署运维](operations.md) | 当前运行与维护路径；目标 NyxID／provider／生产配置需真实输入，文档与模板不是 Live 证据 |
-| [交付台账](delivery-status.md)及其 I1–I10 记录 | 按固定源码记录开发自测、独立有界复验、未完成分支；Document／Local／Live 分开，不以修复关闭替代整体验收 |
+| [交付台账](delivery-status.md)及其迭代记录 | 按固定源码记录开发自测、独立有界复验、未完成分支；Document／Local／Live 分开，不以修复关闭替代整体验收 |
 | [74978bc 独立 Local 恢复](review-local-recovery-749.md) | 实际四 Ghost 与平台加密捕获／新卷恢复、全字段审计、旧会话失效及只读对账；本地身份 fixture，不包含真实外部 delivery 恢复或生产 RPO/RTO |
 | [阶段 0](phase-0.md)、[迁移复验](local-revalidation.md) | 历史双站与基础实验；仅适用于其记录的源码和环境，不能代表当前 CMS／service 或四站完整结果 |
 
