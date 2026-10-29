@@ -13,3 +13,5 @@
 | R016 | 采集异常保持GIF和发布可用，保存owner/article/lang/date gap并显示Unavailable；完全DB不可写保留进程内gap | metrics.test.ts：observations写失败HTTP200但指标null/Unavailable，其他语言不受影响 |
 
 验证：strict TypeScript、60项本地测试；前端语法、diff检查。最终四Ghost与恢复会另外生成当前源码指纹证据，旧证据不提升为新版本验收。
+
+R007兼容性跟进：所有授权metrics只读调用也携带冻结connectionFingerprint（新增refreshMetrics回归），防止native执行端新约束使原有指标读取总是Unavailable。

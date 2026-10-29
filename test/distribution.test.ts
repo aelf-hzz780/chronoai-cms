@@ -129,3 +129,10 @@ test('R014: paused outbound admits explicit uncertain delivery reconciliation bu
   const queued=await f.service.originals.confirm(f.actor,fresh.id,{ownerId:'solo',revisionId:fresh.revision.id,creditedAuthor:'solo',action:'publish',rightsConfirmed:true,idempotencyKey:'new-original'},'trace');
   assert.equal(await new ReleaseWorker(f.service.originals,{async publish(){throw Error('Must not send');},async verify(){return true;},async reconcile(){return null;},async unpublish(){throw Error('Must not send');}}).once(),false);assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',queued.id)!.state,'queued');
 });
+test('R007 follow-up: authorized metrics reads carry the same frozen connection proof to native execution',async t=>{
+  const f=await setup('solo');t.after(()=>f.store.close());const {connectionFingerprint}=await import('../src/connection-proof.ts');
+  const delivery=await f.service.request(f.actor,f.release.id,{target:'dev',connectionId:'solo-dev',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'metrics-proof'},'trace');f.store.run("UPDATE deliveries SET state='published',remote_id='remote',url='https://dev.to/a/post' WHERE id=?",delivery.id);
+  const connection=await f.service.connections.connection(f.actor,{kind:'personal',issuer:f.actor.issuer,subject:'solo'},'solo-dev','dev');let reads=0;
+  f.service.connections.execute=async(_actor,input:any)=>{assert.equal(input.connectionFingerprint,connectionFingerprint(connection));assert.equal(input.readOnly,true);reads++;return{accountId:'account',status:200,body:input.request.url.includes('/me/published')?[{id:'remote',page_views_count:7}]:{user:{user_id:'account'},public_reactions_count:2,comments_count:0}};};
+  assert.equal((await f.service.refreshMetrics(f.actor,delivery.id,'trace')).availability,'Available');assert.equal(reads,2);
+});
