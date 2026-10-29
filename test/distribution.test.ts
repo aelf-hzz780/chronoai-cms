@@ -51,6 +51,33 @@ test('A35/A36/A37/A38: uncertain writes do not duplicate; assisted targets retai
   assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?', assisted.id)?.state, 'submitted');
 });
 
+test('R027: queued connection failure preserves confirmation Trace in events and worker audit',async t=>{
+  const f=await setup();t.after(()=>f.store.close());const trace='confirmation-disabled-connection';
+  const delivery=await f.service.request(f.actor,f.release.id,{target:'dev',connectionId:'org-dev',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'failure-trace'},trace);
+  f.approve();await f.service.authorize(f.actor,delivery.id,delivery.digest,'exact-approval-trace');
+  f.service.connections.connection=async()=>{throw new RemoteError('CONNECTION_DISABLED','Exact connection disabled');};
+  assert.equal(await f.worker.once(),true);assert.equal(f.calls.length,0);
+  const event=f.store.get('SELECT * FROM delivery_events WHERE delivery_id=? ORDER BY rowid DESC LIMIT 1',delivery.id)!;
+  assert.equal(event.state,'manual_action_needed');assert.equal(event.code,'CONNECTION_DISABLED');assert.equal(event.trace_id,trace);
+  const audit=f.store.get("SELECT * FROM audit WHERE resource_id=? AND action='delivery.manual_action_needed' ORDER BY rowid DESC LIMIT 1",delivery.id)!;
+  assert.equal(audit.actor,'worker');assert.equal(audit.trace_id,trace);assert.equal(audit.owner_id,'org');
+  assert.equal(f.store.get('SELECT trace_id FROM deliveries WHERE id=?',delivery.id)!.trace_id,trace);
+});
+
+test('R027: uncertain write and failed read-only reconciliation retain the confirmation audit correlation',async t=>{
+  const f=await setup('solo');t.after(()=>f.store.close());const trace='confirmation-lost-response';
+  const delivery=await f.service.request(f.actor,f.release.id,{target:'dev',connectionId:'solo-dev',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'uncertain-trace'},trace);
+  f.makeUncertain();await f.worker.once();assert.equal(f.calls.length,1);assert.equal(f.calls[0].request.method,'POST');
+  await f.service.reconcile(f.actor,delivery.id,'explicit-reconcile-trace');await f.worker.once();
+  assert.equal(f.calls.length,2);assert.equal(f.calls[1].readOnly,true);assert.equal(f.calls[1].request.method,'GET');
+  const events=f.store.all("SELECT * FROM delivery_events WHERE delivery_id=? AND state='uncertain' ORDER BY rowid",delivery.id);
+  assert.equal(events.length,2);assert.ok(events.every(event=>event.trace_id===trace));
+  const audits=f.store.all("SELECT * FROM audit WHERE resource_id=? AND action='delivery.uncertain'",delivery.id);
+  assert.equal(audits.length,2);assert.ok(audits.every(audit=>audit.actor==='worker'&&audit.trace_id===trace));
+  assert.equal(f.store.get("SELECT trace_id FROM audit WHERE resource_id=? AND action='delivery.reconcile.request'",delivery.id)!.trace_id,'explicit-reconcile-trace');
+  assert.equal(f.store.get('SELECT trace_id FROM deliveries WHERE id=?',delivery.id)!.trace_id,trace);
+});
+
 test('distribution confirmation is idempotent and cancellation cannot be resurrected by a late approval',async t=>{
   const f=await setup();t.after(()=>f.store.close());const request={target:'dev',connectionId:'org-dev',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'same'};
   const first=await f.service.request(f.actor,f.release.id,request,'trace');assert.equal((await f.service.request(f.actor,f.release.id,request,'trace')).id,first.id);

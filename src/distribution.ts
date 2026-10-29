@@ -270,7 +270,7 @@ export class DeliveryWorker {
     } catch (error) {
       const code = error instanceof AppError ? error.code : 'INTERNAL';
       const state = recovering || knownWrite || acceptedWrite || sent && ['REMOTE_CONTRACT','NYXID_CONTRACT'].includes(code) || error instanceof RemoteError && error.uncertain || (!(error instanceof AppError) && sent) ? 'uncertain' : ['MANUAL_REMOVAL_REQUIRED', 'ACCOUNT_RIGHTS_REQUIRED', 'CONNECTION_DISABLED','REMOTE_AUTHORIZATION'].includes(code) ? 'manual_action_needed' : code === 'APPROVAL_NEEDED' ? 'approval_needed' : error instanceof AppError && [401,403,409,503].includes(error.status) ? 'blocked' : 'failed';
-      this.queue.mutate(lease,() => this.service.event(lease.resourceId, state, 'worker', code),true);
+      this.queue.mutate(lease,() => this.service.event(lease.resourceId, state, store.get('SELECT trace_id FROM deliveries WHERE id=?',lease.resourceId)!.trace_id, code),true);
     }
     return true;
   }
