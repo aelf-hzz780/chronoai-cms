@@ -29,6 +29,10 @@
 
 ## 独立复验与剩余门禁
 
-原任务已在910591d真实Chromium复验中关闭R002／R011，包含透明文字、26行裁剪、长文滚动、中英混排、辅助full／excerpt及动态页面干扰；其余R001–R017的关闭记录沿用各自固定SHA和具体分支，不扩大为完整场景矩阵通过。R018在8828d6c等待独立复验，本记录不提前判定关闭。
+原任务已在910591d真实Chromium复验中关闭R002／R011；在8828d6c进一步确认R002关键6分支及R011实际report的7分支通过，包括正常26行、中英长文、透明／裁剪文字、辅助full／excerpt、动态页面干扰及重叠文字盒的透明尾节点拒绝。
+
+R018在8828d6c已独立关闭：纯图片／caption均verify=true并物化一个有效PNG；129段实际Worker正常published，40张截图、4.446秒。13项容量／生命周期检查通过，包含publish／update超限零Ghost访问、旧线上不变、2MB私有原稿两入口byte exact、unpublish／cancel不被超限新工作稿阻断。独立证据位于原任务工作树`.runtime/acceptance-review/reviews/8828d6c/`下的`limits/r018-review.json`、`body/review.md`、`dispatch/dispatch-review.json`；运行数据不复制入Git。
+
+原任务明确确认R001–R018全部已登记缺陷闭环关闭，结论限各自固定SHA和具体分支。完整Local权限、多组织／受限代理／撤权、Markdown／并发／素材私密、指标过滤／隐私矩阵仍由原任务继续独立补验。最新8828恢复工件已提供，逐项解密／checksum／数据库及页面素材只读独立核对仍在进行；本机开发运行验证不替代这一步。
 
 真实NyxID、DEV／Hashnode／Medium／HackerNoon账号与外部写入、生产HTTPS／容量／付款责任／隐私及RPO/RTO继续BLOCKED。目标remote只读访问仍Repository not found，未push；不推送main／master。运行目录含私有配置、凭证与加密备份，全部保持Git忽略，仅提交可审查源码和文档。
