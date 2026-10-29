@@ -100,4 +100,9 @@ test('R017: successful sidecar visit clears checkpointed attempts during a concu
   await pending;store.run=run;store.get=get;
   assert.equal(store.get('SELECT count(*) AS n FROM observations')!.n,1);assert.equal(store.get('SELECT count(*) AS n FROM collection_attempts')!.n,0);
   assert.equal((await metrics.query(f.actors.solo,'solo',{})).readership.pageViews.value,1);
+  first=true;store.run=(sql,...args)=>{if(first&&sql.startsWith('INSERT INTO collection_attempts')){first=false;throw Error('initial write unavailable');}return run(sql,...args);};
+  const cleanup=metrics.coverage.completeSidecar.bind(metrics.coverage);metrics.coverage.completeSidecar=()=>{throw Error('interrupted after observation commit');};
+  await assert.rejects(metrics.collect(metrics.token(a.id,release.id),{consent:true,ip:'127.0.0.1',userAgent:'test'}));store.run=run;metrics.coverage.completeSidecar=cleanup;
+  const restarted=new MetricsService(content,config);assert.equal((await restarted.query(f.actors.solo,'solo',{})).readership.pageViews.value,2);
+  await snapshotPlatform(second,join(directory,'after-commit.sqlite'));assert.equal(store.get('SELECT count(*) AS n FROM collection_attempts')!.n,0);
 });

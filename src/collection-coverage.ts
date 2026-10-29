@@ -41,6 +41,7 @@ export class CollectionCoverage {
     const recorded=this.store.all('SELECT c.*,a.owner_id,a.language FROM collection_attempts c JOIN articles a ON a.id=c.article_id');
     const known=new Set(recorded.map(item=>item.id));
     return [...recorded,...this.sidecars().filter(item=>!known.has(item.id)).flatMap(item=>{
+      if(this.store.get('SELECT 1 FROM observations WHERE id=?',item.id))return [];
       const article=this.store.get('SELECT owner_id,language FROM articles WHERE id=?',item.article_id);
       return article?[{...item,...article}]:[];
     })];
