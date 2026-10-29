@@ -1,6 +1,6 @@
 # I9 CMS 文件选择器重复选择（开发记录）
 
-R023修复源码：`586ff1a6b9462f05228610249adb404fbabda6cf`；关联D4、A17/A19，固定业务基线为792a7bb。独立实际浏览器专项复验待返回；完整D1–D9/A01–A52及Live未整体通过。
+R023修复源码：`586ff1a6b9462f05228610249adb404fbabda6cf`；关联D4、A17/A19，固定业务基线为792a7bb。独立实际浏览器专项已关闭；完整D1–D9/A01–A52及Live未整体通过。
 
 ## R023：同一路径文件可重复选择
 
@@ -19,4 +19,4 @@ R023修复源码：`586ff1a6b9462f05228610249adb404fbabda6cf`；关联D4、A17/A
 
 `node --check web/app.js`通过；`npm run check` strict与80项测试全部通过。探针脚本和输出在Git忽略的`.runtime/r023-file-picker-probe.mjs`及命令输出中，不能替代独立验收。没有新增后端路由、权限或外部写入；Markdown导入仍保留原始BOM／CRLF语义，图片仍只通过当前文章私有asset服务上传。
 
-独立专项应在固定586ff1a上复验真实浏览器同路径图片跨文章、成功／失败重试及Markdown重复选择；R023在独立结论返回前保持OPEN。dev源站、review Ghost和root3398／3399按资源窗口保持现状，不启动或重启。
+固定586ff1a的独立报告确认真实Chrome四个分支通过：同路径PNG跨文章、实际401后同路径重试、BOM/CRLF同`.md`二次导入并下载、延迟真实上传响应期间切换文章；7个trusted选择事件与input清空断言通过。证据为原任务工作树`.runtime/acceptance-review/reviews/586ff1a/file-picker/file-picker-review.json`，R023已关闭。dev源站、review Ghost和root3398／3399按资源窗口保持现状，不启动或重启。
