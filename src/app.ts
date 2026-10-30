@@ -111,6 +111,7 @@ export async function createApp(deps: AppDependencies) {
         const data = await deps.content.markdown(request.actor, (request.params as {id:string}).id, text((request.query as {revision:string}).revision, 'revision'));
         return reply.type('text/markdown; charset=utf-8').header('content-disposition', 'attachment; filename="article.md"').send(data);
       });
+      api.get('/articles/:id/markdown-file', async request => deps.content.markdownFile(request.actor, (request.params as {id:string}).id, text((request.query as {revision:string}).revision, 'revision')));
       api.get('/articles/:id/revisions', async request => {
         const article = deps.content.article((request.params as {id:string}).id);
         const current = await deps.content.visibleRevision(request.actor, article);

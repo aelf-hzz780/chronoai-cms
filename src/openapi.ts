@@ -6,7 +6,7 @@ interface Success {status?:200|201|202;schema?:Record<string,any>;media?:string[
 export function openApi(publicUrl:string) {
   const paths:Record<string,any>={};
   function route(method:string,path:string,name:string,summary:string,body?:any,query:Record<string,any>={},success:Success={}) {
-    const parameters=[...Array.from(path.matchAll(/\{([^}]+)\}/g),m=>({name:m[1],in:'path',required:true,schema:id})),...Object.entries(query).map(([name,schema]:any)=>({name,in:'query',required:name==='ownerId'||path.endsWith('/markdown')&&name==='revision',schema}))];
+    const parameters=[...Array.from(path.matchAll(/\{([^}]+)\}/g),m=>({name:m[1],in:'path',required:true,schema:id})),...Object.entries(query).map(([name,schema]:any)=>({name,in:'query',required:name==='ownerId'||path.endsWith('/markdown-file')&&name==='revision',schema}))];
     const operation:any={operationId:name,summary,parameters,security:[{NyxIdentity:[],NyxDelegation:[]},{Bearer:[]}],responses:{[success.status??200]:{description:success.description??'Authorized result',content:Object.fromEntries((success.media??['application/json']).map(mime=>[mime,{schema:success.schema??resultObject}]))},'401':{description:'Identity unavailable, revoked or invalid'},'403':{description:'Current scope, owner or publishing authority denied'},'409':{description:'Revision, confirmation, destination or execution state requires action'}}};
     if(body)operation.requestBody={required:true,content:{'application/json':{schema:body}}};
     (paths[`/api/service${path}`]??={})[method]=operation;
@@ -20,7 +20,7 @@ export function openApi(publicUrl:string) {
   route('get','/articles/{id}','getArticle','Read an authorized article revision',undefined,{revision:{type:'string',description:'Optional authorized revision'}});
   route('patch','/articles/{id}','editArticle','Save an immutable revision with conflict protection',object({expectedRevision:id,title:string,markdown:string,creditedAuthor:string},['expectedRevision']));
   route('post','/articles/{id}/submit','submitDraft','Submit this exact draft revision',object({revisionId:id}));
-  route('get','/articles/{id}/markdown','downloadMarkdown','Download byte-preserved original Markdown',undefined,{revision:id},{media:['text/markdown'],schema:binary});
+  route('get','/articles/{id}/markdown-file','downloadMarkdown','Retrieve the original .md file as a base64 JSON envelope. Decode data as base64 bytes, verify byteLength and SHA-256, then save as filename; never save the JSON or normalized text as Markdown.',undefined,{revision:id},{schema:object({articleId:id,revisionId:id,filename:{type:'string',const:'article.md'},mediaType:{type:'string',const:'text/markdown'},encoding:{type:'string',const:'base64'},byteLength:{type:'integer',minimum:0,maximum:2000000},sha256:{type:'string',pattern:'^[0-9a-f]{64}$'},data:{type:'string',contentEncoding:'base64',contentMediaType:'text/markdown',maxLength:2666668}})});
   route('get','/articles/{id}/revisions','listRevisions','List only authorized revision history',undefined,{},{schema:resultArray});
   route('get','/articles/{id}/preview','previewArticle','Privately preview an authorized saved revision',undefined,{revision:{type:'string',description:'Optional authorized revision; defaults to the caller-visible revision'}});
   route('post','/articles/{id}/translation','linkTranslation','Link a translation to an authorized source revision',object({sourceArticleId:id,sourceRevisionId:id}));

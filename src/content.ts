@@ -33,6 +33,10 @@ export class ContentService {
     const revision = await this.visibleRevision(actor, this.article(id), revisionId);
     return Buffer.from(revision.markdown);
   }
+  async markdownFile(actor: Actor, id: string, revisionId: string) {
+    const data = await this.markdown(actor, id, revisionId);
+    return { articleId: id, revisionId, filename: 'article.md', mediaType: 'text/markdown', encoding: 'base64', byteLength: data.length, sha256: digest(data), data: data.toString('base64') };
+  }
   input(input: Record<string, unknown>) {
     const title = text(input.title, 'title', 250);
     const markdown = text(input.markdown, 'markdown', 2_000_000);

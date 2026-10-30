@@ -33,7 +33,8 @@ test('R022: declared success statuses, JSON shapes and binary media match actual
     const asset=(await observe('uploadPrivateImage',{method:'POST',url:`/api/service/articles/${article.id}/assets`,payload:{mime,base64:bytes.toString('base64')}},201)).json();
     await observe('getPrivateImage',{url:`/api/service/assets/${asset.id}`},200,bytes);
   }
-  await observe('downloadMarkdown',{url:`/api/service/articles/${article.id}/markdown?revision=${article.revision.id}`},200,Buffer.from(source));
+  const file=(await observe('downloadMarkdown',{url:`/api/service/articles/${article.id}/markdown-file?revision=${article.revision.id}`})).json();
+  assert.deepEqual(Buffer.from(file.data,'base64'),Buffer.from(source));
   f.store.run('INSERT INTO sites VALUES (?,?,?,?,?)','site','solo','en','http://localhost:3999','KEY');
   const release=(await observe('confirmOriginal',{method:'POST',url:`/api/service/articles/${article.id}/releases`,payload:{ownerId:'solo',revisionId:article.revision.id,creditedAuthor:'Solo',action:'publish',rightsConfirmed:true,idempotencyKey:'contract-original'}},202)).json();
   // Only local fixture state is seeded; no Ghost request or worker dispatch.
