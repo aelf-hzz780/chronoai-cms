@@ -68,6 +68,8 @@ export class NyxAuthority implements Authority {
     const result=await remoteJson(this.config.introspectionUrl,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body});
     const scopes=typeof result.scope==='string'?result.scope.split(' '):[];
     requireValue(result.active===true && result.sub===actor.subject && (!result.iss || result.iss===actor.issuer) && (actor.sourceScopes??actor.scopes).every(s=>scopes.includes(s)),401,'REVOKED','Current authorization is invalid');
+    const mapping=(actor.entry==='cms'?this.config.cmsOperationScopes:this.config.serviceOperationScopes) ?? this.config.operationScopes;
+    if(mapping) requireValue(actor.scopes.every(capability=>mapping[capability]?.every(scope=>scopes.includes(scope))),401,'REVOKED','Current capability configuration no longer authorizes the saved action');
   }
   async call(actor:Actor,path:string,method='GET',body?:unknown) {
     requireValue(path.startsWith('/api/v1/') && !path.includes('..'),500,'NYXID_ROUTE','Invalid upstream route');

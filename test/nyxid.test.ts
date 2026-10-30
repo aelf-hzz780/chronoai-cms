@@ -15,6 +15,15 @@ test('NyxID native operation digest agrees with the official Unicode cross-langu
   assert.equal(exactArguments(endpoint,'/elsewhere/123',{method:'PUT',url:'https://dev.to/api/elsewhere/123'}),null);
 });
 
+test('R029: online authority rejects saved capabilities removed from the current entry configuration',async t=>{
+  const config={introspectionUrl:'https://nyx.example/introspect',clientId:'cms',cmsOperationScopes:{'content:read':['profile'],'publish':['proxy']}} as unknown as Config;
+  const authority=new NyxAuthority(config),actor={issuer:'nyxid',subject:'person',credential:'test-only',entry:'cms' as const,sourceScopes:['profile','proxy'],scopes:['content:read','publish']};
+  const original=globalThis.fetch;globalThis.fetch=async()=>new Response(JSON.stringify({active:true,sub:'person',iss:'nyxid',scope:'profile proxy'}));t.after(()=>{globalThis.fetch=original;});
+  await authority.validate(actor);
+  delete config.cmsOperationScopes!.publish;
+  await assert.rejects(authority.validate(actor),{code:'REVOKED'});
+});
+
 test('native NyxID inventory, exact approval and redemption never use a fallback account or a second proxy write',async t=>{
   const f=fixture(); const directory=await mkdtemp(join(tmpdir(),'chrono-nyx-contract-'));t.after(async()=>{f.store.close();await rm(directory,{recursive:true,force:true});});
   const owner={kind:'organization',issuer:f.actors.admin.issuer,subject:'org'};

@@ -1,7 +1,7 @@
 import { AppError, requireValue, text } from './errors.ts';
 import { Store, type Row } from './store.ts';
 
-export interface Actor { issuer: string; subject: string; scopes: string[]; credential: string; sourceScopes?: string[]; }
+export interface Actor { issuer: string; subject: string; scopes: string[]; credential: string; sourceScopes?: string[]; entry?:'cms'|'service'; }
 export interface Authority {
   validate(actor: Actor): Promise<void>;
   membership(actor: Actor, organization: string): Promise<'admin' | 'member' | null | string>;

@@ -69,7 +69,7 @@ export async function createApp(deps: AppDependencies) {
         for (const owner of deps.store.all('SELECT * FROM owners WHERE issuer=? AND (kind=? OR subject=?) LIMIT 1000', request.actor.issuer, 'organization', request.actor.subject)) {
           try { await deps.policy.owner(request.actor, owner.id); }
           catch (error) { if (error instanceof AppError && error.code === 'FORBIDDEN') continue; throw error; }
-          workspaces.push({ id: owner.id, kind: owner.kind, name: deps.store.get('SELECT display_name FROM owner_profiles WHERE owner_id=?',owner.id)?.display_name??owner.subject, canPublish: await deps.policy.canPublish(request.actor, owner) });
+          workspaces.push({ id: owner.id, kind: owner.kind, name: deps.store.get('SELECT display_name FROM owner_profiles WHERE owner_id=?',owner.id)?.display_name??owner.subject, canPublish: request.actor.scopes.includes('publish') && await deps.policy.canPublish(request.actor, owner) });
         }
         const session = deps.store.get('SELECT csrf FROM sessions WHERE id=?', (await import('./content.ts')).digest(request.cookies.chrono_session ?? ''));
         return { subject: request.actor.subject, workspaces, csrf: entry === 'cms' ? session?.csrf : undefined };

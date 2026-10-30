@@ -23,18 +23,21 @@ export class AuthManager {
     this.discovery = discovery; this.keys = createRemoteJWKSet(new URL(discovery.jwks_uri), { timeoutDuration: 8000, cooldownDuration: 1000 });
     return discovery;
   }
-  actor(payload: JWTPayload, credential: string): Actor {
+  actor(payload: JWTPayload, credential: string, entry:'cms'|'service'='service'): Actor {
     requireValue(payload.iss === this.config.issuer && typeof payload.sub === 'string' && typeof payload.exp === 'number' && payload.exp * 1000 > Date.now() && typeof payload.scope === 'string', 401, 'INVALID_TOKEN', 'Invalid caller token');
     const sourceScopes = payload.scope.split(' ').filter(Boolean);
-    const scopes = this.config.operationScopes ? Object.entries(this.config.operationScopes).filter(([,required]) => required.every(scope => sourceScopes.includes(scope))).map(([operation]) => operation) : sourceScopes;
-    return { issuer: payload.iss, subject: payload.sub, scopes, sourceScopes, credential };
+    const mapping=(entry==='cms'?this.config.cmsOperationScopes:this.config.serviceOperationScopes) ?? this.config.operationScopes;
+    const scopes = mapping ? Object.entries(mapping).filter(([,required]) => required.every(scope => sourceScopes.includes(scope))).map(([capability]) => capability) : sourceScopes;
+    return { issuer: payload.iss, subject: payload.sub, scopes, sourceScopes, credential,entry };
   }
-  async accessToken(token: string, audience: string) {
+  async accessToken(token: string, audience: string, entry:'cms'|'service'='service') {
     await this.discover();
     try {
       const result = await jwtVerify(token, this.keys!, { issuer: this.config.issuer, audience, algorithms: ['RS256', 'ES256'], requiredClaims: ['sub', 'exp', 'iat'] });
       requireValue(result.payload.token_type === 'access' && result.payload.sa !== true && result.payload.relay !== true, 401, 'INVALID_TOKEN', 'Human access token required; ID and service-account tokens cannot authorize user actions');
-      const actor = this.actor(result.payload, token); await this.policy.scope(actor, 'content:read'); return actor;
+      if(entry==='cms') requireValue(result.payload.client_id===this.config.clientId,401,'INVALID_TOKEN','CMS client binding required');
+      else if(this.config.serviceOperationScopes) requireValue(typeof result.payload.client_id==='string' && this.config.serviceClientIds?.includes(result.payload.client_id),401,'INVALID_TOKEN','Explicit service caller client required; use signed propagation for proxy calls');
+      const actor = this.actor(result.payload, token,entry); await this.policy.scope(actor, 'content:read'); return actor;
     } catch { throw new AppError(401, 'INVALID_TOKEN', 'Caller token could not be verified'); }
   }
   async authenticate(request: FastifyRequest): Promise<Actor | null> {
@@ -42,11 +45,11 @@ export class AuthManager {
       const identity=request.headers['x-nyxid-identity-token'], delegation=request.headers['x-nyxid-delegation-token'];
       if (identity || delegation) {
         requireValue(typeof identity === 'string' && typeof delegation === 'string',401,'INVALID_TOKEN','Both signed identity and delegated authority are required');
-        return this.propagated(identity,delegation);
+        return this.provision(await this.propagated(identity,delegation));
       }
       const header = request.headers.authorization;
       if (!header?.startsWith('Bearer ')) return null;
-      return this.accessToken(header.slice(7), this.config.serviceAudience);
+      return this.provision(await this.accessToken(header.slice(7), this.config.serviceAudience));
     }
     const session = request.cookies.chrono_session;
     if (!session) return null;
@@ -55,8 +58,14 @@ export class AuthManager {
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
       requireValue(request.headers.origin === this.config.publicUrl && request.headers['x-csrf-token'] === row.csrf, 403, 'CSRF', 'Same-origin request and CSRF token required');
     }
-    const actor = this.vault.open<Actor>(row.actor_json);
+    const saved = this.vault.open<Actor>(row.actor_json);
+    const actor = this.config.cmsOperationScopes ? await this.accessToken(saved.credential,this.config.cmsAudience,'cms') : saved;
     await this.policy.scope(actor, 'content:read');
+    return actor;
+  }
+  provision(actor:Actor) {
+    const ownerId=`personal-${digest(`${actor.issuer}\n${actor.subject}`).slice(0,32)}`;
+    this.store.run('INSERT OR IGNORE INTO owners VALUES (?,?,?,?)',ownerId,'personal',actor.issuer,actor.subject);
     return actor;
   }
   async propagated(identity: string, delegation: string) {
@@ -66,7 +75,8 @@ export class AuthManager {
       const assertion=await jwtVerify(identity,this.keys!,{issuer:this.config.issuer,audience:this.config.serviceAudience,algorithms:['RS256'],requiredClaims:['sub','iat','exp','jti','nyx_service_id']});
       const delegated=await jwtVerify(delegation,this.keys!,{issuer:this.config.issuer,audience:this.config.nyxAudience,algorithms:['RS256'],requiredClaims:['sub','iat','exp','jti','scope']});
       const p=delegated.payload;
-      requireValue(assertion.payload.nyx_service_id === this.config.serviceId && Number(assertion.payload.exp)-Number(assertion.payload.iat)<=60 && Number(assertion.payload.iat)<=Date.now()/1000 && assertion.payload.sub === p.sub && p.token_type === 'access' && p.delegated === true && p.sa !== true && p.relay !== true && (p.act as {sub?:string})?.sub === this.config.serviceSlug,401,'INVALID_TOKEN','Identity and delegated authority binding mismatch');
+      const issued=Number(assertion.payload.iat),lifetime=Number(assertion.payload.exp)-issued;
+      requireValue(assertion.payload.nyx_service_id === this.config.serviceId && lifetime>0 && lifetime<=60 && issued<=Date.now()/1000+5 && assertion.payload.sub === p.sub && p.token_type === 'access' && p.delegated === true && p.sa !== true && p.relay !== true && (p.act as {sub?:string})?.sub === this.config.serviceSlug,401,'INVALID_TOKEN','Identity and delegated authority binding mismatch');
       const actor=this.actor(p,delegation);await this.policy.scope(actor,'content:read');return actor;
     } catch { throw new AppError(401,'INVALID_TOKEN','Propagated caller could not be verified'); }
   }
@@ -78,7 +88,7 @@ export class AuthManager {
       this.store.run('INSERT INTO oidc_states VALUES (?,?,?,?)', digest(state), nonce, verifier, new Date(Date.now() + 300_000).toISOString());
       const url = new URL(discovery.authorization_endpoint);
       const challenge = Buffer.from(digest(verifier), 'hex').toString('base64url');
-      url.search = new URLSearchParams({ client_id: this.config.clientId, response_type: 'code', redirect_uri: `${this.config.publicUrl}/auth/callback`, scope: this.config.oauthScopes ?? 'openid profile content:read content:write publish metrics:read roles:write connections:read', state, nonce, code_challenge: challenge, code_challenge_method: 'S256' }).toString();
+      url.search = new URLSearchParams({ client_id: this.config.clientId, response_type: 'code', redirect_uri: `${this.config.publicUrl}/auth/callback`, scope: this.config.oauthScopes ?? 'openid profile', state, nonce, code_challenge: challenge, code_challenge_method: 'S256' }).toString();
       reply.setCookie('chrono_oidc', state, { ...cookie, maxAge: 300 }); return reply.redirect(url.href);
     });
     app.get('/auth/callback', async (request, reply) => {
@@ -95,10 +105,10 @@ export class AuthManager {
       const id = await jwtVerify(tokens.id_token, this.keys!, { issuer: this.config.issuer, audience: this.config.clientId, algorithms: ['RS256', 'ES256'], requiredClaims: ['exp', 'iat', 'sub', 'nonce'] }).catch(() => { throw new AppError(401, 'OIDC_ID_TOKEN', 'Invalid sign-in response'); });
       requireValue(id.payload.nonce === saved.nonce, 401, 'OIDC_NONCE', 'Invalid login nonce');
       if (id.payload.at_hash) requireValue(id.payload.at_hash === Buffer.from(digest(tokens.access_token), 'hex').subarray(0, 16).toString('base64url'), 401, 'OIDC_ACCESS_HASH', 'Login access token binding mismatch');
-      const actor = await this.accessToken(tokens.access_token, this.config.cmsAudience);
+      const actor = await this.accessToken(tokens.access_token, this.config.cmsAudience,'cms');
       requireValue(id.payload.sub === actor.subject, 401, 'OIDC_SUBJECT', 'Token subject mismatch');
       const ownerId = `personal-${digest(`${actor.issuer}\n${actor.subject}`).slice(0, 32)}`;
-      this.store.run('INSERT OR IGNORE INTO owners VALUES (?,?,?,?)', ownerId, 'personal', actor.issuer, actor.subject);
+      this.provision(actor);
       const session = randomBytes(32).toString('base64url'), csrf = randomBytes(32).toString('base64url');
       const payload = JSON.parse(Buffer.from(tokens.access_token.split('.')[1], 'base64url').toString());
       this.store.run('INSERT INTO sessions VALUES (?,?,?,?)', digest(session), this.vault.seal(actor), csrf, new Date(Math.min(payload.exp * 1000, Date.now() + 3_600_000)).toISOString());

@@ -1,20 +1,53 @@
 # NyxID 注册与连接交接
 
-实现依据：官方源码 revision `38bae2f7825bfa70d8a9e4e837118d7d9658e6a5`。这是可执行对接清单，当前没有目标 NyxID Live 注册或外部账号发文证据。
+实现依据：官方源码 revision `38bae2f7825bfa70d8a9e4e837118d7d9658e6a5`。官方0.75.0已在真实本地自托管实例联调；实际结果见review-i14.md。该证据不是目标生产NyxID或外部账号发文签收。
 
 ## 注册输入
 
 1. OIDC confidential client：准确登记 `https://<cms-host>/auth/callback`，启用 Authorization Code + PKCE S256；登记实际 client ID/secret。issuer 是 discovery 声明的标识，允许字面 `nyxid`，不可擅自把 issuer 改成 API URL。
 2. `NYXID_API_URL`、`NYXID_DISCOVERY_URL`、`NYXID_INTROSPECTION_URL` 使用实例真实 HTTPS endpoint。`NYXID_TOKEN_AUDIENCE` 是 delegated access token audience；`NYXID_CMS_AUDIENCE` 是 CMS access token audience；`NYXID_SERVICE_AUDIENCE` 是签名 identity assertion 的服务 audience。不能相互猜测替代。
 3. 注册平台 service：填写真实 `NYXID_SERVICE_ID` / `NYXID_SERVICE_SLUG`，导入 `/openapi.json` 中 `/api/service/*` 操作。转发原生 `X-NyxID-Identity-Token` 和 `X-NyxID-Delegation-Token`；同时验证签名、issuer、audience、同一 sub、60秒 identity TTL、service id、delegated、act.sub 和 scope。
-4. `NYXID_OAUTH_SCOPES` 必须是实例实际授予的 scope。平台用例为 `content:read/content:write/publish/metrics:read/roles:write/connections:read`。如上游名称不同，明确设置 `NYXID_OPERATION_SCOPES_JSON`，每个 operation 映射一个非空 required-scope 数组，全部满足才授予；省略时逐字匹配。不得把缺失 scope 映射为通配权限。
+4. 使用下述分入口capability映射。官方0.75.0的OIDC白名单不接受`content:read`等平台capability名称，不能将其登记为OAuth scope。默认只申请`openid profile`且仅映射读取；额外能力必须明确配置并取得相应上游scope授权。
 5. 配置测试用户：无组织、普通 Member、Admin、指定 Publisher、多组织、离组与撤权；分别从 CMS 和 service 验证。组织来源是 `/api/v1/orgs` 实时 `your_role`；Viewer 不获得 Member 权利。Publisher 只是本平台组织发布能力，由当前 Admin 管理。
 
 导入契约时保留各operation的201／202／200成功状态及JSON object／array／原始二进制媒体声明；私有图片按实际Content-Type处理，不能强制按JSON解码。preview的可选revision参数及report的removed枚举均应保留，removed仍受已确认remove动作和精确已知URL404／410核验约束。具体操作响应见api-guide.md；目标NyxID的OpenAPI导入兼容性仍需真实注册与脱敏导出验证，不能由本机契约测试代替。
 
+## 官方0.75.0的分入口权限配置
+
+CMS OIDC与service注入的delegation使用不同scope集合，必须分别映射。`NYXID_CMS_CAPABILITY_SCOPES_JSON`和`NYXID_SERVICE_CAPABILITY_SCOPES_JSON`的key是下表6个capability，**不是operationId**；value为该入口必须全部具备的非空上游scope数组。缺key即无该能力，不支持通配。`NYXID_OPERATION_SCOPES_JSON`作为旧全局配置保留，不能和分入口配置混用；迁移时先清空旧项。未知key、空scope或以openid/profile/email/roles/groups/offline_access单独授予额外能力会在启动时拒绝。
+
+| 平台capability | CMS身份只读默认 | CMS额外能力显式配置 | service只读默认 | service额外能力显式配置 |
+| --- | --- | --- | --- | --- |
+| content:read | profile | profile | account:read | account:read |
+| content:write | 无 | proxy | 无 | account:read + proxy:* |
+| publish | 无 | proxy | 无 | account:read + proxy:* |
+| metrics:read | 无 | proxy | 无 | account:read + proxy:* |
+| roles:write | 无 | proxy | 无 | account:read + proxy:* |
+| connections:read | 无 | proxy | 无 | account:read + proxy:* |
+
+上表是本平台对官方可用scope的显式能力解释，不宣称NyxID提供六个同名细粒度scope。只配置实际需要的key；例如编辑但不能发布，仅增加content:write。profile单独不授予写入；proxy也不替代owner、当前组织Member/Admin、Publisher或组织出站精确批准。CMS用户明确同意额外proxy scope后，本平台仍按配置及业务策略授权；NyxID的服务选择、凭证资源范围和审批策略继续约束其上游调用。
+
+可写CMS配置示例（仅示例，无secret）：
+
+```dotenv
+NYXID_OAUTH_SCOPES=openid profile proxy
+NYXID_CMS_CAPABILITY_SCOPES_JSON={"content:read":["profile"],"content:write":["proxy"],"publish":["proxy"],"metrics:read":["proxy"],"roles:write":["proxy"],"connections:read":["proxy"]}
+NYXID_SERVICE_CAPABILITY_SCOPES_JSON={"content:read":["account:read"],"content:write":["account:read","proxy:*"],"publish":["account:read","proxy:*"],"metrics:read":["account:read","proxy:*"],"roles:write":["account:read","proxy:*"],"connections:read":["account:read","proxy:*"]}
+```
+
+OAuth client仅登记所需`openid profile`或`openid profile proxy`，不用email/roles/groups/offline_access即可完成本次联调。NyxID access token的audience是实例配置的共享值，CMS还核对签名token的client_id等于`NYXID_CLIENT_ID`；不能用另一个client或第一方登录token冒充本CMS授权。ID token仍核对CMS client audience、nonce、PKCE、state与at_hash。加密session在每次请求中重新验签、在线introspection并按当前配置重算capability；既有任务的保存权限也按当前映射重新核验。
+
+Service在官方注册对象开启JWT identity及delegation注入，配置独立服务audience、准确service ID/slug；只读scope为`account:read`，确有本地写需求时再配置`account:read proxy:*`。`account:read`仅允许由管理员配置的service签发，不能填进OAuth allowed_scopes或OAuth client delegation_scopes。分入口模式默认仅接受匹配的两个签名传播header；直接Bearer另需`NYXID_SERVICE_CLIENT_IDS`逐一允许签发client，并满足service audience及capability映射，当前官方OAuth白名单不提供account:read，因此本版推荐使用真实代理注入路径。两入口首次通过认证后使用同一issuer/sub确定性创建本人workspace。
+
+service签名仍核对issuer、audience、相同sub、nyx_service_id、delegated、act.sub、禁止SA/relay、有效期及在线有效性。identity最长60秒，仅对iat允许最多5秒的正向时钟偏差，过期不延长；超限未来签发拒绝。此容差用于已实测的Colima/宿主亚秒级差异，运维仍应同步时钟。
+
+官方NyxID默认可能等待service写请求的人工审批，未配置通知渠道时表现为等待，不能关闭批准检查绕过。本地验证仅通过官方审批API批准独立测试服务的具体请求；调用方应在NyxID查看/批准或拒绝后等待结果。受限API key／operation-scoped caller不应绕过NyxID拒绝delegation注入的边界。组织向外部平台分发的原有精确内容/目标/动作审批另行保持，本次无外部provider发文。
+
+本地注册操作使用独立命名client、四用户、org和service；App端口、DB、media、connections与配置需独立，私有文件0600。无外部连接时connections文件显式为`[]`，provider feature flags全部关闭。不得复用生产secret、改官方源码或覆盖现有测试Admin/client。
+
 ## 逐操作scope交接表
 
-真实service入口的AuthManager先要求content:read，下表列出各用例追加要求后的合并集合。它们是平台scope词汇，由NYXID_OPERATION_SCOPES_JSON映射上游实际授权；HTTP Bearer／apiKey安全方案本身不声明OAuth scope语义。scope不替代owner、实时组织角色、提交版本可见性、Publisher／Admin及精确批准检查。
+真实service入口的AuthManager先要求content:read，下表列出各用例追加要求后的合并集合。它们是平台capability词汇，由分入口capability映射转换上游实际授权；HTTP Bearer／apiKey安全方案本身不声明OAuth scope语义。scope不替代owner、实时组织角色、提交版本可见性、Publisher／Admin及精确批准检查。
 
 | operationId | 所需平台scope（全部满足） |
 |---|---|
