@@ -11,7 +11,9 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 | [74978bc 独立 Local 恢复](review-local-recovery-749.md) | 实际四 Ghost 与平台加密捕获／新卷恢复、全字段审计、旧会话失效及只读对账；本地身份 fixture，不包含真实外部 delivery 恢复或生产 RPO/RTO |
 | [阶段 0](phase-0.md)、[迁移复验](local-revalidation.md) | 历史双站与基础实验；仅适用于其记录的源码和环境，不能代表当前 CMS／service 或四站完整结果 |
 
-独立 Local 已覆盖实际 CMS/service × owner × language 发布、浏览器 consent 指标、译文与恢复等有界流程；原始剩余角色／scope／入口／时序差量已独立核算完毕。51场景Local PASS，A05仅因缺具名目标部署／付款／运维输入而BLOCKED，可继续推进Local工作为0；Document为48 PASS／4 BLOCKED（A01/A05/A06/A52），Live为52 BLOCKED。R001–R028均有界关闭（R021非门禁），详见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。真实 NyxID 注册与双入口授权、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程，以及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应 Live／生产证据。阶段 0 不再作为唯一验收证据入口。
+历史独立 Local 已覆盖实际 CMS/service × owner × language 发布、浏览器 consent 指标、译文与恢复等有界流程。2026-10-29 的收尾账目为 51 场景 Local PASS／A05 BLOCKED、Document 48 PASS／4 BLOCKED（A01/A05/A06/A52）、Live 52 BLOCKED，R001–R028 有界关闭（R021 非门禁），见[历史收尾](review-i13.md#独立-local-收尾2026-10-29)。2026-10-30 真实官方 NyxID 0.75.0 启动发现 R029；固定业务源码 `2d65bc0` 已完成修复及真实 CMS OIDC／service 代理开发联调，四用户、角色与撤权、只读 scope、停用检查通过，独立复验待返回，见 [I14](review-i14.md)。历史“可推进 Local 工作为 0”不再代表当前状态。
+
+本轮是真实本地 NyxID，未使用身份 fixture；发布仅排队／取消，无 Ghost Worker 或外部 provider 出站。目标 NyxID 正式注册／交接、组织外部写入精确批准、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应证据。正式 D1–D9／A01–A52 结论由独立验收更新，开发记录不代替签收。阶段 0 保留为历史入口。
 
 ## 1. 交付追踪
 

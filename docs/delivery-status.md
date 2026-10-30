@@ -1,12 +1,12 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`；基点019222c，I1为5eb51a7，R001–R005修复为c6de8b5；I2提交见Git历史。当前修复源码为804e7c4（R028；含R027 b1d30b2、R025 2b5f9e2、R024 74978bc、R023 586ff1a、R022 792a7bb、R021 0649608、R020 ed1239f），R026文档为557518d／fe3fd60；I3–I13记录见review-i3-p1.md、review-i3-p2.md、review-i4.md、review-i5.md、review-i6.md、review-i7.md、review-i8.md、review-i9.md、review-i10.md、review-i11.md、review-i12.md、review-i13.md；实际运行证据按各自固定源码与sourceFingerprint逐文件对应。
+分支：`codex/003-blogsystem-delivery`。当前业务源码为 `2d65bc0a8c191bc99ce6cf22cb995c7c004062aa`（R029）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID新增记录见 [I14](review-i14.md)。实际证据按固定业务源码与逐文件指纹对应。
 
-状态含义：implemented为开发状态；Document／Local／Live结论分别记录。**R001–R028已全部独立有界关闭（R021非门禁）；51场景Local PASS，A05 Local BLOCKED，可继续推进的Local工作为0。D1–D9正式签收仍为0，全部52场景的Live必需目标门禁未满足。** 不以fixture、文档或缺陷关闭替代真实目标验收。
+状态含义：implemented为开发状态；Document／Local／Live分别记录。**R001–R028已独立有界关闭（R021非门禁）；2026-10-30新增R029已修复并完成真实官方NyxID双入口开发联调，独立复验待返回。D1–D9尚未正式签收。** 本轮真实本地身份结果不自动提升目标部署、外部平台或正式D/A结论。
 
-最新独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。Document为48 PASS／4 BLOCKED（A01/A05/A06/A52），Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入），Live为52 BLOCKED，整体为BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。确定性Local分支无需仅因共享A01/A05/A06目标门禁未通过而逐项重复；A43/A44不额外强求Unavailable或未获授权的外部数字。逐项证据、最终差量及外部输入见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
+历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，尚未纳入R029及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
 
-独立恢复证据继续有效：固定74978bc完整加密capture／新卷四Ghost恢复、全字段BLOB审计、丢响应只读对账、撤权queued零写入与新稿新图发布；A50另含6条非空delivery／payload／native approval的加密平台恢复与Local HTTP重验，详见review-local-recovery-749.md。短资源窗口已结束：原任务review App／Ghost／identity已停止，卷／keys／证据保留；dev8及baseline4已恢复并验证healthy。本任务无需操作环境；等待外部输入或新的具体缺陷，不再派生开发或重复测试，未push／merge。
+独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。本轮只使用独立App3117、DB/media及新建NyxID测试用户/client/org/service；App保留供独立复验。未修改NyxID官方源码、原有测试Admin/client，未操作四Ghost、dev、baseline及恢复卷，未启动Worker或向provider出站，未push／merge。
 
 ## 增量 I2
 
@@ -52,12 +52,16 @@ b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trac
 
 804e7c4修复R028，CMS取消／对账后以刷新GET读回的同一记录状态反馈，手动刷新清除旧queued提示；列表、历史及选择器保持。真实App＋Chrome随机loopback fixture固定SHA 6/6通过，含原文／分发对账旧POST响应与新GET读回交错；同脚本加载修复前源码稳定复现queued旧提示。node syntax及diff check通过。独立固定804e7c4 UI专项4/4 PASS并关闭R028，history／Trace／三个选择器／原文链接保持。原始Local剩余差量亦已完成；未重复取消安全／全检／四Ghost或操作资源窗口，详见review-i13.md。
 
+## 增量 I14
+
+`2d65bc0`修复R029（D1/D2、A01/A06）：官方NyxID 0.75.0拒绝旧默认业务scope，现默认OIDC为openid profile，只授予读取；CMS与service分别使用显式capability AND映射，额外权限不由identity scope自动获得。CMS签名client_id绑定、每请求introspection及当前映射重算、service双签名传播／直接Bearer client白名单、当前组织角色／Publisher继续共同约束。strict、86/86本地测试及最终相关10/10通过。固定SHA真实四用户完成两入口同身份／workspace、个人互通与隔离、组织角色grant/revoke、只读scope、实际离组及停用检查，共7组通过。service非GET由当前用户通过官方审批API逐次批准独立本地动作，无通配grant；排队／取消不代表Ghost发布或外部分发。R029待原任务独立复验，详见 [I14](review-i14.md) 及 [注册配置](nyxid-registration.md)。
+
 ## D1–D9
 
 | 交付 | 开发状态 | 证据层级 | 剩余正式门禁 |
 |---|---|---|---|
-| D1 | implemented | 独立Local＋部署模板；A05外部输入受阻 | 真实NyxID、具名目标HTTPS部署／容量／付款运维责任 |
-| D2 | implemented | 独立Local API／签名／原文／指标闭合 | 目标service注册与真实双入口授权 |
+| D1 | implemented | 历史独立Local＋部署模板；I14真实NyxID开发联调通过待独立复验 | R029独立结论、目标HTTPS部署／容量／付款运维责任 |
+| D2 | implemented | 历史独立Local API；I14真实service代理与CMS授权开发联调通过 | R029独立复验、目标service正式交接及全部用例验收 |
 | D3 | implemented | 独立Local角色／owner／入口／时序闭合 | 目标NyxID角色／委托／撤权契约及共享部署门禁 |
 | D4 | implemented | 独立Local源文／素材／冲突／译文／CMS闭合 | 共享目标身份与部署门禁 |
 | D5 | implemented | 独立Local四Ghost／更新／取消／核验闭合 | 目标身份与部署门禁 |
@@ -72,12 +76,12 @@ b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trac
 
 | 场景 | 开发状态 | Document | Local | 代码/证据索引 | 有界证据与外部边界 |
 |---|---|---|---|---|---|
-| A01 | implemented | BLOCKED | PASS | auth.test.ts / nyxid-registration.md | OIDC本地签名流程；目标NyxID双入口Live未验证 |
+| A01 | implemented | BLOCKED | PASS | auth.test.ts / nyxid-registration.md / review-i14.md | 历史独立结论保留；I14真实NyxID双入口开发验证通过，R029待独立复验 |
 | A02 | implemented | PASS | PASS | auth.test.ts | 签名、state/nonce/audience/PKCE/hash本地回归 |
 | A03 | implemented | PASS | PASS | auth.test.ts | 会话注销与重放本地回归 |
 | A04 | implemented | PASS | PASS | infra/platform/nginx.conf.example | 四角色CMS/service凭证×四Ghost 32拒绝＋4正控通过；目标部署访问配置待确认 |
 | A05 | implemented | BLOCKED | BLOCKED | operations.md | BLOCKED：缺具名目标域名／资源、付款／运维责任；无待实现代码项 |
-| A06 | implemented | BLOCKED | PASS | http.test.ts / operations.test.ts | 双入口本地API；NyxID service注册Live BLOCKED |
+| A06 | implemented | BLOCKED | PASS | http.test.ts / operations.test.ts / review-i14.md | 历史独立结论保留；I14实际service注册／签名代理通过，正式交接待验 |
 | A07 | implemented | PASS | PASS | http.test.ts / four-ghost.integration.ts | 双入口四站及service个人／CMS组织新正文更新通过，URL／remoteID保持；真实NyxID委托待验证 |
 | A08 | implemented | PASS | PASS | operations.test.ts / metrics.test.ts / four-ghost.integration.ts | 原文bytes和同口径查询局部 |
 | A09 | implemented | PASS | PASS | auth.test.ts / content.test.ts | scope/伪造身份/委托边界局部 |
@@ -127,10 +131,10 @@ b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trac
 
 ## 外部 BLOCKED
 
-- B1：真实 NyxID issuer、应用／service 注册、授权与组织／委托／精确批准实际契约和测试角色；关联 D1/D2/D3/D6。
+- B1：本地真实NyxID issuer、独立应用／service及四用户角色／委托已完成I14开发联调，R029独立结论待返回；目标注册交接及组织向外部平台精确批准／receipt仍需相应真实证据，关联D1/D2/D3/D6。
 - B2：DEV 个人／组织、Hashnode 组织 Pro 和有权账号、NyxID exact connections；关联 D6。无真实账号写入。
 - B3：Medium／HackerNoon 账号、人工提交负责人、明确获准内容和外部写入授权；关联 D6/D7。
 - B4：生产 HTTPS 域名、部署容量、付款责任、隐私保留策略及 RPO/RTO；关联 D1/D8/D9。
 - B5：目标 remote `git@github.com:aelf-hzz780/chronoai-cms.git` 2026-10-29 10:59Z原任务只读重试仍Repository not found；不阻止本地开发和增量 commit。
 
-以上外部输入继续BLOCKED；当前可独立推进Local工作为0。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将其提升为Live或正式D/A签收。
+外部账号／内容动作授权／目标部署与责任等输入继续BLOCKED；R029本地修复已具备真实NyxID开发证据，等待独立复验。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将本地开发通过提升为Live或正式D/A签收。
