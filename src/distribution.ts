@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type { Actor } from './policy.ts';
+import type { Actor, AuthorizationPurpose } from './policy.ts';
 import { PublishingService, type OriginalAdapter } from './publishing.ts';
 import { digest } from './content.ts';
 import { AppError, requireValue, text } from './errors.ts';
@@ -29,9 +29,9 @@ export class DistributionService {
     requireValue(this.connections.listConnections,503,'CONNECTION_CONFIGURATION_REQUIRED','NyxID connection discovery is not configured');
     return this.connections.listConnections(actor,{kind:owner.kind,issuer:owner.issuer,subject:owner.subject});
   }
-  async context(actor: Actor, id: string) {
+  async context(actor: Actor, id: string, purpose:AuthorizationPurpose='queued-write') {
     const delivery = this.store.get('SELECT * FROM deliveries WHERE id=?', id); requireValue(delivery, 404, 'NOT_FOUND', 'Delivery not found');
-    const owner = await this.originals.content.policy.publish(actor, delivery.owner_id);
+    const owner = await this.originals.content.policy.publish(actor, delivery.owner_id,purpose);
     const snapshot = this.store.get('SELECT * FROM delivery_payloads WHERE delivery_id=?', id)!;
     const payload = JSON.parse(snapshot.payload_json) as CopyPayload;
     return { delivery, owner: { kind: owner.kind, issuer: owner.issuer, subject: owner.subject }, payload: { ...payload, remoteId: delivery.remote_id ?? payload.remoteId, remoteUrl: delivery.url ?? payload.remoteUrl }, actor: this.originals.vault.open<Actor>(snapshot.actor_json) };
@@ -125,7 +125,7 @@ export class DistributionService {
     return result;
   }
   async cancel(actor: Actor, id: string, trace: string) {
-    const { delivery } = await this.context(actor, id);
+    const { delivery } = await this.context(actor, id,'access');
     this.store.transaction(() => {
       const current = this.store.get('SELECT state FROM deliveries WHERE id=?', id)!;
       requireValue(['queued', 'approval_needed', 'manual_action_needed'].includes(current.state) && !this.store.get("SELECT 1 FROM jobs WHERE kind='delivery' AND resource_id=? AND state='running'", id), 409, 'ALREADY_SENT', 'A request may already have been sent; reconcile and request removal');
@@ -134,7 +134,8 @@ export class DistributionService {
     }); return { id, state: 'cancelled' };
   }
   async reconcile(actor: Actor, id: string, trace: string) {
-    const { delivery } = await this.context(actor, id);
+    const { delivery, actor:sourceActor } = await this.context(actor, id);
+    await this.originals.content.policy.scope(sourceActor,'publish','queued-write');
     requireValue(delivery.state === 'uncertain', 409, 'DELIVERY_STATE', 'Only uncertain deliveries can reconcile');
     this.store.transaction(() => {
       const update = this.store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE kind='delivery' AND resource_id=? AND state<>'running'", id);
@@ -216,6 +217,7 @@ export class DeliveryWorker {
     try {
       const actor = this.service.originals.vault.open<Actor>(recovery?.actor_json ?? snapshot.actor_json);
       const { delivery, payload, owner } = await this.service.context(actor, lease.resourceId);
+      if(recovery)await this.service.originals.content.policy.scope(this.service.originals.vault.open<Actor>(snapshot.actor_json),'publish','queued-write');
       const target = this.service.targets.get(delivery.target);
       const connection = await this.service.connections.connection(actor, owner, delivery.connection_id, delivery.target);
       requireValue(connectionFingerprint(connection) === payload.connectionFingerprint, 409, 'CONNECTION_CHANGED', 'Selected account or publication configuration changed; exact confirmation and authorization must be renewed');

@@ -3,20 +3,21 @@ import { Store, type Row } from './store.ts';
 
 export type CallerBinding = { kind:'cms'|'direct-service'; clientId:string; audience:string } | { kind:'propagated'; serviceId:string; serviceSlug:string; identityAudience:string; delegationAudience:string };
 export interface Actor { issuer: string; subject: string; scopes: string[]; credential: string; sourceScopes?: string[]; entry?:'cms'|'service'; binding?:CallerBinding; }
+export type AuthorizationPurpose = 'access'|'queued-write';
 export interface Authority {
-  validate(actor: Actor): Promise<void>;
+  validate(actor: Actor, purpose?: AuthorizationPurpose): Promise<void>;
   membership(actor: Actor, organization: string): Promise<'admin' | 'member' | null | string>;
 }
 export class Policy {
   store: Store; authority: Authority;
   constructor(store: Store, authority: Authority) { this.store = store; this.authority = authority; }
-  async scope(actor: Actor, scope: string) {
+  async scope(actor: Actor, scope: string, purpose:AuthorizationPurpose='access') {
     requireValue(actor.scopes.includes(scope), 403, 'INSUFFICIENT_SCOPE', `Requires ${scope}`);
-    try { await this.authority.validate(actor); }
-    catch { throw new AppError(401, 'IDENTITY_UNAVAILABLE', 'Current identity or delegated authority could not be verified'); }
+    try { await this.authority.validate(actor,purpose); }
+    catch (error) { if(error instanceof AppError && error.code==='SOURCE_AUTHORITY_UNPROVEN')throw error; throw new AppError(401, 'IDENTITY_UNAVAILABLE', 'Current identity or delegated authority could not be verified'); }
   }
-  async owner(actor: Actor, ownerId: string, scope = 'content:read'): Promise<Row> {
-    await this.scope(actor, scope);
+  async owner(actor: Actor, ownerId: string, scope = 'content:read', purpose:AuthorizationPurpose='access'): Promise<Row> {
+    await this.scope(actor, scope,purpose);
     const owner = this.store.get('SELECT * FROM owners WHERE id=?', ownerId);
     requireValue(owner && owner.issuer === actor.issuer, 403, 'FORBIDDEN', 'Workspace access denied');
     if (owner.kind === 'personal') requireValue(owner.subject === actor.subject, 403, 'FORBIDDEN', 'Workspace access denied');
@@ -32,8 +33,8 @@ export class Policy {
     const role = await this.membership(actor, owner);
     return !!role && (role === 'admin' || !!this.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?', owner.id, actor.subject));
   }
-  async publish(actor: Actor, ownerId: string) {
-    const owner = await this.owner(actor, ownerId, 'publish');
+  async publish(actor: Actor, ownerId: string, purpose:AuthorizationPurpose='queued-write') {
+    const owner = await this.owner(actor, ownerId, 'publish',purpose);
     requireValue(await this.canPublish(actor, owner), 403, 'FORBIDDEN', 'Publishing authority required');
     return owner;
   }

@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import type { Actor, Authority } from './policy.ts';
+import type { Actor, Authority, AuthorizationPurpose } from './policy.ts';
 import type { Config } from './config.ts';
 import type { Store } from './store.ts';
 import type { RemoteRequest } from './targets.ts';
@@ -63,8 +63,8 @@ export function exactArguments(endpoint:any,path:string,request:RemoteRequest) {
 export class NyxAuthority implements Authority {
   config:Config; store?:Store; callers:CallerAuthorization;
   constructor(config:Config,store?:Store) { this.config=config;this.store=store;this.callers=new CallerAuthorization(config); }
-  async validate(actor:Actor) {
-    const current=await this.callers.restore(actor);
+  async validate(actor:Actor,purpose:AuthorizationPurpose='access') {
+    const current=await this.callers.restore(actor,purpose);
     const body=new URLSearchParams({token:actor.credential,client_id:this.config.clientId});
     if(this.config.clientSecret) body.set('client_secret',this.config.clientSecret);
     const result=await remoteJson(this.config.introspectionUrl,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body});

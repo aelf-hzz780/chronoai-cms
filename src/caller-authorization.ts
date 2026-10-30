@@ -3,7 +3,19 @@ import type {Config} from './config.ts';
 import {safeUrl} from './config.ts';
 import {requireValue} from './errors.ts';
 import {remoteJson} from './http-client.ts';
-import type {Actor,CallerBinding} from './policy.ts';
+import type {Actor,CallerBinding,AuthorizationPurpose} from './policy.ts';
+
+// Only signed JWT claims enter this check. Actor metadata and ingress headers
+// cannot establish source authority. Official introspection still checks each
+// retained consent/session/delegation reference online, including revocation.
+function hasSourceLineage(value:unknown):boolean {
+  if(!value || typeof value!=='object' || Array.isArray(value))return false;
+  const lineage=value as Record<string,any>,nonempty=(s:unknown)=>typeof s==='string'&&s.trim().length>0;
+  if(!Array.isArray(lineage.consents)||lineage.consents.length>3)return false;
+  if(![lineage.source_session_id,lineage.delegation_jti].every(v=>v==null||nonempty(v)))return false;
+  if(!lineage.consents.every((b:any)=>b&&nonempty(b.client_id)&&typeof b.scopes==='string'&&b.scopes.split(' ').includes('openid')&&nonempty(b.reference?.consent_id)&&nonempty(b.reference?.consent_revision)))return false;
+  return lineage.consents.length>0||nonempty(lineage.source_session_id)||nonempty(lineage.delegation_jti);
+}
 
 // Shared by initial authentication and online revalidation of encrypted snapshots.
 export class CallerAuthorization {
@@ -40,7 +52,7 @@ export class CallerAuthorization {
     else requireValue(this.config.serviceClientIds?.includes(payload.client_id),401,'INVALID_TOKEN','Explicit service caller client required; use signed propagation for proxy calls');
     return {kind:entry==='cms'?'cms':'direct-service',clientId:payload.client_id,audience};
   }
-  async restore(actor:Actor){
+  async restore(actor:Actor,purpose:AuthorizationPurpose='access'){
     const b=actor.binding;
     requireValue(b&&actor.issuer===this.config.issuer,401,'REVOKED','Saved caller provenance required; authenticate and confirm again');
     let audience:string;
@@ -57,6 +69,7 @@ export class CallerAuthorization {
     requireValue(payload.sub===actor.subject,401,'REVOKED','Saved caller subject changed');
     if(b.kind==='propagated')requireValue(payload.delegated===true&&(payload.act as {sub?:string})?.sub===b.serviceSlug,401,'REVOKED','Delegation actor binding changed');
     else {const current=this.directBinding(payload,b.kind==='cms'?'cms':'service',audience);requireValue(current.kind!=='propagated'&&current.clientId===b.clientId,401,'REVOKED','Saved client differs from signed client');}
+    if(purpose==='queued-write'&&b.kind==='propagated')requireValue(hasSourceLineage(payload.oauth_lineage),403,'SOURCE_AUTHORITY_UNPROVEN','当前代理授权无法持续核验，待发操作已阻止。请使用支持持续授权的服务登录后重新确认；原稿保留。');
     const current=this.actor(payload,actor.credential,b);
     requireValue(actor.scopes.every(scope=>current.scopes.includes(scope)),401,'REVOKED','Current configuration no longer authorizes the saved action');
     return current;

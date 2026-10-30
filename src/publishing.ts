@@ -62,7 +62,7 @@ export class PublishingService {
   }
   async cancel(actor: Actor, id: string, trace: string) {
     const row = this.content.store.get('SELECT * FROM releases WHERE id=?', id); requireValue(row, 404, 'NOT_FOUND', 'Release not found');
-    await this.content.policy.publish(actor, row.owner_id);
+    await this.content.policy.publish(actor, row.owner_id,'access');
     this.content.store.transaction(() => {
       const latest = this.content.store.get('SELECT * FROM releases WHERE id=?', id)!;
       requireValue(latest.state === 'queued' && this.content.store.get("SELECT 1 FROM jobs WHERE kind='release' AND resource_id=? AND state='queued'", id), 409, 'ALREADY_SENT', 'Request may already have been sent; reconcile and request removal');
@@ -74,6 +74,7 @@ export class PublishingService {
   async reconcile(actor: Actor, id: string, trace: string) {
     const row = this.content.store.get('SELECT * FROM releases WHERE id=?', id); requireValue(row, 404, 'NOT_FOUND', 'Release not found');
     await this.content.policy.publish(actor, row.owner_id);
+    await this.content.policy.scope(this.vault.open<Actor>(row.actor_json),'publish','queued-write');
     requireValue(['uncertain', 'verifying'].includes(row.state), 409, 'PUBLICATION_STATE', 'Only uncertain or unverified originals require reconciliation');
     this.content.store.transaction(() => {
       const current = this.content.store.get('SELECT state FROM releases WHERE id=?', id)!;
@@ -99,6 +100,7 @@ export class ReleaseWorker {
     let state = 'failed', code: string | null = null, acknowledged = false;
     try {
       const recovery = recovering ? store.get("SELECT * FROM recovery_actors WHERE kind='release' AND resource_id=?", row.id) : undefined;
+      if(recovery)await this.service.content.policy.scope(this.service.vault.open<Actor>(row.actor_json),'publish','queued-write');
       const actor = this.service.vault.open<Actor>(recovery?.actor_json ?? row.actor_json);
       await this.service.content.policy.publish(actor, row.owner_id);
       const input = this.service.input(row);
