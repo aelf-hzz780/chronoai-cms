@@ -47,6 +47,6 @@
 
 交付仓库为公开的 [aelf-hzz780/chronoai-cms](https://github.com/aelf-hzz780/chronoai-cms)，`origin` 使用 `git@github.com:aelf-hzz780/chronoai-cms.git`。root已验证 `f528dc0` 正常推送至功能分支 `codex/003-blogsystem-delivery`；新建`main`仅含原始baseline `019222c`，未force或merge。本批次新增文档提交待 review/push。PR创建API仍返回403 `Resource not accessible by integration`，**尚未创建PR**。新增 commit 使用 `hzz780 <richard.huang@aelf.io>`，保留已有历史，通过PR合并。
 
-尚未初始化 Spec Kitty 项目。系统安装了 Spec Kitty CLI 不代表项目已采用该工作流；后续若采用，按项目规约初始化并遵循其流程。新增公开交付报告 I20/I21 采用中英对照；既有中文设计文档的完整双语整理尚未完成，不在本轮扩大修改。英文来源文件保持原文。
+尚未初始化 Spec Kitty 项目。系统安装了 Spec Kitty CLI 不代表项目已采用该工作流；后续若采用，按项目规约初始化并遵循其流程。新增公开交付报告 I20/I21 与[候选系统设计](docs/design.md)采用中英对照；其余既有中文设计文档的完整双语整理尚未完成，不在本轮扩大修改。英文来源文件保持原文。
 
 生产配置、账号凭证与本地运行数据不进入版本控制。生产上线、真实外部平台账号联调及九项交付验收均尚未完成。
