@@ -17,7 +17,7 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 
 真实本地NyxID证据按轮次区分：I14／I15（App3117）发布仅排队／取消；I17／I18（App3437）在私有一致数据库副本运行实际Worker及安全adapter，provider／远端结果为fixture，未进行Ghost／provider网络写入。目标 NyxID 正式注册／交接、组织外部写入精确批准、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应证据。正式 D1–D9／A01–A52 结论由独立验收更新，开发记录不代替签收。阶段 0 保留为历史入口。
 
-新增[I20实际联合证据](review-i20.md)在0418652覆盖真实NyxID＋四原版Ghost八组初始发布、非空指标及12组两入口查询一致性，以及CMS个人更新／双向hreflang／stale／下线有界分支。组织中文更新已被Ghost接收但仍verifying/INTERNAL，原因未定，未恢复或重发，后续组织生命周期和完整隔离恢复待验。dev八容器原ID／image／volume恢复只是资源窗口收尾，不能替代A49–A51或约定RPO/RTO。该轮证据不代表Native全部通过，动态结论仍由root台账给出。
+新增[I20实际联合证据](review-i20.md)在0418652覆盖真实NyxID＋四原版Ghost八组初始发布、非空指标及12组两入口查询一致性，以及CMS个人更新／双向hreflang／stale／下线有界分支。[I21恢复收尾证据](review-i21.md)进一步覆盖实际旧token仍active时退组阻断、当前Admin同ID只读认回零写、旧cookie清session后401、22 payload加密归档新卷核对、恢复后实际Ghost 201新图、组织中文同ID只读认回和projection complete。原组织中文首次INTERNAL原因未定，组织后续stale/unpublish、普通成员个人路径、新素材cancel及完整隔离恢复仍待验。dev八容器恢复仅为资源窗口收尾，不能替代A49–A51或约定RPO/RTO；该轮证据不代表Native全部通过，动态结论仍由root台账给出。
 
 R031/P1仍OPEN（A09/A15、D2/D3/D5/D9），官方来源契约研究见 [I16](review-i16.md)。`abfb988`临时保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，完整key/child能力仍BLOCKED上游；该结果不关闭R031、不重开R029／R030、不提升正式D/A签收，边界见 [I17](review-i17.md)。R032／R033／R034已独立有界关闭；普通用户门户Launch入口上游缺口见[注册指南](nyxid-registration.md)，下列正式矩阵保持原文。
 
