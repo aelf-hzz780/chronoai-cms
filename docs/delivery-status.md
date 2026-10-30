@@ -1,16 +1,16 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`。当前业务源码为 `abfb988854ca7b0a90a41a663aab6fbac81598b9`（R031临时保护；R030为76595bc，含R029 `2d65bc0`）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID及保存授权修复见 [I14](review-i14.md)、[I15](review-i15.md)。实际证据按固定业务源码与逐文件指纹对应。
+分支：`codex/003-blogsystem-delivery`。当前业务源码为 `4a27487bac6c74459c7f65a6e9c2cf4c63ea36f1`（R033只读恢复，保留abfb988的R031临时保护；R030为76595bc，含R029 `2d65bc0`）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID及保存授权修复见 [I14](review-i14.md)、[I15](review-i15.md)。实际证据按固定业务源码与逐文件指纹对应。
 
 状态含义：implemented为开发状态；Document／Local／Live分别记录。历史上R001–R030在各自固定SHA有界关闭（29项必需缺陷及R021非门禁），R029／R030固定业务源码为76595bc；51 PASS／A05 BLOCKED仅是R031发现前的历史Local modeled统计，不能作为abfb988的当前结论。历史报告及边界见 [I15](review-i15.md#独立有界闭合2026-10-30)。
 
-**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** 本次只读核对快照记录于`2026-10-30T05:41:21.997443+00:00`，业务基线76595bc、增量保护abfb988；Local为**49 PASS／1 BLOCKED／2 FAIL**，其中A09／A15因R031仍FAIL，Document为48 PASS／4 BLOCKED，Live为52 BLOCKED，正式交付签收0项。临时安全阻断的有界PASS不自动改写完整能力台账。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID结合四Ghost发布、指标和必要恢复差量；旧确认凭据过期／撤销后当前Admin只读对账的疑似回归仍待独立复验，不宣称R004完整覆盖，不把重新确认或重发作为对账替代。
+**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** 临时安全阻断的有界PASS不自动改写完整能力台账。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID结合四Ghost发布、指标和必要恢复差量；R033独立确认了旧credential失效后当前合法Admin／owner的只读对账回归，4a27487开发修复已通过，待独立复验。不以重新确认或重发替代对账，不外推旧R004覆盖。
 
-**R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：官方普通delegation缺少原key在线来源。abfb988临时fail-closed保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，见[实际报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child命令来源契约仍BLOCKED上游。R032/P2为本轮当前统计／环境口吻的文档修正，待独立复验；不将其或临时保护计为R031能力关闭。R029／R030不重开，R031不降N/A，边界见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。
+**R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：官方普通delegation缺少原key在线来源。abfb988临时fail-closed保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，见[实际报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child命令来源契约仍BLOCKED上游。R032/P2文档修正已在11b6011独立有界关闭，见[报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/R032-documentation-retest.json)。**R033/P1（A36/A49/A50、D7/D9）修复待独立复验**，开发证据见 [I18](review-i18.md)。R029／R030不重开，R031不降N/A，边界见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。
 
 历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，不包含后续R029／R030闭合及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
 
-独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。环境按轮次区分：I14／I15（2d65bc0／76595bc）的开发联调使用独立App3117及其DB/media和测试用户/client/org/service；I17（abfb988）的开发验证另建App3437，root独立重放另用App3447。这些轮次不是同一环境或同一证据集，端口仅作本地证据标识，不保证持续运行。I17 Worker只在私有一致SQLite副本配安全adapter运行，无真实Ghost/provider写入；本次R032只修文档，未调用或操作上述App、root3417及其测试对象、Ghost/dev/baseline或恢复卷，未改官方NyxID源码，未push／merge。
+独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。环境按轮次区分：I14／I15（2d65bc0／76595bc）的开发联调使用独立App3117及其DB/media和测试用户/client/org/service；I17（abfb988）的开发验证另建App3437，I18将其安全重启至4a27487，root独立重放另用App3447。这些轮次不是同一环境或同一证据集，端口仅作本地证据标识，不保证持续运行。I17／I18 Worker只在私有一致SQLite副本配安全adapter运行，无真实Ghost/provider写入。历史R032仅修文档；I18只操作自己的3437对象，未操作root3447／3417、旧3117、Ghost/dev/baseline或其恢复卷，未改角色／Publisher或官方NyxID源码，未push／merge。
 
 ## 增量 I2
 
@@ -70,11 +70,15 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 ## 增量 I17
 
-`abfb988`实现R031临时来源保护：统一Policy.publish要求代理queued-write具有已验签、非空且官方在线有效的lineage，覆盖两个Worker、metadata投影及复核原来源；普通读取／草稿／取消保留现有权限。strict与141/141、授权专项55/55通过。开发App3437完成实际OAuth service queued正控及撤consent后缩scope／独立删除consent的两个Worker阻断，各0adapter／0写入；真实无lineage key正常／撤范围／删除旧快照均阻断。release来自实际API，delivery连接／provider为fixture，Worker只在私有DB副本运行，无Ghost/provider出站；该轮源7条任务已取消，13个DB暂停外发。root另在App3447完成5组／10Worker有界PASS。完整key/child能力仍OPEN/BLOCKED，旧凭据过期／撤销后的当前Admin只读对账仍待复验；限制、失败尝试、回滚及证据见 [I17](review-i17.md)。
+`abfb988`实现R031临时来源保护：统一Policy.publish要求代理queued-write具有已验签、非空且官方在线有效的lineage，历史实现覆盖两个Worker、metadata投影及复核原来源；普通读取／草稿／取消保留现有权限。strict与141/141、授权专项55/55通过。开发App3437完成实际OAuth service queued正控及撤consent后缩scope／独立删除consent的两个Worker阻断，各0adapter／0写入；真实无lineage key正常／撤范围／删除旧快照均阻断。release来自实际API，delivery连接／provider为fixture，Worker只在私有DB副本运行，无Ghost/provider出站；该轮源7条任务已取消，13个DB暂停外发。root另在App3447完成5组／10Worker有界PASS。完整key/child能力仍OPEN/BLOCKED；复核原来源造成的恢复回归已独立确认为R033，当前修复见I18。历史限制、失败尝试、回滚及证据见 [I17](review-i17.md)。
 
 ## 增量 R032 文档修正
 
-按[独立文档报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/documentation-review.json)修正README及本页的当前统计和环境表述，并同步验收首部与I17的当前边界：旧51 PASS与App3117均标注历史轮次，当前入口引用root台账49 PASS／1 BLOCKED／2 FAIL及未验状态。仅文档修改，待root独立复验；正式验收第1节起矩阵及source／phase0／baseline保持原文，不关闭R031或提升D/A签收。
+按[独立文档报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/documentation-review.json)修正README及本页的统计和环境表述，并同步验收首部与I17的证据边界：旧51 PASS与App3117均标注历史轮次。11b6011提交时引用的是2026-10-30T05:41:21.997443+00:00的49 PASS／1 BLOCKED／2 FAIL快照，现改由最新root台账提供当前状态。R032已独立有界关闭；正式验收第1节起矩阵及source／phase0／baseline保持原文，不关闭R031或提升D/A签收。
+
+## 增量 I18
+
+`4a27487`修复独立R033/P1：uncertain复核和恢复Worker仅以当前合法caller执行access授权，原Actor作为审计证据保留，不再将其queued-write有效性作为读取前提；恢复中beforeWrite继续拒绝新写。strict、相关77/77及全量146/146通过。App3437真实官方OAuth撤consent后，fresh CMS owner使两个Worker各1读取／0新写完成恢复；R031六组／12Worker正反控通过。临时key已删、源queued=0、15个源／副本DB均暂停；无Ghost/provider网络写入，连接与远端结果为fixture。修复待独立复验，不自行关闭R033或提升完整能力，证据与局限见 [I18](review-i18.md)。
 
 ## D1–D9
 
@@ -92,7 +96,7 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 ## A01–A52
 
-下表保留以804e7c4历史综合账目为基础、叠加截至76595bc有界补充的证据索引；Document／Local列未回填R031之后的当前状态，不能读作abfb988验收结果，A09／A15当前以本页首部链接的root台账FAIL为准。开发implemented不代表签收；所有正式场景仍受共享A01/A05/A06目标门禁及适用外部输入约束，不以测试名推断结论。详细来源与最新状态以root独立台账为准。
+下表保留以804e7c4历史综合账目为基础、叠加截至76595bc有界补充的证据索引；Document／Local列未回填R031之后的当前状态，不能读作abfb988或4a27487验收结果，R031／R033相关场景当前以本页首部链接的root台账为准。开发implemented不代表签收；所有正式场景仍受共享A01/A05/A06目标门禁及适用外部输入约束，不以测试名推断结论。详细来源与最新状态以root独立台账为准。
 
 | 场景 | 开发状态 | Document | Local | 代码/证据索引 | 有界证据与外部边界 |
 |---|---|---|---|---|---|

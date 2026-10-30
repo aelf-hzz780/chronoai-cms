@@ -1,6 +1,6 @@
 # I17 R031 临时来源保护与真实 OAuth 撤权验证
 
-业务修复：`abfb988854ca7b0a90a41a663aab6fbac81598b9`。**临时来源写入保护已获root Local专项及独立App3447实际重放的有界PASS，见[独立报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；R031完整key/child命令来源能力仍为OPEN/BLOCKED上游。** root另在复验旧确认凭据过期／撤销后当前合法Admin只读认回uncertain远端的疑似回归，本页原有R004 fixture结论不证明这些场景完整通过。R029／R030保留原范围有界CLOSED，完整D/A与Live未签收。[I16](review-i16.md)保留保护前的契约研究及root复现。
+历史业务修复：`abfb988854ca7b0a90a41a663aab6fbac81598b9`。**临时来源写入保护已获root Local专项及独立App3447实际重放的有界PASS，见[独立报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；R031完整key/child命令来源能力仍为OPEN/BLOCKED上游。** 旧确认credential过期／撤销阻断当前合法Admin只读对账，已由root独立确认为R033/P1；4a27487修复及开发证据见 [I18](review-i18.md)，待独立复验。本页保留abfb988历史实现与证据，原来源须持续有效的恢复限制不再是当前设计。旧R004不重开。R029／R030保留原范围有界CLOSED，完整D/A与Live未签收。[I16](review-i16.md)保留保护前的契约研究及root复现。
 
 ## 目标、决策与影响范围
 
@@ -18,9 +18,9 @@
 
 ## Worker、复核与最后写入边界
 
-确认原创、创建／授权分发、两个Worker及其发送前检查均共用上述默认保护；AlternateService／AlternateWorker及自动metadata重试也经过同一publish入口。原文和分发复核在保存新的recovery Actor前，另检查原确认Actor的queued-write来源；Worker再次检查原来源。原来源检查不重复要求原Publisher仍保有组织角色，当前复核者仍须有发布权限。现有R004 fixture仅证明原credential仍有效时新Admin接管离组Publisher；原credential过期／撤销后的合法只读对账仍待root独立复验，不能把写入保护有界PASS外推到该能力。
+在历史abfb988中，确认原创、创建／授权分发、两个Worker及其发送前检查均共用上述默认保护；AlternateService／AlternateWorker及自动metadata重试也经过同一publish入口。原文和分发复核在保存新的recovery Actor前另检查原确认Actor的queued-write来源，Worker再次检查原来源。该检查虽不重复要求原Publisher仍保有组织角色，却要求原credential持续有效；旧R004 fixture仅覆盖其仍有效时新Admin接管离组Publisher。root随后独立确认该额外条件导致R033；4a27487改为当前recovery caller的access授权，保留新写queued-write保护与恢复禁止重发，详见 [I18](review-i18.md)。
 
-复核仍只能读取和核对远端结果，不能重新发送。abfb988当前实现也会阻止缺lineage、过期／撤销原credential的复核；这是待复验的行为描述，不能据此降低R8／D7／D9／A36／A50要求的先核对避免重复及R10当前caller权限要求。普通排队失败为blocked并记录原Trace及错误码，恢复中的任务保留uncertain／verifying语义和错误码；已有不确定结果不能被误称为安全未发送。保留原稿、原确认及已知远端信息，不以新确认或重发替代只读对账，不自动搬迁或换源重发。
+复核始终只能读取和核对远端结果，不能重新发送。abfb988历史实现阻止缺lineage、过期／撤销原credential的复核，该行为已确认为R033，不能据此降低R8／D7／D9／A36／A50要求的先核对避免重复及R10当前caller权限要求。普通排队失败为blocked并记录原Trace及错误码，恢复中的任务保留uncertain／verifying语义和错误码；已有不确定结果不能被误称为安全未发送。保留原稿、原确认及已知远端信息，不以新确认或重发替代只读对账，不自动搬迁或换源重发。
 
 ## 本地 TDD 与回归
 
@@ -57,7 +57,7 @@ strict TypeScript及全量 **141/141** 通过，授权专项55/55。首次全量
 
 只读查询远端HEAD `2a1f278ddf9dcf1390f8f316a10f2f04183af6f5`及最新release [v0.76.0](https://github.com/ChronoAIProject/NyxID/releases/tag/v0.76.0)（2026-10-29发布）。该HEAD的JWT claims、identity delegation生成、OAuth authority校验及lineage模型4文件与本地固定revision逐字节一致，未补原key/child命令lineage。另在独立bare仓库比较两个revision，844个变更文件中选择9个相关backend契约／测试检查diff；proxy、approval与assistant authority的变更为shared-agent访问约束等，没有为普通逐请求proxy写补来源命令授权。证据见`upstream-review.json`、`upstream-compare.json`及`upstream-changed-contracts.diff`。GitHub compare API曾403限流，后用独立bare仓库完成检查；未对官方工作树fetch／checkout／修改，未外发问题。
 
-R031完整能力仍需[I16的官方来源／命令契约](review-i16.md#方案与可安全执行范围)，尤其原key与child incarnation、当前精确UserService／operation／批准绑定的在线核验，以及撤销／轮换／scope与批准漂移的真实测试。root临时来源写入保护有界PASS不覆盖上述完整能力或待复验的过期／撤销原credential只读恢复，不关闭R031、不降N/A、不静默转CMS，不提升完整Local／D1–D9／A01–A52或Live。
+R031完整能力仍需[I16的官方来源／命令契约](review-i16.md#方案与可安全执行范围)，尤其原key与child incarnation、当前精确UserService／operation／批准绑定的在线核验，以及撤销／轮换／scope与批准漂移的真实测试。root临时来源写入保护有界PASS不覆盖上述完整能力或另行追踪的R033只读恢复，不关闭R031、不降N/A、不静默转CMS，不提升完整Local／D1–D9／A01–A52或Live。
 
 ## 部署与回滚
 

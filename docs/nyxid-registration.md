@@ -6,6 +6,8 @@ R031尚OPEN：普通service delegation的active状态不能证明原API key仍�
 
 OAuth service调用需通过官方consent授予精确UserService／resource；仅取得proxy scope不足以访问未授权服务。普通consent review会合并scopes，较小scope登录不代表撤权；I17采用官方撤旧consent后重新授较小scope，并核对旧队列仍被阻断。所有App／Worker须一起升级，回滚期间暂停外发，不自动恢复旧blocked任务。
 
+R033只读恢复修复见 [I18](review-i18.md)，业务源码4a27487开发验证通过、待独立复验。uncertain对账按当前合法Admin／owner的access授权，不要求原确认credential仍有效；当前scope、owner／组织发布权限和精确连接绑定仍须成立。恢复只查询既有远端结果，beforeWrite禁止重发；原Actor密文和Trace保持。恢复请求调用人失权也必须阻断，不能用新恢复身份替换旧任务的新写授权。新确认／queued外发继续执行R031来源保护。
+
 ## 注册输入
 
 1. OIDC confidential client：准确登记 `https://<cms-host>/auth/callback`，启用 Authorization Code + PKCE S256；登记实际 client ID/secret。issuer 是 discovery 声明的标识，允许字面 `nyxid`，不可擅自把 issuer 改成 API URL。

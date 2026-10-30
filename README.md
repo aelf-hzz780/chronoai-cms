@@ -6,9 +6,9 @@
 
 历史记录：2026-10-30 独立报告在固定业务源码 `76595bc` 有界关闭 R029／R030，当轮登记 R001–R030 均已关闭（29 项必需缺陷及 R021 非门禁）。strict 与 127 项测试、33 条 Local 绑定／模式／时间分支以及真实官方 NyxID 的 10 组／39 条业务 HTTP 记录通过，证据与限制见 [I15](docs/review-i15.md#独立有界闭合2026-10-30)。51 PASS／A05 BLOCKED 为 R031 发现前的历史 Local modeled 统计，不是当前验收结果。
 
-当前以[最新 root 独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准：本次只读核对的快照记录于 `2026-10-30T05:41:21.997443+00:00`，业务基线 `76595bc`、增量保护 `abfb988`，Local **49 PASS／1 BLOCKED／2 FAIL**（A09／A15因R031仍FAIL），正式交付签收0项。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID与四Ghost发布、指标和必要恢复差量验收；历史“可推进Local工作为0”不作为当前结论。
+当前状态以[最新 root 独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准，开发记录不替代独立签收。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID与四Ghost发布、指标和必要恢复差量验收；历史“可推进Local工作为0”不作为当前结论。
 
-新增 **R031/P1 OPEN**：真实受限API key被撤服务范围或删除后，保存队列仍通过执行前授权。`abfb988`已加入临时fail-closed保护，strict与141/141开发测试通过；root在独立App3447取得临时来源写入保护有界PASS，见[实际重放报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)。完整key/child能力仍BLOCKED上游；旧确认凭据过期／撤销后当前Admin只读对账的疑似回归仍待独立复验，不宣称R004完整覆盖。边界见 [I17](docs/review-i17.md)，历史契约研究见 [I16](docs/review-i16.md)。R029／R030保持原范围有界关闭。
+**R031/P1 OPEN**：真实受限API key被撤服务范围或删除后，保存队列仍通过执行前授权。`abfb988`临时fail-closed保护已获root独立App3447有界PASS，见[实际重放报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child能力仍BLOCKED上游，边界见 [I17](docs/review-i17.md)。独立确认的 **R033/P1**（原credential失效阻断当前合法Admin／owner只读对账）已在业务源码`4a27487`修复：strict、146/146测试及真实官方NyxID撤consent后两个Worker只读恢复开发验证通过，**待独立复验**，见 [I18](docs/review-i18.md)。R032文档问题已独立有界关闭；R029／R030保持原范围有界关闭，历史契约研究见 [I16](docs/review-i16.md)。
 
 **完整 D1–D9／A01–A52 尚未正式签收。** 本地真实 NyxID 证据不自动提升正式 D/A；目标部署与运维责任、真实外部账号、精确内容／动作授权及约定 RPO/RTO 仍缺输入。当前证据与逐项边界见[交付台账](docs/delivery-status.md)及[验收矩阵与证据入口](docs/acceptance.md)。阶段 0 记录保留为历史。
 
