@@ -4,6 +4,8 @@
 
 状态含义：implemented为开发状态；Document／Local／Live分别记录。**R001–R030均已独立有界关闭，共29项必需缺陷及R021非门禁；R029／R030的固定业务源码为76595bc。Local modeled统计为51 PASS／A05 BLOCKED，Live及正式D1–D9仍未完成。** 原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理，以及真实NyxID结合四Ghost发布、指标和必要恢复差量的独立验收；不以缺陷关闭推断当前Local工作为0。根报告及证据边界见 [I15](review-i15.md#独立有界闭合2026-10-30)。
 
+**新增R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：原key服务范围撤销／删除后，新proxy拒绝而旧queued仍通过beforeWrite。官方普通delegation缺少原key在线来源；本轮仅源码／证据研究，尚无R031业务修复或新增网络验证，见 [I16](review-i16.md)。登记31项中30项既有有界关闭；R029／R030不重开，R031不降N/A。
+
 历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，不包含后续R029／R030闭合及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
 
 独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。本轮只使用独立App3117、DB/media及新建NyxID测试用户/client/org/service；App保留供独立复验。未修改NyxID官方源码、原有测试Admin/client，未操作四Ghost、dev、baseline及恢复卷，Worker仅在私有一致SQLite副本配安全adapter运行，无真实Ghost/provider写入，未push／merge。
@@ -59,6 +61,10 @@ b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trac
 ## 增量 I15
 
 `76595bc`修复R030（A09/A15、D2/D3/D5/D9）：新认证与保存Actor重验共用CallerAuthorization，完整核对当前入口、entry/global/raw能力及CMS/direct service client／audience或propagated service来源绑定。mapping整项移除也重算；CMS session所有模式均重验签名client；direct service所有模式均需显式client白名单。加密队列缺来源绑定则blocked并要求重新确认，短identity assertion过期不误杀仍有效delegation的延时任务。TDD在旧源码28/40分支失败，修复后40/40通过（含父测试为41），覆盖两个Worker；strict及完整127/127、原独立6场景重跑6/6通过。真实NyxID增补及独立结论见 [I15](review-i15.md)，R029／R030已独立有界关闭：strict＋127/127、原6＋新增27条Local分支及真实NyxID 10组／39条HTTP通过；两入口queued撤Publisher后实际ReleaseWorker blocked／FORBIDDEN／0adapter调用。本轮仍无真实Ghost/provider写入；后续原生差量验收继续。
+
+## 增量 I16
+
+R031已在真实API key撤服务范围及删除两条路径复现；Worker安全adapter避免了实际发文。官方service delegation没有原key／child来源，普通introspection只见仍active派生token；已有raw-key service-wide introspection不支持逐请求审批场景，read request-proof不能授权queued写。最小上游契约、有限可执行范围与两个Worker后续验收见 [I16](review-i16.md)。当前业务源码仍76595bc，R031 OPEN，未修改官方Nyx或环境，网络复现等待root ready。
 
 ## D1–D9
 

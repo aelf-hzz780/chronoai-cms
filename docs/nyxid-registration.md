@@ -2,6 +2,8 @@
 
 实现依据：官方源码 revision `38bae2f7825bfa70d8a9e4e837118d7d9658e6a5`。官方0.75.0已在真实本地自托管实例联调；开发结果见[I14](review-i14.md)，固定76595bc的R029／R030独立有界闭合及剩余原生验收见[I15](review-i15.md#独立有界闭合2026-10-30)。该证据不是目标生产NyxID或外部账号发文签收。
 
+R031尚OPEN：普通service delegation的active状态不能证明原API key仍存在或仍有当前服务范围。现有原keyintrospection与read request-proof各有明确适用边界，不能替代逐请求批准的pending写来源校验；当前无该缺陷修复，部署／执行范围见 [I16](review-i16.md)。
+
 ## 注册输入
 
 1. OIDC confidential client：准确登记 `https://<cms-host>/auth/callback`，启用 Authorization Code + PKCE S256；登记实际 client ID/secret。issuer 是 discovery 声明的标识，允许字面 `nyxid`，不可擅自把 issuer 改成 API URL。
