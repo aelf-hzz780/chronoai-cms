@@ -134,8 +134,7 @@ export class DistributionService {
     }); return { id, state: 'cancelled' };
   }
   async reconcile(actor: Actor, id: string, trace: string) {
-    const { delivery, actor:sourceActor } = await this.context(actor, id);
-    await this.originals.content.policy.scope(sourceActor,'publish','queued-write');
+    const { delivery } = await this.context(actor, id,'access');
     requireValue(delivery.state === 'uncertain', 409, 'DELIVERY_STATE', 'Only uncertain deliveries can reconcile');
     this.store.transaction(() => {
       const update = this.store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE kind='delivery' AND resource_id=? AND state<>'running'", id);
@@ -216,8 +215,8 @@ export class DeliveryWorker {
     let sent = false, knownWrite = false, acceptedWrite = false;
     try {
       const actor = this.service.originals.vault.open<Actor>(recovery?.actor_json ?? snapshot.actor_json);
-      const { delivery, payload, owner } = await this.service.context(actor, lease.resourceId);
-      if(recovery)await this.service.originals.content.policy.scope(this.service.originals.vault.open<Actor>(snapshot.actor_json),'publish','queued-write');
+      const purpose = recovering?'access':'queued-write';
+      const { delivery, payload, owner } = await this.service.context(actor, lease.resourceId,purpose);
       const target = this.service.targets.get(delivery.target);
       const connection = await this.service.connections.connection(actor, owner, delivery.connection_id, delivery.target);
       requireValue(connectionFingerprint(connection) === payload.connectionFingerprint, 409, 'CONNECTION_CHANGED', 'Selected account or publication configuration changed; exact confirmation and authorization must be renewed');
@@ -230,7 +229,7 @@ export class DeliveryWorker {
       };
       const send = async (request: RemoteRequest) => {
         this.queue.guard(lease);
-        await this.service.originals.content.policy.publish(actor, delivery.owner_id);
+        await this.service.originals.content.policy.publish(actor, delivery.owner_id,purpose);
         if (!isRead(request)) {
           requireValue(!recovering,409,'RECOVERY_READ_ONLY','Recovery cannot send new destination writes');
           if (payload.action !== 'remove') {

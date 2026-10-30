@@ -66,7 +66,7 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
   {name:'empty lineage',entry:'propagated',legacyLineage:{consents:[]}},
   {name:'malformed consent lineage',entry:'propagated',legacyLineage:{consents:[{client_id:'x'}]}},
   {name:'blank session lineage',entry:'propagated',legacyLineage:{consents:[],source_session_id:''}},
-  {name:'legacy key recovery actor cannot replace source',entry:'propagated',legacyLineage:null,recovery:true},
+  {name:'legacy key snapshot permits current caller read-only recovery',entry:'propagated',legacyLineage:null,recovery:true,allowed:true},
   {name:'valid lineage recovery',entry:'propagated',allowed:true,recovery:true},
   {name:'lineage revoked at final write',entry:'propagated',revokeBeforeWrite:true},
   {name:'issuer change',entry:'direct',change:c=>{c.issuer='other';}},
@@ -102,8 +102,7 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
   }
   if(scenario.recovery){
    f.store.run(`UPDATE ${kind==='release'?'releases':'deliveries'} SET state='uncertain' WHERE id=?`,id);
-   if('legacyLineage' in scenario)await assert.rejects(kind==='release'?f.pub.reconcile(actor,id,'r031'):distribution().reconcile(actor,id,'r031'),{code:'SOURCE_AUTHORITY_UNPROVEN'});
-   f.store.run('INSERT INTO recovery_actors VALUES (?,?,?,?)',kind,id,vault.seal(actor),'r031');
+   if(kind==='release')await f.pub.reconcile(actor,id,'r031');else await distribution().reconcile(actor,id,'r031');
   }
   if(scenario.entry==='cms')f.store.run('INSERT INTO sessions VALUES (?,?,?,?)',digest('session'),vault.seal(actor),'csrf',new Date(Date.now()+600000).toISOString());
   f.store.close();config={...config};scenario.change?.(config);f=open(config);writes=0;atBoundary=true;
@@ -116,7 +115,7 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
    if(kind==='release')await new ReleaseWorker(f.pub,original).once();else await new DeliveryWorker(distribution(),original).once();
    assert.equal(writes,scenario.allowed&&!scenario.recovery?1:0,'outbound writes after current authorization check');
    assert.equal(f.store.get(`SELECT state FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.state,scenario.recovery?(kind==='release'?'uncertain':(scenario.allowed?'published':'uncertain')):scenario.allowed?'published':'blocked');
-   if('legacyLineage' in scenario)assert.equal(f.store.get(`SELECT error_code FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.error_code,'SOURCE_AUTHORITY_UNPROVEN');
+   if('legacyLineage' in scenario&&!scenario.recovery)assert.equal(f.store.get(`SELECT error_code FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.error_code,'SOURCE_AUTHORITY_UNPROVEN');
   }finally{f.store.close();}
  });
 });
