@@ -10,7 +10,7 @@
 
 **R031/P1 OPEN**：真实受限API key被撤服务范围或删除后，保存队列仍通过执行前授权。`abfb988`临时fail-closed保护已获root独立App3447有界PASS，见[实际重放报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child能力仍BLOCKED上游，边界见 [I17](docs/review-i17.md)。**R033/P1已在4a27487／3ded07e独立有界关闭**，见 [I18](docs/review-i18.md)。**R034/P1（A08/A17、D2/D4）已在0418652／98bac5b独立有界关闭**：实际MCP文件封装解码、保存和读回字节一致，原始HTTP下载保持，见 [I19](docs/review-i19.md)。R032文档问题已独立有界关闭；R029／R030保持原范围有界关闭，历史契约研究见 [I16](docs/review-i16.md)。
 
-最新实际联合验证在固定业务源码`0418652`完成真实官方NyxID＋四原版Ghost的CMS／service × 个人／组织 × 中英八组初始发布、非空浏览指标与12组两入口查询一致性；CMS个人更新、双向hreflang、译文stale与下线有界通过。第二轮实际恢复完成原credential仍active但组织退组时的当前Admin只读认回、旧cookie失效、22 payload加密归档新卷恢复、恢复后单次Ghost 201新图发布，以及组织中文同ID只读认回和显式projection resume；原组织中文首次INTERNAL原因仍未定，未把它解释成超时或产品bug。组织后续stale/unpublish、普通成员个人路径、新素材cancel及完整隔离恢复边界仍待验。证据与边界见中英对照 [I20](docs/review-i20.md) 与 [I21](docs/review-i21.md)；dev原容器恢复仅为资源窗口收尾，不是正式RPO/RTO验收。
+最新实际联合验证在固定业务源码`0418652`完成真实官方NyxID＋四原版Ghost的CMS／service × 个人／组织 × 中英八组初始发布、非空浏览指标与12组两入口查询一致性；CMS个人更新、双向hreflang、译文stale与下线有界通过。第二轮实际恢复完成原credential仍active但组织退组时的当前Admin只读认回、旧cookie失效、实际 native 新卷全量恢复、22 payload加密归档核对、权限／映射／媒体核对、恢复后新文章与素材验证，以及组织中文同ID只读认回和显式projection resume；原组织中文首次INTERNAL原因仍未定，未把它解释成超时或产品bug。仍缺正式生产RPO/RTO、外部分发恢复、完整组织lifecycle、组织后续stale/unpublish、普通成员个人路径、新素材cancel及实际外部平台。证据与边界见中英对照 [I20](docs/review-i20.md) 与 [I21](docs/review-i21.md)；dev原容器恢复仅为资源窗口收尾，不是正式RPO/RTO验收。
 
 **完整 D1–D9／A01–A52 尚未正式签收。** 本地真实 NyxID 证据不自动提升正式 D/A；目标部署与运维责任、真实外部账号、精确内容／动作授权及约定 RPO/RTO 仍缺输入。当前证据与逐项边界见[交付台账](docs/delivery-status.md)及[验收矩阵与证据入口](docs/acceptance.md)。阶段 0 记录保留为历史。
 
