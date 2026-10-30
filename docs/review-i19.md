@@ -1,6 +1,6 @@
 # I19 R034 MCP 原始 Markdown 文件交付
 
-业务修复：`041865217bb876b4d885a88a1e1344cb11af4345`。**R034/P1（A08/A17、D2/D4）开发修复，待root独立复验**。原问题及Trace／批准ID见[R034独立报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/actual-nyxid/R034.json)：4a27487在实际官方NyxID MCP导入中文BOM＋CRLF原稿60字节，同token直接HTTP下载60字节及SHA保持，MCP仅返回57字节text，丢失UTF-8 BOM。原稿存储及上传没有损坏。
+业务修复：`041865217bb876b4d885a88a1e1344cb11af4345`。**R034/P1（A08/A17、D2/D4）已在0418652／98bac5b独立有界CLOSED**，见[独立汇总](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/0418652/review.json)。独立155既有测试及23组／249 HTTP通过；实际官方MCP保存／读回七个.md（含修复前旧稿）、中英BOM／无BOM及LF／CRLF、旧／新revision、stale409和实际跨用户403通过，六次精确本地批准，原raw CMS字节一致，见[实际复验](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/0418652/actual-nyxid/R034-retest.json)。原问题及Trace／批准ID见[R034独立报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/actual-nyxid/R034.json)：4a27487在实际官方NyxID MCP导入中文BOM＋CRLF原稿60字节，同token直接HTTP下载60字节及SHA保持，MCP仅返回57字节text，丢失UTF-8 BOM。原稿存储及上传没有损坏。
 
 ## 目标、方案与契约
 
@@ -45,4 +45,4 @@ OpenAPI保留operationId `downloadMarkdown`，改指`/markdown-file`且revision�
 
 本轮不启动Worker、不创建发布任务，无Ghost／provider网络出站；自己的App3437验证后停止，源DB保持outbound_paused=true、queued release=0，私稿／修订及文件证据保留。未创建临时key。private目录0700、文件0600；不打印或提交token／cookie／Actor。`cleanup.json`与`document-verification.json`／`source-fingerprint.json`记录清理及固定业务SHA核查；正式验收第1节起9750字节与source／phase0／baseline保持原文。
 
-R034待root独立复验，不自行关闭；[R033](review-i18.md)已独立有界关闭，不重开；R031完整key/child能力仍OPEN/BLOCKED上游。A01/D1普通用户门户Launch入口另有[root只读确认的上游契约缺口](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/portal-contract-review.json)，注册homepage或管理员可见不能作为通过。完整D1–D9／A01–A52及Live未签收，当前状态以[root台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。
+R034已由root独立有界关闭；后续实际NyxID＋四Ghost联合验收的指定分支与未完成边界另见 [I20](review-i20.md)；[R033](review-i18.md)已独立有界关闭，不重开；R031完整key/child能力仍OPEN/BLOCKED上游。A01/D1普通用户门户Launch入口另有[root只读确认的上游契约缺口](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/portal-contract-review.json)，注册homepage或管理员可见不能作为通过。完整D1–D9／A01–A52及Live未签收，当前状态以[root台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。

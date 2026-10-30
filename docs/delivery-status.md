@@ -4,9 +4,9 @@
 
 状态含义：implemented为开发状态；Document／Local／Live分别记录。历史上R001–R030在各自固定SHA有界关闭（29项必需缺陷及R021非门禁），R029／R030固定业务源码为76595bc；51 PASS／A05 BLOCKED仅是R031发现前的历史Local modeled统计，不能作为abfb988的当前结论。历史报告及边界见 [I15](review-i15.md#独立有界闭合2026-10-30)。
 
-**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** 临时安全阻断的有界PASS不自动改写完整能力台账。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID结合四Ghost发布、指标和必要恢复差量；R033独立确认了旧credential失效后当前合法Admin／owner的只读对账回归，4a27487／3ded07e已独立有界关闭。当前新增R034/P1为真实MCP交付原文时丢BOM，业务修复与开发验证见I19，待独立复验。不以重新确认或重发替代对账，不外推旧R004覆盖。
+**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** 临时安全阻断的有界PASS不自动改写完整能力台账。R033已在4a27487／3ded07e、R034已在0418652／98bac5b独立有界关闭。实际NyxID＋四Ghost初始发布、非空指标及个人生命周期的新证据与组织verifying待恢复边界见 [I20](review-i20.md)；实际门户／CMS入口、多组织／受限代理及必要恢复等差量继续独立追踪。不以重新确认或重发替代对账，不外推旧R004覆盖。
 
-**R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：官方普通delegation缺少原key在线来源。abfb988临时fail-closed保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，见[实际报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child命令来源契约仍BLOCKED上游。R032/P2文档修正已在11b6011独立有界关闭，见[报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/R032-documentation-retest.json)。**R033/P1（A36/A49/A50、D7/D9）已独立有界关闭**，见 [I18](review-i18.md)。**R034/P1（A08/A17、D2/D4）修复待独立复验**，见 [I19](review-i19.md)。R029／R030不重开，R031不降N/A，边界见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。
+**R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：官方普通delegation缺少原key在线来源。abfb988临时fail-closed保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，见[实际报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child命令来源契约仍BLOCKED上游。R032/P2文档修正已在11b6011独立有界关闭，见[报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/R032-documentation-retest.json)。**R033/P1（A36/A49/A50、D7/D9）已独立有界关闭**，见 [I18](review-i18.md)。**R034/P1（A08/A17、D2/D4）已独立有界关闭**，见 [I19](review-i19.md)。R029／R030不重开，R031不降N/A，边界见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。
 
 历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，不包含后续R029／R030闭合及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
 
@@ -82,7 +82,13 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 ## 增量 I19
 
-`0418652`修复R034/P1：真实NyxID MCP对非图片响应做text解码会丢Markdown BOM，现用明确base64 JSON文件封装；`downloadMarkdown`迁至`/markdown-file`，需重新导入34操作，直接HTTP／CMS原`/markdown`保留。strict、相关19/19及全量155/155通过。App3437实际官方OAuth＋精确服务consent＋MCP协议2025-03-26完成中英×BOM有无×LF／CRLF八组，32个实际解码落盘.md逐字节及SHA一致；后续修订、旧revision、stale409及真实跨owner403通过，24次本地精确动作逐次官方批准。App验证后停止，source queued=0、paused=true，无Worker／Ghost／provider出站。R034修复待独立复验，完整D/A不提升，见 [I19](review-i19.md)。A01/D1普通用户门户Launch入口另有[上游缺口](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/portal-contract-review.json)。
+`0418652`修复R034/P1：真实NyxID MCP对非图片响应做text解码会丢Markdown BOM，现用明确base64 JSON文件封装；`downloadMarkdown`迁至`/markdown-file`，需重新导入34操作，直接HTTP／CMS原`/markdown`保留。strict、相关19/19及全量155/155通过。App3437实际官方OAuth＋精确服务consent＋MCP协议2025-03-26完成中英×BOM有无×LF／CRLF八组，32个实际解码落盘.md逐字节及SHA一致；后续修订、旧revision、stale409及真实跨owner403通过，24次本地精确动作逐次官方批准。App验证后停止，source queued=0、paused=true，无Worker／Ghost／provider出站。root在0418652／98bac5b以155既有测试、独立23组／249 HTTP及真实MCP七个.md保存／读回、旧稿／修订／stale409／跨用户403独立有界关闭R034；完整D/A不提升，见 [I19](review-i19.md)。A01/D1普通用户门户Launch入口另有[上游缺口](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/portal-contract-review.json)。
+
+## 增量 I20
+
+固定业务源码0418652的实际官方NyxID＋四原版Ghost八组初始发布通过，独立environment核对原版镜像、源码／卷／owner与原文／素材绑定；真实浏览生成非空指标，12组CMS／service查询一致。CMS个人更新、双向hreflang、stale及下线有界通过，组织英文更新有界通过；组织中文更新已到同一Ghost remoteId，但release仍verifying/INTERNAL，原因未定、未恢复或重发，组织后续互链／stale／下线及完整隔离恢复待验。root本地源App与四站九容器已停止、外发暂停、卷与现场保留；dev八容器原ID／image／volume恢复及九端点200仅是资源窗口收尾，不是备份／数据恢复验收。中英报告、逐项证据与界限见 [I20](review-i20.md)。
+
+Git交付：公开仓库origin已正常接收功能分支至98bac5b，main仅原始baseline019222c，未force／merge；PR API仍403，尚未创建PR，本轮文档新提交待原任务处理。R031完整能力和A01普通门户入口仍上游BLOCKED，Native整体及正式D/A未签收，动态状态沿用root台账。
 
 ## D1–D9
 
@@ -163,6 +169,6 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 - B2：DEV 个人／组织、Hashnode 组织 Pro 和有权账号、NyxID exact connections；关联 D6。无真实账号写入。
 - B3：Medium／HackerNoon 账号、人工提交负责人、明确获准内容和外部写入授权；关联 D6/D7。
 - B4：生产 HTTPS 域名、部署容量、付款责任、隐私保留策略及 RPO/RTO；关联 D1/D8/D9。
-- B5：目标 remote `git@github.com:aelf-hzz780/chronoai-cms.git` 2026-10-29 10:59Z原任务只读重试仍Repository not found；不阻止本地开发和增量 commit。
+- B5：历史Repository not found／SSH写权限阻塞已解除；原任务已正常push功能分支至98bac5b。当前仅PR创建API返回403 `Resource not accessible by integration`，尚未创建PR，未merge；本轮新增文档commit尚待原任务处理，见 [I20](review-i20.md)。
 
 外部账号／内容动作授权／目标部署与责任等输入继续BLOCKED；R029／R030已独立有界关闭，原任务继续上述实际原生验收差量。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将本地开发通过提升为Live或正式D/A签收。
