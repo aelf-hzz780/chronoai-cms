@@ -77,7 +77,7 @@ The browser uses NyxID Authorization Code + PKCE. Validate state, nonce, signatu
 
 NyxID 服务调用必须通过当前环境正式支持的签名身份／委托机制验证实际调用人和 scope。`X-NyxID-User-Id` 等裸请求头不能独立构成可信身份。平台范围的通用服务凭证不能替代人的所有权和成员权限检查。OIDC 身份 token、API access token、代理 identity assertion 的用途不可混用。
 
-NyxID service calls must verify the actual caller and scope through the signed identity or delegation mechanism formally supported by the current environment. A bare request header such as `X-NyxID-User-Id` cannot independently establish a trusted identity. A platform-wide generic service credential cannot replace a person's ownership and membership checks. OIDC identity tokens, API access tokens, and delegated identity assertions must not be used interchangeably.
+NyxID service calls must verify the actual caller and scope through the signed identity or delegation mechanism formally supported by the current environment. A bare request header such as `X-NyxID-User-Id` cannot independently establish a trusted identity. A platform-wide generic service credential cannot replace a person's ownership and membership checks. OIDC identity tokens, API access tokens, and proxy identity assertions must not be used interchangeably.
 
 所有路径均执行 actor × action × owner × resource × delegated scope 检查；包含列表、搜索、下载、预览、图片、指标、取消和对账。外部传入的 owner/channel/post/revision/connection ID 只用于查找，授权依据来自服务端记录。记录 actor、owner 与 credited_author，不能互相替代。
 
@@ -105,7 +105,7 @@ Permission checks use the current authoritative state. After leaving an organiza
 
 组织原文发布不增加 Editor 或强制二审。组织自动外部写入额外要求 NyxID Admin 对确切内容、连接／目标和动作批准，修改外部副本也适用。不能用组织通用 grant 自动替代精确批准。
 
-Publishing an organization original does not add an Editor role or require a second review. Automated organization writes additionally require a NyxID Admin to approve the exact content, connection or target, and action; the same applies when modifying an external copy. A generic organization grant cannot automatically replace exact approval.
+Publishing an organization original does not add an Editor role or require a second review. Automated external organization writes additionally require a NyxID Admin to approve the exact content, connection or target, and action; the same applies when modifying an external copy. A generic organization grant cannot automatically replace exact approval.
 
 ## 4. 内容、修订、媒体与翻译
 
@@ -122,7 +122,7 @@ Publishing an organization original does not add an Editor role or require a sec
 - TranslationLink 记录文章对与源 revision；源文变化标记过时，不自动改写或发布译文。仅在对应译文公开后生成公开链接；下线时同步清理相关公开链接。
 - TranslationLink records the article pair and source revision. A source change marks the translation outdated; it does not rewrite or publish the translation automatically. Generate a public link only after the corresponding translation is public, and remove related public links when it is unpublished.
 - 草稿及未发布图片在私有存储中，通过鉴权读取或短时、绑定权限的链接访问；不可通过 Ghost 公共图片地址提前公开。发布准备仍写入私有 staging，确认对应 revision 已实际公开后才启用持久的公开资源访问；最后核验正文和图片均可达才完成发布。公开访问状态由存储／CDN 持久承载，不依赖业务服务实时鉴权。发布失败或发送前取消时素材保持私有；结果 uncertain 时先对账再决定是否公开。回收暂存素材需检查其他已发布 revision 的引用，不能误删共享资源。保留私有源与发布资源映射，并验证这一非原子转换的失败路径。
-- Drafts and unpublished images remain in private storage and are read through authorization or short-lived, permission-bound links; they cannot be exposed early through a public Ghost image URL. Publication preparation remains in private staging. Enable durable public asset access only after confirming that the target revision is actually public, and complete publication only after verifying that both body and image are reachable. Storage/CDN durably carries public access state rather than relying on real-time business-service authorization. Keep assets private when publication fails or is cancelled before sending; when the result is uncertain, reconcile first and then decide whether to publish. Before reclaiming staged assets, check references from other published revisions so shared resources are not deleted accidentally. Preserve private-source and published-resource mappings and verify failure paths in this non-atomic transition.
+- Drafts and unpublished images remain in private storage and are read through authorization or short-lived, permission-bound links; they cannot be exposed early through a public Ghost image URL. Publication preparation remains in private staging. Enable durable public asset access only after confirming that the target revision is actually public, and complete publication only after verifying that both body and image are reachable. Storage/CDN durably carries public access state rather than relying on real-time business-service authorization. Keep assets private when publication fails or is cancelled before sending; when the result is uncertain, reconcile first and then decide whether to expose assets publicly. Before reclaiming staged assets, check references from other published revisions so shared resources are not deleted accidentally. Preserve private-source and published-resource mappings and verify failure paths in this non-atomic transition.
 - Markdown 渲染禁用危险 HTML／协议并做输出净化。远端图片导入必须限制协议、大小、类型、重定向和网络地址，防止 XSS、SSRF 及资源耗尽。原始文件与渲染后的内容分别存储。
 - Markdown rendering disables dangerous HTML/protocols and sanitizes output. Remote image import must restrict protocol, size, type, redirects, and network addresses to prevent XSS, SSRF, and resource exhaustion. Store original files separately from rendered content.
 
@@ -200,7 +200,7 @@ The platform MetricsService provides date, article, language, and destination fi
 
 数据项返回 value、availability、source、updated_at 和覆盖范围；不可用以 null＋Unavailable 原因表示，不填 0。外部阅读／互动仅接入支持且已授权的来源。组织成员可查看聚合看板，个人数据仅 owner；私有草稿／预览不采集。客户端不能通过伪造 owner/article 字段把访问写进其他租户；采集故障不阻断发布。
 
-Each data item returns value, availability, source, updated_at, and coverage. Unavailable data is represented by null plus an Unavailable reason, not by 0. External reading/interaction is integrated only from supported and authorized sources. Organization members may view aggregate dashboards, while personal data is restricted to the owner; private drafts/previews are not collected. A client cannot write access into another tenant by forging owner/article fields, and collection failure does not block publishing.
+Each data item returns value, availability, source, updated_at, and coverage. Unavailable data is represented by null plus an Unavailable reason, not by 0. External reading/interaction is integrated only from supported and authorized sources. Organization members may view aggregate dashboards, while personal data is restricted to the owner; private drafts/previews are not collected. A client cannot record visits under another tenant by forging owner/article fields, and collection failure does not block publishing.
 
 ## 8. 模式、可靠性与运维
 
