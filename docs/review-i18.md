@@ -1,6 +1,6 @@
 # I18 R033 当前调用人的只读恢复授权
 
-业务修复：`4a27487bac6c74459c7f65a6e9c2cf4c63ea36f1`。独立 **R033/P1（A36/A49/A50、D7/D9）开发修复通过，待root独立复验**，不自行关闭。root在abfb988对release／delivery × 原credential自然过期／在线撤销独立复现，真实官方NyxID撤consent后fresh owner亦复现；不重开旧R004。[R033独立依据](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/independent-auth/R033.json)与[实际撤consent依据](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/recovery-regression.json)保留原结论。
+业务修复：`4a27487bac6c74459c7f65a6e9c2cf4c63ea36f1`。独立 **R033/P1（A36/A49/A50、D7/D9）已在4a27487／3ded07e由root独立有界关闭**，见[汇总报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/review.json)。独立Local21行为分支、114相关测试与strict，以及实际官方NyxID撤consent后fresh owner的两个Worker各1读取／0新写通过，R031实际五组／10Worker保护回归亦通过。root在abfb988对release／delivery × 原credential自然过期／在线撤销独立复现，真实官方NyxID撤consent后fresh owner亦复现；不重开旧R004。[R033独立依据](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/independent-auth/R033.json)与[实际撤consent依据](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/recovery-regression.json)保留原结论。
 
 ## 目标、决策与实现
 
@@ -43,4 +43,4 @@ release来源为实际API；delivery连接／provider、远端结果及lost-resp
 
 无schema／密钥迁移。App与全部Worker一起升级至固定业务SHA；先暂停外发，检查uncertain与旧queued，再由当前有权caller显式只读对账。保持R031新写保护，不自动重发、换源或复活旧blocked任务。若回滚代码，保持outbound_paused=true并停止外发Worker；回滚到abfb988会恢复R033限制，需人工保留并跟进uncertain。
 
-R032文档问题已独立有界关闭，当前状态统一链接[root台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)，不硬编码随验收变化的当前统计。R033待独立复验；R031完整能力仍OPEN/BLOCKED上游；完整D1–D9／A01–A52与Live未签收。正式验收第1节起9750字节、source／phase0／baseline保持原文；`document-verification.json`及`source-fingerprint.json`绑定固定业务SHA与逐文件内容。
+R032文档问题已独立有界关闭，当前状态统一链接[root台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)，不硬编码随验收变化的当前统计。R033已独立有界关闭；后续R034原始文件交付另见 [I19](review-i19.md)；R031完整能力仍OPEN/BLOCKED上游；完整D1–D9／A01–A52与Live未签收。正式验收第1节起9750字节、source／phase0／baseline保持原文；`document-verification.json`及`source-fingerprint.json`绑定固定业务SHA与逐文件内容。

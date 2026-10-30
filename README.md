@@ -8,7 +8,7 @@
 
 当前状态以[最新 root 独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准，开发记录不替代独立签收。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID与四Ghost发布、指标和必要恢复差量验收；历史“可推进Local工作为0”不作为当前结论。
 
-**R031/P1 OPEN**：真实受限API key被撤服务范围或删除后，保存队列仍通过执行前授权。`abfb988`临时fail-closed保护已获root独立App3447有界PASS，见[实际重放报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child能力仍BLOCKED上游，边界见 [I17](docs/review-i17.md)。独立确认的 **R033/P1**（原credential失效阻断当前合法Admin／owner只读对账）已在业务源码`4a27487`修复：strict、146/146测试及真实官方NyxID撤consent后两个Worker只读恢复开发验证通过，**待独立复验**，见 [I18](docs/review-i18.md)。R032文档问题已独立有界关闭；R029／R030保持原范围有界关闭，历史契约研究见 [I16](docs/review-i16.md)。
+**R031/P1 OPEN**：真实受限API key被撤服务范围或删除后，保存队列仍通过执行前授权。`abfb988`临时fail-closed保护已获root独立App3447有界PASS，见[实际重放报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child能力仍BLOCKED上游，边界见 [I17](docs/review-i17.md)。**R033/P1已在4a27487／3ded07e独立有界关闭**，见 [I18](docs/review-i18.md)。新增 **R034/P1**（A08/A17、D2/D4）：真实NyxID MCP将原始Markdown转为text时丢BOM；业务源码`0418652`改用可还原原始.md的base64 JSON文件封装，strict与155/155测试通过，开发证据及独立复验状态见 [I19](docs/review-i19.md)。R032文档问题已独立有界关闭；R029／R030保持原范围有界关闭，历史契约研究见 [I16](docs/review-i16.md)。
 
 **完整 D1–D9／A01–A52 尚未正式签收。** 本地真实 NyxID 证据不自动提升正式 D/A；目标部署与运维责任、真实外部账号、精确内容／动作授权及约定 RPO/RTO 仍缺输入。当前证据与逐项边界见[交付台账](docs/delivery-status.md)及[验收矩阵与证据入口](docs/acceptance.md)。阶段 0 记录保留为历史。
 

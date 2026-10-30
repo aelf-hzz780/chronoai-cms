@@ -1,6 +1,6 @@
 # I17 R031 临时来源保护与真实 OAuth 撤权验证
 
-历史业务修复：`abfb988854ca7b0a90a41a663aab6fbac81598b9`。**临时来源写入保护已获root Local专项及独立App3447实际重放的有界PASS，见[独立报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；R031完整key/child命令来源能力仍为OPEN/BLOCKED上游。** 旧确认credential过期／撤销阻断当前合法Admin只读对账，已由root独立确认为R033/P1；4a27487修复及开发证据见 [I18](review-i18.md)，待独立复验。本页保留abfb988历史实现与证据，原来源须持续有效的恢复限制不再是当前设计。旧R004不重开。R029／R030保留原范围有界CLOSED，完整D/A与Live未签收。[I16](review-i16.md)保留保护前的契约研究及root复现。
+历史业务修复：`abfb988854ca7b0a90a41a663aab6fbac81598b9`。**临时来源写入保护已获root Local专项及独立App3447实际重放的有界PASS，见[独立报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；R031完整key/child命令来源能力仍为OPEN/BLOCKED上游。** 旧确认credential过期／撤销阻断当前合法Admin只读对账，已由root独立确认为R033/P1；4a27487／3ded07e已独立有界关闭，证据见 [I18](review-i18.md)。本页保留abfb988历史实现与证据，原来源须持续有效的恢复限制不再是当前设计。旧R004不重开。R029／R030保留原范围有界CLOSED，完整D/A与Live未签收。[I16](review-i16.md)保留保护前的契约研究及root复现。
 
 ## 目标、决策与影响范围
 

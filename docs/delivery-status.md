@@ -1,16 +1,16 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`。当前业务源码为 `4a27487bac6c74459c7f65a6e9c2cf4c63ea36f1`（R033只读恢复，保留abfb988的R031临时保护；R030为76595bc，含R029 `2d65bc0`）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID及保存授权修复见 [I14](review-i14.md)、[I15](review-i15.md)。实际证据按固定业务源码与逐文件指纹对应。
+分支：`codex/003-blogsystem-delivery`。当前业务源码为 `041865217bb876b4d885a88a1e1344cb11af4345`（R034 MCP文件交付，保留4a27487的R033恢复与abfb988的R031临时保护；R030为76595bc，含R029 `2d65bc0`）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID及保存授权修复见 [I14](review-i14.md)、[I15](review-i15.md)。实际证据按固定业务源码与逐文件指纹对应。
 
 状态含义：implemented为开发状态；Document／Local／Live分别记录。历史上R001–R030在各自固定SHA有界关闭（29项必需缺陷及R021非门禁），R029／R030固定业务源码为76595bc；51 PASS／A05 BLOCKED仅是R031发现前的历史Local modeled统计，不能作为abfb988的当前结论。历史报告及边界见 [I15](review-i15.md#独立有界闭合2026-10-30)。
 
-**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** 临时安全阻断的有界PASS不自动改写完整能力台账。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID结合四Ghost发布、指标和必要恢复差量；R033独立确认了旧credential失效后当前合法Admin／owner的只读对账回归，4a27487开发修复已通过，待独立复验。不以重新确认或重发替代对账，不外推旧R004覆盖。
+**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** 临时安全阻断的有界PASS不自动改写完整能力台账。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID结合四Ghost发布、指标和必要恢复差量；R033独立确认了旧credential失效后当前合法Admin／owner的只读对账回归，4a27487／3ded07e已独立有界关闭。当前新增R034/P1为真实MCP交付原文时丢BOM，业务修复与开发验证见I19，待独立复验。不以重新确认或重发替代对账，不外推旧R004覆盖。
 
-**R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：官方普通delegation缺少原key在线来源。abfb988临时fail-closed保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，见[实际报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child命令来源契约仍BLOCKED上游。R032/P2文档修正已在11b6011独立有界关闭，见[报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/R032-documentation-retest.json)。**R033/P1（A36/A49/A50、D7/D9）修复待独立复验**，开发证据见 [I18](review-i18.md)。R029／R030不重开，R031不降N/A，边界见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。
+**R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：官方普通delegation缺少原key在线来源。abfb988临时fail-closed保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，见[实际报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child命令来源契约仍BLOCKED上游。R032/P2文档修正已在11b6011独立有界关闭，见[报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/R032-documentation-retest.json)。**R033/P1（A36/A49/A50、D7/D9）已独立有界关闭**，见 [I18](review-i18.md)。**R034/P1（A08/A17、D2/D4）修复待独立复验**，见 [I19](review-i19.md)。R029／R030不重开，R031不降N/A，边界见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。
 
 历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，不包含后续R029／R030闭合及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
 
-独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。环境按轮次区分：I14／I15（2d65bc0／76595bc）的开发联调使用独立App3117及其DB/media和测试用户/client/org/service；I17（abfb988）的开发验证另建App3437，I18将其安全重启至4a27487，root独立重放另用App3447。这些轮次不是同一环境或同一证据集，端口仅作本地证据标识，不保证持续运行。I17／I18 Worker只在私有一致SQLite副本配安全adapter运行，无真实Ghost/provider写入。历史R032仅修文档；I18只操作自己的3437对象，未操作root3447／3417、旧3117、Ghost/dev/baseline或其恢复卷，未改角色／Publisher或官方NyxID源码，未push／merge。
+独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。环境按轮次区分：I14／I15（2d65bc0／76595bc）的开发联调使用独立App3117及其DB/media和测试用户/client/org/service；I17（abfb988）的开发验证另建App3437，I18将其安全重启至4a27487，I19重启至0418652做MCP文件验证后停止，root独立重放另用App3447。这些轮次不是同一环境或同一证据集，端口仅作本地证据标识，不保证持续运行。I17／I18 Worker只在私有一致SQLite副本配安全adapter运行，I19未启动Worker，均无真实Ghost/provider写入。历史R032仅修文档；I18／I19只操作自己的3437对象，未操作root3447／3417、旧3117、Ghost/dev/baseline或其恢复卷，未改角色／Publisher或官方NyxID源码，未push／merge。
 
 ## 增量 I2
 
@@ -78,7 +78,11 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 ## 增量 I18
 
-`4a27487`修复独立R033/P1：uncertain复核和恢复Worker仅以当前合法caller执行access授权，原Actor作为审计证据保留，不再将其queued-write有效性作为读取前提；恢复中beforeWrite继续拒绝新写。strict、相关77/77及全量146/146通过。App3437真实官方OAuth撤consent后，fresh CMS owner使两个Worker各1读取／0新写完成恢复；R031六组／12Worker正反控通过。临时key已删、源queued=0、15个源／副本DB均暂停；无Ghost/provider网络写入，连接与远端结果为fixture。修复待独立复验，不自行关闭R033或提升完整能力，证据与局限见 [I18](review-i18.md)。
+`4a27487`修复独立R033/P1：uncertain复核和恢复Worker仅以当前合法caller执行access授权，原Actor作为审计证据保留，不再将其queued-write有效性作为读取前提；恢复中beforeWrite继续拒绝新写。strict、相关77/77及全量146/146通过。App3437真实官方OAuth撤consent后，fresh CMS owner使两个Worker各1读取／0新写完成恢复；R031六组／12Worker正反控通过。临时key已删、源queued=0、15个源／副本DB均暂停；无Ghost/provider网络写入，连接与远端结果为fixture。root在4a27487／3ded07e以Local21行为分支、114相关测试、strict及实际官方NyxID两Worker各1读取／0新写独立有界关闭R033；R031实际五组／10Worker保护继续通过。不提升完整能力，证据与局限见 [I18](review-i18.md)。
+
+## 增量 I19
+
+`0418652`修复R034/P1：真实NyxID MCP对非图片响应做text解码会丢Markdown BOM，现用明确base64 JSON文件封装；`downloadMarkdown`迁至`/markdown-file`，需重新导入34操作，直接HTTP／CMS原`/markdown`保留。strict、相关19/19及全量155/155通过。App3437实际官方OAuth＋精确服务consent＋MCP协议2025-03-26完成中英×BOM有无×LF／CRLF八组，32个实际解码落盘.md逐字节及SHA一致；后续修订、旧revision、stale409及真实跨owner403通过，24次本地精确动作逐次官方批准。App验证后停止，source queued=0、paused=true，无Worker／Ghost／provider出站。R034修复待独立复验，完整D/A不提升，见 [I19](review-i19.md)。A01/D1普通用户门户Launch入口另有[上游缺口](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/portal-contract-review.json)。
 
 ## D1–D9
 
@@ -96,7 +100,7 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 ## A01–A52
 
-下表保留以804e7c4历史综合账目为基础、叠加截至76595bc有界补充的证据索引；Document／Local列未回填R031之后的当前状态，不能读作abfb988或4a27487验收结果，R031／R033相关场景当前以本页首部链接的root台账为准。开发implemented不代表签收；所有正式场景仍受共享A01/A05/A06目标门禁及适用外部输入约束，不以测试名推断结论。详细来源与最新状态以root独立台账为准。
+下表保留以804e7c4历史综合账目为基础、叠加截至76595bc有界补充的证据索引；Document／Local列未回填R031之后的当前状态，不能读作abfb988、4a27487或0418652验收结果，R031／R033／R034相关场景当前以本页首部链接的root台账为准。开发implemented不代表签收；所有正式场景仍受共享A01/A05/A06目标门禁及适用外部输入约束，不以测试名推断结论。详细来源与最新状态以root独立台账为准。
 
 | 场景 | 开发状态 | Document | Local | 代码/证据索引 | 有界证据与外部边界 |
 |---|---|---|---|---|---|

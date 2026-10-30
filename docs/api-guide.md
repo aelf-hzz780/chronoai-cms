@@ -13,6 +13,30 @@
 
 `GET /articles/:id/preview?revision=...`可预览指定的有权历史修订；省略revision时使用调用人当前可见版本。参数不扩大私人草稿／素材的访问范围。渲染时仅处理首个编码BOM，存储和下载仍保留原始字节。
 
+## NyxID MCP 原始文件交付
+
+MCP `downloadMarkdown`使用`GET /api/service/articles/:id/markdown-file?revision=...`，返回application/json文件封装：`articleId`、`revisionId`、`filename=article.md`、`mediaType=text/markdown`、`encoding=base64`、`byteLength`、`sha256`、`data`。`data`是原始UTF-8文件字节的标准base64，包含BOM及原始换行。调用方须解码、核对长度与SHA-256后写出`.md`文件；MCP text中的JSON是传输封装，不能把JSON或渲染后的Markdown当作原始文件。
+
+在NyxID通过`nyx__search_tools`重新发现`<service-slug>__downloadmarkdown`，再以`nyx__call_tool`传`arguments_json`（包含文章`id`和必需的`revision`）。将返回text中的JSON对象保存为`envelope.json`，可按下例输出原始文件；输出路径显式指定，已有文件不会被覆盖：
+
+```sh
+node --input-type=module - envelope.json original.md <<'JS'
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+const file=JSON.parse(await readFile(process.argv[2],'utf8'));
+assert.equal(file.encoding,'base64');
+assert.equal(file.mediaType,'text/markdown');
+const bytes=Buffer.from(file.data,'base64');
+assert.equal(bytes.toString('base64'),file.data);
+assert.equal(bytes.length,file.byteLength);
+assert.equal(createHash('sha256').update(bytes).digest('hex'),file.sha256);
+await writeFile(process.argv[3],bytes,{flag:'wx',mode:0o600});
+JS
+```
+
+CMS及直接HTTP的`GET /api/{cms|service}/articles/:id/markdown?revision=...`继续返回原始attachment，不改变旧路径；新`markdown-file`接口也在两个入口共用同一revision可见性授权。更新服务后必须重新导入／发现OpenAPI端点：operationId保持`downloadMarkdown`，路径从`/markdown`迁至`/markdown-file`，操作总数仍34。旧catalog会继续取得可能丢BOM的MCP text，不能据此宣称保真。直接HTTP兼容路径不再作为MCP下载操作登记。真实验证边界见 [I19](review-i19.md)。
+
 ## 成功响应契约
 
 `/openapi.json`逐操作声明实际成功状态、顶层JSON类型与媒体类型。对象响应允许具体用例字段；调用方应读取返回的state，不将202解释为已发布。
@@ -22,7 +46,7 @@
 | createArticle、importMarkdownFile、uploadPrivateImage | 201 | application/json object |
 | confirmOriginal、confirmDistribution | 202 | application/json object；后续可能等待批准、worker、公开核验或人工处理 |
 | listArticles、listRevisions、listOriginals、listDestinations、listOwnerConnections、listDistribution、readAudit、getPublishedAlternatesStatus | 200 | application/json array，元素为object；空列表为[] |
-| downloadMarkdown | 200 | text/markdown二进制原始UTF-8字节，响应可带charset=utf-8 |
+| downloadMarkdown | 200 | application/json文件封装；base64解码并核对byteLength／sha256后得到指定revision的原始.md字节 |
 | getPrivateImage | 200 | image/png、image/jpeg、image/gif或image/webp原始二进制字节，按Content-Type解码 |
 | 其他操作 | 200 | application/json object |
 

@@ -13,11 +13,11 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 
 历史独立 Local 已覆盖实际 CMS/service × owner × language 发布、浏览器 consent 指标、译文与恢复等有界流程。2026-10-29 的804e7c4收尾账目为51场景Local PASS／A05 BLOCKED、Document 48 PASS／4 BLOCKED（A01/A05/A06/A52）、Live 52 BLOCKED，R001–R028有界关闭（R021非门禁），见[历史收尾](review-i13.md#独立-local-收尾2026-10-29)。2026-10-30真实官方NyxID 0.75.0启动发现R029；固定业务源码`2d65bc0`已完成修复及真实CMS OIDC／service代理开发联调，四用户、角色与撤权、只读scope、停用检查通过，历史开发证据见 [I14](review-i14.md)。该SHA独立复验新增R030（A09/A15、D2/D3/D5/D9）：保存会话／队列的当前授权绑定需补强。固定修复`76595bc`已由原任务独立报告有界关闭R029／R030，strict与127/127、33条Local绑定／模式／时间分支及真实NyxID的10组／39条业务HTTP记录通过，见 [I15](review-i15.md#独立有界闭合2026-10-30)。当轮R031发现前登记30项均有界关闭（29必需＋R021非门禁），51 PASS／A05 BLOCKED仅为当时历史Local modeled统计，不是abfb988当前结论。
 
-当前状态以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准，开发记录不替代独立签收。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID与四Ghost发布、指标和必要恢复差量；历史“可推进Local工作为0”不代表当前状态。旧credential失效后当前合法Admin／owner只读对账已独立确认为R033/P1（A36/A49/A50、D7/D9）；业务源码4a27487开发修复通过，待独立复验，见 [I18](review-i18.md)。不重开旧R004，不以重新确认或重发替代核对。
+当前状态以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准，开发记录不替代独立签收。原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理及真实NyxID与四Ghost发布、指标和必要恢复差量；历史“可推进Local工作为0”不代表当前状态。旧credential失效后当前合法Admin／owner只读对账已独立确认为R033/P1（A36/A49/A50、D7/D9）；业务源码4a27487／文档3ded07e已独立有界关闭，见 [I18](review-i18.md)。R034/P1另行追踪真实MCP原始文件字节损失（A08/A17、D2/D4），0418652修复及开发证据见 [I19](review-i19.md)，不以开发通过替代独立签收。不重开旧R004，不以重新确认或重发替代核对。
 
 真实本地NyxID证据按轮次区分：I14／I15（App3117）发布仅排队／取消；I17／I18（App3437）在私有一致数据库副本运行实际Worker及安全adapter，provider／远端结果为fixture，未进行Ghost／provider网络写入。目标 NyxID 正式注册／交接、组织外部写入精确批准、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应证据。正式 D1–D9／A01–A52 结论由独立验收更新，开发记录不代替签收。阶段 0 保留为历史入口。
 
-R031/P1仍OPEN（A09/A15、D2/D3/D5/D9），官方来源契约研究见 [I16](review-i16.md)。`abfb988`临时保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，完整key/child能力仍BLOCKED上游；该结果不关闭R031、不重开R029／R030、不提升正式D/A签收，边界见 [I17](review-i17.md)。R032历史统计／环境口吻的文档修正已独立有界关闭；R033另行追踪，下列正式矩阵保持原文。
+R031/P1仍OPEN（A09/A15、D2/D3/D5/D9），官方来源契约研究见 [I16](review-i16.md)。`abfb988`临时保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，完整key/child能力仍BLOCKED上游；该结果不关闭R031、不重开R029／R030、不提升正式D/A签收，边界见 [I17](review-i17.md)。R032历史统计／环境口吻的文档修正已独立有界关闭；R033已独立有界关闭，R034另行追踪；普通用户门户Launch入口上游缺口见[注册指南](nyxid-registration.md)，下列正式矩阵保持原文。
 
 ## 1. 交付追踪
 

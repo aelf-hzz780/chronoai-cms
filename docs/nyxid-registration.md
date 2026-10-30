@@ -6,7 +6,7 @@ R031尚OPEN：普通service delegation的active状态不能证明原API key仍�
 
 OAuth service调用需通过官方consent授予精确UserService／resource；仅取得proxy scope不足以访问未授权服务。普通consent review会合并scopes，较小scope登录不代表撤权；I17采用官方撤旧consent后重新授较小scope，并核对旧队列仍被阻断。所有App／Worker须一起升级，回滚期间暂停外发，不自动恢复旧blocked任务。
 
-R033只读恢复修复见 [I18](review-i18.md)，业务源码4a27487开发验证通过、待独立复验。uncertain对账按当前合法Admin／owner的access授权，不要求原确认credential仍有效；当前scope、owner／组织发布权限和精确连接绑定仍须成立。恢复只查询既有远端结果，beforeWrite禁止重发；原Actor密文和Trace保持。恢复请求调用人失权也必须阻断，不能用新恢复身份替换旧任务的新写授权。新确认／queued外发继续执行R031来源保护。
+R033只读恢复修复已在业务源码4a27487独立有界关闭，见 [I18](review-i18.md)。uncertain对账按当前合法Admin／owner的access授权，不要求原确认credential仍有效；当前scope、owner／组织发布权限和精确连接绑定仍须成立。恢复只查询既有远端结果，beforeWrite禁止重发；原Actor密文和Trace保持。恢复请求调用人失权也必须阻断，不能用新恢复身份替换旧任务的新写授权。新确认／queued外发继续执行R031来源保护。
 
 ## 注册输入
 
@@ -17,6 +17,10 @@ R033只读恢复修复见 [I18](review-i18.md)，业务源码4a27487开发验证
 5. 配置测试用户：无组织、普通 Member、Admin、指定 Publisher、多组织、离组与撤权；分别从 CMS 和 service 验证。组织来源是 `/api/v1/orgs` 实时 `your_role`；Viewer 不获得 Member 权利。Publisher 只是本平台组织发布能力，由当前 Admin 管理。
 
 导入契约时保留各operation的201／202／200成功状态及JSON object／array／原始二进制媒体声明；私有图片按实际Content-Type处理，不能强制按JSON解码。preview的可选revision参数及report的removed枚举均应保留，removed仍受已确认remove动作和精确已知URL404／410核验约束。具体操作响应见api-guide.md；目标NyxID的OpenAPI导入兼容性仍需真实注册与脱敏导出验证，不能由本机契约测试代替。
+
+R034修复将34操作中的`downloadMarkdown`迁至`/api/service/articles/{id}/markdown-file`，返回明确的base64 JSON文件封装；调用方按`encoding`解码`data`并核对`byteLength`／`sha256`，实际保存原始`.md`。必须重新导入／发现当前OpenAPI，确认该操作为application/json且revision必填；旧`binary_artifact`标记和仅改MIME不能解决官方MCP的文本解码损失。直接HTTP与CMS的原`/markdown`下载保留，文件封装仍执行同一当前权限与不可变revision检查。解码示例见 [API指南](api-guide.md#nyxid-mcp-原始文件交付)，开发验证与限制见 [I19](review-i19.md)。
+
+普通用户门户入口仍有独立上游缺口：官方38bae2f的普通`/keys`分组不渲染homepage，`/services`只对catalog／tools／admin-read开放且Homepage仅复制文本；OIDC provider、Authorized／Developer Apps均不能据此提供普通用户Launch入口。不能伪造provider关系或把管理员可见注册项当作A01/D1入口通过，见[root只读门户报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/portal-contract-review.json)。
 
 ## 官方0.75.0的分入口权限配置
 
