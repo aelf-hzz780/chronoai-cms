@@ -2,9 +2,9 @@
 
 个人与组织的双语内容发布平台，按 2026-10-28 的 Gist v0.7 需求从空项目开始建设。
 
-当前已实现可本地运行的 CMS、共享 NyxID service API、Markdown／私有素材／修订、四站 Ghost 原创发布、外部分发与生命周期、指标及加密备份恢复。历史独立 Local 验证覆盖实际 CMS/service 发布、个人／组织 × EN/ZH 四个官方 Ghost、浏览器指标和隔离恢复，当时身份使用本地签名 issuer fixture。2026-10-30 已新增真实官方 NyxID 0.75.0 双入口开发联调，固定业务源码 `2d65bc0` 的四用户、角色／撤权、只读 scope 与停用检查通过，见 [I14](docs/review-i14.md)；该轮没有 Ghost Worker 或外部 provider 出站。
+当前已实现可本地运行的 CMS、共享 NyxID service API、Markdown／私有素材／修订、四站 Ghost 原创发布、外部分发与生命周期、指标及加密备份恢复。历史独立 Local 验证覆盖实际 CMS/service 发布、个人／组织 × EN/ZH 四个官方 Ghost、浏览器指标和隔离恢复，当时身份使用本地签名 issuer fixture。2026-10-30 已新增真实官方 NyxID 0.75.0 双入口开发联调，历史业务源码 `2d65bc0` 的四用户、角色／撤权、只读 scope 与停用检查通过，见 [I14](docs/review-i14.md)；该轮没有 Ghost Worker 或外部 provider 出站。
 
-2026-10-29 独立收尾账目为 R001–R028 有界关闭（R021 非门禁）、51 场景 Local PASS／A05 BLOCKED、Document 48 PASS／4 BLOCKED、Live 52 BLOCKED。2026-10-30 真实 NyxID 启动新增 R029：修复及开发联调已完成，独立复验待返回，历史“可推进 Local 工作为 0”不再作为当前结论。
+2026-10-29 独立收尾账目为 R001–R028 有界关闭（R021 非门禁）、51 场景 Local PASS／A05 BLOCKED、Document 48 PASS／4 BLOCKED、Live 52 BLOCKED。2026-10-30 真实 NyxID 启动新增 R029：其独立复验新增 R030（保存会话／队列未服从当前配置撤权）。当前业务修复 `76595bc` 通过 strict 与 127 项本地测试，两个 Worker 的重启撤权正反控通过，真实 NyxID 增补与独立结论见 [I15](docs/review-i15.md)；R029／R030 待独立判定。历史“可推进 Local 工作为 0”不再作为当前结论。
 
 **完整 D1–D9／A01–A52 尚未正式签收。** 本地真实 NyxID 证据不自动提升正式 D/A；目标部署与运维责任、真实外部账号、精确内容／动作授权及约定 RPO/RTO 仍缺输入。当前证据与逐项边界见[交付台账](docs/delivery-status.md)及[验收矩阵与证据入口](docs/acceptance.md)。阶段 0 记录保留为历史。
 

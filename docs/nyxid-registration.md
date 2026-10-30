@@ -37,7 +37,9 @@ NYXID_SERVICE_CAPABILITY_SCOPES_JSON={"content:read":["account:read"],"content:w
 
 OAuth client仅登记所需`openid profile`或`openid profile proxy`，不用email/roles/groups/offline_access即可完成本次联调。NyxID access token的audience是实例配置的共享值，CMS还核对签名token的client_id等于`NYXID_CLIENT_ID`；不能用另一个client或第一方登录token冒充本CMS授权。ID token仍核对CMS client audience、nonce、PKCE、state与at_hash。加密session在每次请求中重新验签、在线introspection并按当前配置重算capability；既有任务的保存权限也按当前映射重新核验。
 
-Service在官方注册对象开启JWT identity及delegation注入，配置独立服务audience、准确service ID/slug；只读scope为`account:read`，确有本地写需求时再配置`account:read proxy:*`。`account:read`仅允许由管理员配置的service签发，不能填进OAuth allowed_scopes或OAuth client delegation_scopes。分入口模式默认仅接受匹配的两个签名传播header；直接Bearer另需`NYXID_SERVICE_CLIENT_IDS`逐一允许签发client，并满足service audience及capability映射，当前官方OAuth白名单不提供account:read，因此本版推荐使用真实代理注入路径。两入口首次通过认证后使用同一issuer/sub确定性创建本人workspace。
+Service在官方注册对象开启JWT identity及delegation注入，配置独立服务audience、准确service ID/slug；只读scope为`account:read`，确有本地写需求时再配置`account:read proxy:*`。`account:read`仅允许由管理员配置的service签发，不能填进OAuth allowed_scopes或OAuth client delegation_scopes。默认仅接受匹配的两个签名传播header；直接Bearer在分入口、旧全局及raw scope三种模式下均需`NYXID_SERVICE_CLIENT_IDS`逐一允许签发client，签名client_id与service audience须匹配，delegated token不能改走直接Bearer。当前官方OAuth白名单不提供account:read，因此本版推荐使用真实代理注入路径。两入口首次通过认证后使用同一issuer/sub确定性创建本人workspace。
+
+R030修复后，新认证、保存会话和队列共用当前授权核验。加密Actor保存CMS／direct service的client与audience，或propagated的service ID、slug、identity audience及delegation audience；Worker在执行及beforeWrite前重验签名、当前绑定、当前entry/global/raw能力与在线有效性。mapping整项移除也重新计算，不复用旧capability；CMS session在所有模式下均重验当前client。propagated的短identity assertion在入口验签后保存其来源绑定，延时任务核验仍有效的delegation，不要求原60秒assertion持续有效，也不延长delegation expiry。旧队列若缺来源绑定将blocked，需当前有权用户重新认证／确认；旧CMS session可通过原签名access token按当前配置重新认证。不得手工补写Actor来源或直接重放旧授权。证据见 [I15](review-i15.md)。
 
 service签名仍核对issuer、audience、相同sub、nyx_service_id、delegated、act.sub、禁止SA/relay、有效期及在线有效性。identity最长60秒，仅对iat允许最多5秒的正向时钟偏差，过期不延长；超限未来签发拒绝。此容差用于已实测的Colima/宿主亚秒级差异，运维仍应同步时钟。
 
