@@ -2,11 +2,11 @@
 
 分支：`codex/003-blogsystem-delivery`。当前业务源码为 `76595bcc5883f826aaf49acb3e3575531e41cb26`（R030；含R029 `2d65bc0`）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID及保存授权修复见 [I14](review-i14.md)、[I15](review-i15.md)。实际证据按固定业务源码与逐文件指纹对应。
 
-状态含义：implemented为开发状态；Document／Local／Live分别记录。**R001–R028已独立有界关闭（R021非门禁）；2026-10-30新增R029完成真实官方NyxID开发联调后，独立复验新增R030；当前76595bc已修复保存会话／队列的当前授权绑定，R029／R030均待独立判定。D1–D9尚未正式签收。** 本轮真实本地身份结果不自动提升目标部署、外部平台或正式D/A结论。
+状态含义：implemented为开发状态；Document／Local／Live分别记录。**R001–R030均已独立有界关闭，共29项必需缺陷及R021非门禁；R029／R030的固定业务源码为76595bc。Local modeled统计为51 PASS／A05 BLOCKED，Live及正式D1–D9仍未完成。** 原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理，以及真实NyxID结合四Ghost发布、指标和必要恢复差量的独立验收；不以缺陷关闭推断当前Local工作为0。根报告及证据边界见 [I15](review-i15.md#独立有界闭合2026-10-30)。
 
-历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，尚未纳入R029及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
+历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，不包含后续R029／R030闭合及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
 
-独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。本轮只使用独立App3117、DB/media及新建NyxID测试用户/client/org/service；App保留供独立复验。未修改NyxID官方源码、原有测试Admin/client，未操作四Ghost、dev、baseline及恢复卷，未启动Worker或向provider出站，未push／merge。
+独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。本轮只使用独立App3117、DB/media及新建NyxID测试用户/client/org/service；App保留供独立复验。未修改NyxID官方源码、原有测试Admin/client，未操作四Ghost、dev、baseline及恢复卷，Worker仅在私有一致SQLite副本配安全adapter运行，无真实Ghost/provider写入，未push／merge。
 
 ## 增量 I2
 
@@ -54,18 +54,18 @@ b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trac
 
 ## 增量 I14
 
-`2d65bc0`修复R029（D1/D2、A01/A06）：官方NyxID 0.75.0拒绝旧默认业务scope，现默认OIDC为openid profile，只授予读取；CMS与service分别使用显式capability AND映射，额外权限不由identity scope自动获得。CMS签名client_id绑定、每请求introspection及当前映射重算、service双签名传播／直接Bearer client白名单、当前组织角色／Publisher继续共同约束。strict、86/86本地测试及最终相关10/10通过。固定SHA真实四用户完成两入口同身份／workspace、个人互通与隔离、组织角色grant/revoke、只读scope、实际离组及停用检查，共7组通过。service非GET由当前用户通过官方审批API逐次批准独立本地动作，无通配grant；排队／取消不代表Ghost发布或外部分发。R029待原任务独立复验，详见 [I14](review-i14.md) 及 [注册配置](nyxid-registration.md)。
+`2d65bc0`修复R029（D1/D2、A01/A06）：官方NyxID 0.75.0拒绝旧默认业务scope，现默认OIDC为openid profile，只授予读取；CMS与service分别使用显式capability AND映射，额外权限不由identity scope自动获得。CMS签名client_id绑定、每请求introspection及当前映射重算、service双签名传播／直接Bearer client白名单、当前组织角色／Publisher继续共同约束。strict、86/86本地测试及最终相关10/10通过。固定SHA真实四用户完成两入口同身份／workspace、个人互通与隔离、组织角色grant/revoke、只读scope、实际离组及停用检查，共7组通过。service非GET由当前用户通过官方审批API逐次批准独立本地动作，无通配grant；排队／取消不代表Ghost发布或外部分发。R029最终随76595bc独立有界关闭，详见 [I14](review-i14.md) 及 [注册配置](nyxid-registration.md)。
 
 ## 增量 I15
 
-`76595bc`修复R030（A09/A15、D2/D3/D5/D9）：新认证与保存Actor重验共用CallerAuthorization，完整核对当前入口、entry/global/raw能力及CMS/direct service client／audience或propagated service来源绑定。mapping整项移除也重算；CMS session所有模式均重验签名client；direct service所有模式均需显式client白名单。加密队列缺来源绑定则blocked并要求重新确认，短identity assertion过期不误杀仍有效delegation的延时任务。TDD在旧源码28/40分支失败，修复后40/40通过（含父测试为41），覆盖两个Worker；strict及完整127/127、原独立6场景重跑6/6通过。真实NyxID增补及独立结论见 [I15](review-i15.md)，R029／R030待原任务独立判定。本轮仍无Ghost/provider出站。
+`76595bc`修复R030（A09/A15、D2/D3/D5/D9）：新认证与保存Actor重验共用CallerAuthorization，完整核对当前入口、entry/global/raw能力及CMS/direct service client／audience或propagated service来源绑定。mapping整项移除也重算；CMS session所有模式均重验签名client；direct service所有模式均需显式client白名单。加密队列缺来源绑定则blocked并要求重新确认，短identity assertion过期不误杀仍有效delegation的延时任务。TDD在旧源码28/40分支失败，修复后40/40通过（含父测试为41），覆盖两个Worker；strict及完整127/127、原独立6场景重跑6/6通过。真实NyxID增补及独立结论见 [I15](review-i15.md)，R029／R030已独立有界关闭：strict＋127/127、原6＋新增27条Local分支及真实NyxID 10组／39条HTTP通过；两入口queued撤Publisher后实际ReleaseWorker blocked／FORBIDDEN／0adapter调用。本轮仍无真实Ghost/provider写入；后续原生差量验收继续。
 
 ## D1–D9
 
 | 交付 | 开发状态 | 证据层级 | 剩余正式门禁 |
 |---|---|---|---|
-| D1 | implemented | 历史独立Local＋部署模板；I14真实NyxID开发联调通过待独立复验 | R029／R030独立结论、目标HTTPS部署／容量／付款运维责任 |
-| D2 | implemented | 历史独立Local API；I14真实service代理与CMS授权开发联调通过 | R029／R030独立复验、目标service正式交接及全部用例验收 |
+| D1 | implemented | 历史独立Local＋部署模板；76595bc真实NyxID双入口独立有界通过 | 实际门户／CMS入口验收、目标HTTPS部署／容量／付款运维责任 |
+| D2 | implemented | 历史独立Local API；76595bc真实service代理与CMS授权独立有界通过 | 实际OpenAPI注册、多组织／受限代理及目标service正式交接与全部用例验收 |
 | D3 | implemented | 独立Local角色／owner／入口／时序闭合 | 目标NyxID角色／委托／撤权契约及共享部署门禁 |
 | D4 | implemented | 独立Local源文／素材／冲突／译文／CMS闭合 | 共享目标身份与部署门禁 |
 | D5 | implemented | 独立Local四Ghost／更新／取消／核验闭合 | 目标身份与部署门禁 |
@@ -80,12 +80,12 @@ b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trac
 
 | 场景 | 开发状态 | Document | Local | 代码/证据索引 | 有界证据与外部边界 |
 |---|---|---|---|---|---|
-| A01 | implemented | BLOCKED | PASS | auth.test.ts / nyxid-registration.md / review-i14.md | 历史独立结论保留；I14真实NyxID双入口开发验证通过，R029／R030待独立复验 |
+| A01 | implemented | BLOCKED | PASS | auth.test.ts / nyxid-registration.md / review-i14.md | modeled结论保留；76595bc真实NyxID双入口独立通过，R029／R030有界关闭，门户差量继续 |
 | A02 | implemented | PASS | PASS | auth.test.ts | 签名、state/nonce/audience/PKCE/hash本地回归 |
 | A03 | implemented | PASS | PASS | auth.test.ts | 会话注销与重放本地回归 |
 | A04 | implemented | PASS | PASS | infra/platform/nginx.conf.example | 四角色CMS/service凭证×四Ghost 32拒绝＋4正控通过；目标部署访问配置待确认 |
 | A05 | implemented | BLOCKED | BLOCKED | operations.md | BLOCKED：缺具名目标域名／资源、付款／运维责任；无待实现代码项 |
-| A06 | implemented | BLOCKED | PASS | http.test.ts / operations.test.ts / review-i14.md | 历史独立结论保留；I14实际service注册／签名代理通过，正式交接待验 |
+| A06 | implemented | BLOCKED | PASS | http.test.ts / operations.test.ts / review-i14.md | modeled结论保留；实际签名代理独立通过，OpenAPI注册／受限代理及正式交接待验 |
 | A07 | implemented | PASS | PASS | http.test.ts / four-ghost.integration.ts | 双入口四站及service个人／CMS组织新正文更新通过，URL／remoteID保持；真实NyxID委托待验证 |
 | A08 | implemented | PASS | PASS | operations.test.ts / metrics.test.ts / four-ghost.integration.ts | 原文bytes和同口径查询局部 |
 | A09 | implemented | PASS | PASS | auth.test.ts / content.test.ts | scope/伪造身份/委托边界局部 |
@@ -135,10 +135,10 @@ b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trac
 
 ## 外部 BLOCKED
 
-- B1：本地真实NyxID issuer、独立应用／service及四用户角色／委托已完成I14开发联调，R029／R030独立结论待返回；目标注册交接及组织向外部平台精确批准／receipt仍需相应真实证据，关联D1/D2/D3/D6。
+- B1：本地真实NyxID双入口、角色／委托与queued撤权已独立通过，R029／R030有界关闭；实际门户／CMS入口、OpenAPI注册、多组织／受限代理及目标注册交接、组织向外部平台精确批准／receipt仍需相应证据，关联D1/D2/D3/D6。
 - B2：DEV 个人／组织、Hashnode 组织 Pro 和有权账号、NyxID exact connections；关联 D6。无真实账号写入。
 - B3：Medium／HackerNoon 账号、人工提交负责人、明确获准内容和外部写入授权；关联 D6/D7。
 - B4：生产 HTTPS 域名、部署容量、付款责任、隐私保留策略及 RPO/RTO；关联 D1/D8/D9。
 - B5：目标 remote `git@github.com:aelf-hzz780/chronoai-cms.git` 2026-10-29 10:59Z原任务只读重试仍Repository not found；不阻止本地开发和增量 commit。
 
-外部账号／内容动作授权／目标部署与责任等输入继续BLOCKED；R029／R030修复已有本地正反控与真实NyxID证据入口，等待独立判定。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将本地开发通过提升为Live或正式D/A签收。
+外部账号／内容动作授权／目标部署与责任等输入继续BLOCKED；R029／R030已独立有界关闭，原任务继续上述实际原生验收差量。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将本地开发通过提升为Live或正式D/A签收。

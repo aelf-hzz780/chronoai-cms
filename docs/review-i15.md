@@ -1,6 +1,6 @@
 # I15 保存授权的当前绑定与撤权（开发记录）
 
-R030修复业务源码：`76595bcc5883f826aaf49acb3e3575531e41cb26`；关联A09/A15、D2/D3/D5/D9，前置R029为`2d65bc0`。**R029／R030待原任务独立判定，尚未关闭，不提升正式D/A签收。**
+R030修复业务源码：`76595bcc5883f826aaf49acb3e3575531e41cb26`；关联A09/A15、D2/D3/D5/D9，前置R029为`2d65bc0`。**R029／R030已由原任务在该业务SHA独立有界关闭，结论为PASS_BOUNDED_R029_R030；不提升正式D/A签收。**
 
 ## 发现与修复
 
@@ -35,6 +35,26 @@ CMS session在所有模式下重新认证原access token，始终检查当前CMS
 
 脚本为`integration.mjs`及`worker-probe.mjs`；脱敏结果为`integration-result.json`、`worker-<releaseId>.json`。证据按同一固定SHA分段：`actual-delta-final.log`完成三个缺失分支，`actual-positive-retry.log`续跑不变授权正控并退出0；结果汇总这两段，不声称一次连续无失败运行。第一轮service-first后续CMS页面等待超时；另一轮个人owner未配site而拒绝正控，已改为预先注册site的组织Admin。`actual-positive.log`还保留一次callback后me瞬时401；同一保存token随后独立验签与在线introspection通过，重试通过，首次原因未明，未修改产品或放宽校验。`integration-last-attempt.json`保留此前停止信息。私有数据库副本与凭据仍在`.runtime/r029-nyxid/private/`，文件0600，避免输出token／cookie／完整授权头。
 
-`source-fingerprint.json`确认72个源码／测试／配置文件与业务SHA逐字节一致；`document-verification.json`确认43个本地链接／anchor有效、两份来源checksum正确，正式acceptance第1节起9750字节以及phase0／baseline／manifest保持原文。
+`source-fingerprint.json`确认72个源码／测试／配置文件与业务SHA逐字节一致；`document-verification.json`确认48个本地链接／anchor有效、两份来源checksum正确，正式acceptance第1节起9750字节以及phase0／baseline／manifest保持原文。
 
 本轮没有真实Ghost/provider写入，没有操作四Ghost/dev/baseline/恢复卷，没有push／merge。App3117及NyxID保留供原任务独立复验；真实外部账号／具体内容动作授权／目标部署运维责任与正式D/A仍需相应输入和独立结论。
+
+
+## 独立有界闭合（2026-10-30）
+
+原任务根报告为[review.json](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/76595bc/review.json)，reviewedAt为2026-10-30T05:13:13.823926+00:00，业务固定`76595bcc5883f826aaf49acb3e3575531e41cb26`，文档`c86e3892b2902470d841580aa816ff91dad951a1`无业务差量。独立判定为`PASS_BOUNDED_R029_R030`，两项均CLOSED，无新增发现。当前登记R001–R030共30项已关闭，其中29项必需缺陷、R021非门禁。
+
+独立strict与127/127通过；`auth-review/`下原6＋新增27条绑定／模式／时间分支共33/33通过。这部分明确使用Local签名／introspection fixture，包含identity过期而有效delegation仍可执行的延时正控，不放宽token expiry或入口60秒约束。
+
+原任务另建自己的真实官方NyxID账户、client、org、service及App3417／私有DB，完成HTTP OIDC code/PKCE及官方明确consent、真实proxy双签名／introspection，7＋3组实际分支与39条业务HTTP记录通过；这是独立HTTP流程，不宣称独立浏览器重放。`actual-nyxid/`下的`actual-http-review.json`、`role-readonly-review.json`、`worker-final-review.json`记录：
+
+- 全新service-first个人owner从0→1，随后CMS为同主体；双入口BOM／CRLF／中文Markdown逐字节下载与跨owner拒绝。
+- 只读CMS及account:read service的实际release POST均403；两入口Member可投稿但拒发，Admin可确认同份投稿并取消。
+- 实际退组后组织内容拒绝、个人内容仍可读；同口径metrics查询及越权通过，仅空隔离数据集，不作为新增readership测量。
+- 两入口保持真正queued后撤Publisher，重开一致SQLite副本的实际ReleaseWorker均blocked／FORBIDDEN，adapterCalls=0、authorizedWrites=0。只有Worker外发adapter为安全替身，未执行真实Ghost/provider写入；不能将该结果替代真实NyxID结合四Ghost的发布差量。
+
+`actual-nyxid/environment-review.json`公开保留root两次harness修正：官方loopback consent交接可为200 HTML callback链接，原302预期已改；metrics每次查询的distribution.updated_at为读时刻，不应要求逐次相同。最终独立流程未使用重试兜底或压制授权失败。开发侧瞬时401仍原因未明，root最终独立流程未复现，保留上述记录。
+
+root源6条release均经实际Admin API取消，剩余queued为0；成员及service scope已恢复，App3417已停。NyxID与开发App3117保持现状。本次仅同步文档，不重跑全检／恢复，不启动Ghost Worker或新栈。
+
+Local modeled统计仍为51 PASS／A05 BLOCKED，Live／正式D1–D9仍未完成。原任务继续实际NyxID门户／CMS入口与OpenAPI注册、实际多组织／受限代理，以及真实NyxID和四Ghost发布、指标及必要恢复差量的独立验收；当前Local待办不能写为0。真实provider账号／订阅／具体内容动作授权、目标部署／付款／运维／隐私／RPO-RTO及Git远端输入仍缺，缺陷有界闭合不代替这些门禁。
