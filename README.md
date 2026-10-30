@@ -10,7 +10,7 @@
 
 **R031/P1 OPEN**：真实受限API key被撤服务范围或删除后，保存队列仍通过执行前授权。`abfb988`临时fail-closed保护已获root独立App3447有界PASS，见[实际重放报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child能力仍BLOCKED上游，边界见 [I17](docs/review-i17.md)。**R033/P1已在4a27487／3ded07e独立有界关闭**，见 [I18](docs/review-i18.md)。**R034/P1（A08/A17、D2/D4）已在0418652／98bac5b独立有界关闭**：实际MCP文件封装解码、保存和读回字节一致，原始HTTP下载保持，见 [I19](docs/review-i19.md)。R032文档问题已独立有界关闭；R029／R030保持原范围有界关闭，历史契约研究见 [I16](docs/review-i16.md)。
 
-最新实际联合验证在固定业务源码`0418652`完成真实官方NyxID＋四原版Ghost的CMS／service × 个人／组织 × 中英八组初始发布、非空浏览指标与12组两入口查询一致性；CMS个人更新、双向hreflang、译文stale与下线有界通过。后续 r3/r4 有界证据完成现有组织译文 stale→unpublish 生命周期、普通成员个人 CMS/service × EN/ZH 矩阵、两个未发送新图取消分支，以及同组织 Admin/member 精确角色私有资源拒绝；首个 CMS-EN 仅公开补核，另三篇才是新增发布，未声称四篇重跑。恢复证据仍覆盖原 credential 退组阻断、旧 cookie 失效、实际 native 新卷全量恢复、22 payload 加密归档核对、权限／映射／媒体核对、恢复后新文章与素材验证，以及组织中文同ID只读认回和 projection complete；原组织中文首次 INTERNAL 原因仍未定。仍缺正式生产RPO/RTO、外部分发恢复、已发送或外部分发取消、显式垃圾回收及实际外部平台。证据与边界见中英对照 [I20](docs/review-i20.md) 与 [I21](docs/review-i21.md)；dev原容器恢复仅为资源窗口收尾，不是正式RPO/RTO验收。
+最新实际联合验证在固定业务源码`0418652`完成真实官方NyxID＋四原版Ghost的CMS／service × 个人／组织 × 中英八组初始发布、非空浏览指标与12组两入口查询一致性；CMS个人更新、双向hreflang、译文stale与下线有界通过。后续 r3/r4 有界证据完成现有组织译文 stale→unpublish 生命周期、普通成员个人 CMS/service × EN/ZH 矩阵、两个未发送新图取消分支、同组织 Admin/member 精确角色私有资源拒绝，以及默认浏览器认证与退出后的旧 cookie 失效；首个 CMS-EN 仅公开补核，另三篇才是新增发布，未声称四篇重跑。恢复证据仍覆盖原 credential 退组阻断、旧 cookie 失效、实际 native 新卷全量恢复、22 payload 加密归档核对、权限／映射／媒体核对、恢复后新文章与素材验证，以及组织中文同ID只读认回和 projection complete；原组织中文首次 INTERNAL 原因仍未定。仍缺正式生产RPO/RTO、外部分发恢复、实际外部平台及普通 Nyx 门户 Launch；已发送或外部分发取消、显式垃圾回收不属于本轮新增证据范围。证据与边界见中英对照 [I20](docs/review-i20.md) 与 [I21](docs/review-i21.md)；dev原容器恢复仅为资源窗口收尾，不是正式RPO/RTO验收。
 
 **完整 D1–D9／A01–A52 尚未正式签收。** 本地真实 NyxID 证据不自动提升正式 D/A；目标部署与运维责任、真实外部账号、精确内容／动作授权及约定 RPO/RTO 仍缺输入。当前证据与逐项边界见[交付台账](docs/delivery-status.md)及[验收矩阵与证据入口](docs/acceptance.md)。阶段 0 记录保留为历史。
 
@@ -45,7 +45,7 @@
 
 ## 工程状态
 
-交付仓库为公开的 [aelf-hzz780/chronoai-cms](https://github.com/aelf-hzz780/chronoai-cms)，`origin` 使用 `git@github.com:aelf-hzz780/chronoai-cms.git`。原任务已正常推送`codex/003-blogsystem-delivery`并验证远端为`98bac5b`；新建`main`仅含原始baseline `019222c`，未force或merge。PR创建API仍返回403 `Resource not accessible by integration`，**尚未创建PR**；本轮新增文档提交另行交回原任务处理。新增 commit 使用 `hzz780 <richard.huang@aelf.io>`，保留已有历史，通过PR合并。
+交付仓库为公开的 [aelf-hzz780/chronoai-cms](https://github.com/aelf-hzz780/chronoai-cms)，`origin` 使用 `git@github.com:aelf-hzz780/chronoai-cms.git`。root已验证 `f528dc0` 正常推送至功能分支 `codex/003-blogsystem-delivery`；新建`main`仅含原始baseline `019222c`，未force或merge。本批次新增文档提交待 review/push。PR创建API仍返回403 `Resource not accessible by integration`，**尚未创建PR**。新增 commit 使用 `hzz780 <richard.huang@aelf.io>`，保留已有历史，通过PR合并。
 
 尚未初始化 Spec Kitty 项目。系统安装了 Spec Kitty CLI 不代表项目已采用该工作流；后续若采用，按项目规约初始化并遵循其流程。新增公开交付报告 I20/I21 采用中英对照；既有中文设计文档的完整双语整理尚未完成，不在本轮扩大修改。英文来源文件保持原文。
 

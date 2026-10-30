@@ -86,9 +86,9 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 ## 增量 I20
 
-固定业务源码0418652的实际官方NyxID＋四原版Ghost八组初始发布通过，独立environment核对原版镜像、源码／卷／owner与原文／素材绑定；真实浏览生成非空指标，12组CMS／service查询一致。CMS个人更新、双向hreflang、stale及下线有界通过，组织英文更新有界通过；后续 r3/r4 另通过现有组织译文 stale→unpublish 生命周期、普通成员个人 CMS/service × EN/ZH（首个 CMS-EN 为历史实际发布只读补核，另三篇新增）、两个未发送新图取消分支，以及同组织 Admin/member 精确角色私有资源拒绝。组织中文首次INTERNAL原因未定；正式生产RPO/RTO、外部分发恢复、已发送或外部分发取消、显式垃圾回收和实际外部平台仍待验。root本地源／恢复App与四站九容器已停止、外发暂停、卷与现场保留；dev八容器原ID／image／volume恢复及九端点200仅是资源窗口收尾，不是备份／数据恢复验收。中英报告、逐项证据与界限见 [I20](review-i20.md) 与 [I21](review-i21.md)。
+固定业务源码0418652的实际官方NyxID＋四原版Ghost八组初始发布通过，独立environment核对原版镜像、源码／卷／owner与原文／素材绑定；真实浏览生成非空指标，12组CMS／service查询一致。CMS个人更新、双向hreflang、stale及下线有界通过，组织英文更新有界通过；后续 r3/r4 另通过现有组织译文 stale→unpublish 生命周期、普通成员个人 CMS/service × EN/ZH（首个 CMS-EN 为历史实际发布只读补核，另三篇新增）、两个未发送新图取消分支、同组织 Admin/member 精确角色私有资源拒绝，以及默认浏览器认证与退出后的旧 cookie 失效。组织中文首次INTERNAL原因未定；正式生产RPO/RTO、外部分发恢复、实际外部平台和普通 Nyx 门户 Launch 仍待验；已发送或外部分发取消、显式垃圾回收不属于本轮新增证据范围。root本地源／恢复App与四站九容器已停止、外发暂停、卷与现场保留；dev八容器原ID／image／volume恢复及九端点200仅是资源窗口收尾，不是备份／数据恢复验收。中英报告、逐项证据与界限见 [I20](review-i20.md) 与 [I21](review-i21.md)。
 
-Git交付：公开仓库origin已正常接收功能分支至98bac5b，main仅原始baseline019222c，未force／merge；PR API仍403，尚未创建PR，本轮文档新提交待原任务处理。R031完整能力和A01普通门户入口仍上游BLOCKED，Native整体及正式D/A未签收，动态状态沿用root台账。
+Git交付：root已验证 `f528dc0` 正常push至功能分支 `origin/codex/003-blogsystem-delivery`，main仍仅原始baseline `019222c`，未force／merge；本批次后续文档提交待 review/push，PR API仍403，尚未创建PR。R031完整能力和A01普通门户入口仍上游BLOCKED，Native整体及正式D/A未签收，动态状态沿用root台账。
 
 ## D1–D9
 
@@ -169,6 +169,6 @@ Git交付：公开仓库origin已正常接收功能分支至98bac5b，main仅原
 - B2：DEV 个人／组织、Hashnode 组织 Pro 和有权账号、NyxID exact connections；关联 D6。无真实账号写入。
 - B3：Medium／HackerNoon 账号、人工提交负责人、明确获准内容和外部写入授权；关联 D6/D7。
 - B4：生产 HTTPS 域名、部署容量、付款责任、隐私保留策略及 RPO/RTO；关联 D1/D8/D9。
-- B5：历史Repository not found／SSH写权限阻塞已解除；原任务已正常push功能分支至98bac5b。当前仅PR创建API返回403 `Resource not accessible by integration`，尚未创建PR，未merge；本轮新增文档commit尚待原任务处理，见 [I20](review-i20.md)。
+- B5：历史Repository not found／SSH写权限阻塞已解除；root已验证`f528dc0`正常push功能分支`origin/codex/003-blogsystem-delivery`。本批次新增文档commit待review/push；当前仅PR创建API返回403 `Resource not accessible by integration`，尚未创建PR，未merge，见 [I20](review-i20.md) 与 [I21](review-i21.md)。
 
 外部账号／内容动作授权／目标部署与责任等输入继续BLOCKED；R029／R030已独立有界关闭，原任务继续上述实际原生验收差量。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将本地开发通过提升为Live或正式D/A签收。
