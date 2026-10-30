@@ -11,9 +11,9 @@ test('A02/A09: real signatures, issuer/audience/expiry/type and delegated scope 
   const f = fixture(); t.after(() => f.store.close());
   const { privateKey, publicKey } = await generateKeyPair('RS256');
   const { privateKey: wrongKey } = await generateKeyPair('RS256');
-  const auth = new AuthManager({ issuer: f.actors.solo.issuer, publicUrl: 'https://cms.example', clientId: 'cms' } as Config, f.store, new Vault('ab'.repeat(32)), f.policy);
+  const auth = new AuthManager({ issuer: f.actors.solo.issuer, publicUrl: 'https://cms.example', clientId: 'cms',serviceClientIds:['direct'] } as Config, f.store, new Vault('ab'.repeat(32)), f.policy);
   auth.discovery = {}; auth.keys = createLocalJWKSet({ keys: [{ ...await exportJWK(publicKey), kid: 'test' }] }) as typeof auth.keys;
-  const make = (overrides: Record<string, any> = {}, key = privateKey, typ = 'JWT') => new SignJWT({ scope: 'content:read content:write', token_type: 'access', ...overrides }).setProtectedHeader({ alg: 'RS256', kid: 'test', typ }).setIssuer(overrides.iss ?? f.actors.solo.issuer).setSubject('solo').setAudience(overrides.aud ?? 'service').setIssuedAt().setExpirationTime(overrides.exp ?? '5m').sign(key);
+  const make = (overrides: Record<string, any> = {}, key = privateKey, typ = 'JWT') => new SignJWT({ scope: 'content:read content:write', token_type: 'access', client_id:'direct', ...overrides }).setProtectedHeader({ alg: 'RS256', kid: 'test', typ }).setIssuer(overrides.iss ?? f.actors.solo.issuer).setSubject('solo').setAudience(overrides.aud ?? 'service').setIssuedAt().setExpirationTime(overrides.exp ?? '5m').sign(key);
   assert.equal((await auth.accessToken(await make(), 'service')).subject, 'solo');
   for (const token of [await make({ iss: 'https://other.example' }), await make({ aud: 'cms' }), await make({ exp: Math.floor(Date.now() / 1000) - 10 }), await make({}, wrongKey), await make({ token_type: 'id' }), await make({ sa: true }), await make({ scope: '' })]) {
     await assert.rejects(auth.accessToken(token, 'service'), { code: 'INVALID_TOKEN' });
@@ -37,8 +37,12 @@ test('R029: entry-specific capabilities and CMS client binding prevent identity-
 
 test('A03/A47: encrypted sessions, no identity header fallback, CSRF and deleted session replay', async t => {
   const f = fixture(); t.after(() => f.store.close()); const vault = new Vault('ab'.repeat(32));
-  const auth = new AuthManager({ publicUrl: 'https://cms.example' } as Config, f.store, vault, f.policy);
-  const session = 'synthetic-session', sealed = vault.seal(f.actors.solo);
+  const config={issuer:f.actors.solo.issuer,publicUrl:'https://cms.example',clientId:'cms',cmsAudience:'cms'} as Config;
+  const auth = new AuthManager(config, f.store, vault, f.policy);
+  const {privateKey,publicKey}=await generateKeyPair('RS256');auth.discovery={};auth.keys=createLocalJWKSet({keys:[{...await exportJWK(publicKey),kid:'session'}]}) as typeof auth.keys;
+  const credential=await new SignJWT({scope:'content:read',token_type:'access',client_id:'cms'}).setProtectedHeader({alg:'RS256',kid:'session'}).setIssuer(config.issuer).setSubject('solo').setAudience('cms').setIssuedAt().setExpirationTime('5m').sign(privateKey);
+  const actor=await auth.accessToken(credential,'cms','cms');
+  const session = 'synthetic-session', sealed = vault.seal(actor);
   assert.ok(!sealed.includes('test-only')); assert.ok(!sealed.includes('solo'));
   f.store.run('INSERT INTO sessions VALUES (?,?,?,?)', digest(session), sealed, 'csrf-value', new Date(Date.now() + 60000).toISOString());
   const request = { url: '/api/cms/me', method: 'GET', cookies: { chrono_session: session }, headers: {} } as any;
@@ -67,7 +71,7 @@ test('NyxID propagated signed identity requires matching service, person, actor 
 
 test('OIDC callback binds PKCE/state/nonce/access hash and yields the same caller on CMS and service; logout revokes the cookie',async t=>{
   const f=fixture(),vault=new Vault('ab'.repeat(32));t.after(()=>f.store.close());const {privateKey,publicKey}=await generateKeyPair('RS256');
-  const config={issuer:f.actors.solo.issuer,clientId:'client',publicUrl:'https://cms.example',cmsAudience:'cms',serviceAudience:'service'} as Config;
+  const config={issuer:f.actors.solo.issuer,clientId:'client',publicUrl:'https://cms.example',cmsAudience:'cms',serviceAudience:'service',serviceClientIds:['direct']} as Config;
   const auth=new AuthManager(config,f.store,vault,f.policy);auth.discovery={authorization_endpoint:'https://nyx.example/authorize',token_endpoint:'https://nyx.example/token'};auth.keys=createLocalJWKSet({keys:[{...await exportJWK(publicKey),kid:'test'}]}) as typeof auth.keys;
   const {createApp}=await import('../src/app.ts');const app=await createApp({...f,vault,publicUrl:config.publicUrl,auth,authenticate:request=>auth.authenticate(request)});t.after(()=>app.close());
   const login=await app.inject({url:'/auth/login'}),url=new URL(login.headers.location!),state=url.searchParams.get('state')!,nonce=url.searchParams.get('nonce')!;
@@ -78,7 +82,7 @@ test('OIDC callback binds PKCE/state/nonce/access hash and yields the same calle
   const cookie=`chrono_oidc=${state}`;assert.equal((await app.inject({url:`/auth/callback?state=wrong&code=code`,headers:{cookie}})).statusCode,401);
   const callback=await app.inject({url:`/auth/callback?state=${state}&code=code`,headers:{cookie}});assert.equal(callback.statusCode,302,callback.body);
   const setCookie=callback.headers['set-cookie'] as string[];const session=setCookie.find(c=>c.startsWith('chrono_session='))!.split(';')[0];assert.ok(setCookie.some(c=>c.includes('HttpOnly')&&c.includes('Secure')&&c.includes('SameSite=Lax')));
-  const cms=(await app.inject({url:'/api/cms/me',headers:{cookie:session}})).json();const service=await app.inject({url:'/api/service/me',headers:{authorization:`Bearer ${await make({scope:'content:read',token_type:'access'},'service')}`}});assert.equal(service.statusCode,200);assert.equal(service.json().subject,cms.subject);
+  const cms=(await app.inject({url:'/api/cms/me',headers:{cookie:session}})).json();const service=await app.inject({url:'/api/service/me',headers:{authorization:`Bearer ${await make({scope:'content:read',token_type:'access',client_id:'direct'},'service')}`}});assert.equal(service.statusCode,200);assert.equal(service.json().subject,cms.subject);
   assert.equal((await app.inject({url:`/auth/callback?state=${state}&code=code`,headers:{cookie}})).statusCode,401);
   assert.equal((await app.inject({method:'POST',url:'/auth/logout',headers:{cookie:session,origin:'https://evil.example','x-csrf-token':cms.csrf}})).statusCode,403);
   assert.equal((await app.inject({method:'POST',url:'/auth/logout',headers:{cookie:session,origin:config.publicUrl,'x-csrf-token':cms.csrf}})).statusCode,200);

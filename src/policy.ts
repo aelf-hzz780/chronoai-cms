@@ -1,7 +1,8 @@
 import { AppError, requireValue, text } from './errors.ts';
 import { Store, type Row } from './store.ts';
 
-export interface Actor { issuer: string; subject: string; scopes: string[]; credential: string; sourceScopes?: string[]; entry?:'cms'|'service'; }
+export type CallerBinding = { kind:'cms'|'direct-service'; clientId:string; audience:string } | { kind:'propagated'; serviceId:string; serviceSlug:string; identityAudience:string; delegationAudience:string };
+export interface Actor { issuer: string; subject: string; scopes: string[]; credential: string; sourceScopes?: string[]; entry?:'cms'|'service'; binding?:CallerBinding; }
 export interface Authority {
   validate(actor: Actor): Promise<void>;
   membership(actor: Actor, organization: string): Promise<'admin' | 'member' | null | string>;

@@ -7,6 +7,7 @@ import { remoteJson, RemoteError } from './http-client.ts';
 import { requireValue } from './errors.ts';
 import { digest } from './content.ts';
 import {connectionFingerprint} from './connection-proof.ts';
+import {CallerAuthorization} from './caller-authorization.ts';
 
 type Owner = { kind:string; issuer:string; subject:string };
 export interface ConnectionBinding {
@@ -60,16 +61,16 @@ export function exactArguments(endpoint:any,path:string,request:RemoteRequest) {
   return args;
 }
 export class NyxAuthority implements Authority {
-  config:Config; store?:Store;
-  constructor(config:Config,store?:Store) { this.config=config;this.store=store; }
+  config:Config; store?:Store; callers:CallerAuthorization;
+  constructor(config:Config,store?:Store) { this.config=config;this.store=store;this.callers=new CallerAuthorization(config); }
   async validate(actor:Actor) {
+    const current=await this.callers.restore(actor);
     const body=new URLSearchParams({token:actor.credential,client_id:this.config.clientId});
     if(this.config.clientSecret) body.set('client_secret',this.config.clientSecret);
     const result=await remoteJson(this.config.introspectionUrl,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body});
     const scopes=typeof result.scope==='string'?result.scope.split(' '):[];
     requireValue(result.active===true && result.sub===actor.subject && (!result.iss || result.iss===actor.issuer) && (actor.sourceScopes??actor.scopes).every(s=>scopes.includes(s)),401,'REVOKED','Current authorization is invalid');
-    const mapping=(actor.entry==='cms'?this.config.cmsOperationScopes:this.config.serviceOperationScopes) ?? this.config.operationScopes;
-    if(mapping) requireValue(actor.scopes.every(capability=>mapping[capability]?.every(scope=>scopes.includes(scope))),401,'REVOKED','Current capability configuration no longer authorizes the saved action');
+    requireValue(current.sourceScopes!.every(scope=>scopes.includes(scope)),401,'REVOKED','Current scopes no longer authorize the saved caller');
   }
   async call(actor:Actor,path:string,method='GET',body?:unknown) {
     requireValue(path.startsWith('/api/v1/') && !path.includes('..'),500,'NYXID_ROUTE','Invalid upstream route');

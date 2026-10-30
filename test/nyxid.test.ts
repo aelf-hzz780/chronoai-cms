@@ -1,4 +1,5 @@
 import {test} from 'node:test';
+import {generateKeyPair,exportJWK,createLocalJWKSet,SignJWT} from 'jose';
 import assert from 'node:assert/strict';
 import {mkdtemp,writeFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
@@ -16,8 +17,11 @@ test('NyxID native operation digest agrees with the official Unicode cross-langu
 });
 
 test('R029: online authority rejects saved capabilities removed from the current entry configuration',async t=>{
-  const config={introspectionUrl:'https://nyx.example/introspect',clientId:'cms',cmsOperationScopes:{'content:read':['profile'],'publish':['proxy']}} as unknown as Config;
-  const authority=new NyxAuthority(config),actor={issuer:'nyxid',subject:'person',credential:'test-only',entry:'cms' as const,sourceScopes:['profile','proxy'],scopes:['content:read','publish']};
+  const config={issuer:'nyxid',cmsAudience:'shared',introspectionUrl:'https://nyx.example/introspect',clientId:'cms',cmsOperationScopes:{'content:read':['profile'],'publish':['proxy']}} as unknown as Config;
+  const authority=new NyxAuthority(config),{privateKey,publicKey}=await generateKeyPair('RS256');
+  authority.callers.discovery={};authority.callers.keys=createLocalJWKSet({keys:[{...await exportJWK(publicKey),kid:'saved'}]}) as typeof authority.callers.keys;
+  const credential=await new SignJWT({scope:'profile proxy',token_type:'access',client_id:'cms'}).setProtectedHeader({alg:'RS256',kid:'saved'}).setIssuer('nyxid').setSubject('person').setAudience('shared').setIssuedAt().setExpirationTime('5m').sign(privateKey);
+  const actor=authority.callers.actor(await authority.callers.access(credential,'shared'),credential,{kind:'cms',clientId:'cms',audience:'shared'});
   const original=globalThis.fetch;globalThis.fetch=async()=>new Response(JSON.stringify({active:true,sub:'person',iss:'nyxid',scope:'profile proxy'}));t.after(()=>{globalThis.fetch=original;});
   await authority.validate(actor);
   delete config.cmsOperationScopes!.publish;

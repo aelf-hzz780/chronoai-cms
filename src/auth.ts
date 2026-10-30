@@ -1,43 +1,27 @@
 import { randomBytes } from 'node:crypto';
-import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
+import { jwtVerify } from 'jose';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type { Config } from './config.ts';
-import { safeUrl } from './config.ts';
 import { Store } from './store.ts';
 import { Vault } from './vault.ts';
 import { AppError, requireValue, text } from './errors.ts';
 import { remoteJson } from './http-client.ts';
 import { digest } from './content.ts';
 import type { Actor, Policy } from './policy.ts';
+import {CallerAuthorization} from './caller-authorization.ts';
 
 export class AuthManager {
   config: Config; store: Store; vault: Vault; policy: Policy;
-  discovery: any; keys: ReturnType<typeof createRemoteJWKSet> | undefined;
-  constructor(config: Config, store: Store, vault: Vault, policy: Policy) { this.config = config; this.store = store; this.vault = vault; this.policy = policy; }
-  async discover() {
-    if (this.discovery) return this.discovery;
-    const discovery = await remoteJson(this.config.discoveryUrl ?? `${this.config.issuer}/.well-known/openid-configuration`);
-    requireValue(discovery.issuer === this.config.issuer, 502, 'OIDC_ISSUER', 'Discovery issuer mismatch');
-    for (const key of ['authorization_endpoint', 'token_endpoint', 'jwks_uri']) safeUrl(discovery[key], this.config.allowLoopback);
-    requireValue(discovery.code_challenge_methods_supported?.includes('S256'), 502, 'OIDC_PKCE', 'Issuer must support PKCE S256');
-    this.discovery = discovery; this.keys = createRemoteJWKSet(new URL(discovery.jwks_uri), { timeoutDuration: 8000, cooldownDuration: 1000 });
-    return discovery;
-  }
-  actor(payload: JWTPayload, credential: string, entry:'cms'|'service'='service'): Actor {
-    requireValue(payload.iss === this.config.issuer && typeof payload.sub === 'string' && typeof payload.exp === 'number' && payload.exp * 1000 > Date.now() && typeof payload.scope === 'string', 401, 'INVALID_TOKEN', 'Invalid caller token');
-    const sourceScopes = payload.scope.split(' ').filter(Boolean);
-    const mapping=(entry==='cms'?this.config.cmsOperationScopes:this.config.serviceOperationScopes) ?? this.config.operationScopes;
-    const scopes = mapping ? Object.entries(mapping).filter(([,required]) => required.every(scope => sourceScopes.includes(scope))).map(([capability]) => capability) : sourceScopes;
-    return { issuer: payload.iss, subject: payload.sub, scopes, sourceScopes, credential,entry };
-  }
+  callers:CallerAuthorization;
+  constructor(config: Config, store: Store, vault: Vault, policy: Policy) { this.config = config; this.store = store; this.vault = vault; this.policy = policy; this.callers=new CallerAuthorization(config); }
+  get discovery(){return this.callers.discovery;} set discovery(value:any){this.callers.discovery=value;}
+  get keys(){return this.callers.keys;} set keys(value:CallerAuthorization['keys']){this.callers.keys=value;}
+  discover(){return this.callers.discover();}
   async accessToken(token: string, audience: string, entry:'cms'|'service'='service') {
-    await this.discover();
     try {
-      const result = await jwtVerify(token, this.keys!, { issuer: this.config.issuer, audience, algorithms: ['RS256', 'ES256'], requiredClaims: ['sub', 'exp', 'iat'] });
-      requireValue(result.payload.token_type === 'access' && result.payload.sa !== true && result.payload.relay !== true, 401, 'INVALID_TOKEN', 'Human access token required; ID and service-account tokens cannot authorize user actions');
-      if(entry==='cms') requireValue(result.payload.client_id===this.config.clientId,401,'INVALID_TOKEN','CMS client binding required');
-      else if(this.config.serviceOperationScopes) requireValue(typeof result.payload.client_id==='string' && this.config.serviceClientIds?.includes(result.payload.client_id),401,'INVALID_TOKEN','Explicit service caller client required; use signed propagation for proxy calls');
-      const actor = this.actor(result.payload, token,entry); await this.policy.scope(actor, 'content:read'); return actor;
+      const payload=await this.callers.access(token,audience);
+      const actor=this.callers.actor(payload,token,this.callers.directBinding(payload,entry,audience));
+      await this.policy.scope(actor,'content:read');return actor;
     } catch { throw new AppError(401, 'INVALID_TOKEN', 'Caller token could not be verified'); }
   }
   async authenticate(request: FastifyRequest): Promise<Actor | null> {
@@ -59,7 +43,7 @@ export class AuthManager {
       requireValue(request.headers.origin === this.config.publicUrl && request.headers['x-csrf-token'] === row.csrf, 403, 'CSRF', 'Same-origin request and CSRF token required');
     }
     const saved = this.vault.open<Actor>(row.actor_json);
-    const actor = this.config.cmsOperationScopes ? await this.accessToken(saved.credential,this.config.cmsAudience,'cms') : saved;
+    const actor = await this.accessToken(saved.credential,this.config.cmsAudience,'cms');
     await this.policy.scope(actor, 'content:read');
     return actor;
   }
@@ -77,7 +61,7 @@ export class AuthManager {
       const p=delegated.payload;
       const issued=Number(assertion.payload.iat),lifetime=Number(assertion.payload.exp)-issued;
       requireValue(assertion.payload.nyx_service_id === this.config.serviceId && lifetime>0 && lifetime<=60 && issued<=Date.now()/1000+5 && assertion.payload.sub === p.sub && p.token_type === 'access' && p.delegated === true && p.sa !== true && p.relay !== true && (p.act as {sub?:string})?.sub === this.config.serviceSlug,401,'INVALID_TOKEN','Identity and delegated authority binding mismatch');
-      const actor=this.actor(p,delegation);await this.policy.scope(actor,'content:read');return actor;
+      const actor=this.callers.actor(p,delegation,{kind:'propagated',serviceId:this.config.serviceId,serviceSlug:this.config.serviceSlug,identityAudience:this.config.serviceAudience,delegationAudience:this.config.nyxAudience});await this.policy.scope(actor,'content:read');return actor;
     } catch { throw new AppError(401,'INVALID_TOKEN','Propagated caller could not be verified'); }
   }
   install(app: FastifyInstance) {
