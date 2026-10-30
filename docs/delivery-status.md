@@ -86,7 +86,7 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 ## 增量 I20
 
-固定业务源码0418652的实际官方NyxID＋四原版Ghost八组初始发布通过，独立environment核对原版镜像、源码／卷／owner与原文／素材绑定；真实浏览生成非空指标，12组CMS／service查询一致。CMS个人更新、双向hreflang、stale及下线有界通过，组织英文更新有界通过；第二轮恢复另通过原token仍active但退组时当前Admin同ID只读认回零写、旧cookie清session后401、实际 native 新卷全量恢复、22 payload加密归档核对、权限／映射／媒体核对、恢复后新文章与素材验证、组织中文同ID只读认回和projection complete。组织中文首次INTERNAL原因未定；组织互链已通过，剩余为组织 stale/unpublish 等后续生命周期分支、普通成员个人路径及新素材cancel。正式生产RPO/RTO、外部分发恢复和完整组织lifecycle仍待验。root本地源／恢复App与四站九容器已停止、外发暂停、卷与现场保留；dev八容器原ID／image／volume恢复及九端点200仅是资源窗口收尾，不是备份／数据恢复验收。中英报告、逐项证据与界限见 [I20](review-i20.md) 与 [I21](review-i21.md)。
+固定业务源码0418652的实际官方NyxID＋四原版Ghost八组初始发布通过，独立environment核对原版镜像、源码／卷／owner与原文／素材绑定；真实浏览生成非空指标，12组CMS／service查询一致。CMS个人更新、双向hreflang、stale及下线有界通过，组织英文更新有界通过；后续 r3/r4 另通过现有组织译文 stale→unpublish 生命周期、普通成员个人 CMS/service × EN/ZH（首个 CMS-EN 为历史实际发布只读补核，另三篇新增）、两个未发送新图取消分支，以及同组织 Admin/member 精确角色私有资源拒绝。组织中文首次INTERNAL原因未定；正式生产RPO/RTO、外部分发恢复、已发送或外部分发取消、显式垃圾回收和实际外部平台仍待验。root本地源／恢复App与四站九容器已停止、外发暂停、卷与现场保留；dev八容器原ID／image／volume恢复及九端点200仅是资源窗口收尾，不是备份／数据恢复验收。中英报告、逐项证据与界限见 [I20](review-i20.md) 与 [I21](review-i21.md)。
 
 Git交付：公开仓库origin已正常接收功能分支至98bac5b，main仅原始baseline019222c，未force／merge；PR API仍403，尚未创建PR，本轮文档新提交待原任务处理。R031完整能力和A01普通门户入口仍上游BLOCKED，Native整体及正式D/A未签收，动态状态沿用root台账。
 
