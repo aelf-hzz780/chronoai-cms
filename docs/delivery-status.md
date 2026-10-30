@@ -1,10 +1,10 @@
 # 交付状态（开发台账，不是独立验收结论）
 
-分支：`codex/003-blogsystem-delivery`。当前业务源码为 `76595bcc5883f826aaf49acb3e3575531e41cb26`（R030；含R029 `2d65bc0`）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID及保存授权修复见 [I14](review-i14.md)、[I15](review-i15.md)。实际证据按固定业务源码与逐文件指纹对应。
+分支：`codex/003-blogsystem-delivery`。当前业务源码为 `abfb988854ca7b0a90a41a663aab6fbac81598b9`（R031临时保护；R030为76595bc，含R029 `2d65bc0`）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID及保存授权修复见 [I14](review-i14.md)、[I15](review-i15.md)。实际证据按固定业务源码与逐文件指纹对应。
 
 状态含义：implemented为开发状态；Document／Local／Live分别记录。**R001–R030均已独立有界关闭，共29项必需缺陷及R021非门禁；R029／R030的固定业务源码为76595bc。Local modeled统计为51 PASS／A05 BLOCKED，Live及正式D1–D9仍未完成。** 原任务继续实际门户／CMS入口、OpenAPI注册、多组织／受限代理，以及真实NyxID结合四Ghost发布、指标和必要恢复差量的独立验收；不以缺陷关闭推断当前Local工作为0。根报告及证据边界见 [I15](review-i15.md#独立有界闭合2026-10-30)。
 
-**新增R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：原key服务范围撤销／删除后，新proxy拒绝而旧queued仍通过beforeWrite。官方普通delegation缺少原key在线来源；本轮仅源码／证据研究，尚无R031业务修复或新增网络验证，见 [I16](review-i16.md)。登记31项中30项既有有界关闭；R029／R030不重开，R031不降N/A。
+**新增R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：原key服务范围撤销／删除后，新proxy拒绝而旧queued仍通过beforeWrite。官方普通delegation缺少原key在线来源；已新增临时fail-closed保护及真实OAuth service正反控，strict与141/141开发测试通过、待原任务独立复验；完整key/child命令来源契约仍BLOCKED上游，见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。登记31项中30项既有有界关闭；R029／R030不重开，R031不降N/A。
 
 历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，不包含后续R029／R030闭合及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
 
@@ -64,7 +64,11 @@ b1d30b2修复R027，DeliveryWorker异常event／audit沿用原delivery确认Trac
 
 ## 增量 I16
 
-R031已在真实API key撤服务范围及删除两条路径复现；Worker安全adapter避免了实际发文。官方service delegation没有原key／child来源，普通introspection只见仍active派生token；已有raw-key service-wide introspection不支持逐请求审批场景，read request-proof不能授权queued写。最小上游契约、有限可执行范围与两个Worker后续验收见 [I16](review-i16.md)。当前业务源码仍76595bc，R031 OPEN，未修改官方Nyx或环境，网络复现等待root ready。
+R031已在真实API key撤服务范围及删除两条路径复现；Worker安全adapter避免了实际发文。官方service delegation没有原key／child来源，普通introspection只见仍active派生token；已有raw-key service-wide introspection不支持逐请求审批场景，read request-proof不能授权queued写。最小上游契约、有限可执行范围与两个Worker后续验收见 [I16](review-i16.md)。I16研究时业务源码仍76595bc，未修改官方Nyx或环境；后续ready后的临时保护及网络实测另见I17。
+
+## 增量 I17
+
+`abfb988`实现R031临时来源保护：统一Policy.publish要求代理queued-write具有已验签、非空且官方在线有效的lineage，覆盖两个Worker、metadata投影及复核原来源；普通读取／草稿／取消保留现有权限。strict与141/141、授权专项55/55通过。独立App3437完成实际OAuth service queued正控及撤consent后缩scope／独立删除consent的两个Worker阻断，各0adapter／0写入；真实无lineage key正常／撤范围／删除旧快照均阻断。release来自实际API，delivery连接／provider为fixture，Worker只在私有DB副本运行，无Ghost/provider出站；源7条任务已取消，所有13个DB暂停外发。最新官方HEAD四个关键契约文件仍未补key/child命令lineage。保护待独立验收，R031完整能力仍OPEN/BLOCKED；限制、失败尝试、回滚及证据见 [I17](review-i17.md)。
 
 ## D1–D9
 

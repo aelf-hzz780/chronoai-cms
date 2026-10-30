@@ -2,7 +2,9 @@
 
 实现依据：官方源码 revision `38bae2f7825bfa70d8a9e4e837118d7d9658e6a5`。官方0.75.0已在真实本地自托管实例联调；开发结果见[I14](review-i14.md)，固定76595bc的R029／R030独立有界闭合及剩余原生验收见[I15](review-i15.md#独立有界闭合2026-10-30)。该证据不是目标生产NyxID或外部账号发文签收。
 
-R031尚OPEN：普通service delegation的active状态不能证明原API key仍存在或仍有当前服务范围。现有原keyintrospection与read request-proof各有明确适用边界，不能替代逐请求批准的pending写来源校验；当前无该缺陷修复，部署／执行范围见 [I16](review-i16.md)。
+R031尚OPEN：普通service delegation的active状态不能证明原API key仍存在或仍有当前服务范围。现有原keyintrospection与read request-proof各有明确适用边界，不能替代逐请求批准的pending写来源校验；`abfb988`已加入临时fail-closed保护，缺可验证lineage的propagated发布路径（包括仍有效key）保守拒绝，返回403 SOURCE_AUTHORITY_UNPROVEN并保留原稿；读取／草稿／取消继续使用现有权限。带真实签名OAuth lineage的service及当前有效CMS／直接OAuth client可按原约束执行。完整key/child能力仍BLOCKED上游；真实正反控、保守影响与部署／回滚见 [I17](review-i17.md)，历史研究见 [I16](review-i16.md)。
+
+OAuth service调用需通过官方consent授予精确UserService／resource；仅取得proxy scope不足以访问未授权服务。普通consent review会合并scopes，较小scope登录不代表撤权；I17采用官方撤旧consent后重新授较小scope，并核对旧队列仍被阻断。所有App／Worker须一起升级，回滚期间暂停外发，不自动恢复旧blocked任务。
 
 ## 注册输入
 

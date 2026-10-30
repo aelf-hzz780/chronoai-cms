@@ -15,7 +15,7 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 
 本轮是真实本地 NyxID，未使用身份 fixture；发布仅排队／取消，无 Ghost Worker 或外部 provider 出站。目标 NyxID 正式注册／交接、组织外部写入精确批准、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应证据。正式 D1–D9／A01–A52 结论由独立验收更新，开发记录不代替签收。阶段 0 保留为历史入口。
 
-新增R031/P1仍OPEN（A09/A15、D2/D3/D5/D9）：真实受限key撤服务范围或删除后，保存queued仍通过执行前检查；官方来源契约研究见 [I16](review-i16.md)。该发现不重开R029／R030，不把缺口降为N/A；本轮未改正式矩阵或新增网络验证。
+新增R031/P1仍OPEN（A09/A15、D2/D3/D5/D9）：真实受限key撤服务范围或删除后，保存queued仍通过执行前检查；官方来源契约研究见 [I16](review-i16.md)。该发现不重开R029／R030，不把缺口降为N/A；本轮未改正式矩阵。后续`abfb988`已完成临时安全阻断、strict与141/141及真实OAuth service正反控开发验证，两个Worker撤权均0adapter／0写入；完整key/child能力仍BLOCKED上游、待原任务独立验收，边界见 [I17](review-i17.md)。
 
 ## 1. 交付追踪
 

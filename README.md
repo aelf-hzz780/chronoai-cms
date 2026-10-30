@@ -6,7 +6,7 @@
 
 2026-10-30 独立报告已在固定业务源码 `76595bc` 有界关闭 R029／R030，登记 R001–R030 均已关闭（29 项必需缺陷及 R021 非门禁）。strict 与 127 项测试、33 条 Local 绑定／模式／时间分支以及真实官方 NyxID 的 10 组／39 条业务 HTTP 记录通过，证据与限制见 [I15](docs/review-i15.md#独立有界闭合2026-10-30)。Local modeled 统计仍为 51 PASS／A05 BLOCKED；原任务继续实际门户／CMS 入口、OpenAPI 注册、多组织／受限代理及真实 NyxID 与四 Ghost 发布、指标和必要恢复差量的独立验收。历史“可推进 Local 工作为 0”不作为当前结论。
 
-新增 **R031/P1 OPEN**：真实受限API key被撤服务范围或删除后，保存队列仍通过执行前授权。当前已定位官方来源校验契约缺口，尚无业务修复；研究与安全执行边界见 [I16](docs/review-i16.md)。R029／R030保持原范围有界关闭。
+新增 **R031/P1 OPEN**：真实受限API key被撤服务范围或删除后，保存队列仍通过执行前授权。`abfb988`已加入临时fail-closed保护：缺可在线核验lineage的代理排队写统一拒绝，真实OAuth service正控及撤consent／缩范围后的两个Worker阻断通过。strict与141/141开发测试通过，完整key/child能力仍BLOCKED上游、待独立验收，见 [I17](docs/review-i17.md)；契约研究见 [I16](docs/review-i16.md)。R029／R030保持原范围有界关闭。
 
 **完整 D1–D9／A01–A52 尚未正式签收。** 本地真实 NyxID 证据不自动提升正式 D/A；目标部署与运维责任、真实外部账号、精确内容／动作授权及约定 RPO/RTO 仍缺输入。当前证据与逐项边界见[交付台账](docs/delivery-status.md)及[验收矩阵与证据入口](docs/acceptance.md)。阶段 0 记录保留为历史。
 
