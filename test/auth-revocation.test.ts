@@ -20,10 +20,11 @@ import {loadConfig,type Config} from '../src/config.ts';
 const cmsMap={'content:read':['profile'],'content:write':['proxy'],publish:['proxy']};
 const lineage={consents:[],source_session_id:'original-session',delegation_jti:null};
 const serviceMap={'content:read':['account:read'],'content:write':['account:read','proxy:*'],publish:['account:read','proxy:*']};
+type OnlineFailure='inactive'|'scope reduced'|'subject mismatch'|'issuer mismatch'|'nonboolean active'|'server failure'|'malformed response'|'connection closed';
 test('R030/R031: persisted callers and workers enforce current bindings and signed source lineage',async t=>{
  const {privateKey,publicKey}=await generateKeyPair('RS256'),jwk={...await exportJWK(publicKey),kid:'local-r030'};
  const revokedTokens=new Set<string>();
- let base='';
+ let base='',onlineFailure:OnlineFailure|undefined;
  const server=createServer(async(req,res)=>{
   res.setHeader('content-type','application/json');
   if(req.url==='/.well-known/openid-configuration')return res.end(JSON.stringify({issuer:base,authorization_endpoint:base+'/authorize',token_endpoint:base+'/token',jwks_uri:base+'/jwks',code_challenge_methods_supported:['S256']}));
@@ -32,7 +33,10 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
    const chunks=[];for await(const chunk of req)chunks.push(chunk);
    const token=new URLSearchParams(Buffer.concat(chunks).toString()).get('token')!;
    const p=JSON.parse(Buffer.from(token.split('.')[1],'base64url').toString());
-   return res.end(JSON.stringify({active:!revokedTokens.has(token),sub:p.sub,iss:p.iss,scope:p.scope,exp:p.exp}));
+   if(onlineFailure==='connection closed'){req.socket.destroy();return;}
+   if(onlineFailure==='server failure'){res.statusCode=500;res.end('{}');return;}
+   if(onlineFailure==='malformed response'){res.end('{');return;}
+   return res.end(JSON.stringify({active:onlineFailure==='nonboolean active'?'true':onlineFailure!=='inactive'&&!revokedTokens.has(token),sub:onlineFailure==='subject mismatch'?'another-person':p.sub,iss:onlineFailure==='issuer mismatch'?'another-issuer':p.iss,scope:onlineFailure==='scope reduced'?'account:read':p.scope,exp:p.exp}));
   }
   res.statusCode=404;res.end('{}');
  });
@@ -42,7 +46,7 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
  const env={PUBLIC_URL:'http://localhost:3199',ALLOW_LOOPBACK_HTTP:'true',NYXID_ISSUER:base,NYXID_API_URL:base,NYXID_CLIENT_ID:'cms',NYXID_CMS_AUDIENCE:'shared',NYXID_SERVICE_AUDIENCE:'service',NYXID_TOKEN_AUDIENCE:'delegation',NYXID_SERVICE_ID:'registered',NYXID_SERVICE_SLUG:'blog',NYXID_INTROSPECTION_URL:base+'/introspect',ENCRYPTION_KEY:'ab'.repeat(32),TRACKING_SECRET:'local-only',NYXID_CMS_CAPABILITY_SCOPES_JSON:JSON.stringify(cmsMap),NYXID_SERVICE_CAPABILITY_SCOPES_JSON:JSON.stringify(serviceMap),NYXID_SERVICE_CLIENT_IDS:'direct'};
  const vault=new Vault(env.ENCRYPTION_KEY);
  const sign=(claims:any,audience:string,seconds=600)=>new SignJWT(claims).setProtectedHeader({alg:'RS256',kid:'local-r030'}).setIssuer(base).setSubject('person').setAudience(audience).setIssuedAt().setExpirationTime(`${seconds}s`).setJti(crypto.randomUUID()).sign(privateKey);
- const scenarios: {name:string;entry:'cms'|'direct'|'propagated';allowed?:boolean;raw?:boolean;legacyLineage?:unknown;recovery?:boolean;revokeBeforeWrite?:boolean;change?:(c:Config)=>void}[]=[
+ const scenarios: {name:string;entry:'cms'|'direct'|'propagated';allowed?:boolean;raw?:boolean;legacyLineage?:unknown;recovery?:boolean;revokeBeforeWrite?:boolean;onlineFailure?:OnlineFailure;atFinalWrite?:boolean;change?:(c:Config)=>void}[]=[
   {name:'direct baseline',entry:'direct',allowed:true},
   {name:'remove publish key',entry:'direct',change:c=>{delete c.serviceOperationScopes!.publish;}},
   {name:'remove whole service map',entry:'direct',change:c=>{delete c.serviceOperationScopes;}},
@@ -70,12 +74,17 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
   {name:'valid lineage recovery',entry:'propagated',allowed:true,recovery:true},
   {name:'lineage revoked at final write',entry:'propagated',revokeBeforeWrite:true},
   {name:'issuer change',entry:'direct',change:c=>{c.issuer='other';}},
+  ...(['inactive','scope reduced','subject mismatch','issuer mismatch','nonboolean active','server failure','malformed response','connection closed'] as const).flatMap(onlineFailure=>[
+   {name:`online ${onlineFailure} before execution`,entry:'propagated' as const,onlineFailure},
+   {name:`online ${onlineFailure} at final write`,entry:'propagated' as const,onlineFailure,atFinalWrite:true},
+  ]),
  ];
  for(const scenario of scenarios)for(const kind of ['release','delivery'])await t.test(`${scenario.name}: ${kind}`,async()=>{
+  onlineFailure=undefined;
   let config=loadConfig({...env,DATABASE_PATH:join(directory,`${scenarios.indexOf(scenario)}-${kind}.sqlite`)});if(scenario.raw)delete config.serviceOperationScopes;
   function open(c:Config){const store=new Store(c.database),authority=new NyxAuthority(c,store),policy=new Policy(store,authority),content=new ContentService(store,policy),auth=new AuthManager(c,store,vault,policy),pub=new PublishingService(content,vault);return {store,policy,content,auth,pub};}
   let f=open(config);let writes=0,atBoundary=false;
-  const revoke=()=>{if(atBoundary&&scenario.revokeBeforeWrite)revokedTokens.add(credential);};
+  const revoke=()=>{if(atBoundary&&scenario.revokeBeforeWrite)revokedTokens.add(credential);if(atBoundary&&scenario.atFinalWrite)onlineFailure=scenario.onlineFailure;};
   const original:OriginalAdapter={async publish(input){revoke();await input.beforeWrite!();writes++;return {remoteId:'local',url:'http://localhost:3198/local/'};},async verify(){return true;},async reconcile(){return null;},async unpublish(){throw Error('unexpected');}};
   const result={state:'published' as const,remoteId:'copy',url:'https://local.invalid/copy',sourceVerified:true};
   const target:Target={name:'local',automatic:true,automaticActions:['create'],async write(_p,_c,send){revoke();await send({method:'POST',url:'https://local.invalid/copy'});return result;},async reconcile(){return result;}};
@@ -106,6 +115,7 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
   }
   if(scenario.entry==='cms')f.store.run('INSERT INTO sessions VALUES (?,?,?,?)',digest('session'),vault.seal(actor),'csrf',new Date(Date.now()+600000).toISOString());
   f.store.close();config={...config};scenario.change?.(config);f=open(config);writes=0;atBoundary=true;
+  if(scenario.onlineFailure&&!scenario.atFinalWrite)onlineFailure=scenario.onlineFailure;
   try{
    if(identity&&scenario.allowed){await new Promise(resolve=>setTimeout(resolve,2100));await assert.rejects(f.auth.propagated(identity,credential));}
    if(scenario.entry==='cms'){
@@ -116,6 +126,7 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
    assert.equal(writes,scenario.allowed&&!scenario.recovery?1:0,'outbound writes after current authorization check');
    assert.equal(f.store.get(`SELECT state FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.state,scenario.recovery?(kind==='release'?'uncertain':(scenario.allowed?'published':'uncertain')):scenario.allowed?'published':'blocked');
    if('legacyLineage' in scenario&&!scenario.recovery)assert.equal(f.store.get(`SELECT error_code FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.error_code,'SOURCE_AUTHORITY_UNPROVEN');
+   if(scenario.onlineFailure)assert.equal(f.store.get(`SELECT error_code FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.error_code,'IDENTITY_UNAVAILABLE');
   }finally{f.store.close();}
  });
 });
