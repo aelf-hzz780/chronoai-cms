@@ -5,6 +5,7 @@ import { Vault } from './vault.ts';
 import { AppError, requireValue, text } from './errors.ts';
 import { RemoteError } from './http-client.ts';
 import { Queue, type Lease } from './queue.ts';
+import {assertCommandRequest,bindActorCommand,assertCommandBinding,deriveCommand,releaseCommand,projectionCommand} from './command-authority.ts';
 
 export interface OriginalInput {
   releaseId: string; articleId: string; revisionId: string; ownerId: string; language: string;
@@ -24,12 +25,13 @@ export class PublishingService {
   constructor(content: ContentService, vault: Vault) { this.content = content; this.vault = vault; }
   async confirm(actor: Actor, articleId: string, input: Record<string, unknown>, trace: string) {
     const article = this.content.article(articleId); await this.content.policy.publish(actor, article.owner_id);
+    assertCommandRequest(actor,'POST',`/api/service/articles/${articleId}/releases`);
     requireValue(input.ownerId === article.owner_id, 403, 'FORBIDDEN', 'Confirmed owner must match the article');
     const key = text(input.idempotencyKey, 'idempotencyKey', 200), actorKey = `${actor.issuer}|${actor.subject}`;
     const revisionId = text(input.revisionId, 'revisionId');
     const fingerprint = digest(JSON.stringify({ articleId, revisionId, owner: input.ownerId, author: input.creditedAuthor, action: input.action, rights: input.rightsConfirmed }));
     const previous = this.content.store.get('SELECT * FROM idempotency WHERE actor=? AND operation=? AND key=?', actorKey, 'original', key);
-    if (previous) { requireValue(previous.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key already used for different content'); return this.safe(this.content.store.get('SELECT * FROM releases WHERE id=?', previous.resource_id)!); }
+    if (previous) { requireValue(previous.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key already used for different content'); const row=this.content.store.get('SELECT * FROM releases WHERE id=?', previous.resource_id)!;this.content.store.transaction(()=>bindActorCommand(this.content.store,actor,releaseCommand(row)));return this.safe(row); }
     const revision = await this.content.visibleRevision(actor, article, revisionId);
     requireValue(input.creditedAuthor === revision.credited_author && input.rightsConfirmed === true, 400, 'CONFIRMATION_REQUIRED', 'Confirm exact credited author and text/image publication rights');
     requireValue(['publish', 'update', 'unpublish'].includes(String(input.action)), 400, 'INVALID_INPUT', 'Invalid publication action');
@@ -40,7 +42,8 @@ export class PublishingService {
     const id = randomUUID(), now = new Date().toISOString();
     this.content.store.transaction(() => {
       requireValue(!this.content.store.get("SELECT 1 FROM releases WHERE article_id=? AND state IN ('queued','publishing','verifying','uncertain')", articleId), 409, 'PENDING_RELEASE', 'Resolve the pending original before another release');
-      this.content.store.run('INSERT INTO releases VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', id, articleId, revisionId, article.owner_id, this.vault.seal(actor), input.action as string, 'queued', live?.remote_id ?? null, live?.url ?? null, null, trace, now, now);
+      const bound=bindActorCommand(this.content.store,actor,releaseCommand({id,article_id:articleId,revision_id:revisionId,owner_id:article.owner_id,action:input.action}));
+      this.content.store.run('INSERT INTO releases VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', id, articleId, revisionId, article.owner_id, this.vault.seal(bound), input.action as string, 'queued', live?.remote_id ?? null, live?.url ?? null, null, trace, now, now);
       const translation=this.content.store.get('SELECT * FROM translations WHERE article_id=?',articleId);
       if(translation) this.content.store.run('INSERT INTO release_links VALUES (?,?,?)',id,translation.source_article,translation.source_revision);
       this.content.store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)', randomUUID(), 'release', id, 'queued', null, now);
@@ -100,6 +103,7 @@ export class ReleaseWorker {
     try {
       const recovery = recovering ? store.get("SELECT * FROM recovery_actors WHERE kind='release' AND resource_id=?", row.id) : undefined;
       const actor = this.service.vault.open<Actor>(recovery?.actor_json ?? row.actor_json);
+      if(!recovering)assertCommandBinding(store,actor,releaseCommand(row));
       // Recovery uses current caller authority to inspect the saved result.
       // Original confirmation remains audit evidence; beforeWrite forbids resend.
       await this.service.content.policy.publish(actor, row.owner_id,recovering?'access':'queued-write');
@@ -107,6 +111,7 @@ export class ReleaseWorker {
       input.guard = () => this.queue.guard(lease);
       input.beforeWrite = async () => {
         requireValue(!recovering, 409, 'RECOVERY_READ_ONLY', 'Recovery may inspect existing results but cannot resend');
+        assertCommandBinding(store,actor,releaseCommand(store.get('SELECT * FROM releases WHERE id=?',row.id)!));
         await this.service.content.policy.publish(actor, row.owner_id); this.queue.guard(lease);this.queue.assertWritable();
       };
       if (recovering) {
@@ -145,6 +150,7 @@ export class ReleaseWorker {
       store.audit('worker', row.owner_id, `original.${row.action === 'unpublish' ? 'unpublished' : 'published'}`, row.id, row.trace_id, { revisionId: row.revision_id, url: result.url });
       const projection=randomUUID(),recovery=store.get("SELECT actor_json FROM recovery_actors WHERE kind='release' AND resource_id=?",row.id);
       store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',projection,row.article_id,row.owner_id,recovery?.actor_json??row.actor_json,'queued',null,row.trace_id);
+      if(!recovery)deriveCommand(store,this.service.vault.open<Actor>(row.actor_json),releaseCommand(row),projectionCommand({id:projection,article_id:row.article_id,owner_id:row.owner_id}));
       store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',projection,'queued',null,now);
     }, true);
   }

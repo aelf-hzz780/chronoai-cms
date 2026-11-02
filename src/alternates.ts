@@ -3,6 +3,7 @@ import {PublishingService,type OriginalInput} from './publishing.ts';
 import {Queue} from './queue.ts';
 import {AppError,requireValue} from './errors.ts';
 import type {Actor} from './policy.ts';
+import {assertCommandRequest,bindActorCommand,assertCommandBinding,deriveCommand,projectionCommand} from './command-authority.ts';
 export interface Alternate {language:string;url:string;}
 export interface AlternateAdapter {alternates(input:OriginalInput,links:Alternate[]):Promise<void>;}
 export class AlternateService {
@@ -10,9 +11,11 @@ export class AlternateService {
   constructor(originals:PublishingService){this.originals=originals;}
   async request(actor:Actor,articleId:string,trace:string) {
     const article=this.originals.content.article(articleId);await this.originals.content.policy.publish(actor,article.owner_id);
+    assertCommandRequest(actor,'POST',`/api/service/articles/${articleId}/sync-links`);
     const id=randomUUID(),store=this.originals.content.store;
     store.transaction(()=>{
-      store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',id,articleId,article.owner_id,this.originals.vault.seal(actor),'queued',null,trace);
+      const bound=bindActorCommand(store,actor,projectionCommand({id,article_id:articleId,owner_id:article.owner_id}));
+      store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',id,articleId,article.owner_id,this.originals.vault.seal(bound),'queued',null,trace);
       store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',id,'queued',null,new Date().toISOString());
       store.audit(actor.subject,article.owner_id,'alternates.request',id,trace);
     });return{id,state:'queued'};
@@ -41,12 +44,12 @@ export class AlternateWorker {
     let attemptedWrite=false;
     const correction=store.get('SELECT * FROM projection_retries WHERE projection_id=?',row.id);
     try {
-      const actor=this.service.originals.vault.open<Actor>(row.actor_json);await this.service.originals.content.policy.publish(actor,row.owner_id);
+      const actor=this.service.originals.vault.open<Actor>(row.actor_json);assertCommandBinding(store,actor,projectionCommand(row));await this.service.originals.content.policy.publish(actor,row.owner_id);
       for(const release of this.service.affected(row.article_id,row.owner_id)) {
         const input=this.service.originals.input(release),links=this.service.links(release.article_id,row.owner_id),snapshot=this.service.snapshot(row.owner_id);
         const guard=()=>{this.queue.guard(lease);this.queue.assertWritable();requireValue(store.get('SELECT state FROM releases WHERE id=?',release.id)?.state==='published' && this.service.snapshot(row.owner_id)===snapshot,409,'PUBLICATION_CHANGED','Original or translation targets changed during metadata projection');};
         input.guard=guard;
-        input.beforeWrite=async()=>{await this.service.originals.content.policy.publish(actor,row.owner_id);guard();attemptedWrite=true;};
+        input.beforeWrite=async()=>{assertCommandBinding(store,actor,projectionCommand(store.get('SELECT * FROM projections WHERE id=?',row.id)!));await this.service.originals.content.policy.publish(actor,row.owner_id);guard();attemptedWrite=true;};
         await this.adapter.alternates(input,links);guard();
       }
       this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='complete',error_code=NULL WHERE id=?",row.id);store.run('DELETE FROM projection_retries WHERE projection_id=?',row.id);store.audit(actor.subject,row.owner_id,'alternates.complete',row.id,row.trace_id);},true);
@@ -67,6 +70,7 @@ export class AlternateWorker {
           store.run("UPDATE jobs SET state='done',lease_until=NULL WHERE id=?",lease.jobId);
           if(code==='PUBLICATION_CHANGED'||attemptedWrite){
             const id=randomUUID();store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',id,row.article_id,row.owner_id,row.actor_json,'queued',null,row.trace_id);
+            deriveCommand(store,this.service.originals.vault.open<Actor>(row.actor_json),projectionCommand(row),projectionCommand({...row,id}));
             store.run('INSERT INTO projection_retries VALUES (?,?,?)',id,0,new Date().toISOString());
             store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',id,'queued',null,new Date().toISOString());
           }

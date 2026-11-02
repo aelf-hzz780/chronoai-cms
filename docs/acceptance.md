@@ -21,6 +21,8 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 
 R031/P1仍OPEN（A09/A15、D2/D3/D5/D9），官方来源契约研究见 [I16](review-i16.md)。`abfb988`临时保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，完整key/child能力仍BLOCKED上游；该结果不关闭R031、不重开R029／R030、不提升正式D/A签收，边界见 [I17](review-i17.md)。R032／R033／R034已独立有界关闭；普通用户门户Launch入口上游缺口见[注册指南](nyxid-registration.md)，下列正式矩阵保持原文。
 
+2026-11-02 按新授权推进 [I22 R031 V1 consumer 候选](review-i22.md)：专用签名 proof、实际请求字节、专用在线 authority、唯一 jti 命令绑定与最终发送守卫已有本地模型证据。此前本地收尾是2026-10-30的固定快照，不包含本轮新增工作；真实 NyxID 后端固定 SHA 的联合验证及独立验收仍待完成，R031与正式D/A不提升。
+
 ## 1. 交付追踪
 
 | 交付 | 需求 | 模块 | 必需验收场景 |

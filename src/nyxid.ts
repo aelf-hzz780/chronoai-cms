@@ -8,6 +8,7 @@ import { requireValue } from './errors.ts';
 import { digest } from './content.ts';
 import {connectionFingerprint} from './connection-proof.ts';
 import {CallerAuthorization} from './caller-authorization.ts';
+import {validateCommandAuthority} from './command-authority.ts';
 
 type Owner = { kind:string; issuer:string; subject:string };
 export interface ConnectionBinding {
@@ -64,13 +65,14 @@ export class NyxAuthority implements Authority {
   config:Config; store?:Store; callers:CallerAuthorization;
   constructor(config:Config,store?:Store) { this.config=config;this.store=store;this.callers=new CallerAuthorization(config); }
   async validate(actor:Actor,purpose:AuthorizationPurpose='access') {
-    const current=await this.callers.restore(actor,purpose);
+    const {current,command}=await this.callers.restore(actor,purpose);
     const body=new URLSearchParams({token:actor.credential,client_id:this.config.clientId});
     if(this.config.clientSecret) body.set('client_secret',this.config.clientSecret);
     const result=await remoteJson(this.config.introspectionUrl,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body});
     const scopes=typeof result.scope==='string'?result.scope.split(' '):[];
     requireValue(result.active===true && result.sub===actor.subject && (!result.iss || result.iss===actor.issuer) && (actor.sourceScopes??actor.scopes).every(s=>scopes.includes(s)),401,'REVOKED','Current authorization is invalid');
     requireValue(current.sourceScopes!.every(scope=>scopes.includes(scope)),401,'REVOKED','Current scopes no longer authorize the saved caller');
+    if(command)await validateCommandAuthority(this.config,actor.commandAuthority!,command);
   }
   async call(actor:Actor,path:string,method='GET',body?:unknown) {
     requireValue(path.startsWith('/api/v1/') && !path.includes('..'),500,'NYXID_ROUTE','Invalid upstream route');
@@ -141,6 +143,13 @@ export class NyxAuthority implements Authority {
     const connection=await this.connection(actor,input.owner,input.connectionId,input.target),request=input.request as RemoteRequest,path=this.path(connection,request);
     requireValue(typeof input.connectionFingerprint==='string' && input.connectionFingerprint===connectionFingerprint(connection),409,'CONNECTION_CHANGED','Resolved connection differs from the confirmed account or route');
     const guard=()=>{requireValue(input.connectionFingerprint===connectionFingerprint(connection),409,'CONNECTION_CHANGED','Resolved binding changed before dispatch');input.beforeDispatch?.();};
+    const beforeDispatch=async()=>{
+      if(!input.readOnly){
+        if(input.beforeWrite)await input.beforeWrite();
+        else if(actor.commandAuthority)await this.validate(actor,'queued-write');
+      }
+      guard();
+    };
     if(input.owner.kind==='organization' && !input.readOnly) {
       const status=await this.approval(actor,input.owner,input.approvalRef,input.digest,input.connectionId,input.action);
       const binding=this.store!.get('SELECT * FROM nyx_approvals WHERE reference=?',input.approvalRef)!;
@@ -149,7 +158,7 @@ export class NyxAuthority implements Authority {
       for(const key of ['catalog_digest','exact_view_digest','operation_digest','operation_id','operation_generation','idempotency_key']) if(stored[key]!==undefined) fence[key]=stored[key];
       const finalConnection=await this.connection(actor,input.owner,input.connectionId,input.target);
       requireValue(input.connectionFingerprint===connectionFingerprint(finalConnection),409,'CONNECTION_CHANGED','Exact account changed during approval verification');
-      guard();
+      await beforeDispatch();
       const result=status.state==='redeemed'?status:await this.call(actor,`/api/v1/approvals/exact-service/requests/${encodeURIComponent(input.approvalRef)}/redeem`,'POST',fence);
       if(result.state==='failed' || result.state==='redeeming') throw new RemoteError('REMOTE_UNCERTAIN','NyxID effect outcome requires read-only reconciliation',true);
       requireValue(result.state==='redeemed' && result.receipt,409,'APPROVAL_NEEDED','NyxID did not redeem the exact authorization');
@@ -161,7 +170,7 @@ export class NyxAuthority implements Authority {
     const query=new URLSearchParams(path.split('?')[1]??'');
     requireValue(!query.has('_nyxid_via'),403,'DESTINATION_ROUTE','Connection selector is server-owned');query.set('_nyxid_via',connection.id);
     const route=`/api/v1/proxy/s/${encodeURIComponent(connection.slug)}/${path.split('?')[0].replace(/^\//,'')}?${query}`;
-    guard();
+    await beforeDispatch();
     const body=await this.call(actor,route,request.method,request.body);
     return {accountId:connection.accountId,status:200,body};
   }

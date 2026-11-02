@@ -9,6 +9,7 @@ import { remoteJson } from './http-client.ts';
 import { digest } from './content.ts';
 import type { Actor, Policy } from './policy.ts';
 import {CallerAuthorization} from './caller-authorization.ts';
+import {commandRequest} from './command-authority.ts';
 
 export class AuthManager {
   config: Config; store: Store; vault: Vault; policy: Policy;
@@ -29,8 +30,22 @@ export class AuthManager {
       const identity=request.headers['x-nyxid-identity-token'], delegation=request.headers['x-nyxid-delegation-token'];
       if (identity || delegation) {
         requireValue(typeof identity === 'string' && typeof delegation === 'string',401,'INVALID_TOKEN','Both signed identity and delegated authority are required');
-        return this.provision(await this.propagated(identity,delegation));
+        let actor=await this.propagated(identity,delegation);
+        const proof=request.headers['x-nyxid-command-authority'];
+        if(proof!==undefined){
+          const single=(name:string):string|null=>{
+            const count=request.raw.rawHeaders.filter((_,index)=>index%2===0&&request.raw.rawHeaders[index].toLowerCase()===name).length;
+            const value=request.headers[name];requireValue(count<=1&&(value===undefined||typeof value==='string'),403,'SOURCE_AUTHORITY_UNPROVEN','Command authority requires single exact request headers');return value??null;
+          };
+          for(const name of ['x-nyxid-identity-token','x-nyxid-delegation-token'])single(name);
+          const token=single('x-nyxid-command-authority')!,contentType=single('content-type'),idempotencyKey=single('idempotency-key');
+          requireValue(request.body===undefined||Buffer.isBuffer(request.rawBody),403,'SOURCE_AUTHORITY_UNPROVEN','Original command request bytes are required');
+          actor={...actor,commandAuthority:{token,request:commandRequest(request.method,request.raw.url!,request.rawBody??Buffer.alloc(0),contentType,idempotencyKey)}};
+          await this.policy.scope(actor,'content:read','queued-write');
+        }
+        return this.provision(actor);
       }
+      requireValue(request.headers['x-nyxid-command-authority']===undefined,403,'SOURCE_AUTHORITY_UNPROVEN','Command authority requires signed propagated identity and delegation');
       const header = request.headers.authorization;
       if (!header?.startsWith('Bearer ')) return null;
       return this.provision(await this.accessToken(header.slice(7), this.config.serviceAudience));

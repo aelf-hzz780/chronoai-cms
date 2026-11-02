@@ -9,6 +9,7 @@ import { render } from './render.ts';
 import {assistedMarkdown,provesAssistedCopy} from './assisted-proof.ts';
 import { Queue } from './queue.ts';
 import {BrowserRenderProof,type RenderProof} from './render-proof.ts';
+import {assertCommandRequest,bindActorCommand,assertCommandBinding,deliveryCommand} from './command-authority.ts';
 
 export interface Connections {
   connection(actor: Actor, owner: any, id: string, target: string): Promise<any>;
@@ -52,6 +53,7 @@ export class DistributionService {
   async request(actor: Actor, releaseId: string, input: Record<string, unknown>, trace: string) {
     const release = this.store.get('SELECT * FROM releases WHERE id=?', releaseId); requireValue(release, 404, 'NOT_FOUND', 'Original not found');
     const owner = await this.originals.content.policy.publish(actor, release.owner_id);
+    assertCommandRequest(actor,'POST',`/api/service/releases/${releaseId}/deliveries`);
     const ownerRef = { kind: owner.kind, issuer: owner.issuer, subject: owner.subject };
     requireValue(input.ownerId === undefined || input.ownerId === owner.id, 403, 'FORBIDDEN', 'Owner mismatch');
     const target = this.targets.get(text(input.target, 'target'), ['update','remove'].includes(String(input.action))), connectionId = text(input.connectionId, 'connectionId'), key = text(input.idempotencyKey, 'idempotencyKey', 200);
@@ -60,7 +62,7 @@ export class DistributionService {
     const fingerprint = digest(JSON.stringify({ releaseId, target: target.name, connectionId, action: input.action, format: input.format, excerpt: input.excerpt, copyId: input.copyId }));
     const actorKey = `${actor.issuer}|${actor.subject}`;
     const prior = this.store.get('SELECT * FROM idempotency WHERE actor=? AND operation=? AND key=?', actorKey, 'delivery', key);
-    if (prior) { requireValue(prior.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key reused for different delivery'); return this.store.get('SELECT * FROM deliveries WHERE id=?', prior.resource_id)!; }
+    if (prior) { requireValue(prior.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key reused for different delivery');const row=this.store.get('SELECT * FROM deliveries WHERE id=?', prior.resource_id)!;this.store.transaction(()=>bindActorCommand(this.store,actor,deliveryCommand(row)));return row; }
     const original = this.originals.input(release);
     requireValue(original.language === 'en', 409, 'LANGUAGE_NOT_VERIFIED', 'External distribution is initially enabled for English only');
     if (input.action !== 'remove') requireValue(release.state === 'published', 409, 'ORIGINAL_NOT_LIVE', 'Exact confirmed original must currently be live');
@@ -90,7 +92,8 @@ export class DistributionService {
     this.store.transaction(() => {
       if (input.action === 'create') requireValue(!this.store.get("SELECT 1 FROM deliveries d JOIN releases r ON r.id=d.release_id WHERE r.article_id=? AND d.target=? AND d.connection_id=? AND d.action='create' AND d.state NOT IN ('failed','blocked','cancelled','removed')", release.article_id, target.name, connectionId), 409, 'DUPLICATE_TARGET', 'An existing or uncertain copy already targets this connection; update or reconcile it');
       this.store.run('INSERT INTO deliveries(id,release_id,owner_id,connection_id,target,action,format,digest,state,remote_id,url,approval_ref,trace_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', id, releaseId, owner.id, connectionId, target.name, input.action as string, input.format as string, contentDigest, state, copy?.remote_id ?? null, copy?.url ?? null, null, trace, now, now);
-      this.store.run('INSERT INTO delivery_payloads VALUES (?,?,?)', id, this.originals.vault.seal(actor), JSON.stringify(payload));
+      const bound=bindActorCommand(this.store,actor,deliveryCommand(this.store.get('SELECT * FROM deliveries WHERE id=?',id)!));
+      this.store.run('INSERT INTO delivery_payloads VALUES (?,?,?)', id, this.originals.vault.seal(bound), JSON.stringify(payload));
       this.store.run('INSERT INTO idempotency VALUES (?,?,?,?,?)', actorKey, 'delivery', key, fingerprint, id);
       if (state === 'queued') this.store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)', randomUUID(), 'delivery', id, 'queued', null, now);
       this.store.audit(actor.subject, owner.id, 'delivery.confirm', id, trace, { revision: release.revision_id, contentDigest, connectionId, target: target.name, action: input.action, rightsConfirmed: true });
@@ -100,11 +103,13 @@ export class DistributionService {
   }
   async authorize(actor: Actor, id: string, approvalRef: string, trace: string) {
     const { delivery, owner } = await this.context(actor, id);
+    assertCommandRequest(actor,'POST',`/api/service/deliveries/${id}/authorize`);
     requireValue(delivery.state === 'approval_needed', 409, 'DELIVERY_STATE', 'Delivery is not awaiting exact authorization');
     await this.connections.approval(actor, owner, text(approvalRef, 'approvalRef'), delivery.digest, delivery.connection_id, delivery.action);
     await this.originals.content.policy.publish(actor,delivery.owner_id);
     this.store.transaction(() => {
       requireValue(this.store.get('SELECT state FROM deliveries WHERE id=?',id)?.state==='approval_needed',409,'DELIVERY_STATE','Delivery changed while authorization was checked');
+      bindActorCommand(this.store,actor,{kind:'delivery-authorization',resourceId:id,digest:digest(JSON.stringify([delivery.digest,approvalRef]))});
       this.store.run('UPDATE deliveries SET approval_ref=? WHERE id=?', approvalRef, id);
       this.event(id, 'queued', trace);
       this.store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?) ON CONFLICT(kind,resource_id) DO UPDATE SET state=excluded.state,lease_until=NULL', randomUUID(), 'delivery', id, 'queued', null, new Date().toISOString());
@@ -215,6 +220,7 @@ export class DeliveryWorker {
     let sent = false, knownWrite = false, acceptedWrite = false;
     try {
       const actor = this.service.originals.vault.open<Actor>(recovery?.actor_json ?? snapshot.actor_json);
+      if(!recovering)assertCommandBinding(store,actor,deliveryCommand(store.get('SELECT * FROM deliveries WHERE id=?',lease.resourceId)!));
       const purpose = recovering?'access':'queued-write';
       const { delivery, payload, owner } = await this.service.context(actor, lease.resourceId,purpose);
       const target = this.service.targets.get(delivery.target);
@@ -245,13 +251,16 @@ export class DeliveryWorker {
           const freshConnection = await this.service.connections.connection(actor,owner,delivery.connection_id,delivery.target);
           requireValue(connectionFingerprint(freshConnection) === payload.connectionFingerprint,409,'CONNECTION_CHANGED','Connection configuration drifted before execution');
           await this.service.originals.content.policy.publish(actor, delivery.owner_id);
+          assertCommandBinding(store,actor,deliveryCommand(store.get('SELECT * FROM deliveries WHERE id=?',delivery.id)!));
           this.queue.guard(lease);
           if (!this.queue.mutate(lease,() => this.service.event(delivery.id, 'sending', delivery.trace_id))) this.queue.guard(lease);
           assertDispatch();
           sent = true;
         }
         this.queue.guard(lease);
-        const result = await this.service.connections.execute(actor, { owner, connectionId: delivery.connection_id, target: delivery.target, digest: delivery.digest, action: delivery.action, approvalRef: delivery.approval_ref, request, connectionFingerprint:payload.connectionFingerprint, beforeDispatch:()=>{if(!isRead(request))assertDispatch();else this.queue.guard(lease);}, readOnly: isRead(request) });
+        const result = await this.service.connections.execute(actor, { owner, connectionId: delivery.connection_id, target: delivery.target, digest: delivery.digest, action: delivery.action, approvalRef: delivery.approval_ref, request, connectionFingerprint:payload.connectionFingerprint,
+          beforeWrite:async()=>{await this.service.originals.content.policy.publish(actor,delivery.owner_id);assertCommandBinding(store,actor,deliveryCommand(store.get('SELECT * FROM deliveries WHERE id=?',delivery.id)!));},
+          beforeDispatch:()=>{if(!isRead(request))assertDispatch();else this.queue.guard(lease);}, readOnly: isRead(request) });
         if(!isRead(request) && result.status>=200 && result.status<300)acceptedWrite=true;
         requireValue(result.accountId === connection.accountId, 502, 'REMOTE_ACCOUNT_MISMATCH', 'Execution account does not match the selected connection');
         if (result.status < 200 || result.status >= 300) throw new RemoteError(result.status === 401 || result.status === 403 ? 'ACCOUNT_RIGHTS_REQUIRED' : 'DESTINATION_FAILED', 'Destination did not accept the operation', !isRead(request) && result.status >= 500);

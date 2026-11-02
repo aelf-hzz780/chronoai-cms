@@ -57,6 +57,8 @@ test('native NyxID inventory, exact approval and redemption never use a fallback
   const {connectionFingerprint}=await import('../src/connection-proof.ts');
   const input={connectionFingerprint:connectionFingerprint(await authority.connection(f.actors.admin,owner,'org-dev','dev')),owner,connectionId:'org-dev',target:'dev',request,digest:'confirmed-digest',action:'create',approvalRef:'native-ref',readOnly:false};
   await assert.rejects(authority.execute(f.actors.admin,{...input,request:{...request,body:{article:{title:'Changed'}}}}),{code:'APPROVAL_NEEDED'});
+  await assert.rejects(authority.execute(f.actors.admin,{...input,beforeWrite:async()=>{await Promise.resolve();throw new Error('Authority revoked during final upstream checks');}}),/Authority revoked during final upstream checks/);
+  assert.equal(calls.filter(c=>c.path.endsWith('/redeem')).length,0,'Async authority rejection must precede exact redemption');
   assert.equal((await authority.execute(f.actors.admin,input)).body.id,123);
   assert.equal((await authority.execute(f.actors.admin,input)).body.id,123);
   assert.equal(calls.filter(c=>c.path.endsWith('/redeem')).length,1);
@@ -70,4 +72,6 @@ test('R007: native execute rejects a resolved binding different from the frozen 
   const {connectionFingerprint}=await import('../src/distribution.ts');let writes=0;
   authority.connection=async()=>({...base,accountId:'B',generation:'2',active:true});authority.call=async()=>{writes++;return{};};
   await assert.rejects(authority.execute(f.actors.solo,{owner,connectionId:base.id,target:'dev',request:{method:'POST',url:'https://dev.to/api/articles'},connectionFingerprint:connectionFingerprint(base),beforeDispatch:()=>{},readOnly:false}),{code:'CONNECTION_CHANGED'});assert.equal(writes,0);
+  authority.connection=async()=>({...base,active:true});
+  await assert.rejects(authority.execute(f.actors.solo,{owner,connectionId:base.id,target:'dev',request:{method:'POST',url:'https://dev.to/api/articles'},connectionFingerprint:connectionFingerprint(base),beforeWrite:async()=>{await Promise.resolve();throw new Error('Source revoked before proxy dispatch');},beforeDispatch:()=>{},readOnly:false}),/Source revoked before proxy dispatch/);assert.equal(writes,0);
 });

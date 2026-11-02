@@ -42,6 +42,8 @@ export class Store {
       CREATE TABLE IF NOT EXISTS audit (id TEXT PRIMARY KEY, actor TEXT NOT NULL, owner_id TEXT NOT NULL, action TEXT NOT NULL, resource_id TEXT NOT NULL, trace_id TEXT NOT NULL, detail_json TEXT NOT NULL, created_at TEXT NOT NULL);
       CREATE INDEX IF NOT EXISTS audit_owner ON audit(owner_id,created_at);
       CREATE TABLE IF NOT EXISTS idempotency (actor TEXT NOT NULL, operation TEXT NOT NULL, key TEXT NOT NULL, digest TEXT NOT NULL, resource_id TEXT NOT NULL, PRIMARY KEY(actor,operation,key));
+      CREATE TABLE IF NOT EXISTS command_authorities (issuer TEXT NOT NULL, jti TEXT NOT NULL, token_digest TEXT NOT NULL, kind TEXT NOT NULL, resource_id TEXT NOT NULL, command_digest TEXT NOT NULL, PRIMARY KEY(issuer,jti));
+      CREATE TABLE IF NOT EXISTS command_derivations (kind TEXT NOT NULL, resource_id TEXT NOT NULL, issuer TEXT NOT NULL, jti TEXT NOT NULL, task_digest TEXT NOT NULL, PRIMARY KEY(kind,resource_id), FOREIGN KEY(issuer,jti) REFERENCES command_authorities(issuer,jti));
       CREATE TABLE IF NOT EXISTS assets (id TEXT PRIMARY KEY, owner_id TEXT NOT NULL REFERENCES owners(id), article_id TEXT NOT NULL REFERENCES articles(id), content BLOB NOT NULL, mime TEXT NOT NULL, digest TEXT NOT NULL, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS asset_publications (asset_id TEXT NOT NULL REFERENCES assets(id), release_id TEXT NOT NULL REFERENCES releases(id), public_path TEXT NOT NULL, PRIMARY KEY(asset_id,release_id));
       CREATE TABLE IF NOT EXISTS sessions (id TEXT PRIMARY KEY, actor_json TEXT NOT NULL, csrf TEXT NOT NULL, expires_at TEXT NOT NULL);

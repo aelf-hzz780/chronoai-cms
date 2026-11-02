@@ -4,6 +4,7 @@ import {safeUrl} from './config.ts';
 import {requireValue} from './errors.ts';
 import {remoteJson} from './http-client.ts';
 import type {Actor,CallerBinding,AuthorizationPurpose} from './policy.ts';
+import {verifyCommandAuthority,type CommandClaims} from './command-authority.ts';
 
 // Only signed JWT claims enter this check. Actor metadata and ingress headers
 // cannot establish source authority. Official introspection still checks each
@@ -69,9 +70,13 @@ export class CallerAuthorization {
     requireValue(payload.sub===actor.subject,401,'REVOKED','Saved caller subject changed');
     if(b.kind==='propagated')requireValue(payload.delegated===true&&(payload.act as {sub?:string})?.sub===b.serviceSlug,401,'REVOKED','Delegation actor binding changed');
     else {const current=this.directBinding(payload,b.kind==='cms'?'cms':'service',audience);requireValue(current.kind!=='propagated'&&current.clientId===b.clientId,401,'REVOKED','Saved client differs from signed client');}
-    if(purpose==='queued-write'&&b.kind==='propagated')requireValue(hasSourceLineage(payload.oauth_lineage),403,'SOURCE_AUTHORITY_UNPROVEN','当前代理授权无法持续核验，待发操作已阻止。请使用支持持续授权的服务登录后重新确认；原稿保留。');
+    let command:CommandClaims|undefined;
+    if(purpose==='queued-write'&&b.kind==='propagated'){
+      if(actor.commandAuthority)command=await verifyCommandAuthority(actor,this.config,this.keys!,payload.exp!);
+      else requireValue(hasSourceLineage(payload.oauth_lineage),403,'SOURCE_AUTHORITY_UNPROVEN','当前代理授权无法持续核验，待发操作已阻止。请使用支持持续授权的服务登录后重新确认；原稿保留。');
+    }
     const current=this.actor(payload,actor.credential,b);
     requireValue(actor.scopes.every(scope=>current.scopes.includes(scope)),401,'REVOKED','Current configuration no longer authorizes the saved action');
-    return current;
+    return {current,command};
   }
 }

@@ -16,7 +16,7 @@ import type { DistributionService } from './distribution.ts';
 import { AlternateService } from './alternates.ts';
 import {openApi} from './openapi.ts';
 
-declare module 'fastify' { interface FastifyRequest { actor: Actor; } }
+declare module 'fastify' { interface FastifyRequest { actor: Actor; rawBody:Buffer|null; } }
 export interface AppDependencies {
   store: Store; policy: Policy; content: ContentService; vault: Vault; publicUrl: string;
   authenticate(request: FastifyRequest): Promise<Actor | null>; auth?: AuthManager;
@@ -27,7 +27,11 @@ export interface AppDependencies {
 export async function createApp(deps: AppDependencies) {
   const app = Fastify({ bodyLimit: 7_000_000, routerOptions:{maxParamLength:1024}, genReqId: () => randomUUID(), logger: false, trustProxy: deps.trustedProxyCidrs?.length ? deps.trustedProxyCidrs : false });
   await app.register(cookie);
-  app.addContentTypeParser('text/markdown',{parseAs:'buffer',bodyLimit:2_000_000},(_request,body,done)=>done(null,body));
+  app.decorateRequest('rawBody',null);
+  const jsonParser=app.getDefaultJsonParser('error','error');
+  app.removeContentTypeParser('application/json');
+  app.addContentTypeParser('application/json',{parseAs:'buffer'},(request,body,done)=>{request.rawBody=Buffer.from(body);jsonParser(request,body.toString('utf8'),done);});
+  app.addContentTypeParser('text/markdown',{parseAs:'buffer',bodyLimit:2_000_000},(request,body,done)=>{request.rawBody=Buffer.from(body);done(null,body);});
   app.decorateRequest('actor', null as unknown as Actor);
   app.addHook('onRequest', async (request, reply) => {
     reply.header('x-trace-id', request.id).header('cache-control', 'no-store').header('x-content-type-options', 'nosniff').header('referrer-policy', 'same-origin');
