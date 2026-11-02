@@ -76,7 +76,7 @@ node scripts/recovery.ts restore /private/plan.json /private/fresh-restore
 
 恢复默认使用卷内content而不是生产nested mount。卷内 `.chrono-private-staging` 随content tar保留；宿主机外置staging是临时工作目录，原始私有素材保存在SQLite。按前文布局重新预置每站0700私有根、校验Worker UID／mount，并重设 `GHOST_MEDIA_STAGING_JSON`；残留临时文件不能复制到public。切回生产布局前，把已公开素材恢复到对应平台site子目录，核对hash和最小权限，再挂载Ghost只读。恢复后不自动重发，先逐项只读reconcile，重验当前NyxID权限、连接与未过期exact批准。明确审批后才 `scripts/provision.ts resume --confirmed`；缺失公开图片通过新的有效补图命令完成，不能复用已终结的补图请求。不要让隔离恢复实例使用真实provider凭证执行写入。
 
-最新独立四站完整Local恢复见[74978bc恢复记录](review-local-recovery-749.md)，含加密包／全字段BLOB审计、源Ghost停止时新卷页面图片读回、旧session失效、丢响应GET-only对账和撤权queued零写入。早期开发恢复记录保留在[review-i2.md](review-i2.md)；各自原卷保留。首次r1地址池耗尽失败与r2显式网络恢复均有记录，45秒仅为成功CLI耗时；这些证据不代表真实外部delivery恢复或生产RPO/RTO。上线前由责任人给出数值目标、备份频率、离机存储和保留策略，再在生产等价环境测量恢复耗时与可丢失窗口。
+当前源码与新增授权／素材表的独立四站Local恢复见[W2恢复记录](review-w2-recovery-20261102.md)：源 `0b0e9d1`、修复及复验 `83b4b8e`，包含全表BLOB／索引、加密包、四MySQL/content/config与私有staging审计、暂停只读认回、当前授权补图和恢复后新稿。身份／分发远端使用明确标注的受控适配器，不能替代W1的Native NyxID来源验收；38.298秒仅为该次恢复CLI耗时。历史[74978bc恢复记录](review-local-recovery-749.md)与[早期开发记录](review-i2.md)保留；这些证据不代表真实外部delivery恢复或生产RPO/RTO。上线前由责任人给出数值目标、备份频率、离机存储和保留策略，再在生产等价环境测量恢复耗时与可丢失窗口。
 
 ## 升级、回滚与退组
 
