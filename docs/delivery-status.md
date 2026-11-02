@@ -4,7 +4,9 @@
 
 状态含义：implemented为开发状态；Document／Local／Live分别记录。历史上R001–R030在各自固定SHA有界关闭（29项必需缺陷及R021非门禁），R029／R030固定业务源码为76595bc；51 PASS／A05 BLOCKED仅是R031发现前的历史Local modeled统计，不能作为abfb988的当前结论。历史报告及边界见 [I15](review-i15.md#独立有界闭合2026-10-30)。
 
-**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** 临时安全阻断的有界PASS不自动改写完整能力台账。R033已在4a27487／3ded07e、R034已在0418652／98bac5b独立有界关闭。实际NyxID＋四Ghost初始发布、非空指标及个人生命周期的新证据与组织verifying待恢复边界见 [I20](review-i20.md)；实际门户／CMS入口、多组织／受限代理及必要恢复等差量继续独立追踪。不以重新确认或重发替代对账，不外推旧R004覆盖。
+**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** [2026-10-30 独立本地收尾](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/local-handoff-complete.json)确认固定业务源码 `0418652` 的已识别可独立推进本地工作已完成，整体仍为 `NOT_ACCEPTED`。实际官方 NyxID OAuth／proxy／MCP／默认浏览器、四 Ghost 发布／生命周期／私有素材／指标及加密隔离恢复的有界证据见 [I20](review-i20.md) 与 [I21](review-i21.md)；组织中文已同 ID 只读认回并完成后续下线，首次 INTERNAL 原因仍未知。剩余工作依赖 NyxID 上游能力、真实外部平台账号与精确内容／动作授权、目标生产运维输入及 PR 创建权限。临时安全阻断的有界 PASS 不自动改写完整能力台账；R033 已在4a27487／3ded07e、R034 已在0418652／98bac5b独立有界关闭。不以重新确认或重发替代对账，不外推旧R004覆盖。
+
+该独立收尾快照的正式分层统计仍为 Document 48 PASS／4 BLOCKED、Local 49 PASS／2 FAIL／1 BLOCKED、Live 52 BLOCKED；登记缺陷关闭36项（其中必需31项）、开放1项 R031、可独立推进本地工作0项、正式交付签收0项。Local 的有界实际补充证据不自动重算历史 modeled 场景。验收源／恢复 App 与四 Ghost 均已停止并保留数据，dev八容器原 ID／image／volume及观察运行环境已归还；此处记录收尾状态，不代表当前持续运行健康。
 
 **R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：官方普通delegation缺少原key在线来源。abfb988临时fail-closed保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，见[实际报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child命令来源契约仍BLOCKED上游。R032/P2文档修正已在11b6011独立有界关闭，见[报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/R032-documentation-retest.json)。**R033/P1（A36/A49/A50、D7/D9）已独立有界关闭**，见 [I18](review-i18.md)。**R034/P1（A08/A17、D2/D4）已独立有界关闭**，见 [I19](review-i19.md)。R029／R030不重开，R031不降N/A，边界见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。
 
@@ -88,14 +90,14 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 固定业务源码0418652的实际官方NyxID＋四原版Ghost八组初始发布通过，独立environment核对原版镜像、源码／卷／owner与原文／素材绑定；真实浏览生成非空指标，12组CMS／service查询一致。CMS个人更新、双向hreflang、stale及下线有界通过，组织英文更新有界通过；后续 r3/r4 另通过现有组织译文 stale→unpublish 生命周期、普通成员个人 CMS/service × EN/ZH（首个 CMS-EN 为历史实际发布只读补核，另三篇新增）、两个未发送新图取消分支、同组织 Admin/member 精确角色私有资源拒绝，以及默认浏览器认证与退出后的旧 cookie 失效。组织中文首次INTERNAL原因未定；正式生产RPO/RTO、外部分发恢复、实际外部平台和普通 Nyx 门户 Launch 仍待验；已发送或外部分发取消、显式垃圾回收不属于本轮新增证据范围。root本地源／恢复App与四站九容器已停止、外发暂停、卷与现场保留；dev八容器原ID／image／volume恢复及九端点200仅是资源窗口收尾，不是备份／数据恢复验收。中英报告、逐项证据与界限见 [I20](review-i20.md) 与 [I21](review-i21.md)。
 
-Git交付：root已验证 `f528dc0` 正常push至功能分支 `origin/codex/003-blogsystem-delivery`，main仍仅原始baseline `019222c`，未force／merge；本批次后续文档提交待 review/push，PR API仍403，尚未创建PR。R031完整能力和A01普通门户入口仍上游BLOCKED，Native整体及正式D/A未签收，动态状态沿用root台账。
+Git交付：2026-10-30 独立收尾记录已交付 `8df559d` 至功能分支 `origin/codex/003-blogsystem-delivery`，main仍仅原始baseline `019222c`，未force／merge；本轮状态同步文档另待独立 review，未包含在该已交付 SHA 中。收尾时 PR API 最后返回403，尚未创建PR，标题／正文与 compare 入口已备；当前权限通路需另行核验。R031完整能力和A01普通门户入口仍上游BLOCKED，Native整体及正式D/A未签收，动态状态沿用root台账。
 
 ## D1–D9
 
 | 交付 | 开发状态 | 证据层级 | 剩余正式门禁 |
 |---|---|---|---|
-| D1 | implemented | 历史独立Local＋部署模板；76595bc真实NyxID双入口独立有界通过 | 实际门户／CMS入口验收、目标HTTPS部署／容量／付款运维责任 |
-| D2 | implemented | 历史独立Local API；76595bc真实service代理与CMS授权独立有界通过 | 实际OpenAPI注册、多组织／受限代理及目标service正式交接与全部用例验收 |
+| D1 | implemented | 历史独立Local＋部署模板；0418652实际NyxID双入口／默认浏览器认证与退出有界通过 | 普通Nyx门户Launch上游能力、目标HTTPS部署／容量／付款运维责任及正式交接 |
+| D2 | implemented | 历史独立Local API；0418652实际service代理／CMS授权／MCP文件交付独立有界通过 | R031在线可验key/child来源契约、目标service注册／正式交接与真实外部连接全部用例验收 |
 | D3 | implemented | 独立Local角色／owner／入口／时序闭合 | 目标NyxID角色／委托／撤权契约及共享部署门禁 |
 | D4 | implemented | 独立Local源文／素材／冲突／译文／CMS闭合 | 共享目标身份与部署门禁 |
 | D5 | implemented | 独立Local四Ghost／更新／取消／核验闭合 | 目标身份与部署门禁 |
@@ -165,10 +167,10 @@ Git交付：root已验证 `f528dc0` 正常push至功能分支 `origin/codex/003-
 
 ## 外部 BLOCKED
 
-- B1：本地真实NyxID双入口、角色／委托与queued撤权已独立通过，R029／R030有界关闭；实际门户／CMS入口、OpenAPI注册、多组织／受限代理及目标注册交接、组织向外部平台精确批准／receipt仍需相应证据，关联D1/D2/D3/D6。
+- B1：本地实际官方NyxID OAuth／proxy／MCP／默认浏览器、角色／私有资源隔离与queued撤权已有独立有界证据，R029／R030有界关闭，R031临时fail-closed保护有界PASS；仍缺 R031 在线可验 originating API-key／child 来源契约、普通用户门户 Launch 上游能力、目标注册正式交接及组织向真实外部平台精确批准／receipt，关联D1/D2/D3/D6。
 - B2：DEV 个人／组织、Hashnode 组织 Pro 和有权账号、NyxID exact connections；关联 D6。无真实账号写入。
 - B3：Medium／HackerNoon 账号、人工提交负责人、明确获准内容和外部写入授权；关联 D6/D7。
 - B4：生产 HTTPS 域名、部署容量、付款责任、隐私保留策略及 RPO/RTO；关联 D1/D8/D9。
-- B5：历史Repository not found／SSH写权限阻塞已解除；root已验证`f528dc0`正常push功能分支`origin/codex/003-blogsystem-delivery`。本批次新增文档commit待review/push；当前仅PR创建API返回403 `Resource not accessible by integration`，尚未创建PR，未merge，见 [I20](review-i20.md) 与 [I21](review-i21.md)。
+- B5：历史Repository not found／SSH写权限阻塞已解除；2026-10-30 独立收尾记录功能分支`origin/codex/003-blogsystem-delivery`已交付`8df559d`。本轮状态同步文档另待独立 review；收尾时 PR 创建 API 最后返回403 `Resource not accessible by integration`，尚未创建PR，标题／正文与 compare 入口已备，未merge。当前权限通路需另行核验，历史边界见 [I20](review-i20.md) 与 [I21](review-i21.md)。
 
-外部账号／内容动作授权／目标部署与责任等输入继续BLOCKED；R029／R030已独立有界关闭，原任务继续上述实际原生验收差量。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将本地开发通过提升为Live或正式D/A签收。
+外部账号／内容动作授权／目标部署与责任等输入继续BLOCKED；R029／R030已独立有界关闭，待相应外部输入或上游能力变化后再定向推进剩余原生验收。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将本地开发通过提升为Live或正式D/A签收。
