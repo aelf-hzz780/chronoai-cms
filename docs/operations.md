@@ -72,9 +72,9 @@ node scripts/recovery.ts capture /private/plan.json /private/backup.enc
 node scripts/recovery.ts restore /private/plan.json /private/fresh-restore
 ```
 
-恢复只支持全新 `blogsystem-restore-*` project、新卷与loopback端口，拒绝覆盖existing；官方digest镜像必须已缓存，不拉取。先验证全包，再恢复DB/content/config。恢复平台强制paused、清空旧session/oidc，in-flight变uncertain。恢复Ghost沿用隔离端口URL，**不能直接指向生产**；按报告校验所有revision字节、素材hash、发布页/404、owner映射和远端身份，修正平台site/admin/media/env到隔离环境。
+恢复只支持全新 `blogsystem-restore-*` project、新卷与loopback端口，拒绝覆盖existing；官方digest镜像必须已缓存，不拉取。先验证全包，再恢复DB/content/config。恢复平台强制paused、清空旧session/oidc，in-flight变uncertain。未完成的补图请求按已公开计数转为 `partial` 或 `blocked`，记录 `RESTORED_RECONCILIATION_REQUIRED`；原Actor、确认digest、revision与计数保持不变。SQLite快照包含 `command_authorities`、`command_derivations`、`release_media_requests` 及其 `release_media_pending` 索引，历史授权记录不代替当前授权检查。恢复Ghost沿用隔离端口URL，**不能直接指向生产**；按报告校验所有revision字节、素材hash、发布页/404、owner映射和远端身份，修正平台site/admin/media/env到隔离环境。
 
-恢复默认使用卷内content而不是生产nested mount。切回生产布局前，把已公开素材恢复到对应平台site子目录，核对hash和最小权限，再挂载Ghost只读；私有素材继续只在DB。恢复后不自动重发，先逐项只读reconcile，重验当前NyxID权限、连接与未过期exact批准。明确审批后才 `scripts/provision.ts resume --confirmed`。不要让隔离恢复实例使用真实provider凭证执行写入。
+恢复默认使用卷内content而不是生产nested mount。卷内 `.chrono-private-staging` 随content tar保留；宿主机外置staging是临时工作目录，原始私有素材保存在SQLite。按前文布局重新预置每站0700私有根、校验Worker UID／mount，并重设 `GHOST_MEDIA_STAGING_JSON`；残留临时文件不能复制到public。切回生产布局前，把已公开素材恢复到对应平台site子目录，核对hash和最小权限，再挂载Ghost只读。恢复后不自动重发，先逐项只读reconcile，重验当前NyxID权限、连接与未过期exact批准。明确审批后才 `scripts/provision.ts resume --confirmed`；缺失公开图片通过新的有效补图命令完成，不能复用已终结的补图请求。不要让隔离恢复实例使用真实provider凭证执行写入。
 
 最新独立四站完整Local恢复见[74978bc恢复记录](review-local-recovery-749.md)，含加密包／全字段BLOB审计、源Ghost停止时新卷页面图片读回、旧session失效、丢响应GET-only对账和撤权queued零写入。早期开发恢复记录保留在[review-i2.md](review-i2.md)；各自原卷保留。首次r1地址池耗尽失败与r2显式网络恢复均有记录，45秒仅为成功CLI耗时；这些证据不代表真实外部delivery恢复或生产RPO/RTO。上线前由责任人给出数值目标、备份频率、离机存储和保留策略，再在生产等价环境测量恢复耗时与可丢失窗口。
 
@@ -88,7 +88,7 @@ node scripts/recovery.ts restore /private/plan.json /private/fresh-restore
 
 单机故障是当前共同失效域，没有HA承诺。四MySQL/Ghost、API/Worker、SQLite、媒体与加密备份需要测量真实CPU/RAM/IO/增长量；本地4CPU/约6GB只用于测试，不作为生产容量承诺。费用项包括VPS/磁盘/离机备份/域名/TLS运维/NyxID/Hashnode Pro/投稿账户。付款人、订阅责任人、维护窗口、值班与人工投稿负责人尚未指定，均列上线blocker；不生成虚构预算或SLA。
 
-恢复暂停出站时，仅显式授权请求、处于uncertain/verifying的原文或uncertain的delivery可被Worker认领做只读远端reconcile；新写任务及metadata投影继续暂停。实际写入边界再次检查pause，不能通过恢复身份变相发文。原文核验后可能恢复本地公开素材及账本，但不调用远端发布API。采集覆盖记录机制见下文“采集覆盖持久性”；缺口跨服务重建、数据库重开及隔离恢复保留。
+恢复暂停出站时，仅显式授权请求、处于uncertain/verifying的原文或uncertain的delivery可被Worker认领做只读远端reconcile；新写任务及metadata投影继续暂停。显式只读复核将该原文未完成的补图请求转为 `blocked/partial` 并记录 `READ_ONLY_RECONCILIATION_REQUESTED`，当前复核Actor不会被旧补图Actor覆盖；已有running Worker时仍拒绝抢占。实际写入边界再次检查pause，不能通过恢复身份变相发文。原文核验只认回已存在的公开素材与账本，不创建公开图片、不调用远端发布API；原来源失效不会阻止当前有权限调用者只读认回。采集覆盖记录机制见下文“采集覆盖持久性”；缺口跨服务重建、数据库重开及隔离恢复保留。
 
 ## 公开正文渲染证明
 

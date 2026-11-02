@@ -116,8 +116,11 @@ export class PublishingService {
       requireValue(['uncertain','verifying'].includes(current.state), 409, 'PUBLICATION_STATE', 'Original no longer requires recovery');
       const updated = this.content.store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE kind='release' AND resource_id=? AND state<>'running'", id);
       requireValue(Number(updated.changes) === 1, 409, 'IN_PROGRESS', 'Current worker still owns this operation');
+      // The explicit read-only request supersedes pending media writes without
+      // replacing their Actor, confirmation digest or count of public files.
+      const media=this.content.store.run("UPDATE release_media_requests SET state=CASE WHEN public_files>0 THEN 'partial' ELSE 'blocked' END,error_code='READ_ONLY_RECONCILIATION_REQUESTED',updated_at=? WHERE release_id=? AND state IN ('queued','running')",new Date().toISOString(),id);
       this.content.store.run('INSERT INTO recovery_actors VALUES (?,?,?,?) ON CONFLICT(kind,resource_id) DO UPDATE SET actor_json=excluded.actor_json,trace_id=excluded.trace_id', 'release', id, this.vault.seal(actor), trace);
-      this.content.store.audit(actor.subject, row.owner_id, 'original.reconcile.request', id, trace);
+      this.content.store.audit(actor.subject, row.owner_id, 'original.reconcile.request', id, trace,{interruptedMediaRequests:Number(media.changes)});
     }); return { id, state: row.state };
   }
 }

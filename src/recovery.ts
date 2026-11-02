@@ -59,9 +59,12 @@ export function isolateRestoredPlatform(store:Store,trace:string) {
     store.run("UPDATE settings SET value='true' WHERE key='outbound_paused'");
     store.run("UPDATE releases SET state='uncertain',error_code='RESTORED_RECONCILIATION_REQUIRED' WHERE state IN ('publishing','verifying') OR id IN (SELECT resource_id FROM jobs WHERE kind='release' AND state='running')");
     store.run("UPDATE deliveries SET state='uncertain',error_code='RESTORED_RECONCILIATION_REQUIRED' WHERE state='sending' OR id IN (SELECT resource_id FROM jobs WHERE kind='delivery' AND state='running')");
+    // Restored media confirmations are historical evidence. A current caller
+    // must reconcile first, then explicitly authorize any remaining image writes.
+    const media=store.run("UPDATE release_media_requests SET state=CASE WHEN public_files>0 THEN 'partial' ELSE 'blocked' END,error_code='RESTORED_RECONCILIATION_REQUIRED',updated_at=? WHERE state IN ('queued','running')",new Date().toISOString());
     store.run("UPDATE jobs SET state='done',lease_until=NULL WHERE kind IN ('release','delivery') AND state='running'");
     store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE kind='projection' AND state='running'");
     store.run('DELETE FROM sessions');store.run('DELETE FROM oidc_states');
-    store.audit('operator','system','recovery.isolated','platform',trace,{outboundPaused:true,sessionsInvalidated:true});
+    store.audit('operator','system','recovery.isolated','platform',trace,{outboundPaused:true,sessionsInvalidated:true,interruptedMediaRequests:Number(media.changes)});
   });
 }
