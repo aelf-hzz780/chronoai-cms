@@ -21,8 +21,8 @@ async function mediaFixture(t:any){
  for(let i=0;i<2;i++)assets.push(await media.upload(f.actors.solo,article.id,'image/png',Buffer.concat([Buffer.from('89504e470d0a1a0a','hex'),Buffer.from([i])]).toString('base64'),'asset'));
  article=await f.content.edit(f.actors.solo,article.id,article.revision.id,{markdown:'Exact body\n\n'+assets.map(a=>a.markdown).join('\n\n')},'revision');
  const release=await pub.confirm(f.actors.solo,article.id,{ownerId:'solo',revisionId:article.revision.id,creditedAuthor:'solo',rightsConfirmed:true,action:'publish',idempotencyKey:'original'},'original');
- const privateRoot=join(directory,'private-staging');await mkdir(privateRoot,{mode:0o700});await mkdir(join(directory,'site'));
- const mediaRoot=join(directory,'public');await mkdir(mediaRoot);await symlink(join(directory,'site'),join(mediaRoot,'site'));
+ const privateRoot=join(directory,'private-staging');await mkdir(privateRoot,{mode:0o700});const target=join(directory,'content','images','chrono');await mkdir(target,{recursive:true});await symlink(target,join(directory,'site'));
+ const mediaRoot=join(directory,'public');await mkdir(mediaRoot);await symlink(target,join(mediaRoot,'site'));
  const ghost=new GhostAdapter(f.store,mediaRoot,true,{GHOST_MEDIA_STAGING_JSON:JSON.stringify({site:privateRoot})},undefined,{async verify(){return true;}}),result={remoteId:'known',url:'http://localhost:3999/post/'};
  const input=pub.input(release),html=ghost.controlledHtml(input);let corrupt=false;
  ghost.current=async()=>({id:'known',url:result.url,title:input.title,status:'published',html,authors:[{id:'author'}]});
@@ -111,7 +111,7 @@ for(const scenario of ['body changed','remote changed','paused','paused before r
  };
  await new ReleaseWorker(f.pub,f.ghost).once();assert.deepEqual(await f.publicFiles(),[]);assert.equal(f.store.get('SELECT count(*) n FROM asset_publications')!.n,0);
  assert.ok(!['published'].includes(f.store.get('SELECT state FROM releases WHERE id=?',f.release.id)!.state));
- if(scenario==='symlink drift during authority'||scenario==='private mode drift during authority')assert.equal(f.store.get('SELECT error_code FROM releases WHERE id=?',f.release.id)!.error_code,'MEDIA_STAGING_CHANGED');
+ if(scenario==='symlink drift during authority'||scenario==='private mode drift during authority')assert.equal(f.store.get('SELECT error_code FROM releases WHERE id=?',f.release.id)!.error_code,scenario==='symlink drift during authority'?'MEDIA_STAGING_LAYOUT':'MEDIA_STAGING_CHANGED');
  assert.equal(f.store.get('SELECT public_files FROM release_media_requests WHERE id=?',request.id)!.public_files,0);
  assert.deepEqual((await readdir(f.privateRoot)).filter(name=>name.startsWith('media-')),[],'Private staging is removed on every exit');
 });

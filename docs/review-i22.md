@@ -90,6 +90,20 @@ The final mount fix passes strict TypeScript and all 289 tests in `npm run check
 
 The mount test establishes actual filesystem behavior; Ghost pages, rendering and NyxID remain safe fixtures, not actual four-Ghost/NyxID joint acceptance. The existing four-site harness now provisions staging/env but was not run against existing stacks. The first implementation used a parameter property unsupported by Node strip-only mode, corrected to ordinary fields. A host expectation initially compared /var literally against macOS canonical /private/var, corrected to realpath. Failed attempts and red/mount results remain in `.runtime/r031-media-mount-fix/` and are not passing evidence.
 
+## served-root symlink 边界修复 / Served-root symlink boundary fix
+
+root对 `202db70` 定向安全复核发现：site→content/images/chrono，而images再symlink→image-storage时，realpath后的父名不再是images，旧枚举漏掉content/files服务根，导致该根内0700 staging被接受。该反例与“标准部署当前配置正确”无关，202db70的既有check／mount结果仅覆盖原范围，不构成部署批准。修复前red已真实复现resolve接受及最终同步守卫接受，未使用网络或live DB。
+
+Targeted root review of `202db70` found that site→content/images/chrono with images→image-storage loses the logical images parent during realpath. The old enumeration then omitted content/files and accepted 0700 staging inside that served root. Correct configuration in the standard deployment did not remove this defect; 202db70's check/mount results cover their original scope and do not approve deployment. Red tests reproduced both resolve acceptance and final synchronous-guard acceptance without network or a live database.
+
+最小修复先读取公开site的逻辑目标，再验证标准images/chrono祖先和规范路径一致，之后才枚举served roots。无法可靠判定的布局清楚报MEDIA_STAGING_LAYOUT：拒绝链式site symlink、不具有逻辑images/chrono边界的site alias，以及改写images或chrono的布局，不扩展任意Ghost自定义路径。直接公开site目录及标准四卷单跳symlink继续支持；私有staging良性alias不受此限制。resolve和最后授权后的同步守卫使用同一检查，即使canonical target保持相同也会拒绝新出现的含混祖先。env和mount要求沿用上一节。
+
+The minimal fix reads the site's logical target first and verifies that standard images/chrono ancestry agrees with canonical paths before enumerating served roots. Unsupported ambiguity raises MEDIA_STAGING_LAYOUT: chained site symlinks, site aliases without a logical images/chrono boundary, and layouts rewriting images or chrono are rejected instead of generalizing arbitrary Ghost custom paths. Direct public site directories and standard four-volume single-hop symlinks remain supported; benign private-staging aliases remain valid. Resolve and the final synchronous guard share this check, including when the canonical target is unchanged. Environment/mount requirements remain as in the preceding section.
+
+新增六项测试覆盖该files/private反例、private良性alias、原单卷目录、相同canonical target但祖先变化、链式site alias和缺逻辑边界alias。原素材测试fixture改为标准content/images/chrono逻辑目标。失败red与最终输出在 `.runtime/r031-staging-symlink-fix/` 保留；最终strict与295/295全量测试、35/35目录／授权专项、标准四卷真实隔离mount专项10/10通过；114个本地文档链接及diff检查通过，正式矩阵／需求源／phase0／baseline保持原文，未操作现存卷或数据库。该修复仍待root固定SHA独立复验与部署批准，不提升R031或正式签收。
+
+Six new tests cover the files/private counterexample, a benign private alias, the original single-volume directory, changed ancestry with an identical canonical target, chained site aliases and aliases lacking the logical boundary. The existing media fixture now uses a standard content/images/chrono logical target. Red and final output remain in `.runtime/r031-staging-symlink-fix/`. Final strict checks and all 295 tests, all 35 directory/authority cases and all ten real isolated standard four-volume mount cases pass. The 114 local links and diff check pass; the formal matrix/source/phase0/baseline documents remain unchanged, and existing volumes/databases remain untouched. Fixed-SHA independent review and deployment approval remain with root; R031 and formal acceptance are not promoted.
+
 ## 验证与限制 / Verification and limits
 
 新增契约测试覆盖专用签名、subject/issuer/audience/expiry/原 delegation 与 descriptor 绑定、在线权威标志及公共字段精确比较、网络错误、唯一 jti 跨命令拒绝、DB 重开和隔离 snapshot/restore 保留 fence。实际 App parser／认证／业务服务加两个 Worker 的模型测试覆盖有效 child、模拟删 key／缩 scope／child 撤销与轮换、错服务／标志／503／坏 JSON、最终 beforeWrite 及 adapter 内发送前撤权零写；还覆盖原始 JSON 空白／query／header 字节、重复 header、无 proof 拒绝、幂等重试、组织 Publisher／独立 exact approval 不换源，以及显式／自动 metadata 绑定。

@@ -1,5 +1,5 @@
 import {realpath,stat,readFile} from 'node:fs/promises';
-import {realpathSync,statSync,readFileSync,type Stats} from 'node:fs';
+import {realpathSync,readlinkSync,lstatSync,statSync,readFileSync,type Stats} from 'node:fs';
 import {resolve,isAbsolute,dirname,basename,join,sep} from 'node:path';
 import type {Store} from './store.ts';
 import {AppError,requireValue} from './errors.ts';
@@ -9,6 +9,22 @@ const contains=(parent:string,child:string)=>parent===child||child.startsWith(pa
 const overlaps=(a:string,b:string)=>contains(a,b)||contains(b,a);
 const unescapeMount=(value:string)=>value.replace(/\\([0-7]{3})/g,(_match,octal:string)=>String.fromCharCode(parseInt(octal,8)));
 const identityOf=(configured:string,target:string,publicStat:Stats,privateRoot:string,privateStat:Stats,mount:string|null)=>JSON.stringify([configured,target,publicStat.dev,publicStat.ino,privateRoot,privateStat.dev,privateStat.ino,privateStat.uid,privateStat.mode,mount]);
+
+// Retain the logical images/chrono boundary before realpath erases symlinked
+// ancestry. Custom/chained site layouts require an explicit future design.
+function siteTarget(path:string) {
+  let logical=path,alias=false;
+  try{logical=resolve(dirname(path),readlinkSync(path));alias=true;}catch(error){if((error as NodeJS.ErrnoException).code!=='EINVAL')throw error;}
+  requireValue(!lstatSync(logical).isSymbolicLink(),503,'MEDIA_STAGING_LAYOUT','Chained site symlinks have no supported Ghost served-root boundary');
+  const nativeLayout=basename(logical)==='chrono'&&basename(dirname(logical))==='images';
+  requireValue(!alias||nativeLayout,503,'MEDIA_STAGING_LAYOUT','Site aliases must directly identify the supported Ghost images/chrono layout');
+  const canonical=realpathSync(path);
+  if(nativeLayout){
+    const content=realpathSync(dirname(dirname(logical)));
+    requireValue(realpathSync(dirname(logical))===join(content,'images')&&canonical===join(content,'images','chrono'),503,'MEDIA_STAGING_LAYOUT','Symlinked Ghost images/chrono ancestry has no supported served-root boundary');
+  }
+  return canonical;
+}
 
 // Docker bind mounts can share st_dev yet still reject rename with EXDEV.
 // Linux mount identity supplements, rather than replaces, the device check.
@@ -41,7 +57,7 @@ export class MediaStaging {
     for(const site of this.store.all('SELECT id FROM sites')){
       const path=resolve(this.mediaRoot,site.id);roots.add(path);
       let canonical:string;
-      try{canonical=await realpath(path);}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')continue;throw error;}
+      try{canonical=siteTarget(path);}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')continue;throw error;}
       roots.add(canonical);
       // Native Ghost content volumes expose images, media, files and themes.
       // Protect their whole served roots, including siblings of images/chrono.
@@ -81,7 +97,7 @@ export class MediaStaging {
   // Resolve the configured symlinks again; never rename through an unchecked alias.
   assertUnchangedSync(location:MediaLocation) {
     try{
-    const configured=this.configured(location.siteId),target=realpathSync(join(this.mediaRoot,location.siteId)),privateRoot=realpathSync(configured);
+    const configured=this.configured(location.siteId),target=siteTarget(join(this.mediaRoot,location.siteId)),privateRoot=realpathSync(configured);
     const publicStat=statSync(target),privateStat=statSync(privateRoot);
     const mounts=process.platform==='linux'?readFileSync('/proc/self/mountinfo','utf8'):null;
     const publicMount=mounts===null?null:findMount(mounts,target),privateMount=mounts===null?null:findMount(mounts,privateRoot);
