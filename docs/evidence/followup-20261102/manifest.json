@@ -243,6 +243,11 @@
       "sha256": "2a9a4ab8b7364a2179940c27ea1db0ab854499a93b27f80715ce188181bc8500"
     },
     {
+      "path": "docs/evidence/followup-20261102/git-delivery-receipt.json",
+      "bytes": 2258,
+      "sha256": "728b71c89080508d14bcc1dc0ae5a460b100c712d29901794badc9a02c5da425"
+    },
+    {
       "path": "docs/evidence/followup-20261102/integrated-check.json",
       "bytes": 432,
       "sha256": "56ca9804729a40cb6e218a1fca1a849ccaa6adcb5907fd7a8c2ccb41cf6bbeb4"
@@ -489,8 +494,8 @@
     },
     {
       "path": "docs/handoff-20261102.md",
-      "bytes": 17444,
-      "sha256": "b98438236a962fbe24756b1f4e193ec49608daa8a77e1a1af39dcf18ecc7cdbf"
+      "bytes": 18317,
+      "sha256": "d65127bb9aaed0a4f60708acc8440cc5de10e65542bd527c917b68f84b804cf7"
     },
     {
       "path": "docs/nyxid-registration.md",

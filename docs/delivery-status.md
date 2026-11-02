@@ -171,6 +171,6 @@ I22记录时的Git交付：2026-11-02 root已独立验收并正常push `6ea9ecd`
 - B2：DEV 个人／组织与有更新权限的账号、Hashnode 组织 Pro／publication、精确 Nyx UserService 连接与内容动作授权，关联 D6/D7。
 - B3：Medium／HackerNoon 账号、人工提交负责人及内容／动作授权；提交与接受分开，关联 D6/D7。
 - B4：生产 HTTPS 域名／资源、付款及运维负责人、监控／隐私保留／离机备份方案、约定的数值 RPO/RTO，关联 D1/D8/D9。
-- B5：SSH 功能分支连接已重新只读核实，历史 port22 连接中断不代表权限撤销。当前 push／PR 结果见交接；PR 权限问题不阻止本地提交或正常功能分支 push。
+- B5（已解除）：`834fb6e` 已正常推送并读回，`main` 保持 `019222c`。本次 connector 创建实际返回 403 后，现有 Chrome 会话已创建 [Draft PR #1](https://github.com/aelf-hzz780/chronoai-cms/pull/1)，公开 REST 确认 draft/open/未合并且正文一致。见[实际 Git 回执](evidence/followup-20261102/git-delivery-receipt.json)；历史错误保留，当前不再列为外部输入阻塞。
 
 这些必需外部验证不改为 N/A。Local PASS 不自动成为 Live 或 D1–D9 正式签收；A43/A44 无权或不可用的计数不强求数值。
