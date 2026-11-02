@@ -43,13 +43,17 @@ export class AlternateWorker {
     const row=store.get('SELECT * FROM projections WHERE id=?',lease.resourceId)!;
     let attemptedWrite=false;
     const correction=store.get('SELECT * FROM projection_retries WHERE projection_id=?',row.id);
+    // Older recovery projections reuse the release trace but carry a different
+    // Actor ciphertext. Corrections retain both, so they must also fail closed.
+    const assertWriteOrigin=()=>requireValue(!store.get('SELECT 1 FROM releases WHERE article_id=? AND trace_id=? AND NOT EXISTS (SELECT 1 FROM releases r WHERE r.article_id=? AND r.trace_id=? AND r.actor_json=?)',row.article_id,row.trace_id,row.article_id,row.trace_id,row.actor_json),409,'RECOVERY_READ_ONLY','Legacy recovery metadata requires a separately authorized sync-links command');
     try {
+      assertWriteOrigin();
       const actor=this.service.originals.vault.open<Actor>(row.actor_json);assertCommandBinding(store,actor,projectionCommand(row));await this.service.originals.content.policy.publish(actor,row.owner_id);
       for(const release of this.service.affected(row.article_id,row.owner_id)) {
         const input=this.service.originals.input(release),links=this.service.links(release.article_id,row.owner_id),snapshot=this.service.snapshot(row.owner_id);
         const guard=()=>{this.queue.guard(lease);this.queue.assertWritable();requireValue(store.get('SELECT state FROM releases WHERE id=?',release.id)?.state==='published' && this.service.snapshot(row.owner_id)===snapshot,409,'PUBLICATION_CHANGED','Original or translation targets changed during metadata projection');};
         input.guard=guard;
-        input.beforeWrite=async()=>{assertCommandBinding(store,actor,projectionCommand(store.get('SELECT * FROM projections WHERE id=?',row.id)!));await this.service.originals.content.policy.publish(actor,row.owner_id);guard();attemptedWrite=true;};
+        input.beforeWrite=async()=>{assertWriteOrigin();assertCommandBinding(store,actor,projectionCommand(store.get('SELECT * FROM projections WHERE id=?',row.id)!));await this.service.originals.content.policy.publish(actor,row.owner_id);guard();attemptedWrite=true;};
         await this.adapter.alternates(input,links);guard();
       }
       this.queue.mutate(lease,()=>{store.run("UPDATE projections SET state='complete',error_code=NULL WHERE id=?",row.id);store.run('DELETE FROM projection_retries WHERE projection_id=?',row.id);store.audit(actor.subject,row.owner_id,'alternates.complete',row.id,row.trace_id);},true);

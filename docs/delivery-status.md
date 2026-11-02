@@ -92,7 +92,7 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 ## 增量 I22（R031 V1 consumer 候选）
 
-2026-11-02 按已确认的专用 command authority V1 契约接入签名／实际 HTTP 字节／专用在线精确核验、事务内唯一 jti 命令绑定、显式 metadata 后继及两个 Worker 的最终发送守卫。有效 child、在线失败／撤权、组织 Publisher 与独立 exact approval 不换源等已由本地模型测试；真实 NyxID 后端固定 SHA 的联合验证与独立验收待完成，不能由 fixture 关闭 R031。恢复仍按当前 caller access 只读，不把 reconcile proof 当新写授权；完整范围、适用限制、测试与升级回滚见中英 [I22](review-i22.md)。既有0418652实际证据不自动覆盖此候选，整体仍NOT_ACCEPTED。
+2026-11-02 按已确认的专用 command authority V1 契约接入签名／实际 HTTP 字节／专用在线精确核验、事务内唯一 jti 命令绑定、显式 metadata 后继及两个 Worker 的最终发送守卫。有效 child、在线失败／撤权、组织 Publisher 与独立 exact approval 不换源等已由本地模型测试；本轮独立发现后的修复补充签名版本／incarnation严格检查、全caller只读恢复零自动metadata、公开图片独立授权与CMS显式补图／partial计数；真实 NyxID 后端固定 SHA 的联合验证与独立验收待完成，不能由 fixture 关闭 R031。恢复仍按当前 caller access 只读，不把 reconcile proof 当新写授权；完整范围、适用限制、测试与升级回滚见中英 [I22](review-i22.md)。既有0418652实际证据不自动覆盖此候选，整体仍NOT_ACCEPTED。
 
 Git交付：2026-11-02 root已独立验收并正常push `6ea9ecd` 至 `origin/codex/003-blogsystem-delivery`，main保持原始baseline `019222c`，未force／merge。I22候选及前置授权测试 `9cf67b8` 尚待固定commit独立审查，由root验收后push。PR与完整D/A沿root台账，不将历史403当作本轮重新探测结果。R031完整能力及A01普通门户入口仍待各自新增证据。
 

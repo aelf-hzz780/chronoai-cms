@@ -1,5 +1,5 @@
 import { SignJWT } from 'jose';
-import { mkdir, writeFile, rename } from 'node:fs/promises';
+import { mkdir, writeFile, rename, readFile, mkdtemp, chmod, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Store, Row } from './store.ts';
 import type { OriginalAdapter, OriginalInput, OriginalResult } from './publishing.ts';
@@ -74,7 +74,7 @@ export class GhostAdapter implements OriginalAdapter {
     const saved = result.posts?.[0]; if(!saved?.id || !saved?.url)throw new RemoteError('GHOST_CONTRACT','Accepted Ghost write has no complete identity; reconcile the existing slug before retrying',true);
     return { remoteId: saved.id, url: saved.url };
   }
-  async verify(input: OriginalInput, result: OriginalResult): Promise<boolean> {
+  async proveOriginal(input: OriginalInput, result: OriginalResult): Promise<boolean> {
     const url = safeUrl(result.url, this.allowLoopback); requireValue(url.origin === new URL(input.site.url).origin, 502, 'GHOST_URL_MISMATCH', 'Ghost URL outside configured publication');
     const post = await this.current(input);
     const author = this.store.get('SELECT ghost_author_id FROM author_mappings WHERE site_id=? AND credited_author=?', input.site.id, input.creditedAuthor);
@@ -90,17 +90,50 @@ export class GhostAdapter implements OriginalAdapter {
     if (!provesBody(this.controlledHtml(input),post.html,page,this.marker(input),input.site.url)) return false;
     if(!await this.renderer.verify(result.url,page,this.marker(input)))return false;
     input.guard?.();
-    // The exact original is now demonstrably public. Only now materialize public images
-    // in a directory served by Ghost itself, independently of the application process.
-    for (const image of this.images(input)) {
-      const directory = join(this.mediaRoot, input.site.id); await mkdir(directory, { recursive: true, mode: 0o755 });
-      input.guard?.();
-      const target = join(directory, image.filename), temporary = `${target}.${input.releaseId}.tmp`;
-      await writeFile(temporary, image.content, { mode: 0o644 }); input.guard?.(); await rename(temporary, target);
-      try { const response = await remote(image.url,{},5_000_000); if (!response.response.headers.get('content-type')?.startsWith(image.mime) || digest(response.bytes)!==image.digest) return false; } catch { return false; }
-      input.guard?.();
-      this.store.run('INSERT OR IGNORE INTO asset_publications VALUES (?,?,?)', image.id, input.releaseId, target);
+    return true;
+  }
+  async publicImage(input:OriginalInput,image:Row & {filename:string;url:string}) {
+    try {
+      if(digest(await readFile(join(this.mediaRoot,input.site.id,image.filename)))!==image.digest)return false;
+      const response=await remote(image.url,{},5_000_000);
+      return response.response.headers.get('content-type')?.startsWith(image.mime)===true&&digest(response.bytes)===image.digest;
+    }catch(error){
+      if(error instanceof RemoteError||(error as NodeJS.ErrnoException).code==='ENOENT')return false;
+      throw error;
     }
+  }
+  async verify(input:OriginalInput,result:OriginalResult) {
+    if(!await this.proveOriginal(input,result))return false;
+    if(input.action!=='unpublish')for(const image of this.images(input))if(!await this.publicImage(input,image))return false;
+    input.guard?.();return true;
+  }
+  async materialize(input:OriginalInput,result:OriginalResult) {
+    if(!await this.proveOriginal(input,result))return false;
+    for(const image of this.images(input)) {
+      if(await this.publicImage(input,image))continue;
+      requireValue(input.beforeMaterialize,409,'MATERIALIZATION_AUTHORITY_REQUIRED','公开图片需要当前发布授权；请使用“补齐公开图片”。');
+      await input.beforeMaterialize();input.guard?.();
+      // Staging is a private sibling of the per-site directories mounted into
+      // Ghost. No image bytes are written to a publicly served temporary path.
+      await mkdir(this.mediaRoot,{recursive:true,mode:0o700});
+      const staging=await mkdtemp(join(this.mediaRoot,'.private-media-'));
+      try {
+        const temporary=join(staging,image.filename);await writeFile(temporary,image.content,{mode:0o600});await chmod(temporary,0o644);
+        await input.beforeMaterialize();input.guard?.();
+        const directory=join(this.mediaRoot,input.site.id);await mkdir(directory,{recursive:true,mode:0o755});
+        await input.beforeMaterialize();input.guard?.();
+        await rename(temporary,join(directory,image.filename));input.onMaterialized?.(image.id);
+      }finally{await rm(staging,{recursive:true,force:true});}
+      if(!await this.publicImage(input,image))return false;
+    }
+    return true;
+  }
+  async recordVerifiedMedia(input:OriginalInput) {
+    const images=input.action==='unpublish'?[]:this.images(input);
+    for(const image of images)if(!await this.publicImage(input,image))return false;
+    await input.beforeRecordMedia?.();
+    input.guard?.();
+    this.store.transaction(()=>{for(const image of images)this.store.run('INSERT OR IGNORE INTO asset_publications VALUES (?,?,?)',image.id,input.releaseId,join(this.mediaRoot,input.site.id,image.filename));});
     return true;
   }
   async reconcile(input: OriginalInput) {

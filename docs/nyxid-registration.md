@@ -8,6 +8,8 @@ OAuth service调用需通过官方consent授予精确UserService／resource；�
 
 R033只读恢复修复已在业务源码4a27487独立有界关闭，见 [I18](review-i18.md)。uncertain对账按当前合法Admin／owner的access授权，不要求原确认credential仍有效；当前scope、owner／组织发布权限和精确连接绑定仍须成立。恢复只查询既有远端结果，beforeWrite禁止重发；原Actor密文和Trace保持。恢复请求调用人失权也必须阻断，不能用新恢复身份替换旧任务的新写授权。新确认／queued外发继续执行R031来源保护。
 
+I22当前OpenAPI为35操作，新增`materializeOriginalMedia`，须重新导入／发现。只读reconcile不公开新图片、不自动排metadata；显式补图需当前queued-write来源与新的专用proof，固定原release/revision/owner/rights，202后读取`media_history`。CMS按钮与完整步骤见[API指南](api-guide.md#只读恢复与显式补图)。该能力仍为候选，不能替代固定后端真实联调。
+
 ## 注册输入
 
 1. OIDC confidential client：准确登记 `https://<cms-host>/auth/callback`，启用 Authorization Code + PKCE S256；登记实际 client ID/secret。issuer 是 discovery 声明的标识，允许字面 `nyxid`，不可擅自把 issuer 改成 API URL。
@@ -18,7 +20,7 @@ R033只读恢复修复已在业务源码4a27487独立有界关闭，见 [I18](re
 
 导入契约时保留各operation的201／202／200成功状态及JSON object／array／原始二进制媒体声明；私有图片按实际Content-Type处理，不能强制按JSON解码。preview的可选revision参数及report的removed枚举均应保留，removed仍受已确认remove动作和精确已知URL404／410核验约束。具体操作响应见api-guide.md；目标NyxID的OpenAPI导入兼容性仍需真实注册与脱敏导出验证，不能由本机契约测试代替。
 
-R034修复将34操作中的`downloadMarkdown`迁至`/api/service/articles/{id}/markdown-file`，返回明确的base64 JSON文件封装；调用方按`encoding`解码`data`并核对`byteLength`／`sha256`，实际保存原始`.md`。必须重新导入／发现当前OpenAPI，确认该操作为application/json且revision必填；旧`binary_artifact`标记和仅改MIME不能解决官方MCP的文本解码损失。直接HTTP与CMS的原`/markdown`下载保留，文件封装仍执行同一当前权限与不可变revision检查。解码示例见 [API指南](api-guide.md#nyxid-mcp-原始文件交付)，R034已独立有界关闭，开发与独立证据及限制见 [I19](review-i19.md)。
+R034历史修复将当时34操作中的`downloadMarkdown`迁至`/api/service/articles/{id}/markdown-file`，返回明确的base64 JSON文件封装；调用方按`encoding`解码`data`并核对`byteLength`／`sha256`，实际保存原始`.md`。必须重新导入／发现当前OpenAPI，确认该操作为application/json且revision必填；旧`binary_artifact`标记和仅改MIME不能解决官方MCP的文本解码损失。直接HTTP与CMS的原`/markdown`下载保留，文件封装仍执行同一当前权限与不可变revision检查。解码示例见 [API指南](api-guide.md#nyxid-mcp-原始文件交付)，R034已独立有界关闭，开发与独立证据及限制见 [I19](review-i19.md)。
 
 普通用户门户入口仍有独立上游缺口：官方38bae2f的普通`/keys`分组不渲染homepage，`/services`只对catalog／tools／admin-read开放且Homepage仅复制文本；OIDC provider、Authorized／Developer Apps均不能据此提供普通用户Launch入口。不能伪造provider关系或把管理员可见注册项当作A01/D1入口通过，见[root只读门户报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/4a27487/portal-contract-review.json)。
 
@@ -65,7 +67,7 @@ service签名仍核对issuer、audience、相同sub、nyx_service_id、delegated
 |---|---|
 | getWorkspaces、listArticles、getArticle、downloadMarkdown、listRevisions、previewArticle、getPrivateImage、listOriginals、listDistribution、readAudit、getPublishedAlternatesStatus | content:read |
 | createArticle、importMarkdownFile、replaceMarkdownFile、editArticle、submitDraft、linkTranslation、uploadPrivateImage | content:read、content:write |
-| confirmOriginal、cancelOriginal、reconcileOriginal、listDestinations、confirmDistribution、getAssistedPackage、requestExactApproval、attachExactApproval、cancelDistribution、reconcileDistribution、reportAssistedSubmission、syncPublishedAlternates | content:read、publish |
+| confirmOriginal、cancelOriginal、reconcileOriginal、materializeOriginalMedia、listDestinations、confirmDistribution、getAssistedPackage、requestExactApproval、attachExactApproval、cancelDistribution、reconcileDistribution、reportAssistedSubmission、syncPublishedAlternates | content:read、publish |
 | listOwnerConnections | content:read、publish、connections:read |
 | refreshExternalMetrics | content:read、publish、metrics:read |
 | queryMetrics | content:read、metrics:read |

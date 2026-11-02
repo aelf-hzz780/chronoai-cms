@@ -11,6 +11,20 @@
 5. `POST .../releases` 明确 ownerId/revisionId/creditedAuthor/action/rightsConfirmed/idempotencyKey；普通组织成员没有发布权限。Worker 核验正文、作者、owner、语言和图片后才 published。
 6. 查询 `/articles/:id/releases`，queued 可 cancel；verifying/uncertain 使用 `/releases/:id/reconcile`，不新建重发来绕过未知结果。update/unpublish 仍是独立确认动作。
 
+## 只读恢复与显式补图
+
+`POST /releases/:id/reconcile` 仅以当前 caller 的 access 权限读取已有结果，可保存认回的 remote ID／URL、release 状态、已公开且经 MIME／SHA 核验的图片 SQLite 映射及审计。它不创建公开图片文件，不修改 Ghost，也不自动排入 metadata projection；CMS、OAuth、key 调用人均相同。图片缺失时保留 uncertain/verifying 和诊断，先检查已认回的原文，不新建 release 绕过未知结果。
+
+确需公开缺少的图片时，CMS 在“分发与副本管理”中选择原文发布记录，核对该记录的旧 revision，勾选图片权利，再点击“补齐公开图片”并确认。两个入口共用 `POST /api/{cms|service}/releases/:id/materialize-media`，OpenAPI operationId 为 `materializeOriginalMedia`，JSON 必填：
+
+```json
+{"ownerId":"<release owner>","revisionId":"<release revision>","rightsConfirmed":true,"idempotencyKey":"<new unique key>"}
+```
+
+该独立命令要求当前 owner／Publisher 及 queued-write 来源授权，service key/child 还须本次请求专用新 proof；不能复用原发布或 reconcile proof。只允许已有 remote ID／URL 的 uncertain/verifying 非下线记录；Worker 精确证明原文正文、作者、owner、marker 与页面后，仅公开该确认版本的本地图片，不调用 Ghost create/update，也不替换原发布 Actor。每次公开前重新核验当前来源、发布权限、lease、pause、版本、站点与作者映射。
+
+202 是排队结果，不代表补图成功。`GET /articles/:id/releases` 的 `media_history` 和 CMS 状态显示每次请求的 state、public_files、error_code、trace_id。`partial` 表示本次已有图片公开；检查原文后，以新幂等 key／新 proof 明确确认剩余补图。相同幂等 key 只读回原请求，不重启任务；补图完成也不自动同步译文链接，需另行授权 `syncPublishedAlternates`。已公开文件无需重写；仅缺 SQLite 映射时只读复核可补映射。
+
 `GET /articles/:id/preview?revision=...`可预览指定的有权历史修订；省略revision时使用调用人当前可见版本。参数不扩大私人草稿／素材的访问范围。渲染时仅处理首个编码BOM，存储和下载仍保留原始字节。
 
 ## NyxID MCP 原始文件交付
@@ -35,7 +49,7 @@ await writeFile(process.argv[3],bytes,{flag:'wx',mode:0o600});
 JS
 ```
 
-CMS及直接HTTP的`GET /api/{cms|service}/articles/:id/markdown?revision=...`继续返回原始attachment，不改变旧路径；新`markdown-file`接口也在两个入口共用同一revision可见性授权。更新服务后必须重新导入／发现OpenAPI端点：operationId保持`downloadMarkdown`，路径从`/markdown`迁至`/markdown-file`，操作总数仍34。旧catalog会继续取得可能丢BOM的MCP text，不能据此宣称保真。直接HTTP兼容路径不再作为MCP下载操作登记。真实验证边界见 [I19](review-i19.md)。
+CMS及直接HTTP的`GET /api/{cms|service}/articles/:id/markdown?revision=...`继续返回原始attachment，不改变旧路径；新`markdown-file`接口也在两个入口共用同一revision可见性授权。更新服务后必须重新导入／发现OpenAPI端点：operationId保持`downloadMarkdown`，路径从`/markdown`迁至`/markdown-file`，当前操作总数为35（I22新增`materializeOriginalMedia`）。旧catalog会继续取得可能丢BOM的MCP text，不能据此宣称保真。直接HTTP兼容路径不再作为MCP下载操作登记。真实验证边界见 [I19](review-i19.md)。
 
 ## 成功响应契约
 
@@ -44,7 +58,7 @@ CMS及直接HTTP的`GET /api/{cms|service}/articles/:id/markdown?revision=...`�
 | 操作 | 成功状态 | 响应 |
 |---|---|---|
 | createArticle、importMarkdownFile、uploadPrivateImage | 201 | application/json object |
-| confirmOriginal、confirmDistribution | 202 | application/json object；后续可能等待批准、worker、公开核验或人工处理 |
+| confirmOriginal、confirmDistribution、materializeOriginalMedia | 202 | application/json object；后续可能等待批准、worker、公开核验或人工处理 |
 | listArticles、listRevisions、listOriginals、listDestinations、listOwnerConnections、listDistribution、readAudit、getPublishedAlternatesStatus | 200 | application/json array，元素为object；空列表为[] |
 | downloadMarkdown | 200 | application/json文件封装；base64解码并核对byteLength／sha256后得到指定revision的原始.md字节 |
 | getPrivateImage | 200 | image/png、image/jpeg、image/gif或image/webp原始二进制字节，按Content-Type解码 |

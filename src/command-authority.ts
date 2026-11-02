@@ -13,6 +13,7 @@ export interface CommandRequest {
 export interface CommandBinding {kind:string;resourceId:string;digest:string;}
 export interface CommandEnvelope {token:string;request:CommandRequest;binding?:CommandBinding;}
 export interface CommandClaims extends JWTPayload {
+  authority_version:1;
   iss:string;sub:string;aud:string;jti:string;iat:number;exp:number;
   user_service_id:string;delegation_sha256:string;command_request:CommandRequest;
   source:{key_id:string;credential_id:string|null;credential_incarnation:string;};
@@ -31,8 +32,8 @@ function validRequest(v:unknown):v is CommandRequest {
 export async function verifyCommandAuthority(actor:Actor,config:Config,keys:JWTVerifyGetKey,delegationExpiry:number):Promise<CommandClaims> {
   const saved=actor.commandAuthority;
   requireValue(saved&&typeof saved.token==='string'&&saved.token.length<=32000&&validRequest(saved.request)&&actor.binding?.kind==='propagated'&&config.serviceId,403,'SOURCE_AUTHORITY_UNPROVEN','A signed command bound to this service request is required');
-  const {payload,protectedHeader}=await jwtVerify(saved.token,keys,{issuer:config.issuer,audience:config.serviceId,algorithms:['RS256'],typ:'nyxid-command-authority+jwt',requiredClaims:['iss','sub','aud','jti','iat','exp','user_service_id','delegation_sha256','command_request','source']});
-  requireValue(protectedHeader.typ==='nyxid-command-authority+jwt'&&payload.iss===actor.issuer&&payload.sub===actor.subject&&payload.aud===config.serviceId&&nonempty(payload.jti)&&Number.isInteger(payload.iat)&&payload.iat!<=Date.now()/1000+5&&Number.isInteger(payload.exp)&&payload.exp!>payload.iat!&&payload.exp!<=delegationExpiry&&nonempty(payload.user_service_id)&&payload.delegation_sha256===digest(actor.credential)&&validRequest(payload.command_request)&&sameFields(payload.command_request,saved.request,requestFields)&&record(payload.source)&&nonempty(payload.source.key_id)&&(payload.source.credential_id===null||nonempty(payload.source.credential_id))&&nonempty(payload.source.credential_incarnation),403,'SOURCE_AUTHORITY_UNPROVEN','Signed command source or request binding mismatch');
+  const {payload,protectedHeader}=await jwtVerify(saved.token,keys,{issuer:config.issuer,audience:config.serviceId,algorithms:['RS256'],typ:'nyxid-command-authority+jwt',requiredClaims:['authority_version','iss','sub','aud','jti','iat','exp','user_service_id','delegation_sha256','command_request','source']});
+  requireValue(payload.authority_version===1&&protectedHeader.typ==='nyxid-command-authority+jwt'&&payload.iss===actor.issuer&&payload.sub===actor.subject&&payload.aud===config.serviceId&&nonempty(payload.jti)&&Number.isInteger(payload.iat)&&payload.iat!<=Date.now()/1000+5&&Number.isInteger(payload.exp)&&payload.exp!>payload.iat!&&payload.exp!<=delegationExpiry&&nonempty(payload.user_service_id)&&payload.delegation_sha256===digest(actor.credential)&&validRequest(payload.command_request)&&sameFields(payload.command_request,saved.request,requestFields)&&record(payload.source)&&nonempty(payload.source.key_id)&&(payload.source.credential_id===null||nonempty(payload.source.credential_id))&&hash(payload.source.credential_incarnation),403,'SOURCE_AUTHORITY_UNPROVEN','Signed command source or request binding mismatch');
   return payload as CommandClaims;
 }
 export async function validateCommandAuthority(config:Config,saved:CommandEnvelope,claims:CommandClaims) {
@@ -42,7 +43,7 @@ export async function validateCommandAuthority(config:Config,saved:CommandEnvelo
   if(r.content_type!==null)form.set('request_content_type',r.content_type);
   if(r.idempotency_key_sha256!==null)form.set('request_idempotency_key_sha256',r.idempotency_key_sha256);
   const result=await remoteJson(config.introspectionUrl,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:form});
-  requireValue(result.active===true&&result.token_type==='command_authority'&&result.scope==='proxy'&&result.independent_commands===true&&result.authority_version===1&&Array.isArray(result.permissions)&&result.permissions.every((p:unknown)=>typeof p==='string')&&sameFields(result,claims,['iss','sub','aud','jti','iat','exp','user_service_id','delegation_sha256'])&&sameFields(result.command_request,claims.command_request,requestFields)&&sameFields(result.source,claims.source,sourceFields),401,'REVOKED','Current command authority is invalid or differs from its signed binding');
+  requireValue(result.active===true&&result.token_type==='command_authority'&&result.scope==='proxy'&&result.independent_commands===true&&result.authority_version===1&&Array.isArray(result.permissions)&&result.permissions.every((p:unknown)=>typeof p==='string')&&sameFields(result,claims,['authority_version','iss','sub','aud','jti','iat','exp','user_service_id','delegation_sha256'])&&sameFields(result.command_request,claims.command_request,requestFields)&&sameFields(result.source,claims.source,sourceFields),401,'REVOKED','Current command authority is invalid or differs from its signed binding');
 }
 export function commandRequest(method:string,pathAndQuery:string,body:Buffer,contentType:string|null,idempotencyKey:string|null):CommandRequest {
   return {version:1,method,path_and_query:pathAndQuery,content_type:contentType,body_sha256:digest(body),idempotency_key_sha256:idempotencyKey===null?null:digest(idempotencyKey)};

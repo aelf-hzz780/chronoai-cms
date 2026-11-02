@@ -21,6 +21,7 @@ import {loadConfig} from '../src/config.ts';
 import {createApp} from '../src/app.ts';
 import {commandRequest,projectionCommand,assertCommandBinding} from '../src/command-authority.ts';
 import {digest} from '../src/content.ts';
+import {RemoteError} from '../src/http-client.ts';
 
 test('R031 V1 consumer: exact ingress, durable command binding and both worker boundaries',async t=>{
  const pair=await generateKeyPair('RS256'),jwk={...await exportJWK(pair.publicKey),kid:'key-command-test'};
@@ -51,7 +52,7 @@ test('R031 V1 consumer: exact ingress, durable command binding and both worker b
  const headers={'x-nyxid-identity-token':identity,'x-nyxid-delegation-token':delegation};
  const issue=async(path:string,body:string,options:{method?:string;contentType?:string|null;idempotencyKey?:string|null;claims?:Record<string,unknown>}={})=>{
   const descriptor=commandRequest(options.method??'POST',path,Buffer.from(body),options.contentType===undefined?'application/json':options.contentType,options.idempotencyKey??null);
-  const token=await sign({user_service_id:'personal-http-connection',delegation_sha256:digest(delegation),command_request:descriptor,source:{key_id:'key',credential_id:'child',credential_incarnation:'original'},...options.claims},'catalog','nyxid-command-authority+jwt',240);
+  const token=await sign({authority_version:1,user_service_id:'personal-http-connection',delegation_sha256:digest(delegation),command_request:descriptor,source:{key_id:'key',credential_id:'child',credential_incarnation:digest('original')},...options.claims},'catalog','nyxid-command-authority+jwt',240);
   return {token,descriptor};
  };
  function open(path:string){const store=new Store(path),vault=new Vault(config.encryptionKey),authority=new NyxAuthority(config,store),policy=new Policy(store,authority),content=new ContentService(store,policy),auth=new AuthManager(config,store,vault,policy),pub=new PublishingService(content,vault);return {store,vault,policy,content,auth,pub};}
@@ -62,7 +63,7 @@ test('R031 V1 consumer: exact ingress, durable command binding and both worker b
   const article=await f.content.create(actor,{ownerId:'owner',language:'en',title:'Command source',markdown:'Local fixture',creditedAuthor:'person'},'draft');
   const releaseInput={ownerId:'owner',revisionId:article.revision.id,creditedAuthor:'person',action:'publish',rightsConfirmed:true,idempotencyKey:'original'};
   let app=await createApp({...f,publicUrl:config.publicUrl,auth:f.auth,authenticate:r=>f.auth.authenticate(r)});
-  const releasePath=`/api/service/articles/${article.id}/releases`,body=JSON.stringify(releaseInput),proof=await issue(releasePath,body,scenario==='valid key'?{claims:{source:{key_id:'key',credential_id:null,credential_incarnation:'original'}}}:{});
+  const releasePath=`/api/service/articles/${article.id}/releases`,body=JSON.stringify(releaseInput),proof=await issue(releasePath,body,scenario==='valid key'?{claims:{source:{key_id:'key',credential_id:null,credential_incarnation:digest('original')}}}:{});
   const confirmation=await app.inject({method:'POST',url:releasePath,payload:body,headers:{...headers,'content-type':'application/json','x-nyxid-command-authority':proof.token}});
   assert.equal(confirmation.statusCode,202,confirmation.body);const release=confirmation.json();
   const saved=f.vault.open<Actor>(f.store.get('SELECT actor_json FROM releases WHERE id=?',release.id)!.actor_json);assert.equal(saved.commandAuthority!.token,proof.token);
@@ -77,7 +78,7 @@ test('R031 V1 consumer: exact ingress, durable command binding and both worker b
   if(kind==='delivery'){
    await new ReleaseWorker(f.pub,original).once();assert.equal(writes,1);writes=0;
    await app.close();app=await createApp({...f,publicUrl:config.publicUrl,distribution:distribution(),auth:f.auth,authenticate:r=>f.auth.authenticate(r)});
-   const deliveryPath=`/api/service/releases/${release.id}/deliveries`,b=JSON.stringify({target:'local',connectionId:'connection',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'copy'}),p=await issue(deliveryPath,b,scenario==='valid key'?{claims:{source:{key_id:'key',credential_id:null,credential_incarnation:'original'}}}:{});
+   const deliveryPath=`/api/service/releases/${release.id}/deliveries`,b=JSON.stringify({target:'local',connectionId:'connection',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'copy'}),p=await issue(deliveryPath,b,scenario==='valid key'?{claims:{source:{key_id:'key',credential_id:null,credential_incarnation:digest('original')}}}:{});
    const confirmation=await app.inject({method:'POST',url:deliveryPath,payload:b,headers:{...headers,'content-type':'application/json','x-nyxid-command-authority':p.token}});assert.equal(confirmation.statusCode,202,confirmation.body);id=confirmation.json().id;
   }
   await app.close();f.store.close();f=open(path);atBoundary=true;
@@ -96,6 +97,36 @@ test('R031 V1 consumer: exact ingress, durable command binding and both worker b
     await new AlternateWorker(new AlternateService(f.pub),{async alternates(input){await input.beforeWrite!();metadataWrites++;}}).once();assert.equal(metadataWrites,1);
    }
   }finally{f.store.close();}
+ });
+
+ await t.test('key recovery queues no metadata; separate media and sync commands use fresh authority',async()=>{
+  sourceActive=true;onlineFailure='';const f=open(':memory:');
+  const app=await createApp({...f,publicUrl:config.publicUrl,auth:f.auth,authenticate:r=>f.auth.authenticate(r)});
+  try{
+   const actor=await f.auth.propagated(identity,delegation);f.store.createOwner('owner','personal',base,'person');f.store.run('INSERT INTO sites VALUES (?,?,?,?,?)','site','owner','en','http://localhost:3598','NO_KEY');
+   const article=await f.content.create(actor,{ownerId:'owner',language:'en',title:'Recover key command',markdown:'Exact old revision',creditedAuthor:'person'},'draft');
+   const send=async(path:string,input:unknown,proof?:string)=>app.inject({method:'POST',url:path,payload:JSON.stringify(input),headers:{...headers,'content-type':'application/json',...(proof?{'x-nyxid-command-authority':proof}:{})}});
+   const originalPath=`/api/service/articles/${article.id}/releases`,body={ownerId:'owner',revisionId:article.revision.id,creditedAuthor:'person',rightsConfirmed:true,action:'publish',idempotencyKey:'old'};
+   const proof=await issue(originalPath,JSON.stringify(body)),confirmed=await send(originalPath,body,proof.token);assert.equal(confirmed.statusCode,202,confirmed.body);const release=confirmed.json();
+   let ghostWrites=0,mediaWrites=0,metadataWrites=0;const result={remoteId:'accepted',url:'http://localhost:3598/accepted/'};
+   const original:OriginalAdapter={async publish(input){await input.beforeWrite!();ghostWrites++;throw new RemoteError('REMOTE_UNCERTAIN','Accepted but response lost',true);},async verify(){return true;},async reconcile(){return result;},async unpublish(){throw Error('unexpected');},async materialize(input){await input.beforeMaterialize!();mediaWrites++;return true;}};
+   const worker=new ReleaseWorker(f.pub,original);await worker.once();assert.equal(ghostWrites,1);
+   revokedProofs.add(decodeJwt(proof.token).jti!);const cipher=f.store.get('SELECT actor_json FROM releases WHERE id=?',release.id)!.actor_json;
+   assert.equal((await send(`/api/service/releases/${release.id}/reconcile`,{})).statusCode,200);await worker.once();
+   assert.equal(ghostWrites,1);assert.equal(mediaWrites,0);assert.equal(f.store.get('SELECT count(*) n FROM projections')!.n,0);
+   // Seed the known accepted-but-missing-images state to exercise the explicit
+   // command. The real Ghost/file behavior is covered in media-authority.test.
+   f.store.run("UPDATE releases SET state='verifying' WHERE id=?",release.id);
+   const mediaPath=`/api/service/releases/${release.id}/materialize-media`,mediaBody={ownerId:'owner',revisionId:article.revision.id,rightsConfirmed:true,idempotencyKey:'fresh-media'};
+   assert.equal((await send(mediaPath,mediaBody)).statusCode,403);assert.ok((await send(mediaPath,mediaBody,proof.token)).statusCode>=400);
+   const mediaProof=await issue(mediaPath,JSON.stringify(mediaBody)),media=await send(mediaPath,mediaBody,mediaProof.token);assert.equal(media.statusCode,202,media.body);
+   assert.notEqual(decodeJwt(mediaProof.token).jti,decodeJwt(proof.token).jti);assert.equal((await send(mediaPath,mediaBody,mediaProof.token)).json().id,media.json().id);
+   assert.equal(f.store.get('SELECT kind FROM command_authorities WHERE jti=?',decodeJwt(mediaProof.token).jti!)!.kind,'release-media');
+   await worker.once();assert.equal(mediaWrites,1);assert.equal(ghostWrites,1);assert.equal(f.store.get('SELECT actor_json FROM releases WHERE id=?',release.id)!.actor_json,cipher);assert.equal(f.store.get('SELECT count(*) n FROM projections')!.n,0);
+   const syncPath=`/api/service/articles/${article.id}/sync-links`;assert.equal((await send(syncPath,{})).statusCode,403);
+   const sync=await issue(syncPath,'{}');assert.equal((await send(syncPath,{},sync.token)).statusCode,200);
+   await new AlternateWorker(new AlternateService(f.pub),{async alternates(input){await input.beforeWrite!();metadataWrites++;}}).once();assert.equal(metadataWrites,1);
+  }finally{await app.close();f.store.close();}
  });
 
  await t.test('organization Publisher and exact approval retain the original request source',async()=>{
@@ -118,7 +149,7 @@ test('R031 V1 consumer: exact ingress, durable command binding and both worker b
    const request=await send(`/api/service/releases/${release.json().id}/deliveries`,{target:'local',connectionId:'connection',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'org-copy'});assert.equal(request.response.statusCode,202,request.response.body);
    const delivery=request.response.json();assert.equal(delivery.state,'approval_needed');
    const cipher=f.store.get('SELECT actor_json FROM delivery_payloads WHERE delivery_id=?',delivery.id)!.actor_json;
-   const authorized=await send(`/api/service/deliveries/${delivery.id}/authorize`,{approvalRef:'exact-approved'},{source:{key_id:'another-key',credential_id:null,credential_incarnation:'another-incarnation'}});assert.equal(authorized.response.statusCode,200,authorized.response.body);
+   const authorized=await send(`/api/service/deliveries/${delivery.id}/authorize`,{approvalRef:'exact-approved'},{source:{key_id:'another-key',credential_id:null,credential_incarnation:digest('another-incarnation')}});assert.equal(authorized.response.statusCode,200,authorized.response.body);
    assert.equal(f.store.get('SELECT actor_json FROM delivery_payloads WHERE delivery_id=?',delivery.id)!.actor_json,cipher,'Authorization cannot replace the original publishing authority');
    revokedProofs.add(decodeJwt(request.proof.token).jti!);
    await new DeliveryWorker(distribution,original).once();assert.equal(writes,0);assert.equal(f.store.get('SELECT state FROM deliveries WHERE id=?',delivery.id)!.state,'blocked');

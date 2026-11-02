@@ -18,14 +18,14 @@ test('R031 command authority: signatures, exact online binding and persistent on
  const request:CommandRequest={version:1,method:'POST',path_and_query:'/api/service/articles/a/releases',content_type:'application/json',body_sha256:digest('{}'),idempotency_key_sha256:null};
  const actor:Actor={issuer:config.issuer,subject:'person',scopes:['publish'],credential:'exact-saved-delegation',entry:'service',binding:{kind:'propagated',serviceId:'catalog',serviceSlug:'blog',identityAudience:'resource',delegationAudience:'delegation'}};
  const now=Math.floor(Date.now()/1000),delegationExpiry=now+300;
- const claims={iss:config.issuer,sub:actor.subject,aud:'catalog',jti:'proof-1',iat:now,exp:now+200,user_service_id:'connection',delegation_sha256:digest(actor.credential),command_request:request,source:{key_id:'parent',credential_id:'child',credential_incarnation:'incarnation'}};
+ const claims={authority_version:1,iss:config.issuer,sub:actor.subject,aud:'catalog',jti:'proof-1',iat:now,exp:now+200,user_service_id:'connection',delegation_sha256:digest(actor.credential),command_request:request,source:{key_id:'parent',credential_id:'child',credential_incarnation:digest('incarnation')}};
  const sign=(changes:Record<string,unknown>={},header:Record<string,unknown>={})=>new SignJWT({...claims,...changes}).setProtectedHeader({alg:'RS256',kid:'command-local',typ:'nyxid-command-authority+jwt',...header}).sign(privateKey);
  const token=await sign(),saved={token,request};
  const verified=await verifyCommandAuthority({...actor,commandAuthority:saved},config,keys,delegationExpiry);
  assert.equal(verified.jti,'proof-1');
  for(const [name,changes,header] of [
-  ['subject',{sub:'other'},{}],['issuer',{iss:'https://other.invalid'},{}],['catalog',{aud:'other'},{}],['missing UserService',{user_service_id:''},{}],['delegation',{delegation_sha256:digest('other')},{}],
-  ['key',{source:{...claims.source,key_id:''}},{}],['child incarnation',{source:{...claims.source,credential_incarnation:''}},{}],['expiry',{exp:delegationExpiry+1},{}],['expired',{exp:now-1},{}],['future issued',{iat:now+60},{}],['typ',{}, {typ:'JWT'}],
+  ['missing authority version',{authority_version:undefined},{}],['unsupported authority version',{authority_version:2},{}],['subject',{sub:'other'},{}],['issuer',{iss:'https://other.invalid'},{}],['catalog',{aud:'other'},{}],['missing UserService',{user_service_id:''},{}],['delegation',{delegation_sha256:digest('other')},{}],
+  ['key',{source:{...claims.source,key_id:''}},{}],['child incarnation',{source:{...claims.source,credential_incarnation:''}},{}],['malformed incarnation',{source:{...claims.source,credential_incarnation:'not-a-hash'}},{}],['uppercase incarnation',{source:{...claims.source,credential_incarnation:'AB'.repeat(32)}},{}],['expiry',{exp:delegationExpiry+1},{}],['expired',{exp:now-1},{}],['future issued',{iat:now+60},{}],['typ',{}, {typ:'JWT'}],
  ] as const)await t.test(`reject signed ${name} mismatch`,async()=>{
   await assert.rejects(verifyCommandAuthority({...actor,commandAuthority:{...saved,token:await sign(changes,header)}},config,keys,delegationExpiry));
  });

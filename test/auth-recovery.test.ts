@@ -13,6 +13,7 @@ import {ContentService} from '../src/content.ts';
 import {PublishingService,ReleaseWorker,type OriginalAdapter} from '../src/publishing.ts';
 import {DistributionService,DeliveryWorker} from '../src/distribution.ts';
 import {TargetRegistry,type Target} from '../src/targets.ts';
+import {AlternateService,AlternateWorker} from '../src/alternates.ts';
 import {RemoteError} from '../src/http-client.ts';
 
 test('R033: current caller recovers uncertain results after source expiry/revocation without new writes',async t=>{
@@ -38,7 +39,7 @@ test('R033: current caller recovers uncertain results after source expiry/revoca
  t.after(()=>new Promise<void>(resolve=>server.close(()=>resolve())));
  const config=loadConfig({PUBLIC_URL:'http://localhost:3497',ALLOW_LOOPBACK_HTTP:'true',NYXID_ISSUER:base,NYXID_API_URL:base,NYXID_CLIENT_ID:'cms',NYXID_CMS_AUDIENCE:'cms',NYXID_SERVICE_AUDIENCE:'service',NYXID_TOKEN_AUDIENCE:'delegation',NYXID_SERVICE_ID:'registered',NYXID_SERVICE_SLUG:'blog',NYXID_INTROSPECTION_URL:base+'/introspect',ENCRYPTION_KEY:'cd'.repeat(32),TRACKING_SECRET:'local-only',NYXID_CMS_CAPABILITY_SCOPES_JSON:JSON.stringify({'content:read':['profile'],publish:['proxy']}),NYXID_SERVICE_CAPABILITY_SCOPES_JSON:JSON.stringify({'content:read':['account:read'],'content:write':['proxy:*'],publish:['proxy:*']})});
  const sign=(claims:any,subject:string,audience:string,lifetime='10m')=>new SignJWT(claims).setProtectedHeader({alg:'RS256',kid:jwk.kid}).setIssuer(base).setSubject(subject).setAudience(audience).setIssuedAt().setExpirationTime(lifetime).setJti(crypto.randomUUID()).sign(privateKey);
- for(const kind of ['release','delivery'])for(const withdrawal of ['expiry','revocation'])await t.test(`${kind}: original ${withdrawal}`,async()=>{
+ for(const kind of ['release','delivery'])for(const withdrawal of ['expiry','revocation'])for(const entry of ['cms','oauth','key'])await t.test(`${kind}: original ${withdrawal}, current ${entry}`,async()=>{
   const store=new Store(':memory:'),vault=new Vault(config.encryptionKey),authority=new NyxAuthority(config,store),policy=new Policy(store,authority),auth=new AuthManager(config,store,vault,policy),content=new ContentService(store,policy),pub=new PublishingService(content,vault);
   try{
    roles.set('publisher','member');roles.set('admin','admin');
@@ -47,8 +48,8 @@ test('R033: current caller recovers uncertain results after source expiry/revoca
    const source=await auth.propagated(identity,sourceToken);
    // A valid current delegated caller without queued-write lineage can still
    // inspect the exact result. It must never inherit permission to resend.
-   const currentToken=withdrawal==='expiry'?await sign({token_type:'access',scope:'openid profile proxy',client_id:'cms'},'admin','cms'):await sign({token_type:'access',scope:'account:read proxy:*',delegated:true,act:{sub:'blog'}},'admin','delegation');
-   const current=withdrawal==='expiry'?await auth.accessToken(currentToken,'cms','cms'):await auth.propagated(await sign({nyx_service_id:'registered'},'admin','service','60s'),currentToken);
+   const currentToken=entry==='cms'?await sign({token_type:'access',scope:'openid profile proxy',client_id:'cms'},'admin','cms'):await sign({token_type:'access',scope:'account:read proxy:*',delegated:true,act:{sub:'blog'},...(entry==='oauth'?{oauth_lineage:{consents:[],source_session_id:'current-session',delegation_jti:null}}:{})},'admin','delegation');
+   const current=entry==='cms'?await auth.accessToken(currentToken,'cms','cms'):await auth.propagated(await sign({nyx_service_id:'registered'},'admin','service','60s'),currentToken);
    store.createOwner('org','organization',base,'organization');store.run('INSERT INTO publishers VALUES (?,?)','org','publisher');store.run('INSERT INTO sites VALUES (?,?,?,?,?)','site','org','en','http://localhost:3498','NO_KEY');
    const article=await content.create(source,{ownerId:'org',language:'en',title:'R033 read-only recovery',markdown:'Local only',creditedAuthor:'publisher'},'create');
    const release=await pub.confirm(source,article.id,{ownerId:'org',revisionId:article.revision.id,action:'publish',creditedAuthor:'publisher',rightsConfirmed:true,idempotencyKey:'original'},'original-confirmation');
@@ -73,7 +74,7 @@ test('R033: current caller recovers uncertain results after source expiry/revoca
    if(withdrawal==='expiry')await new Promise(resolve=>setTimeout(resolve,Math.max(0,decodeJwt(sourceToken).exp!*1000-Date.now()+30)));else revoked.add(decodeJwt(sourceToken).jti!);
    await policy.publish(current,'org','access');
    await assert.rejects(policy.publish(source,'org'));
-   if(withdrawal==='revocation')await assert.rejects(policy.publish(current,'org'),{code:'SOURCE_AUTHORITY_UNPROVEN'});
+   if(entry==='key')await assert.rejects(policy.publish(current,'org'),{code:'SOURCE_AUTHORITY_UNPROVEN'});
    readOnly=true;store.run("UPDATE settings SET value='true' WHERE key='outbound_paused'");
    // Both the request and already-persisted recovery Actor use current authority.
    await reconcile();revoked.add(decodeJwt(currentToken).jti!);
@@ -84,7 +85,16 @@ test('R033: current caller recovers uncertain results after source expiry/revoca
    if(kind==='delivery'){
     await reconcile();drift=true;await once();assert.equal(reads,0);assert.equal(store.get('SELECT error_code FROM deliveries WHERE id=?',id)!.error_code,'CONNECTION_CHANGED');drift=false;
    }
+   const projectionsBefore=store.get('SELECT count(*) n FROM projections')!.n;
    await reconcile();assert.equal(await once(),true);
+   assert.equal(store.get('SELECT count(*) n FROM projections')!.n,projectionsBefore,'Read-only recovery must not enqueue metadata for any caller category');
+   if(kind==='release'){
+    store.run("UPDATE settings SET value='false' WHERE key='outbound_paused'");let metadataWrites=0;
+    const alternates=new AlternateService(pub),metadata=new AlternateWorker(alternates,{async alternates(input){await input.beforeWrite!();metadataWrites++;}});
+    assert.equal(await metadata.once(),false);assert.equal(metadataWrites,0);
+    if(entry!=='key'){await alternates.request(current,article.id,'explicit-new-metadata');assert.equal(await metadata.once(),true);assert.equal(metadataWrites,1);}
+    store.run("UPDATE settings SET value='true' WHERE key='outbound_paused'");
+   }
    assert.equal(reads,1);assert.equal(writes,1,'No new write during recovery, even when the adapter attempts one');
    assert.equal(store.get(`SELECT state FROM ${table} WHERE id=?`,id)!.state,'published');
    assert.equal(cipher(),originalCipher,'Original confirmation cipher remains immutable audit evidence');

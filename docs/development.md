@@ -31,7 +31,7 @@ node --env-file=.env scripts/provision.ts author org-en 'Example Author' actual-
 
 每个 owner×language 独立 Ghost 安装。署名必须映射真实 Ghost staff author；密钥仅从 keyRef 对应环境变量读取。公开 HTTPS 与私有 loopback Admin route 分开；普通业务用户不获得 Ghost Admin。详见 `operations.md`。
 
-私有图片在 SQLite BLOB 中。`${PUBLIC_MEDIA_DIRECTORY}/<siteId>` 通过 `infra/platform/ghost-media.override.yaml` 挂入对应 Ghost `content/images/chrono`。正文经 Admin 与公开页完整核验后才物化图片，随后校验公开 MIME 和 SHA-256。业务进程关闭后，公开正文与图片仍由 Ghost 提供。
+私有图片在 SQLite BLOB 中。`${PUBLIC_MEDIA_DIRECTORY}/<siteId>` 通过 `infra/platform/ghost-media.override.yaml` 挂入对应 Ghost `content/images/chrono`。正文经 Admin 与公开页完整核验、当前发布来源与权限重验后才物化图片，随后校验公开 MIME 和 SHA-256。verify与只读reconcile不公开新文件；缺图使用显式补图命令，步骤见[API指南](api-guide.md#只读恢复与显式补图)。业务进程关闭后，公开正文与图片仍由 Ghost 提供。
 
 ## 验证分层
 
@@ -39,10 +39,11 @@ node --env-file=.env scripts/provision.ts author org-en 'Example Author' actual-
 npm run check
 node --check web/app.js
 node --check web/tracker.js
+node --test test/media-ui.integration.ts
 node scripts/test-local-four-ghost.mjs
 node scripts/source-fingerprint.ts
 ```
 
-前三项不连接真实账号。完整检查中的渲染测试需要本机 Chromium，安装与RENDER_BROWSER_EXECUTABLE配置见[公开正文渲染证明](operations.md#公开正文渲染证明)。四站 harness 仅用于本任务已准备的 `colima-blogsystem`，不自动启动 Docker、不拉镜像、不改默认 context；临时 helper 使用缓存官方 Ghost 内置 Node22.23.4，真实应用支持运行时仍是主机 Node24.18。默认 Ghost Adapter 和共享文件系统未替换，覆盖 personal/organization × en/zh × CMS/service 八组合及素材、指标、译文互链、下线。证据生成于 `.runtime/blogsystem-integration-*/evidence.json`，含源码逐文件指纹，不含账号秘密。
+前四项不连接真实账号；补图CMS浏览器专项的所有HTTP均由本地fixture接管，不连接真实App／Ghost／NyxID。完整检查中的渲染测试需要本机 Chromium，安装与RENDER_BROWSER_EXECUTABLE配置见[公开正文渲染证明](operations.md#公开正文渲染证明)。四站 harness 仅用于本任务已准备的 `colima-blogsystem`，不自动启动 Docker、不拉镜像、不改默认 context；临时 helper 使用缓存官方 Ghost 内置 Node22.23.4，真实应用支持运行时仍是主机 Node24.18。默认 Ghost Adapter 和共享文件系统未替换，覆盖 personal/organization × en/zh × CMS/service 八组合及素材、指标、译文互链、下线。证据生成于 `.runtime/blogsystem-integration-*/evidence.json`，含源码逐文件指纹，不含账号秘密。
 
 恢复 CLI 与隔离演练见 `operations.md`。`test/*.integration.ts` 不是默认单测的一部分。已完成局部不等于 A01–A52 所有参数组合完成；独立验收由原任务执行，状态见 `delivery-status.md`。
