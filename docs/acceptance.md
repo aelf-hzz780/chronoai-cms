@@ -11,17 +11,11 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 | [74978bc 独立 Local 恢复](review-local-recovery-749.md) | 实际四 Ghost 与平台加密捕获／新卷恢复、全字段审计、旧会话失效及只读对账；本地身份 fixture，不包含真实外部 delivery 恢复或生产 RPO/RTO |
 | [阶段 0](phase-0.md)、[迁移复验](local-revalidation.md) | 历史双站与基础实验；仅适用于其记录的源码和环境，不能代表当前 CMS／service 或四站完整结果 |
 
-历史独立 Local 已覆盖实际 CMS/service × owner × language 发布、浏览器 consent 指标、译文与恢复等有界流程。2026-10-29 的804e7c4收尾账目为51场景Local PASS／A05 BLOCKED、Document 48 PASS／4 BLOCKED（A01/A05/A06/A52）、Live 52 BLOCKED，R001–R028有界关闭（R021非门禁），见[历史收尾](review-i13.md#独立-local-收尾2026-10-29)。2026-10-30真实官方NyxID 0.75.0启动发现R029；固定业务源码`2d65bc0`已完成修复及真实CMS OIDC／service代理开发联调，四用户、角色与撤权、只读scope、停用检查通过，历史开发证据见 [I14](review-i14.md)。该SHA独立复验新增R030（A09/A15、D2/D3/D5/D9）：保存会话／队列的当前授权绑定需补强。固定修复`76595bc`已由原任务独立报告有界关闭R029／R030，strict与127/127、33条Local绑定／模式／时间分支及真实NyxID的10组／39条业务HTTP记录通过，见 [I15](review-i15.md#独立有界闭合2026-10-30)。当轮R031发现前登记30项均有界关闭（29必需＋R021非门禁），51 PASS／A05 BLOCKED仅为当时历史Local modeled统计，不是abfb988当前结论。
+当前可移交证据以 [W1/W2 整合交接](handoff-20261102.md)与[相对路径 manifest](evidence/followup-20261102/manifest.json)为准。W1 在 `0b0e9d1`＋本地 Nyx `049ee1c` 的选定 service 路径有界关闭 R031；W2 在 `83b4b8e` 修复旧 media 抢占当前恢复 Actor／crash running 并完成真实四 Ghost 新卷加密恢复。共同版本的受影响路径另行真实补验，不把不同 SHA 或受控 Authority 的结果合并冒充完整 Native 通过。
 
-当前状态以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准，开发记录不替代独立签收。[2026-10-30 独立本地收尾](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/local-handoff-complete.json)确认固定业务源码 `0418652` 的已识别可独立推进本地工作已完成；实际官方 NyxID 双入口、MCP／浏览器与四 Ghost 发布、指标、生命周期及隔离恢复的有界证据见 I20／I21。剩余工作依赖 NyxID 上游来源契约／普通门户 Launch、真实外部平台账号与精确内容／动作授权、目标生产运维输入及 PR 创建权限，整体仍为 `NOT_ACCEPTED`。收尾不回填下列历史矩阵，不提升 Live 或 D1–D9 正式签收。R033/P1（A36/A49/A50、D7/D9）已在4a27487／3ded07e独立有界关闭，见 [I18](review-i18.md)。R034/P1（A08/A17、D2/D4）已在0418652／98bac5b独立有界关闭，见 [I19](review-i19.md)。不重开旧R004，不以重新确认或重发替代核对。
+普通 Nyx 门户 Launch 已由本地门户补丁 `c65dc4be` 实现、部署并完成个人／组织 Admin 浏览器有界验证，见[版本绑定记录](evidence/portal-local-launch-20261102.json)。后端 `049ee1c` 是本地补丁依赖，未向 Nyx upstream push／merge。目标 Nyx 注册部署、真实外部分发／恢复、生产责任及数值 RPO/RTO 仍缺输入；正式 D1–D9 保持 NOT_ACCEPTED。
 
-真实本地NyxID证据按轮次区分：I14／I15（App3117）发布仅排队／取消；I17／I18（App3437）在私有一致数据库副本运行实际Worker及安全adapter，provider／远端结果为fixture，未进行Ghost／provider网络写入。目标 NyxID 正式注册／交接、组织外部写入精确批准、DEV／Hashnode 自动写、Medium／HackerNoon 辅助流程及目标部署、责任、保留策略和约定 RPO/RTO 仍需相应证据。正式 D1–D9／A01–A52 结论由独立验收更新，开发记录不代替签收。阶段 0 保留为历史入口。
-
-新增[I20实际联合证据](review-i20.md)在0418652覆盖真实NyxID＋四原版Ghost八组初始发布、非空指标及12组两入口查询一致性，以及CMS个人更新／双向hreflang／stale／下线有界分支。[I21恢复收尾证据](review-i21.md)进一步覆盖实际旧token仍active时退组阻断、当前Admin同ID只读认回零写、旧cookie清session后401、实际 native 新卷全量恢复、22 payload加密归档核对、权限／映射／媒体核对、恢复后新文章与素材验证、现有组织译文 stale→unpublish 生命周期、普通成员个人 CMS/service × EN/ZH 矩阵、两个未发送新图取消分支、同组织 Admin/member 精确角色私有资源拒绝，以及默认浏览器认证与退出后的旧 cookie 失效。原组织中文首次INTERNAL原因未定；仍缺正式生产RPO/RTO、外部分发恢复、实际外部平台及普通 Nyx 门户 Launch；已发送或外部分发取消、显式垃圾回收不属于本轮新增证据范围。dev八容器恢复仅为资源窗口收尾，不能替代A49–A51或约定RPO/RTO；r3/r4 有界证据不代表Native全部通过，动态结论仍由root台账给出。
-
-R031/P1仍OPEN（A09/A15、D2/D3/D5/D9），官方来源契约研究见 [I16](review-i16.md)。`abfb988`临时保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，完整key/child能力仍BLOCKED上游；该结果不关闭R031、不重开R029／R030、不提升正式D/A签收，边界见 [I17](review-i17.md)。R032／R033／R034已独立有界关闭；普通用户门户Launch入口上游缺口见[注册指南](nyxid-registration.md)，下列正式矩阵保持原文。
-
-2026-11-02 按新授权推进 [I22 R031 V1 consumer 候选](review-i22.md)：专用签名 proof、实际请求字节、专用在线 authority、唯一 jti 命令绑定与最终发送守卫已有本地模型证据。此前本地收尾是2026-10-30的固定快照，不包含本轮新增工作；本轮独立发现后的修复补充签名版本／incarnation严格检查、全caller只读恢复零自动metadata、公开图片独立授权与CMS显式补图／partial计数；后续独立发现的跨volume EXDEV部署阻塞另以每站私有staging配置和真实隔离mount专项修复，未获部署或联合验收；真实 NyxID 后端固定 SHA 的联合验证及独立验收仍待完成，R031与正式D/A不提升。
+历史 [I13](review-i13.md)、[I15](review-i15.md)、[I17](review-i17.md)、[I18](review-i18.md)、[I19](review-i19.md)、[I20](review-i20.md)、[I21](review-i21.md)、[I22](review-i22.md)保留其 SHA、失败、修复、临时保护与统计。旧 R031 OPEN 与门户缺口是历史状态；当前有界闭合不回填历史 modeled 统计，也不改变下列原文通过条件。原组织中文首次 INTERNAL 原因未定，后续同 ID 只读认回证据不抹去该失败。不以重发替代对账，不以测试数量推断完整场景签收。
 
 ## 1. 交付追踪
 

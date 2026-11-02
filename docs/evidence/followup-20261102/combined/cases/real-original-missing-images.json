@@ -1,0 +1,138 @@
+{
+  "case": "real-original-missing-images",
+  "operation": "publish-missing",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "sourceFilesVerified": 133,
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "beforeHistory": [],
+  "release": {
+    "id": "f5355255-fd8f-42ec-8456-dac938965a88",
+    "state": "verifying",
+    "error_code": "ORIGINAL_NOT_VERIFIED",
+    "remote_id": "6ae861b7ed2cd7000103139e",
+    "url": "http://localhost:3478/chrono-2bc56515-f12e-4b56-a8a9-b421d00d181f/"
+  },
+  "afterHistory": [],
+  "pendingMedia": 0,
+  "actor": {
+    "subject": "0f55b864-677f-432b-afcd-0c8de064b69c",
+    "fromCurrentRecovery": false
+  },
+  "assets": [
+    {
+      "id": "8e883c5e-d634-40fc-a37d-c4e16907142f",
+      "sha256": "69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8",
+      "url": "http://localhost:3478/content/images/chrono/69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8.png",
+      "publicMatches": false
+    },
+    {
+      "id": "bf4c784b-78c4-4e62-9927-cf4cbc501116",
+      "sha256": "40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea",
+      "url": "http://localhost:3478/content/images/chrono/40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea.png",
+      "publicMatches": false
+    }
+  ],
+  "ghostWrites": 1,
+  "ghostReads": 1,
+  "materializeCalls": 1,
+  "materialized": 0,
+  "boundaryCalls": 0,
+  "revoked": false,
+  "http": [
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/openid-configuration",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/jwks.json",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "POST",
+      "status": 201
+    }
+  ],
+  "approvals": [],
+  "passed": true,
+  "evidenceBoundary": "real NyxID049 + fixed Blog386b965, actual local Ghost; scoped harness fault injection identified by operation"
+}

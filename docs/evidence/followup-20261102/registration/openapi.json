@@ -1,0 +1,2348 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ChronoAI CMS / NyxID publishing service",
+    "version": "0.1.0",
+    "description": "CMS and service share current identity, owner and publishing policy. No account or default connection fallback."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3560"
+    }
+  ],
+  "paths": {
+    "/api/service/me": {
+      "get": {
+        "operationId": "getWorkspaces",
+        "summary": "Read current caller and authorized workspaces",
+        "parameters": [],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/articles": {
+      "get": {
+        "operationId": "listArticles",
+        "summary": "List/search authorized revisions",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createArticle",
+        "summary": "Create original English or Chinese Markdown",
+        "parameters": [],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ownerId": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string",
+                    "enum": [
+                      "en",
+                      "zh"
+                    ]
+                  },
+                  "title": {
+                    "type": "string",
+                    "maxLength": 250
+                  },
+                  "markdown": {
+                    "type": "string",
+                    "maxLength": 2000000
+                  },
+                  "creditedAuthor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ownerId",
+                  "language",
+                  "title",
+                  "markdown",
+                  "creditedAuthor"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/articles/import": {
+      "post": {
+        "operationId": "importMarkdownFile",
+        "summary": "Import an original UTF-8 .md file preserving BOM, CRLF and source bytes",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "creditedAuthor",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "text/markdown": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/markdown": {
+      "put": {
+        "operationId": "replaceMarkdownFile",
+        "summary": "Replace a draft from a UTF-8 .md file with revision conflict protection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expectedRevision",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "text/markdown": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}": {
+      "get": {
+        "operationId": "getArticle",
+        "summary": "Read an authorized article revision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Optional authorized revision"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "editArticle",
+        "summary": "Save an immutable revision with conflict protection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expectedRevision": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "markdown": {
+                    "type": "string"
+                  },
+                  "creditedAuthor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "expectedRevision"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/submit": {
+      "post": {
+        "operationId": "submitDraft",
+        "summary": "Submit this exact draft revision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "revisionId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "revisionId"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/markdown-file": {
+      "get": {
+        "operationId": "downloadMarkdown",
+        "summary": "Retrieve the original .md file as a base64 JSON envelope. Decode data as base64 bytes, verify byteLength and SHA-256, then save as filename; never save the JSON or normalized text as Markdown.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "articleId": {
+                      "type": "string"
+                    },
+                    "revisionId": {
+                      "type": "string"
+                    },
+                    "filename": {
+                      "type": "string",
+                      "const": "article.md"
+                    },
+                    "mediaType": {
+                      "type": "string",
+                      "const": "text/markdown"
+                    },
+                    "encoding": {
+                      "type": "string",
+                      "const": "base64"
+                    },
+                    "byteLength": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 2000000
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "data": {
+                      "type": "string",
+                      "contentEncoding": "base64",
+                      "contentMediaType": "text/markdown",
+                      "maxLength": 2666668
+                    }
+                  },
+                  "required": [
+                    "articleId",
+                    "revisionId",
+                    "filename",
+                    "mediaType",
+                    "encoding",
+                    "byteLength",
+                    "sha256",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/revisions": {
+      "get": {
+        "operationId": "listRevisions",
+        "summary": "List only authorized revision history",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/preview": {
+      "get": {
+        "operationId": "previewArticle",
+        "summary": "Privately preview an authorized saved revision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Optional authorized revision; defaults to the caller-visible revision"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/translation": {
+      "post": {
+        "operationId": "linkTranslation",
+        "summary": "Link a translation to an authorized source revision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourceArticleId": {
+                    "type": "string"
+                  },
+                  "sourceRevisionId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "sourceArticleId",
+                  "sourceRevisionId"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/assets": {
+      "post": {
+        "operationId": "uploadPrivateImage",
+        "summary": "Upload a private PNG/JPEG/GIF/WebP asset",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mime": {
+                    "type": "string",
+                    "enum": [
+                      "image/png",
+                      "image/jpeg",
+                      "image/gif",
+                      "image/webp"
+                    ]
+                  },
+                  "base64": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "mime",
+                  "base64"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/assets/{id}": {
+      "get": {
+        "operationId": "getPrivateImage",
+        "summary": "Read an image only through an authorized corresponding revision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/gif": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/releases": {
+      "post": {
+        "operationId": "confirmOriginal",
+        "summary": "Confirm exact revision, author, owner, rights and Ghost action",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Confirmation accepted; inspect the returned state and publication history before treating it as published",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ownerId": {
+                    "type": "string"
+                  },
+                  "revisionId": {
+                    "type": "string"
+                  },
+                  "creditedAuthor": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "publish",
+                      "update",
+                      "unpublish"
+                    ]
+                  },
+                  "rightsConfirmed": {
+                    "const": true,
+                    "type": "boolean"
+                  },
+                  "idempotencyKey": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ownerId",
+                  "revisionId",
+                  "creditedAuthor",
+                  "action",
+                  "rightsConfirmed",
+                  "idempotencyKey"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listOriginals",
+        "summary": "Read original publication history",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/releases/{id}/cancel": {
+      "post": {
+        "operationId": "cancelOriginal",
+        "summary": "Cancel unsent original",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/releases/{id}/reconcile": {
+      "post": {
+        "operationId": "reconcileOriginal",
+        "summary": "Read-only reconciliation of uncertain original",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/releases/{id}/materialize-media": {
+      "post": {
+        "operationId": "materializeOriginalMedia",
+        "summary": "Explicitly authorize public images for an already accepted exact Ghost revision; never create or update a Ghost post",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Media command queued; inspect original media_history and state. Partial file publication remains visible; reconciliation itself never creates public files.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ownerId": {
+                    "type": "string"
+                  },
+                  "revisionId": {
+                    "type": "string"
+                  },
+                  "rightsConfirmed": {
+                    "const": true,
+                    "type": "boolean"
+                  },
+                  "idempotencyKey": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ownerId",
+                  "revisionId",
+                  "rightsConfirmed",
+                  "idempotencyKey"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/targets": {
+      "get": {
+        "operationId": "listDestinations",
+        "summary": "Read enabled destinations and automatic/assisted capability",
+        "parameters": [],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/owners/{id}/connections": {
+      "get": {
+        "operationId": "listOwnerConnections",
+        "summary": "List only configured exact owner connections and current availability",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/releases/{id}/deliveries": {
+      "post": {
+        "operationId": "confirmDistribution",
+        "summary": "Confirm destination, exact owner connection and full/excerpt copy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Delivery confirmation accepted; approval, worker or manual follow-up may still be required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ownerId": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string",
+                    "enum": [
+                      "dev",
+                      "hashnode",
+                      "medium",
+                      "hackernoon"
+                    ]
+                  },
+                  "connectionId": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "create",
+                      "update",
+                      "remove"
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "enum": [
+                      "full",
+                      "excerpt"
+                    ]
+                  },
+                  "excerpt": {
+                    "type": "string"
+                  },
+                  "copyId": {
+                    "type": "string"
+                  },
+                  "rightsConfirmed": {
+                    "type": "boolean",
+                    "const": true
+                  },
+                  "idempotencyKey": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "target",
+                  "connectionId",
+                  "action",
+                  "format",
+                  "rightsConfirmed",
+                  "idempotencyKey"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/deliveries": {
+      "get": {
+        "operationId": "listDistribution",
+        "summary": "Read per-target status, URLs, source verification and history",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/deliveries/{id}/package": {
+      "get": {
+        "operationId": "getAssistedPackage",
+        "summary": "Retrieve content/images/source attribution and submission instructions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/deliveries/{id}/request-approval": {
+      "post": {
+        "operationId": "requestExactApproval",
+        "summary": "Create native NyxID exact request for Admin authorization",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/deliveries/{id}/authorize": {
+      "post": {
+        "operationId": "attachExactApproval",
+        "summary": "Check and queue exact approved content/action/connection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "approvalRef": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "approvalRef"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/deliveries/{id}/cancel": {
+      "post": {
+        "operationId": "cancelDistribution",
+        "summary": "cancel a delivery; uncertain recovery never re-sends",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/deliveries/{id}/reconcile": {
+      "post": {
+        "operationId": "reconcileDistribution",
+        "summary": "reconcile a delivery; uncertain recovery never re-sends",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/deliveries/{id}/report": {
+      "post": {
+        "operationId": "reportAssistedSubmission",
+        "summary": "Record manual follow-up; published requires public verification, removed requires a confirmed removal action and the exact known copy URL returning 404/410",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "submitted",
+                      "reviewing",
+                      "rejected",
+                      "manual_action_needed",
+                      "published",
+                      "removed"
+                    ]
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "state"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/deliveries/{id}/metrics/refresh": {
+      "post": {
+        "operationId": "refreshExternalMetrics",
+        "summary": "Read supported authorized provider counters for this exact known copy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/metrics": {
+      "get": {
+        "operationId": "queryMetrics",
+        "summary": "Query the same workspace metrics as CMS with availability/source/update time",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "article",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ghost",
+                "dev",
+                "hashnode",
+                "medium",
+                "hackernoon"
+              ]
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/owners/{ownerId}/publishers/{subject}": {
+      "put": {
+        "operationId": "setPublishingPermission",
+        "summary": "Current organization Admin grants or revokes Can publish",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "enabled"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/owners/{id}/audit": {
+      "get": {
+        "operationId": "readAudit",
+        "summary": "Owner or current organization Admin reads access/action audit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/sync-links": {
+      "post": {
+        "operationId": "syncPublishedAlternates",
+        "summary": "Retry published-only translation metadata projection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/service/articles/{id}/link-status": {
+      "get": {
+        "operationId": "getPublishedAlternatesStatus",
+        "summary": "Read translation metadata projection status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "NyxIdentity": [],
+            "NyxDelegation": []
+          },
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identity unavailable, revoked or invalid"
+          },
+          "403": {
+            "description": "Current scope, owner or publishing authority denied"
+          },
+          "409": {
+            "description": "Revision, confirmation, destination or execution state requires action"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "NyxIdentity": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-NyxID-Identity-Token"
+      },
+      "NyxDelegation": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-NyxID-Delegation-Token"
+      }
+    }
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "status": "PASS_EXACT_ALL_TABLE_LOGICAL_REPAIR",
+  "cause": "Copied W1 setup retained old volume literal; only combined-personal/combined-org owners and their two profiles were inserted before duplicate sites.id aborted seed. No Worker was started. Exact four inserted rows were removed in one transaction.",
+  "baseline": {
+    "relativePath": "w1/private/final-platform.sqlite",
+    "sha256": "0fc944ab9e440192f831eee2635ad7fff7b4a7b710b039cbb49e9d965e29ba9f"
+  },
+  "incidentDifferences": [
+    {
+      "table": "owner_profiles",
+      "beforeRows": 2,
+      "incidentRows": 4,
+      "addedRows": 2,
+      "removedRows": 0
+    },
+    {
+      "table": "owners",
+      "beforeRows": 5,
+      "incidentRows": 7,
+      "addedRows": 2,
+      "removedRows": 0
+    }
+  ],
+  "postRepairTables": [
+    {
+      "table": "articles",
+      "beforeRows": 16,
+      "afterRows": 16,
+      "allRowsEqual": true
+    },
+    {
+      "table": "asset_publications",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "assets",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "audit",
+      "beforeRows": 72,
+      "afterRows": 72,
+      "allRowsEqual": true
+    },
+    {
+      "table": "author_mappings",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "allRowsEqual": true
+    },
+    {
+      "table": "collection_attempts",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "collection_gaps",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "command_authorities",
+      "beforeRows": 19,
+      "afterRows": 19,
+      "allRowsEqual": true
+    },
+    {
+      "table": "command_derivations",
+      "beforeRows": 12,
+      "afterRows": 12,
+      "allRowsEqual": true
+    },
+    {
+      "table": "deliveries",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "delivery_events",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "delivery_payloads",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "external_metrics",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "idempotency",
+      "beforeRows": 19,
+      "afterRows": 19,
+      "allRowsEqual": true
+    },
+    {
+      "table": "job_leases",
+      "beforeRows": 15,
+      "afterRows": 15,
+      "allRowsEqual": true
+    },
+    {
+      "table": "jobs",
+      "beforeRows": 31,
+      "afterRows": 31,
+      "allRowsEqual": true
+    },
+    {
+      "table": "migrations",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "allRowsEqual": true
+    },
+    {
+      "table": "nyx_approvals",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "observations",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "oidc_states",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "owner_profiles",
+      "beforeRows": 2,
+      "afterRows": 2,
+      "allRowsEqual": true
+    },
+    {
+      "table": "owners",
+      "beforeRows": 5,
+      "afterRows": 5,
+      "allRowsEqual": true
+    },
+    {
+      "table": "projection_retries",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "projections",
+      "beforeRows": 12,
+      "afterRows": 12,
+      "allRowsEqual": true
+    },
+    {
+      "table": "publishers",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "allRowsEqual": true
+    },
+    {
+      "table": "recovery_actors",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "release_links",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "release_media_requests",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "releases",
+      "beforeRows": 19,
+      "afterRows": 19,
+      "allRowsEqual": true
+    },
+    {
+      "table": "revisions",
+      "beforeRows": 24,
+      "afterRows": 24,
+      "allRowsEqual": true
+    },
+    {
+      "table": "sessions",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "settings",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "allRowsEqual": true
+    },
+    {
+      "table": "site_admin_routes",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    },
+    {
+      "table": "sites",
+      "beforeRows": 5,
+      "afterRows": 5,
+      "allRowsEqual": true
+    },
+    {
+      "table": "submissions",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "allRowsEqual": true
+    },
+    {
+      "table": "translations",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allRowsEqual": true
+    }
+  ],
+  "allTableRowsEqual": true,
+  "schemaEqual": true,
+  "integrity": "ok",
+  "foreignKeys": [],
+  "originalW1ContainerRemainedStopped": true,
+  "failedNewContainerStoppedAndRetained": true,
+  "privateArtifacts": [
+    "private/incident/w1-before-repair.sqlite",
+    "private/incident/w1-after-repair.sqlite"
+  ]
+}

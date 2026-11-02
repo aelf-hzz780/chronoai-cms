@@ -1,0 +1,9 @@
+{
+  "revision": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "sourceRevision": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "binarySha256": "37bbb047eef49e460bde3b8acb669bcecafe1439aec1d05565a0813e1e41a7e1",
+  "binaryMatchesExistingReviewedDeployment": true,
+  "runningCopyMatchesBuiltBinary": true,
+  "nativeProcessAliveAtReadback": true,
+  "deploymentAttestation": "Existing root-reviewed local native replacement; process/copy/binary binding read back, no rebuild or upstream-original claim."
+}

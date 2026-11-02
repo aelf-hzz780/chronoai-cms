@@ -1,0 +1,8 @@
+{
+  "revision": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "checkedFiles": 133,
+  "allMatch": true,
+  "runtimeEntry": "src/main.ts",
+  "configurationIsolated": true,
+  "workerDaemonStarted": false
+}

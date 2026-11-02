@@ -1,0 +1,66 @@
+{
+  "status": "DIAGNOSTIC_COMPLETED_WITH_ORIGINAL_RECORDED_RESULT",
+  "runId": "combined-83699b929b1f",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "cleanup": [
+    {
+      "articleUnpublished": true,
+      "articleUrl": "http://localhost:3478/chrono-06e40c22-b73e-4423-8dbb-b51833d6c875/",
+      "imagesRetained": true
+    },
+    {
+      "actor": "admin",
+      "keyId": "6c1637e8-ddfa-4bb3-a428-fc664111aa61",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "56076398-8ff0-4f38-b467-70079d972913",
+      "revoked": true
+    }
+  ],
+  "boundaries": {
+    "identity": "real Nyx049 signed identity/delegation/command source; exact own UserService; per-request formal approvals",
+    "destination": "actual local Ghost organization-en; actual private staged PNG rename and public bytes",
+    "restore": "actual encrypted/decrypted SQLite snapshots; running crash cut captured after first actual image; no four-Ghost full restore repeated",
+    "outsideScope": [
+      "external providers",
+      "production",
+      "all Nyx source modes",
+      "overall D1-D9"
+    ]
+  },
+  "scope": "Bounded diagnostic reproduction of single-image post-materialization render verification; business source unchanged, instrumented copy of renderer only",
+  "diagnosticOnly": true,
+  "articleId": "06e40c22-b73e-4423-8dbb-b51833d6c875",
+  "releaseId": "2928b90c-9bac-4f18-9680-f9ade192ccea",
+  "phase": "suite_finished",
+  "updatedAt": "2026-11-02T10:22:53.787762+00:00",
+  "initialPostMaterializeState": "published",
+  "initialPostMaterializeCode": null,
+  "caseFiles": [
+    {
+      "case": "diagnostic-publish-missing",
+      "path": "cases/diagnostic-publish-missing.json",
+      "sha256": "a0f5f9935756921c9b738f71ccb346897483be461a5a8c45ebb8b30e0c58cd3b",
+      "originalLocalResultSha256": "9be24709b2996c08af665b47d4b01f8eae45e0014732c5ae96e40669acb627eb",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "diagnostic-fresh-single-image",
+      "path": "cases/diagnostic-fresh-single-image.json",
+      "sha256": "e86a4402ad5d378e7edaa0a937df8d482c14496e4638dbe3e09b9a59380281ee",
+      "originalLocalResultSha256": "90f89068d8c136d3bc1d75ba6ad2a2bfa04d8c9e03f5520baa32b18c2d329074",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "diagnostic-unpublish",
+      "path": "cases/diagnostic-unpublish.json",
+      "sha256": "e3ce03153d9340d81459b6c7ad281ac9e79bca223e2d6fcb253d38fd9771f687",
+      "originalLocalResultSha256": "0fe041be7f27d3a4444745a7690a88026f0da3e6d156e35d8c36cc1000084438",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    }
+  ],
+  "originalLocalReportSha256": "c2cb763e6178abfa191eeda1ccb1a968f17fe949f97c3cae4611f77a9ae23f8b"
+}

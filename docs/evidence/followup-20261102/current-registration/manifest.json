@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "status": "PORTABLE_SANITIZED_SHARED_LOCAL_REGISTRATION_REFRESH",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "pathsRelativeTo": "this directory",
+  "files": {
+    "discovery.json": {
+      "sha256": "093b2a7b60e698119b843dcb7cb8afa7754fe948c9f00898f899c4edd107f150",
+      "bytes": 48413
+    },
+    "endpoints-after.json": {
+      "sha256": "3b60d4dea855f3de12b26525b90c27f25803f01cf9ff71f3c6e5a27e61b2efc9",
+      "bytes": 48343
+    },
+    "endpoints-before.json": {
+      "sha256": "32760e703e3ce69b19bf35a5537d9dd7a495c7d4fff7466cb2e0200572dcaf71",
+      "bytes": 22
+    },
+    "openapi.json": {
+      "sha256": "7f27bbc917a5c9a386d524480ba6d6a50de0dfd2a28a73a8696925a03b8a8dd0",
+      "bytes": 63521
+    },
+    "report.json": {
+      "sha256": "7bf9ed1d7b4984625cb19052c90e518b29b9a7f4df7ffb15f348ea76edc5da36",
+      "bytes": 8459
+    },
+    "rollback.md": {
+      "sha256": "6336866a2f075c42517c4ae09c0dd667d834d70875b7cc9f950cd705948f6f6b",
+      "bytes": 2701
+    },
+    "service-field-diff.json": {
+      "sha256": "2a9a4ab8b7364a2179940c27ea1db0ab854499a93b27f80715ce188181bc8500",
+      "bytes": 1788
+    }
+  },
+  "excluded": [
+    "operator/session credentials",
+    "private runtime env",
+    "full catalog private pre/postimages",
+    "database or user content"
+  ],
+  "knownSecretExactValueScan": {
+    "checkedValues": 8,
+    "matches": 0
+  }
+}

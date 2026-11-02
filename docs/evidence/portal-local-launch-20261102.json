@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "level": "LOCAL_ACTUAL_BROWSER_HISTORICAL_FIXED_VERSION",
+  "status": "PASS_BOUNDED_ACTUAL_LOCAL_BROWSER",
+  "at": "2026-11-02T04:16:49.208703+00:00",
+  "versions": {
+    "frontendCommit": "c65dc4bedb7da79cf0fb477e6f5bd809f03aec9b",
+    "backendCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+    "cmsBusinessCommit": "041865217bb876b4d885a88a1e1344cb11af4345"
+  },
+  "localPatchDependency": true,
+  "officialCheckoutUnmodified": true,
+  "checks": {
+    "homepageConfiguredViaOfficialApi": true,
+    "directEntryIdentityMatched": true,
+    "workspacesMatched": true,
+    "noTokensAddedToHomepage": true,
+    "publicPageContentAndRevisionMatched": true
+  },
+  "personalBranch": {
+    "ordinaryUser": true,
+    "portalPath": "NyxID login → Open Studio → Services → existing BlogSystem service group → Open app → default OAuth → CMS",
+    "historicalArticleCountBeforeSmoke": 10,
+    "newLocalPublicationState": "published"
+  },
+  "organizationBranch": {
+    "ordinaryOrganizationAdmin": true,
+    "portalClicked": true,
+    "defaultOidcCallbackCompleted": true,
+    "portalAndDirectSubjectEqual": true,
+    "normalCmsLogoutBetweenEntries": true,
+    "historicalOrganizationArticles": 7
+  },
+  "sourceEvidence": {
+    "privateRelativePath": "local-runtime-20261102/portal-browser-and-publish-review.json",
+    "sha256": "f857a8aa9428171b2b51d0d3bc70f56cd186247a53cd04c8155e47627a563a2a",
+    "includedInPublicBundle": false
+  },
+  "limits": [
+    "This is the earlier portal fixed-version check, not a fresh run against the final combined CMS SHA.",
+    "Portal patch c65dc4be is locally implemented and deployed; it is not upstream 38bae2f behavior.",
+    "No production or external-provider acceptance; screenshots and private identity/content records remain outside Git."
+  ]
+}

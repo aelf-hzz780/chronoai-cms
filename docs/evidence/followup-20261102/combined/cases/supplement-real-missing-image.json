@@ -1,0 +1,135 @@
+{
+  "case": "supplement-real-missing-image",
+  "operation": "publish-missing",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "sourceFilesVerified": 133,
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "beforeHistory": [],
+  "release": {
+    "id": "b00cf308-dacb-4486-b8a3-6fc691eee1eb",
+    "state": "verifying",
+    "error_code": "ORIGINAL_NOT_VERIFIED",
+    "remote_id": "6ae862b4ed2cd700010313a9",
+    "url": "http://localhost:3478/chrono-5a273f5d-d6c7-4c59-8a5c-ec92cbb2bd4f/"
+  },
+  "afterHistory": [],
+  "pendingMedia": 0,
+  "actor": {
+    "subject": "0f55b864-677f-432b-afcd-0c8de064b69c",
+    "fromCurrentRecovery": false
+  },
+  "assets": [
+    {
+      "id": "c1a6ffed-eb25-46ea-853b-5568ee402a11",
+      "sha256": "aec8d770e88d8ea5459b5edf7ef52ba547e2c3e0b155818e73cb9e9597a3ccc8",
+      "url": "http://localhost:3478/content/images/chrono/aec8d770e88d8ea5459b5edf7ef52ba547e2c3e0b155818e73cb9e9597a3ccc8.png",
+      "publicMatches": false
+    }
+  ],
+  "originalReleaseEvidencePreserved": true,
+  "projectionsBefore": 1,
+  "projectionsAfter": 1,
+  "ghostWrites": 1,
+  "ghostReads": 1,
+  "materializeCalls": 1,
+  "materialized": 0,
+  "boundaryCalls": 0,
+  "revoked": false,
+  "http": [
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/openid-configuration",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/jwks.json",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "POST",
+      "status": 201
+    }
+  ],
+  "approvals": [],
+  "passed": true,
+  "evidenceBoundary": "real NyxID049 + fixed Blog386b965, actual local Ghost; scoped harness fault injection identified by operation"
+}

@@ -1,0 +1,11 @@
+{
+  "status": "FAILED",
+  "checks": {},
+  "transport": "actual native NyxID MCP 2025-03-26",
+  "sourceKeyScope": "proxy; exact newly created personal UserService only",
+  "calls": [],
+  "failure": {
+    "type": "RuntimeError",
+    "code": "HTTP_403_POST_/mcp"
+  }
+}

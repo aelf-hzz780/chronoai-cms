@@ -1,0 +1,11 @@
+{
+  "id": "077c7587-1d20-4a99-b3e0-1d6c7a1d7bf0",
+  "name": null,
+  "redirect_uris": [
+    "http://localhost:3560/auth/callback"
+  ],
+  "client_type": "confidential",
+  "allowed_scopes": "openid profile proxy",
+  "is_active": true,
+  "require_pkce": null
+}

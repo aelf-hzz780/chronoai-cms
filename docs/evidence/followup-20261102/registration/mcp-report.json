@@ -1,0 +1,39 @@
+{
+  "status": "PASS_BOUNDED_LOCAL_MCP_DISCOVERY_AND_READ",
+  "checks": {
+    "search_result_not_error": true,
+    "actual_getworkspaces_not_error": true,
+    "actual_subject_is_own_dedicated_user": true,
+    "actual_personal_workspace_available": true,
+    "tools_list_operation_set_exact": true,
+    "search_results_are_registered_operations": true
+  },
+  "transport": "actual native NyxID MCP 2025-03-26",
+  "sourceKeyScope": "proxy; exact newly created personal UserService only",
+  "calls": [
+    {
+      "method": "initialize",
+      "rpcError": false
+    },
+    {
+      "method": "notifications/initialized",
+      "rpcError": false
+    },
+    {
+      "method": "tools/list",
+      "rpcError": false
+    },
+    {
+      "method": "tools/call",
+      "rpcError": false
+    },
+    {
+      "method": "tools/call",
+      "rpcError": false
+    }
+  ],
+  "sessionHeaderPresent": false,
+  "directToolsListSelectedCount": 35,
+  "searchOperationCount": 25,
+  "searchLimitation": "Search is capped at25 matches despite requested100; tools/list and MCP config provide all35."
+}

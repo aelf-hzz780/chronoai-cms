@@ -1,0 +1,63 @@
+{
+  "case": "encrypted-queued-restore",
+  "operation": "restore",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "sourceFilesVerified": 133,
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "beforeHistory": [
+    {
+      "id": "181509c7-613b-4c10-a088-9acec4b1a541",
+      "state": "blocked",
+      "actorSha256": "71661d0e88fda059af1d5f7c743fce3fcaa068ee121a45d7fee62302d63de916",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+    },
+    {
+      "id": "a460da66-7373-4787-8302-caa014c55353",
+      "state": "blocked",
+      "actorSha256": "c1852adb551e3b6ef777247716a48d7153b47f88fe4b43d1bc7e95ce335e3bb5",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+    },
+    {
+      "id": "e6e2f0c4-6df1-4d0c-9aad-734db1beb1e7",
+      "state": "queued",
+      "actorSha256": "3305a50003bac1aac9a0906009354727525c391a9a44edb50a94a59efc10a573",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": null
+    }
+  ],
+  "restore": {
+    "databaseRetainedPrivately": true,
+    "mediaBefore": {
+      "state": "queued",
+      "actorSha256": "3305a50003bac1aac9a0906009354727525c391a9a44edb50a94a59efc10a573",
+      "digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0
+    },
+    "mediaAfter": {
+      "state": "blocked",
+      "actorSha256": "3305a50003bac1aac9a0906009354727525c391a9a44edb50a94a59efc10a573",
+      "digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "RESTORED_RECONCILIATION_REQUIRED"
+    },
+    "outboundPaused": true,
+    "queuedOrRunningMedia": 0,
+    "integrity": "ok",
+    "encryptedBytes": 479277
+  },
+  "ghostWrites": 0,
+  "ghostReads": 0,
+  "materializeCalls": 0,
+  "materialized": 0,
+  "boundaryCalls": 0,
+  "revoked": false,
+  "http": [],
+  "approvals": [],
+  "passed": true,
+  "evidenceBoundary": "real NyxID049 + fixed Blog386b965, actual local Ghost; scoped harness fault injection identified by operation"
+}

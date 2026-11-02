@@ -1,0 +1,118 @@
+{
+  "at": "2026-11-02T10:32:02.429770+00:00",
+  "reviewer": "evidence_audit",
+  "status": "PASS_BOUNDED_COMMON_VERSION_386B965_REAL_NYX049",
+  "stage": 1,
+  "blockingFindings": [],
+  "businessFixRequired": false,
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "businessSourceSameAsW2": "83b4b8e5fa28cb18a6926f3a10d2205e04f49ab1",
+  "nyxidBackendSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "nyxidNativeBinarySha256": "37bbb047eef49e460bde3b8acb669bcecafe1439aec1d05565a0813e1e41a7e1",
+  "reviewBasis": {
+    "fixedSourceFilesChecked": 133,
+    "primaryCombinedCaseCount": 13,
+    "allRetainedRuns": 5,
+    "allRetainedCasesIncludingDiagnostic": 23,
+    "registrationOperationsCompared": 35,
+    "combinedPortableFilesVerified": 36,
+    "registrationPortableFilesVerified": 30,
+    "manifestMismatches": [],
+    "setupIncident": "Exact logical preservation of W1 baseline, all36 tables plus schema, integrityok/FK0; no DB byte-equality claim.",
+    "cleanup": "Own test services/credentials inactive, isolated APIs stopped, own queues paused and empty of active jobs/media; three sample articles404; four authorized generated PNGs retained and independently hash-verified. Shared3457 andNyx healthy."
+  },
+  "knownNonBlockingObservations": [
+    {
+      "observation": "Supplemental fresh materialization returned ORIGINAL_NOT_VERIFIED after one authorized public image; exact false stage/cause not recorded.",
+      "assessment": "Conservative uncertain+partial result was retained without resend; original fixed renderer current Admin readonly recovered same remoteID/URL/revision/image hash with zero writes. Diagnostic renderer result excluded from fixed-source positive cases. Does not establish first-attempt renderer stability or an environment cause."
+    },
+    {
+      "observation": "MCP tools schema omits listarticles limit/offset numeric bounds.",
+      "assessment": "Admin/config preserve bounds and business content validation enforces them; no exact entire MCP schema or all35 executions claimed."
+    },
+    {
+      "observation": "Local3457 persistent service catalog was not re-read because prior Admin session expired.",
+      "assessment": "Separate new3560 registration/parser/import/MCP route is verified. Matching3457 currentOpenAPI35 is not proof of persistent catalog state."
+    }
+  ],
+  "conditionalLocalCutover": {
+    "allowedByThisReview": true,
+    "authorization": "Existing user-authorized conditional local3457 update; this is technical review and adds no new authorization.",
+    "candidateSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+    "oldSha": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+    "oldContainerId": "921e41205d5252ef2f5813243f827fad12c1b43c8e085c7e2723ca4de2e5dd4c",
+    "controllerSha256": "7efdc916c1df982d1b5229e17a86b28e5d15bb443207df6c10d407ac20992186",
+    "allowedSchemaAdditions": [],
+    "immediateGates": [
+      "Hold exclusive runtime-heavy.lock after validation locks released.",
+      "Recheck exact preserved old containerID/source hashes and worker; single3457 port owner.",
+      "Require queued/running jobs0, media0, delivery rows0 before switch; preserve outbound pause state.",
+      "Bind approval to fixed candidate and this review; run reviewed controller; keep source archives/backup/oldcontainer for rollback.",
+      "If business code/controller changes, review updated change before proceeding."
+    ],
+    "postCutoverRequired": "Independent actual container/source files, workerPID, schema/DB/queue/pause,3457 health and rollback-retention verification; final documentation/public-manifest review is stage2."
+  },
+  "boundaries": {
+    "scope": "Gist v0.7 D1-D9/applicable A01-A52 changed recovery/media paths and bounded registration evidence only.",
+    "document": "Portable evidence and configuration/reproduction are reviewed; final parent manifest and docs remain separate stage2.",
+    "local": "Real patchedNyx049, SQLite recovery and localGhost organizationEN; separateW2 fourGhost evidence retained.",
+    "live": "Not asserted; no production/external-provider lifecycle or numerical RPO/RTO claim.",
+    "overallAcceptance": "NOT_ACCEPTED",
+    "fullW1W2MatrixRerun": false,
+    "diagnosticOnlyCasesExcludedFromPositiveAcceptance": true,
+    "heartbeatMustRemain": "PAUSED"
+  },
+  "evidence": [
+    {
+      "path": "independent/initial-evidence-docs-audit.json",
+      "sha256": "1bec928f550444e2d5e30c5d499efbadfe06347193fd9bd8194727456039c248"
+    },
+    {
+      "path": "independent/setup-incident-independent-review.json",
+      "sha256": "53838f80aaae35bf9d9a40bae7b61764e5c9e7fbe1e43d29af86a7e9ca29949c"
+    },
+    {
+      "path": "independent/combined-core-review.json",
+      "sha256": "d23ec5ae2c6934a1ff2820ae417c5637f92a82c3dd3c5a385d1f70f006ad6b2c"
+    },
+    {
+      "path": "independent/combined-postflight-independent.json",
+      "sha256": "ddd642de1ebc66d7a4b6080a11bffec839d3cc727c2b766cb719daa6079b815d"
+    },
+    {
+      "path": "independent/combined-images-independent.json",
+      "sha256": "47052c7e34e59a31a89530a8ecdb03b14608518b5e275451d00259e0994fc4e6"
+    },
+    {
+      "path": "independent/registration-independent-review.json",
+      "sha256": "54e586202c0f605c6ed3d78e0f12c9dbe0d022860e12f83f3ad06bead1a86a03"
+    },
+    {
+      "path": "independent/nyx-bundle-review.json",
+      "sha256": "69fb4a25a84dae2e2868b57bf5129f275376aa98b9191a8326a76f762eff67f7"
+    },
+    {
+      "path": "independent/cutover-controller-review.json",
+      "sha256": "dda523536b5e6dfb77ec2688e7caba28224d3c07dcaf54c62451356cf5ac8041"
+    },
+    {
+      "path": "integrated-check.json",
+      "sha256": "56ca9804729a40cb6e218a1fca1a849ccaa6adcb5907fd7a8c2ccb41cf6bbeb4"
+    },
+    {
+      "path": "combined/evidence/manifest.json",
+      "sha256": "ddf19b0c3066ba142d4f2fcdddad31ba0de4db2c2457fb8c72b5dcf1440c3515"
+    },
+    {
+      "path": "combined/evidence/run-index.json",
+      "sha256": "0199924dcc6e2d30b5e75bf143a3ac0ba4bbc8d11e19e33b6ec97b05913cb872"
+    },
+    {
+      "path": "registration/portable/manifest.json",
+      "sha256": "eb24275b7a16123653c3dd3ac970f7684bc2946a121a42ce860feafd37ba8a4f"
+    }
+  ],
+  "privateEvidencePathsRelativeTo": ".runtime/acceptance-review/parallel-local-20261102/followup",
+  "privateEvidenceFilesIncludedInGit": false,
+  "publicReportScope": "Stage1 before local cutover and existing3457 registry refresh; later runtime/registration evidence is separate."
+}

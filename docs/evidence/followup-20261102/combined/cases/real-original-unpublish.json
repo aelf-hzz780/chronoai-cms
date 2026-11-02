@@ -1,0 +1,230 @@
+{
+  "case": "real-original-unpublish",
+  "operation": "unpublish",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "sourceFilesVerified": 133,
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "beforeHistory": [],
+  "release": {
+    "id": "250e9b7d-04f3-4a2d-9f82-02fa1af3969e",
+    "state": "unpublished",
+    "error_code": null,
+    "remote_id": "6ae861b7ed2cd7000103139e",
+    "url": "http://localhost:3478/chrono-2bc56515-f12e-4b56-a8a9-b421d00d181f/"
+  },
+  "afterHistory": [],
+  "pendingMedia": 0,
+  "actor": {
+    "subject": "e1287e93-b76b-4750-afbb-d40474ba40c0",
+    "fromCurrentRecovery": false
+  },
+  "assets": [
+    {
+      "id": "8e883c5e-d634-40fc-a37d-c4e16907142f",
+      "sha256": "69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8",
+      "url": "http://localhost:3478/content/images/chrono/69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8.png",
+      "publicMatches": true
+    },
+    {
+      "id": "bf4c784b-78c4-4e62-9927-cf4cbc501116",
+      "sha256": "40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea",
+      "url": "http://localhost:3478/content/images/chrono/40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea.png",
+      "publicMatches": true
+    }
+  ],
+  "ghostWrites": 1,
+  "ghostReads": 5,
+  "materializeCalls": 0,
+  "materialized": 0,
+  "boundaryCalls": 0,
+  "revoked": false,
+  "http": [
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/openid-configuration",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/jwks.json",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/6ae861b7ed2cd7000103139e/",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3478",
+      "path": "/chrono-2bc56515-f12e-4b56-a8a9-b421d00d181f/",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3478",
+      "path": "/content/images/chrono/69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8.png",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "unpublish",
+      "origin": "http://localhost:3478",
+      "path": "/content/images/chrono/40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea.png",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "approvals": [],
+  "passed": true,
+  "evidenceBoundary": "real NyxID049 + fixed Blog386b965, actual local Ghost; scoped harness fault injection identified by operation"
+}

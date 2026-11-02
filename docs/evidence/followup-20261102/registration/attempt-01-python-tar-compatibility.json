@@ -1,0 +1,17 @@
+{
+  "status": "FAILED",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "checks": {
+    "source_head": true,
+    "fresh_owned_objects": true
+  },
+  "limitations": [
+    "Local native NyxID with local patch; not upstream original, production or external publication acceptance.",
+    "Discovery does not prove every operation executes through every transport."
+  ],
+  "failure": {
+    "type": "TypeError",
+    "code": "extractall() got an unexpected keyword argument 'filter'"
+  }
+}

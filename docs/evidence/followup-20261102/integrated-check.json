@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-02T10:02:12.491747+00:00",
+  "status": "PASS",
+  "testedCommit": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "node": "24.18.0",
+  "command": "npm run check",
+  "typecheck": "PASS",
+  "tests": 303,
+  "passed": 303,
+  "failed": 0,
+  "skipped": 0,
+  "logSha256": "d7ffeb9959fe1b455c47d59180fae76cc7152e9c01555f90cf44c38aed89b602",
+  "level": "LOCAL_TESTS_NOT_NATIVE_ACCEPTANCE",
+  "businessSourceChanged": false
+}

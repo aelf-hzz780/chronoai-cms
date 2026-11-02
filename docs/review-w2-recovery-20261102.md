@@ -7,7 +7,7 @@
 - 源业务：`0b0e9d11dacd0c4c069bc0ee9ce8706142036922`。
 - 恢复及受影响业务复验：`83b4b8e5fa28cb18a6926f3a10d2205e04f49ab1`，分支 `codex/w2-current-recovery`。
 - 本轮有界本地恢复通过。真实四站 Ghost／MySQL、新卷、加密包及素材文件均实际运行；当前授权协议另以受控签名 issuer／代理验证。不能将此描述为全套 Native NyxID 或真实外部平台验收，也不提升整体 D1–D9 状态。
-- 证据目录：`/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/parallel-local-20261102/w2/`。`private/` 内含凭据、数据库与备份，禁止上传或贴入报告；公开摘要仅含计数、状态与摘要值。
+- 可移交证据：[W2 脱敏摘要](evidence/followup-20261102/w2-recovery.json)与[整合 manifest](evidence/followup-20261102/manifest.json)。私有原件位于本机 `.runtime/acceptance-review/parallel-local-20261102/w2/`；其中凭据、数据库与备份不进入 Git，公开包不冒充完整原始数据。
 
 ## 修复与审查
 
@@ -41,6 +41,6 @@ TDD 原版 8 项中 7 失败，修复后 8/8；相关回归 47/47、typecheck、
 
 ## 证据边界与交接
 
-本轮当前数据与新增表／素材实现均重新演练，未用旧 `0418652` 恢复成功替代。历史 Native NyxID 双入口／权限证据仅作为已有能力背景；W1 负责当前 Native 来源及 R031。整合此补丁时，W1 应补验“pending media 下显式 reconcile 使用当前 Actor”及“后续补图使用新有效授权”，不可把不同 SHA 的两项成功直接汇总为最终版本通过。
+本轮当前数据与新增表／素材实现均重新演练，未用旧 `0418652` 恢复成功替代。历史 Native NyxID 双入口／权限证据仅作为已有能力背景；W1 负责当前 Native 来源及 R031。整合此补丁时，W1 应补验“pending media 下显式 reconcile 使用当前 Actor”及“后续补图使用新有效授权”，不可把不同 SHA 的两项成功直接汇总为最终版本通过。后续共同版本的定向真实补验与独立审查见[整合交接](handoff-20261102.md)。
 
 生产域名、正式账号／外部平台、订阅付款方、保留策略、离机备份和生产容量／恢复目标仍属于整体交付依赖；它们没有阻止本轮本地 W2 工作完成。本轮不宣称真实 DEV／Hashnode 发布或恢复、不向 NyxID 上游推送、不自合并、不宣称整体 D1–D9 完成。

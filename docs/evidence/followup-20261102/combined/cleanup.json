@@ -1,0 +1,73 @@
+{
+  "status": "PASS_COMBINED_CLEANUP_DATA_RETAINED",
+  "actions": [
+    {
+      "actor": "solo",
+      "ownConnectionInactive": true,
+      "pendingApprovals": 0
+    },
+    {
+      "actor": "admin",
+      "ownConnectionInactive": true,
+      "pendingApprovals": 0
+    },
+    {
+      "actor": "member",
+      "ownConnectionInactive": true,
+      "pendingApprovals": 0
+    },
+    {
+      "actor": "publisher",
+      "ownConnectionInactive": true,
+      "pendingApprovals": 0
+    }
+  ],
+  "registrationsInactive": true,
+  "testUsersInactive": true,
+  "queue": {
+    "databaseRetainedPrivately": true,
+    "outboundPaused": true,
+    "cancelledProjectionJobs": 3,
+    "activeJobs": 0,
+    "activeMedia": 0,
+    "integrity": "ok"
+  },
+  "isolatedApiStopped": true,
+  "publicArticleReadbacks": [
+    {
+      "url": "http://localhost:3478/chrono-06e40c22-b73e-4423-8dbb-b51833d6c875/",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:3478/chrono-5a273f5d-d6c7-4c59-8a5c-ec92cbb2bd4f/",
+      "status": 404
+    },
+    {
+      "url": "http://localhost:3478/chrono-2bc56515-f12e-4b56-a8a9-b421d00d181f/",
+      "status": 404
+    }
+  ],
+  "preservedServices": [
+    {
+      "url": "http://localhost:3457/health",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3001/health",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3000",
+      "status": 200
+    }
+  ],
+  "retained": [
+    "Own stopped container/independent volume",
+    "Encrypted SQLite archives and private snapshot evidence",
+    "Own inactive users/org/client/catalog/UserServices",
+    "Four legitimately public generated PNGs retained; three sample article URLs404",
+    "Failed setup container stopped; W1 data independently verified restored"
+  ],
+  "originalLocalCleanupSha256": "91aa2b11e193cfd4cd31b7bd20b3ad11b0fb6874ba936ec518a762e22418f856",
+  "portableCorrection": "Corrected summary counts from actual deduplicated image readbacks and three exact article URL404 observations; original raw report retained unchanged."
+}

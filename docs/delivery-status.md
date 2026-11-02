@@ -1,18 +1,14 @@
-# 交付状态（开发台账，不是独立验收结论）
+# 交付状态（开发台账，不是正式签收）
 
-分支：`codex/003-blogsystem-delivery`。当前独立验收业务基准为 `041865217bb876b4d885a88a1e1344cb11af4345`（R034 MCP文件交付，保留4a27487的R033恢复与abfb988的R031临时保护；R030为76595bc，含R029 `2d65bc0`）；此前 R028 为804e7c4，R027为b1d30b2，R026文档为557518d／fe3fd60。I1–I13及其历史修复沿Git记录和各review文档追踪；真实NyxID及保存授权修复见 [I14](review-i14.md)、[I15](review-i15.md)。实际证据按固定业务源码与逐文件指纹对应；11月2日新增的 consumer 候选另见 I22，不冒充该已验收基准。
+当前入口为 [2026-11-02 W1/W2 整合交接](handoff-20261102.md)与[仓库内证据 manifest](evidence/followup-20261102/manifest.json)。固定整合源码 `386b9652dc431bb83e4864d5b046b378110ee88d`；W2 业务修复为 `83b4b8e`。当前实现、本地实测、本地部署、远端 push、PR 五种状态独立记录，正式 D1–D9 仍为 **NOT_ACCEPTED**。
 
-状态含义：implemented为开发状态；Document／Local／Live分别记录。历史上R001–R030在各自固定SHA有界关闭（29项必需缺陷及R021非门禁），R029／R030固定业务源码为76595bc；51 PASS／A05 BLOCKED仅是R031发现前的历史Local modeled统计，不能作为abfb988的当前结论。历史报告及边界见 [I15](review-i15.md#独立有界闭合2026-10-30)。
+W1 在 `0b0e9d1`＋本地 NyxID `049ee1c` 的选定 service 路径有界关闭 R031，详见 [W1](acceptance-w1-20261102.md)。W2 在 `83b4b8e` 完成当前实现的四站加密恢复、旧 media 命令终结／只读恢复修复及相关回归，详见 [W2](review-w2-recovery-20261102.md)。两项不同 SHA 的成功不能直接合成共同版本通过；整合补验与独立 reviewer 的结论单列在当前交接。
 
-**当前以[最新root独立台账](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/integration-review/case-ledger-current.json)为准。** [2026-10-30 独立本地收尾](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/local-handoff-complete.json)确认固定业务源码 `0418652` 的已识别可独立推进本地工作已完成，整体仍为 `NOT_ACCEPTED`。该收尾是2026-10-30固定快照；11月2日重新授权推进的 I22 consumer 候选与独立验证另行追踪。实际官方 NyxID OAuth／proxy／MCP／默认浏览器、四 Ghost 发布／生命周期／私有素材／指标及加密隔离恢复的有界证据见 [I20](review-i20.md) 与 [I21](review-i21.md)；组织中文已同 ID 只读认回并完成后续下线，首次 INTERNAL 原因仍未知。剩余工作依赖 NyxID 上游能力、真实外部平台账号与精确内容／动作授权、目标生产运维输入及 PR 创建权限。临时安全阻断的有界 PASS 不自动改写完整能力台账；R033 已在4a27487／3ded07e、R034 已在0418652／98bac5b独立有界关闭。不以重新确认或重发替代对账，不外推旧R004覆盖。
+普通门户 Launch 已在本地 `c65dc4be` 实现、部署，并有个人／组织 Admin 的门户与直接 CMS 一致性证据。后端 `049ee1c` 与门户均为本地补丁，原官方 `38bae2f` checkout 保留。目标部署、真实外部账号／内容动作、精确连接／批准、运维与恢复目标仍需输入；不把所有 NyxID credential／transport 扩展设为新产品门禁。
 
-该独立收尾快照的正式分层统计仍为 Document 48 PASS／4 BLOCKED、Local 49 PASS／2 FAIL／1 BLOCKED、Live 52 BLOCKED；登记缺陷关闭36项（其中必需31项）、开放1项 R031、可独立推进本地工作0项、正式交付签收0项。Local 的有界实际补充证据不自动重算历史 modeled 场景。验收源／恢复 App 与四 Ghost 均已停止并保留数据，dev八容器原 ID／image／volume及观察运行环境已归还；此处记录收尾状态，不代表当前持续运行健康。
+历史 2026-10-30 的 `0418652` 收尾曾为 Document 48 PASS／4 BLOCKED、Local 49 PASS／2 FAIL／1 BLOCKED、Live 52 BLOCKED。该统计和下方历史 A 表不重新计数，也不描述当前 R031 的有界结果；正式场景仍按原文逐项验收。R029／R030／R032／R033／R034 及其他已闭合问题保留原固定版本边界，旧未知原因和失败现场不删除。
 
-**R031/P1 OPEN（A09/A15、D2/D3/D5/D9）**：官方普通delegation缺少原key在线来源。abfb988临时fail-closed保护已获root Local专项及独立App3447真实官方NyxID重放的有界PASS，见[实际报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/actual-nyxid/review.json)；完整key/child命令来源契约仍BLOCKED上游。R032/P2文档修正已在11b6011独立有界关闭，见[报告](/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/acceptance-review/reviews/abfb988/R032-documentation-retest.json)。**R033/P1（A36/A49/A50、D7/D9）已独立有界关闭**，见 [I18](review-i18.md)。**R034/P1（A08/A17、D2/D4）已独立有界关闭**，见 [I19](review-i19.md)。R029／R030不重开，R031不降N/A，边界见 [I17](review-i17.md)；研究见 [I16](review-i16.md)。
-
-历史独立综合账目：原任务`.runtime/acceptance-review/integration-review/case-ledger-current.json`（2026-10-29T11:09:28.646402+00:00，业务源码804e7c4）。当时Document为48 PASS／4 BLOCKED（A01/A05/A06/A52）、Local为51 PASS／1 BLOCKED（A05缺具名目标部署／付款／运维输入）、Live为52 BLOCKED，整体BLOCKED_EXTERNAL_INPUTS_NOT_ACCEPTED。该账目及“可推进Local工作为0”属于当时结论，不包含后续R029／R030闭合及真实NyxID复验；下方矩阵保留该独立结论，新增开发证据另行标注。A43/A44不强求Unavailable或未经授权的外部数字。历史来源见[独立Local收尾](review-i13.md#独立-local-收尾2026-10-29)。
-
-独立恢复证据继续按固定74978bc及各历史工件的边界保留，详见review-local-recovery-749.md。环境按轮次区分：I14／I15（2d65bc0／76595bc）的开发联调使用独立App3117及其DB/media和测试用户/client/org/service；I17（abfb988）的开发验证另建App3437，I18将其安全重启至4a27487，I19重启至0418652做MCP文件验证后停止，root独立重放另用App3447。这些轮次不是同一环境或同一证据集，端口仅作本地证据标识，不保证持续运行。I17／I18 Worker只在私有一致SQLite副本配安全adapter运行，I19未启动Worker，均无真实Ghost/provider写入。历史R032仅修文档；I18／I19只操作自己的3437对象，未操作root3447／3417、旧3117、Ghost/dev/baseline或其恢复卷，未改角色／Publisher或官方NyxID源码，未push／merge。
+以下 I2–I22 为历史迭代记录；其中“当前”“仍待验”均指记录当时，最新状态以上述交接为准。
 
 ## 增量 I2
 
@@ -94,14 +90,14 @@ R031已在真实API key撤服务范围及删除两条路径复现；Worker安全
 
 2026-11-02 按已确认的专用 command authority V1 契约接入签名／实际 HTTP 字节／专用在线精确核验、事务内唯一 jti 命令绑定、显式 metadata 后继及两个 Worker 的最终发送守卫。有效 child、在线失败／撤权、组织 Publisher 与独立 exact approval 不换源等已由本地模型测试；本轮独立发现后的修复补充签名版本／incarnation严格检查、全caller只读恢复零自动metadata、公开图片独立授权与CMS显式补图／partial计数；后续独立发现的跨volume EXDEV部署阻塞另以每站私有staging配置和真实隔离mount专项修复，未获部署或联合验收；真实 NyxID 后端固定 SHA 的联合验证与独立验收待完成，不能由 fixture 关闭 R031。恢复仍按当前 caller access 只读，不把 reconcile proof 当新写授权；完整范围、适用限制、测试与升级回滚见中英 [I22](review-i22.md)。既有0418652实际证据不自动覆盖此候选，整体仍NOT_ACCEPTED。
 
-Git交付：2026-11-02 root已独立验收并正常push `6ea9ecd` 至 `origin/codex/003-blogsystem-delivery`，main保持原始baseline `019222c`，未force／merge。I22候选及前置授权测试 `9cf67b8` 尚待固定commit独立审查，由root验收后push。PR与完整D/A沿root台账，不将历史403当作本轮重新探测结果。R031完整能力及A01普通门户入口仍待各自新增证据。
+I22记录时的Git交付：2026-11-02 root已独立验收并正常push `6ea9ecd` 至 `origin/codex/003-blogsystem-delivery`，main保持原始baseline `019222c`，未force／merge。I22候选及前置授权测试 `9cf67b8` 尚待固定commit独立审查，由root验收后push。PR与完整D/A沿root台账，不将历史403当作本轮重新探测结果。R031完整能力及A01普通门户入口仍待各自新增证据。
 
 ## D1–D9
 
 | 交付 | 开发状态 | 证据层级 | 剩余正式门禁 |
 |---|---|---|---|
-| D1 | implemented | 历史独立Local＋部署模板；0418652实际NyxID双入口／默认浏览器认证与退出有界通过 | 普通Nyx门户Launch上游能力、目标HTTPS部署／容量／付款运维责任及正式交接 |
-| D2 | implemented | 历史独立Local API；0418652实际service代理／CMS授权／MCP文件交付独立有界通过 | R031在线可验key/child来源契约、目标service注册／正式交接与真实外部连接全部用例验收 |
+| D1 | implemented | 历史独立Local＋部署模板；0418652实际NyxID双入口／默认浏览器认证与退出有界通过 | 本地补丁已实现门户Launch；目标HTTPS部署／容量／付款运维责任及正式交接 |
+| D2 | implemented | 历史独立Local API；0418652实际service代理／CMS授权／MCP文件交付独立有界通过 | 所选本地来源路径有界验证；目标service注册／正式交接与真实外部连接用例验收 |
 | D3 | implemented | 独立Local角色／owner／入口／时序闭合 | 目标NyxID角色／委托／撤权契约及共享部署门禁 |
 | D4 | implemented | 独立Local源文／素材／冲突／译文／CMS闭合 | 共享目标身份与部署门禁 |
 | D5 | implemented | 独立Local四Ghost／更新／取消／核验闭合 | 目标身份与部署门禁 |
@@ -112,7 +108,7 @@ Git交付：2026-11-02 root已独立验收并正常push `6ea9ecd` 至 `origin/co
 
 ## A01–A52
 
-下表保留以804e7c4历史综合账目为基础、叠加截至76595bc有界补充的证据索引；Document／Local列未回填R031之后的当前状态，不能读作abfb988、4a27487或0418652验收结果，R031／R033／R034相关场景当前以本页首部链接的root台账为准。开发implemented不代表签收；所有正式场景仍受共享A01/A05/A06目标门禁及适用外部输入约束，不以测试名推断结论。详细来源与最新状态以root独立台账为准。
+下表保留以804e7c4历史综合账目为基础、叠加截至76595bc有界补充的证据索引；Document／Local列未回填R031之后的当前状态，不能读作abfb988、4a27487或0418652验收结果，R031／R033／R034相关场景当前以本页首部链接的整合交接为准。开发implemented不代表签收；所有正式场景仍受共享A01/A05/A06目标门禁及适用外部输入约束，不以测试名推断结论。详细来源与最新状态见当前交接及脱敏manifest。
 
 | 场景 | 开发状态 | Document | Local | 代码/证据索引 | 有界证据与外部边界 |
 |---|---|---|---|---|---|
@@ -171,10 +167,10 @@ Git交付：2026-11-02 root已独立验收并正常push `6ea9ecd` 至 `origin/co
 
 ## 外部 BLOCKED
 
-- B1：本地实际官方NyxID OAuth／proxy／MCP／默认浏览器、角色／私有资源隔离与queued撤权已有独立有界证据，R029／R030有界关闭，R031临时fail-closed保护有界PASS；I22提供 V1 consumer 候选，仍缺固定 NyxID 后端真实 key/child 联合复验及 V1 之外的完整来源能力、普通用户门户 Launch 证据、目标注册正式交接及组织向真实外部平台精确批准／receipt，关联D1/D2/D3/D6。
-- B2：DEV 个人／组织、Hashnode 组织 Pro 和有权账号、NyxID exact connections；关联 D6。无真实账号写入。
-- B3：Medium／HackerNoon 账号、人工提交负责人、明确获准内容和外部写入授权；关联 D6/D7。
-- B4：生产 HTTPS 域名、部署容量、付款责任、隐私保留策略及 RPO/RTO；关联 D1/D8/D9。
-- B5：历史Repository not found／SSH写权限阻塞已解除；2026-11-02 root 独立验收并正常push `6ea9ecd` 至功能分支`origin/codex/003-blogsystem-delivery`，main保持019222c、未merge。I22 consumer候选及前置测试另待独立审查后push；PR权限／创建状态沿root台账，本轮未重新探测。历史边界见 [I20](review-i20.md) 与 [I21](review-i21.md)。
+- B1：本地 Nyx 后端与门户补丁、W1 来源撤权和 W2 恢复证据已有固定版本记录。剩余为目标 Nyx 实例接纳／部署本地补丁、目标注册与真实外部分发精确批准，不再描述为门户未实现。共同版本的补验、注册与复跑材料见当前交接。
+- B2：DEV 个人／组织与有更新权限的账号、Hashnode 组织 Pro／publication、精确 Nyx UserService 连接与内容动作授权，关联 D6/D7。
+- B3：Medium／HackerNoon 账号、人工提交负责人及内容／动作授权；提交与接受分开，关联 D6/D7。
+- B4：生产 HTTPS 域名／资源、付款及运维负责人、监控／隐私保留／离机备份方案、约定的数值 RPO/RTO，关联 D1/D8/D9。
+- B5：SSH 功能分支连接已重新只读核实，历史 port22 连接中断不代表权限撤销。当前 push／PR 结果见交接；PR 权限问题不阻止本地提交或正常功能分支 push。
 
-外部账号／内容动作授权／目标部署与责任等输入继续BLOCKED；R029／R030已独立有界关闭，待相应外部输入或上游能力变化后再定向推进剩余原生验收。Local PASS限独立账目声明的证据与源码边界，不以Mock／文档降级必需真实目标交付，不将本地开发通过提升为Live或正式D/A签收。
+这些必需外部验证不改为 N/A。Local PASS 不自动成为 Live 或 D1–D9 正式签收；A43/A44 无权或不可用的计数不强求数值。

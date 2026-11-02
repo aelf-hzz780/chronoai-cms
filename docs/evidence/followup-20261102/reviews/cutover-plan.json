@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-02T10:07:46.522681+00:00",
+  "reviewer": "evidence_audit",
+  "status": "PASS_STATIC_CONDITIONAL_LOCAL_CUTOVER",
+  "blockingFindings": [],
+  "oldRevision": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+  "candidateRevision": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "allowedSchemaAdditions": [],
+  "approvedDesignFacts": [
+    "Independent followup ROOT/private/state/approval prevent overwriting prior041 cutover history.",
+    "prepare locks current0b0 exact container ID and source-lock; switch rejects different ID and fixed-candidate mismatch.",
+    "Old and new runtime/Worker templates are byte-identical; rollback correctly starts local-candidate-worker.mjs with its matching pid path.",
+    "Candidate env removes old CANDIDATE_SOURCE_SHA before adding the fixed new one.",
+    "Candidate is immutable git archive; package and lock hashes must match old source before cached dependencies reuse; API and Worker verify all archive files before business imports.",
+    "Only publishing.ts and recovery.ts business files differ between0b0 and386b965; Store/schema and dependency manifests are unchanged.",
+    "Queued/running jobs, queued/running media and any delivery rows block initial switch; queue/media remain checked after pause and candidate startup.",
+    "Old API container is stopped, terminating detached exec Worker, before consistent SQLite backup. No automatic data restore overwrites current rows.",
+    "Each mounted volume is preserved; initial staging preflight runs network-none with only four Ghost volumes and checks Worker UID/mode0700/same device/same Linux mount.",
+    "Candidate starts API with outbound paused; schema compared before Worker; only ReleaseWorker and AlternateWorker loaded, local origin allowlist and delivery queue guard remain.",
+    "Rollback stops whole candidate even if pause CLI fails, starts exact preserved old ID, keeps DB and new rows, and only resumes local Worker if queues/media/delivery remain empty and prior pause wasfalse."
+  ],
+  "requiredBeforeExecution": [
+    "Combined actual Nyx049 + candidate386b965 affected-path review must pass; this static report alone is not authority/effect validation.",
+    "If business code changes, freeze the new SHA and repeat affected validation; update source-specific review and stage.",
+    "Root approval must bind exact candidate, independent review evidence and allowedSchemaAdditions=[]; user already authorized this conditional local update.",
+    "Recheck preserved OLD identity, current runtime/worker source hashes, queue/media/delivery state and single3457 owner immediately before mutation.",
+    "Hold runtime-heavy.lock exclusively for cutover when other heavy validation has released it.",
+    "Keep failure/backup/state evidence private; after switch independently read container lock+hashes, real Worker PID,3457 health and prior pause restoration."
+  ],
+  "limitations": [
+    "No switch/rollback executed by this reviewer; no crash fault injection against shared runtime.",
+    "Controller retains preexisting runtime operational choices and only upgrades local3457; no production or external-provider deployment.",
+    "Queue admission can race between pause and stop; post-start queue/media/delivery gate fails closed and rollback preserves new work paused."
+  ],
+  "controllerSha256": "7efdc916c1df982d1b5229e17a86b28e5d15bb443207df6c10d407ac20992186",
+  "privateSource": {
+    "relativePath": "parallel-local-20261102/followup/independent/cutover-controller-review.json",
+    "sha256": "dda523536b5e6dfb77ec2688e7caba28224d3c07dcaf54c62451356cf5ac8041",
+    "includedInGit": false
+  }
+}

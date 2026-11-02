@@ -1,0 +1,305 @@
+{
+  "case": "diagnostic-fresh-single-image",
+  "operation": "media",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "sourceFilesVerified": 133,
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "beforeHistory": [
+    {
+      "id": "108ae5f4-c1d9-4679-b743-99da5b990b16",
+      "state": "queued",
+      "actorSha256": "14674ed320e1966f1d165ec0264b00e2e7fbbd34c0d2f9974114710a50661976",
+      "confirmationDigest": "3533bcdb5d17e1b192fa9b79bddb54d4f10fd2db2246ba8615d4694b1be67e8d",
+      "publicFiles": 0,
+      "error": null
+    }
+  ],
+  "release": {
+    "id": "2928b90c-9bac-4f18-9680-f9ade192ccea",
+    "state": "published",
+    "error_code": null,
+    "remote_id": "6ae8645ded2cd700010313b2",
+    "url": "http://localhost:3478/chrono-06e40c22-b73e-4423-8dbb-b51833d6c875/"
+  },
+  "afterHistory": [
+    {
+      "id": "108ae5f4-c1d9-4679-b743-99da5b990b16",
+      "state": "complete",
+      "actorSha256": "14674ed320e1966f1d165ec0264b00e2e7fbbd34c0d2f9974114710a50661976",
+      "confirmationDigest": "3533bcdb5d17e1b192fa9b79bddb54d4f10fd2db2246ba8615d4694b1be67e8d",
+      "publicFiles": 1,
+      "error": null
+    }
+  ],
+  "pendingMedia": 0,
+  "actor": {
+    "subject": "e1287e93-b76b-4750-afbb-d40474ba40c0",
+    "fromCurrentRecovery": false
+  },
+  "assets": [
+    {
+      "id": "7593081e-86e7-4840-a4e8-d2cb691fc6b2",
+      "sha256": "ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50",
+      "url": "http://localhost:3478/content/images/chrono/ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50.png",
+      "publicMatches": true
+    }
+  ],
+  "originalReleaseEvidencePreserved": true,
+  "projectionsBefore": 2,
+  "projectionsAfter": 2,
+  "diagnosticEvents": [
+    "DIAG_IMAGES_BEFORE [{\"complete\":true,\"naturalWidth\":0,\"height\":27.1875,\"top\":478.71875,\"loading\":\"auto\"}]",
+    "DIAG_STAGES {\"visible\":true,\"first\":true,\"paint\":true,\"final\":true,\"unavailable\":false,\"images\":[{\"complete\":true,\"naturalWidth\":0,\"height\":27.1875,\"top\":478.71875}]}",
+    "DIAG_IMAGES_BEFORE [{\"complete\":true,\"naturalWidth\":96,\"height\":64,\"top\":478.71875,\"loading\":\"auto\"}]",
+    "DIAG_STAGES {\"visible\":true,\"first\":true,\"paint\":true,\"final\":true,\"unavailable\":false,\"images\":[{\"complete\":true,\"naturalWidth\":96,\"height\":64,\"top\":478.71875}]}"
+  ],
+  "diagnosticOnly": true,
+  "ghostWrites": 0,
+  "ghostReads": 9,
+  "materializeCalls": 1,
+  "materialized": 1,
+  "boundaryCalls": 2,
+  "revoked": false,
+  "http": [
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/openid-configuration",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/jwks.json",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/chrono-06e40c22-b73e-4423-8dbb-b51833d6c875/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/content/images/chrono/ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50.png",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/chrono-06e40c22-b73e-4423-8dbb-b51833d6c875/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/content/images/chrono/ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50.png",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/content/images/chrono/ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50.png",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/content/images/chrono/ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50.png",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "approvals": [],
+  "passed": true,
+  "evidenceBoundary": "diagnostic only; instrumented renderer copy"
+}

@@ -1,0 +1,354 @@
+{
+  "at": "2026-11-02T10:41:28.535609+00:00",
+  "status": "PASS_INDEPENDENT_LOCAL_3457_CUTOVER_READBACK",
+  "candidateRevision": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "candidateContainer": "blogsystem-command-candidate-386b9652dc43-r2",
+  "candidateId": "8ef0cae3a34e355e6a3322b9831057c000c79c7fb56f5318e149c8de1524a328",
+  "rollbackContainerId": "921e41205d5252ef2f5813243f827fad12c1b43c8e085c7e2723ca4de2e5dd4c",
+  "rollbackContainerStoppedAndRetained": true,
+  "sourceFilesMatchedRuntimeLockAndGitObjects": 133,
+  "sourceMismatches": [],
+  "envRevisionMatches": true,
+  "runtimeAndWorkerTemplateHashesMatchReview": true,
+  "worker": {
+    "pid": 82,
+    "live": true,
+    "expectedCommand": true
+  },
+  "outboundPaused": false,
+  "priorPauseRestored": true,
+  "queuedRunningJobs": 0,
+  "queuedRunningMedia": 0,
+  "deliveryRows": 0,
+  "schemaExactlyMatchesPreCutoverBackup": true,
+  "schemaAdditions": [],
+  "tableCountChanges": {
+    "audit": 1
+  },
+  "tableCountChangesLimitedToExpectedResumeAudit": true,
+  "tableCount": 36,
+  "priorRowsIndependentComparison": [
+    {
+      "table": "articles",
+      "priorRows": 32,
+      "newRows": 32,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "asset_publications",
+      "priorRows": 25,
+      "newRows": 25,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "assets",
+      "priorRows": 23,
+      "newRows": 23,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "audit",
+      "priorRows": 337,
+      "newRows": 338,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": true,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "author_mappings",
+      "priorRows": 4,
+      "newRows": 4,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "collection_attempts",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "collection_gaps",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "command_authorities",
+      "priorRows": 9,
+      "newRows": 9,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "command_derivations",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "deliveries",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "delivery_events",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "delivery_payloads",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "external_metrics",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "idempotency",
+      "priorRows": 37,
+      "newRows": 37,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "job_leases",
+      "priorRows": 51,
+      "newRows": 51,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "jobs",
+      "priorRows": 62,
+      "newRows": 62,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "migrations",
+      "priorRows": 1,
+      "newRows": 1,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "nyx_approvals",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "observations",
+      "priorRows": 7,
+      "newRows": 7,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "oidc_states",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "owner_profiles",
+      "priorRows": 3,
+      "newRows": 3,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "owners",
+      "priorRows": 8,
+      "newRows": 8,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "projection_retries",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "projections",
+      "priorRows": 25,
+      "newRows": 25,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "publishers",
+      "priorRows": 1,
+      "newRows": 1,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "recovery_actors",
+      "priorRows": 3,
+      "newRows": 3,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "release_links",
+      "priorRows": 4,
+      "newRows": 4,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "release_media_requests",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "releases",
+      "priorRows": 37,
+      "newRows": 37,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "revisions",
+      "priorRows": 57,
+      "newRows": 57,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "sessions",
+      "priorRows": 18,
+      "newRows": 18,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "settings",
+      "priorRows": 0,
+      "newRows": 0,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": true
+    },
+    {
+      "table": "site_admin_routes",
+      "priorRows": 4,
+      "newRows": 4,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "sites",
+      "priorRows": 4,
+      "newRows": 4,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "submissions",
+      "priorRows": 5,
+      "newRows": 5,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    },
+    {
+      "table": "translations",
+      "priorRows": 2,
+      "newRows": 2,
+      "allPriorCellsBlobsDuplicatesPreserved": true,
+      "onlyExpectedResumeAuditAdded": false,
+      "outboundPauseExcluded": false
+    }
+  ],
+  "postCutoverSnapshotSha256": "6b0741ed7859b273990943246f60bb6370db1860961eab4fce63387494a19bca",
+  "databaseIntegrity": "ok",
+  "foreignKeyViolations": 0,
+  "samePersistentVolumeMountsAndAccessModes": true,
+  "samePortBindings": true,
+  "consistentBackupHashVerified": true,
+  "httpReadbacks": [
+    {
+      "url": "http://localhost:3457/health",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3457/",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3001/health",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:3000/",
+      "status": 200
+    }
+  ],
+  "controllerSha256": "c47520ec5cf5d1d5648f4dcbc3708161f3418ecbdcb5369d9453e90364151d28",
+  "stage1ReviewSha256": "31cbd94e651561c336f58411d944fadd1ba70cdeb41f3b7182c8c562930ebfc1",
+  "cutoverStateSha256": "4576ba2007a5422a0ee3743e03c53438a4998b5355c6d04432e50435a90b8ffe",
+  "limits": [
+    "Only read-only post-cutover observations; rollback not executed or fault-injected.",
+    "Current3457 Nyx catalog refresh and final portable documentation are separate checks.",
+    "No external DeliveryWorker or production deployment asserted."
+  ],
+  "privateSourceOriginalSha256": "03977d95f10ea0aa4247c3550692a9c006fc7bc0db7a589ff1dc93f3ff65f6ca",
+  "pathNormalization": "Private references are relative provenance; raw snapshots and local scripts are not shipped."
+}

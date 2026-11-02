@@ -1,0 +1,24 @@
+{
+  "callback": "http://localhost:3560/auth/callback",
+  "clientType": "confidential",
+  "allowedScopes": [
+    "openid",
+    "profile",
+    "proxy"
+  ],
+  "service": {
+    "slug": "blog-followup-registration-20261102",
+    "base_url": "http://localhost:3560",
+    "homepage_url": "http://localhost:3560/auth/login",
+    "openapi_spec_url": "http://localhost:3560/openapi.json",
+    "identity_propagation_mode": "jwt",
+    "identity_jwt_audience": "blog-followup-registration-20261102",
+    "identity_include_user_id": true,
+    "inject_delegation_token": true,
+    "delegation_token_scope": "account:read proxy:*",
+    "introspection_client_ids": [
+      "077c7587-1d20-4a99-b3e0-1d6c7a1d7bf0"
+    ]
+  },
+  "note": "Identifiers retained as non-secret correlation metadata; client secret, credentials and tokens excluded."
+}

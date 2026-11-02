@@ -1,0 +1,41 @@
+{
+  "case": "same-subject-new-key-terminal-replay-idle",
+  "operation": "idle-check",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "sourceFilesVerified": 133,
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "beforeHistory": [
+    {
+      "id": "a31509e6-7036-4a3e-85fb-6507e1a89ce5",
+      "state": "blocked",
+      "actorSha256": "257f15d303bd48429611817615ec70dccc467aa6214568918987758b3ce72175",
+      "confirmationDigest": "0164568316eddfc0668f49e65b3d45a6e5a370b8badf19e552ef34cd1d704243",
+      "publicFiles": 0,
+      "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+    }
+  ],
+  "workerClaimed": false,
+  "afterHistory": [
+    {
+      "id": "a31509e6-7036-4a3e-85fb-6507e1a89ce5",
+      "state": "blocked",
+      "actorSha256": "257f15d303bd48429611817615ec70dccc467aa6214568918987758b3ce72175",
+      "confirmationDigest": "0164568316eddfc0668f49e65b3d45a6e5a370b8badf19e552ef34cd1d704243",
+      "publicFiles": 0,
+      "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+    }
+  ],
+  "originalReleaseEvidencePreserved": true,
+  "projectionsBefore": 1,
+  "projectionsAfter": 1,
+  "ghostWrites": 0,
+  "ghostReads": 0,
+  "materializeCalls": 0,
+  "materialized": 0,
+  "boundaryCalls": 0,
+  "revoked": false,
+  "http": [],
+  "approvals": [],
+  "passed": true,
+  "evidenceBoundary": "real NyxID049 + fixed Blog386b965, actual local Ghost; scoped harness fault injection identified by operation"
+}

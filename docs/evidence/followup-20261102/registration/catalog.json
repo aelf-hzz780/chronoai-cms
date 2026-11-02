@@ -1,0 +1,5 @@
+{
+  "error": "bad_request",
+  "error_code": 1000,
+  "message": "Bad request: Spec URL must not target a private or internal hostname"
+}

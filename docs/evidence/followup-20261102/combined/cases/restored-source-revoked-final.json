@@ -1,0 +1,252 @@
+{
+  "case": "restored-source-revoked-final",
+  "operation": "media",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "sourceFilesVerified": 133,
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "beforeHistory": [
+    {
+      "id": "181509c7-613b-4c10-a088-9acec4b1a541",
+      "state": "blocked",
+      "actorSha256": "71661d0e88fda059af1d5f7c743fce3fcaa068ee121a45d7fee62302d63de916",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+    },
+    {
+      "id": "a460da66-7373-4787-8302-caa014c55353",
+      "state": "blocked",
+      "actorSha256": "c1852adb551e3b6ef777247716a48d7153b47f88fe4b43d1bc7e95ce335e3bb5",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+    },
+    {
+      "id": "e6e2f0c4-6df1-4d0c-9aad-734db1beb1e7",
+      "state": "blocked",
+      "actorSha256": "3305a50003bac1aac9a0906009354727525c391a9a44edb50a94a59efc10a573",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "RESTORED_RECONCILIATION_REQUIRED"
+    },
+    {
+      "id": "6c96a96e-3dea-433a-abb2-d24247fe713e",
+      "state": "blocked",
+      "actorSha256": "b890636d0f746a135f814082b5d3cd21b932a0291fb55b12c55b742e11b4d82a",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "IDENTITY_UNAVAILABLE"
+    },
+    {
+      "id": "0b940663-a0f8-4a7e-8219-2015370cb44d",
+      "state": "queued",
+      "actorSha256": "3cd4682578c1c6840bd2b8ca92e85139b7b163c6d93252bbc211b0119e7c4c07",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": null
+    }
+  ],
+  "release": {
+    "id": "f5355255-fd8f-42ec-8456-dac938965a88",
+    "state": "uncertain",
+    "error_code": "IDENTITY_UNAVAILABLE",
+    "remote_id": "6ae861b7ed2cd7000103139e",
+    "url": "http://localhost:3478/chrono-2bc56515-f12e-4b56-a8a9-b421d00d181f/"
+  },
+  "afterHistory": [
+    {
+      "id": "181509c7-613b-4c10-a088-9acec4b1a541",
+      "state": "blocked",
+      "actorSha256": "71661d0e88fda059af1d5f7c743fce3fcaa068ee121a45d7fee62302d63de916",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+    },
+    {
+      "id": "a460da66-7373-4787-8302-caa014c55353",
+      "state": "blocked",
+      "actorSha256": "c1852adb551e3b6ef777247716a48d7153b47f88fe4b43d1bc7e95ce335e3bb5",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+    },
+    {
+      "id": "e6e2f0c4-6df1-4d0c-9aad-734db1beb1e7",
+      "state": "blocked",
+      "actorSha256": "3305a50003bac1aac9a0906009354727525c391a9a44edb50a94a59efc10a573",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "RESTORED_RECONCILIATION_REQUIRED"
+    },
+    {
+      "id": "6c96a96e-3dea-433a-abb2-d24247fe713e",
+      "state": "blocked",
+      "actorSha256": "b890636d0f746a135f814082b5d3cd21b932a0291fb55b12c55b742e11b4d82a",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "IDENTITY_UNAVAILABLE"
+    },
+    {
+      "id": "0b940663-a0f8-4a7e-8219-2015370cb44d",
+      "state": "blocked",
+      "actorSha256": "3cd4682578c1c6840bd2b8ca92e85139b7b163c6d93252bbc211b0119e7c4c07",
+      "confirmationDigest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "publicFiles": 0,
+      "error": "IDENTITY_UNAVAILABLE"
+    }
+  ],
+  "pendingMedia": 0,
+  "actor": {
+    "subject": "0f55b864-677f-432b-afcd-0c8de064b69c",
+    "fromCurrentRecovery": false
+  },
+  "assets": [
+    {
+      "id": "8e883c5e-d634-40fc-a37d-c4e16907142f",
+      "sha256": "69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8",
+      "url": "http://localhost:3478/content/images/chrono/69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8.png",
+      "publicMatches": false
+    },
+    {
+      "id": "bf4c784b-78c4-4e62-9927-cf4cbc501116",
+      "sha256": "40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea",
+      "url": "http://localhost:3478/content/images/chrono/40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea.png",
+      "publicMatches": false
+    }
+  ],
+  "ghostWrites": 0,
+  "ghostReads": 3,
+  "materializeCalls": 1,
+  "materialized": 0,
+  "boundaryCalls": 2,
+  "revoked": true,
+  "http": [
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/openid-configuration",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/jwks.json",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3478",
+      "path": "/chrono-2bc56515-f12e-4b56-a8a9-b421d00d181f/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "media",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "final-boundary-revocation",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/api-keys/331bba3d-7d64-412d-ba5f-30bb729ff019",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "phase": "after-final-revocation",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "after-final-revocation",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": false
+    }
+  ],
+  "approvals": [],
+  "passed": true,
+  "evidenceBoundary": "real NyxID049 + fixed Blog386b965, actual local Ghost; scoped harness fault injection identified by operation"
+}

@@ -1,0 +1,137 @@
+{
+  "case": "diagnostic-publish-missing",
+  "operation": "publish-missing",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "sourceFilesVerified": 133,
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "beforeHistory": [],
+  "release": {
+    "id": "2928b90c-9bac-4f18-9680-f9ade192ccea",
+    "state": "verifying",
+    "error_code": "ORIGINAL_NOT_VERIFIED",
+    "remote_id": "6ae8645ded2cd700010313b2",
+    "url": "http://localhost:3478/chrono-06e40c22-b73e-4423-8dbb-b51833d6c875/"
+  },
+  "afterHistory": [],
+  "pendingMedia": 0,
+  "actor": {
+    "subject": "0f55b864-677f-432b-afcd-0c8de064b69c",
+    "fromCurrentRecovery": false
+  },
+  "assets": [
+    {
+      "id": "7593081e-86e7-4840-a4e8-d2cb691fc6b2",
+      "sha256": "ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50",
+      "url": "http://localhost:3478/content/images/chrono/ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50.png",
+      "publicMatches": false
+    }
+  ],
+  "originalReleaseEvidencePreserved": true,
+  "projectionsBefore": 2,
+  "projectionsAfter": 2,
+  "diagnosticEvents": [],
+  "diagnosticOnly": true,
+  "ghostWrites": 1,
+  "ghostReads": 1,
+  "materializeCalls": 1,
+  "materialized": 0,
+  "boundaryCalls": 0,
+  "revoked": false,
+  "http": [
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/openid-configuration",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/jwks.json",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "delegation",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200,
+      "type": "command_authority",
+      "active": true
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3001",
+      "path": "/api/v1/orgs",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "phase": "publish-missing",
+      "origin": "http://localhost:3478",
+      "path": "/ghost/api/admin/posts/",
+      "method": "POST",
+      "status": 201
+    }
+  ],
+  "approvals": [],
+  "passed": true,
+  "evidenceBoundary": "diagnostic only; instrumented renderer copy"
+}

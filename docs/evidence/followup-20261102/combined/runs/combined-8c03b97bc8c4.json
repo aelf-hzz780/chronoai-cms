@@ -1,0 +1,89 @@
+{
+  "status": "FAILED_OR_INCOMPLETE",
+  "runId": "combined-8c03b97bc8c4",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "cleanup": [
+    {
+      "actor": "admin",
+      "keyId": "9e644ef4-3d98-4cde-b0d0-9702913faee6",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "90e0fae4-82b5-41a5-8bfd-39de92b6a1bf",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "2923cbfc-b520-4ae7-91b4-be86c44c48d4",
+      "revoked": true
+    }
+  ],
+  "boundaries": {
+    "identity": "real Nyx049 signed identity/delegation/command source; exact own UserService; per-request formal approvals",
+    "destination": "actual local Ghost organization-en; actual private staged PNG rename and public bytes",
+    "restore": "actual encrypted/decrypted SQLite snapshots; running crash cut captured after first actual image; no four-Ghost full restore repeated",
+    "outsideScope": [
+      "external providers",
+      "production",
+      "all Nyx source modes",
+      "overall D1-D9"
+    ]
+  },
+  "scope": "Additional current-source observations and terminal idempotency replay on restored API",
+  "articleId": "5a273f5d-d6c7-4c59-8a5c-ec92cbb2bd4f",
+  "releaseId": "b00cf308-dacb-4486-b8a3-6fc691eee1eb",
+  "phase": "suite_finished",
+  "updatedAt": "2026-11-02T10:16:02.664682+00:00",
+  "terminalReplay": {
+    "samePublisherSubject": true,
+    "newActiveSourceKey": true,
+    "sameRequestId": true,
+    "state": "blocked",
+    "historyUnchanged": true,
+    "workerClaimed": false
+  },
+  "failure": {
+    "type": "Stop",
+    "code": "SUPPLEMENT_FRESH"
+  },
+  "caseFiles": [
+    {
+      "case": "supplement-real-missing-image",
+      "path": "cases/supplement-real-missing-image.json",
+      "sha256": "44391ceb6c967025a0910a587e5b097eb1b61937b592b81ba5a4b1b1028af0f2",
+      "originalLocalResultSha256": "28cfa3c31c3da3618aa6b7630917b3190757ed843ee1bc261836c283d2025c23",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "supplement-explicit-active-source-readonly",
+      "path": "cases/supplement-explicit-active-source-readonly.json",
+      "sha256": "b551ab11f779276d81677f845faf7972de013176d86f1f725555427906e1d43c",
+      "originalLocalResultSha256": "ac0e4855160f537ffdc2fa74f316fb0452b85952d61b55053c91c6fbc8d6ef24",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "same-subject-new-key-terminal-replay-idle",
+      "path": "cases/same-subject-new-key-terminal-replay-idle.json",
+      "sha256": "26eacb0c27953b9de6c5d585c753a6d89eedd847706e5d6f2b25ffd61dc3cd30",
+      "originalLocalResultSha256": "7c3d9d726d658d3ac2001f35ec375bcaef036c9773059d0ea7beff3afd545b8b",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "supplement-explicit-revoked-source-readonly",
+      "path": "cases/supplement-explicit-revoked-source-readonly.json",
+      "sha256": "f5b6957612454208bc5626e453ee642a9582997604563b4ce5bc9d5390ccc234",
+      "originalLocalResultSha256": "9348b1cbd98d6a1345ec3d4b5a9eed0997d9b2e8cd13931751129f553f030742",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "supplement-fresh-materialize",
+      "path": "cases/supplement-fresh-materialize.json",
+      "sha256": "a8e9ed152276992f8daf42efa971f44b4a50a74d4df18b1001cc807b8ce94255",
+      "originalLocalResultSha256": "d4b31b0ec20cd4395a289c87bcebf9c838c3b102fc892acd848b2556ac749d4d",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    }
+  ],
+  "originalLocalReportSha256": "994e374ac0ac0e33c935f9cab6a234cd9605716883cbc588eef657415bb1de70"
+}

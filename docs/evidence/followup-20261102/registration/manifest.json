@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "status": "PORTABLE_SANITIZED_LOCAL_EVIDENCE",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "pathsRelativeTo": "this directory",
+  "files": {
+    "attempt-01-python-tar-compatibility.json": {
+      "sha256": "ffdbfa22d76c92139e4f2e19861d4b139acf2fa61bea19d5946abf5eb17c763d",
+      "bytes": 555
+    },
+    "attempt-02-spec-only-update-400.json": {
+      "sha256": "0e34f11def77a9c70f1025fcac09ee4d29024a305f23dae3a513d46a3431fc06",
+      "bytes": 617
+    },
+    "attempt-03-discovery-400.json": {
+      "sha256": "47f560ea96e76b6136cccf0dfd3fad3c7f24ba57588082eeb9e2e8486077cbc8",
+      "bytes": 835
+    },
+    "attempt-04-catalog-private-url.json": {
+      "sha256": "f52dd02dd4a2146cce9f1621c1722c55d6f852c3d7114899891f81209b0cd181",
+      "bytes": 611
+    },
+    "attempt-05-mcp-scope.json": {
+      "sha256": "f37ce651b062df5a3ab68c777252b37833d9af4bd36b36e4d0a3ed715f8530e2",
+      "bytes": 266
+    },
+    "attempt-06-mcp-stateless-initialization.json": {
+      "sha256": "f6831f68f763f7af4b01aa892f09a75d8ac4e7765a75285c720cf32b31f06579",
+      "bytes": 318
+    },
+    "backend-readback.json": {
+      "sha256": "6fc5e4341454f418abc11b41e9a079778c7d85c90553523883a2d414e7f7ce0a",
+      "bytes": 500
+    },
+    "catalog.json": {
+      "sha256": "6053142a2d6f5d32390de93fa395b48afef5629ff9c79a08c60f07d8021a3eae",
+      "bytes": 136
+    },
+    "cleanup-readback.json": {
+      "sha256": "c8dd738b673edfea94bad3a8dd5b7546fc62ba0035e97174f546bd407df2e88b",
+      "bytes": 184
+    },
+    "cleanup.json": {
+      "sha256": "5166f0c5d0e3f8ebb6fff3b8d29e6de34b05dadc4d2f451bf95c5ebe0d7c4d91",
+      "bytes": 128
+    },
+    "client-readback.json": {
+      "sha256": "73f2f638606aef391dbd29205bfa06ad65b8dc1c0aa38c26fc4211e2b4606721",
+      "bytes": 257
+    },
+    "configuration.example.json": {
+      "sha256": "056872e47ea069c9125105b0c2578746456d54ec3a2319d07e1638db5ab9b14f",
+      "bytes": 2334
+    },
+    "discovery.json": {
+      "sha256": "d54746ab54d1b5b2fc6f4331a51306627463e5f6d02c1931c6c0a8b356eb86d1",
+      "bytes": 48413
+    },
+    "endpoints.json": {
+      "sha256": "5ad99c9644f4d6e5da0c6a79f55f7b452b5abd1ac3f3a55a89e2c3ab3078a375",
+      "bytes": 48343
+    },
+    "http.json": {
+      "sha256": "24978900f5353901f10e73edd5d0f7e434dae62700779e82c94375cee9e026a7",
+      "bytes": 2071
+    },
+    "mcp-getworkspaces.json": {
+      "sha256": "ea23c6acf72e42f45b64bec10ab74ab5c022e78cfb942a0f084278a4fd111199",
+      "bytes": 172
+    },
+    "mcp-read-approval.json": {
+      "sha256": "8494cc621e50b51c4d187c692f20a1d4e36ee6725815f0c3d6eb16998e06c4ee",
+      "bytes": 54
+    },
+    "mcp-report.json": {
+      "sha256": "192abf2fca3c8842724dbd639cb5f707a797c3cb4e08e0ed447c940878a6797a",
+      "bytes": 1071
+    },
+    "mcp-search.json": {
+      "sha256": "a6722b99475ea059ee0c805b873e110433d468a1308c4cf60d320b974e6899e2",
+      "bytes": 20578
+    },
+    "mcp-selected-config.json": {
+      "sha256": "d712089f6960dc44ef3691ad70a359c00be1e82b0ce68159485b8582efb49688",
+      "bytes": 42271
+    },
+    "mcp-selected-tools.json": {
+      "sha256": "4c56be71fc6544baf2e2a6ac23d7f2f81cc1cd55cc05b22fa84d5dd3b570dc59",
+      "bytes": 28686
+    },
+    "openapi.json": {
+      "sha256": "181bcb926418208fb47a541c1e4468756b5eea6cf2d556977008a5f402ebbe1d",
+      "bytes": 63521
+    },
+    "operations.json": {
+      "sha256": "eb47aff79b8617dee8a1ae35c26e07efe7cc3e7211772a162b285aba58c713cc",
+      "bytes": 37566
+    },
+    "registration-readback.json": {
+      "sha256": "6abf9c47b49903fb59206addb6e2716ec0ec30c8952ca0129072473edb5640e7",
+      "bytes": 825
+    },
+    "report.json": {
+      "sha256": "1670707d323d743f222ff0e1dea505e80dc4b9a2d78473cad856473590e517a4",
+      "bytes": 3402
+    },
+    "reproduce.md": {
+      "sha256": "66c68a2f0319a60afffdee48a68f37bb3a37b96e70ff104ad3db8f86dfe2b2cc",
+      "bytes": 8713
+    },
+    "runtime-cleanup.json": {
+      "sha256": "81133036a126229d487221817faea044cf9a3d98173811ae1991cd076f676309",
+      "bytes": 184
+    },
+    "source-lock.json": {
+      "sha256": "e46ac5e766d3998e9dd372ce6ab8c8edbc87ab5d3669d18ee4246daab7111481",
+      "bytes": 13008
+    },
+    "source-readback.json": {
+      "sha256": "998b5b1882990f282a3c70179ab9c4e2660ba7bc919fec214fa0e4b1c0d1ae40",
+      "bytes": 202
+    },
+    "supplementary-probe-corrections.json": {
+      "sha256": "43684e48f620388981c514c052c107b565d618b24219c7326f76e4510b4e10f9",
+      "bytes": 375
+    }
+  },
+  "excluded": [
+    "private databases and users/content",
+    "env and credentials",
+    "raw access/delegation/API keys and client secret",
+    "raw private HTTP bodies"
+  ],
+  "limitations": "Hashes provide integrity, not proof of independent execution; correlate with report, stored operation sets and independent review."
+}

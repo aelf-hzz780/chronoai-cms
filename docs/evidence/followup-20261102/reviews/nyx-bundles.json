@@ -1,0 +1,51 @@
+{
+  "status": "PASS_INCREMENTAL_PATCH_BUNDLES",
+  "entries": [
+    {
+      "component": "backend",
+      "sha256": "c4011ed115cbf6b8485c8939ad2ed867d2316bf5266cbaba8002792968d93678",
+      "bundleVerify": true,
+      "exactHeadPresent": true,
+      "trackedFiles": [
+        "backend/src/config.rs",
+        "backend/src/crypto/aes.rs",
+        "backend/src/crypto/apple_client_secret.rs",
+        "backend/src/crypto/jwt.rs",
+        "backend/src/crypto/jwt_verifier_inventory_tests.rs",
+        "backend/src/crypto/local_key_provider.rs",
+        "backend/src/handlers/channel_webhooks.rs",
+        "backend/src/handlers/oauth.rs",
+        "backend/src/handlers/proxy.rs",
+        "backend/src/main.rs",
+        "backend/src/services/agent_key_introspection/tests.rs",
+        "backend/src/services/channel_relay_service.rs",
+        "backend/src/services/command_authority.rs",
+        "backend/src/services/command_authority/authority.rs",
+        "backend/src/services/command_authority/descriptor.rs",
+        "backend/src/services/command_authority/tests.rs",
+        "backend/src/services/command_authority/tests/egress.rs",
+        "backend/src/services/mcp_service.rs",
+        "backend/src/services/mod.rs",
+        "backend/src/services/proxy_service.rs",
+        "backend/src/services/resource_request_proof/descriptor.rs",
+        "backend/src/services/social_auth_service.rs",
+        "backend/src/test_utils.rs",
+        "docs/COMMAND_AUTHORITY.md",
+        "docs/ENV.md"
+      ]
+    },
+    {
+      "component": "portal",
+      "sha256": "5af879f4646cab804940f781611f453caa94e31ea6ea49ea1406ec6286628d70",
+      "bundleVerify": true,
+      "exactHeadPresent": true,
+      "trackedFiles": [
+        "frontend/src/lib/service-homepage.ts",
+        "frontend/src/pages/service-overview.test.tsx",
+        "frontend/src/pages/service-overview.tsx",
+        "frontend/src/types/keys.ts"
+      ]
+    }
+  ],
+  "boundary": "Source patch bundles only; base commit needed. No runtime configuration/database included, no upstream push performed by reviewer."
+}

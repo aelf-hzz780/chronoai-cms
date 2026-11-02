@@ -1,0 +1,342 @@
+{
+  "at": "2026-11-02T10:38:07.342781+00:00",
+  "status": "PASS_INDEPENDENT_R1_ROLLBACK_AND_SNAPSHOT_REVIEW",
+  "originalFailure": "Root postflight local Python sqlite read-only schema query returned unable to open database file after candidate API/Worker had started; controller rollback ran.",
+  "assessment": "Standalone pre/post backups pass immutable read, schema and all36 tables retain every prior cell/BLOB/duplicate, with only the expected resume audit added and outbound_paused row changed. No business DB corruption or business-source defect observed. Normal read-only copy probe result retained; do not assert an unproved underlying OS cause.",
+  "reviewerHarnessCorrection": "Initial local helper used relativePath.as_uri and failed before any DB comparison; corrected to resolved path. Shared files/runtime not mutated.",
+  "snapshotProbes": [
+    {
+      "snapshot": "before",
+      "sha256": "ddfcfc0836948510b332d6c0d74e39e8ca9e1d7b67eb10236be257819cbf8037",
+      "standaloneNoNonemptyWal": true,
+      "normalReadOnlyCopiedProbe": "OperationalError: unable to open database file",
+      "immutableReadOnly": "PASS",
+      "integrity": "ok",
+      "foreignKeys": 0
+    },
+    {
+      "snapshot": "after",
+      "sha256": "b166b39f56b0bfc8e831b3a01a7703b1472ec8fa4007a822cb7487a2fe24275e",
+      "standaloneNoNonemptyWal": true,
+      "normalReadOnlyCopiedProbe": "OperationalError: unable to open database file",
+      "immutableReadOnly": "PASS",
+      "integrity": "ok",
+      "foreignKeys": 0
+    }
+  ],
+  "schemaExactlyPreserved": true,
+  "tableComparisons": [
+    {
+      "table": "articles",
+      "beforeRows": 32,
+      "afterRows": 32,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "asset_publications",
+      "beforeRows": 25,
+      "afterRows": 25,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "assets",
+      "beforeRows": 23,
+      "afterRows": 23,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "audit",
+      "beforeRows": 332,
+      "afterRows": 333,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": true,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "author_mappings",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "collection_attempts",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "collection_gaps",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "command_authorities",
+      "beforeRows": 9,
+      "afterRows": 9,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "command_derivations",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "deliveries",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "delivery_events",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "delivery_payloads",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "external_metrics",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "idempotency",
+      "beforeRows": 37,
+      "afterRows": 37,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "job_leases",
+      "beforeRows": 51,
+      "afterRows": 51,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "jobs",
+      "beforeRows": 62,
+      "afterRows": 62,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "migrations",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "nyx_approvals",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "observations",
+      "beforeRows": 7,
+      "afterRows": 7,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "oidc_states",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "owner_profiles",
+      "beforeRows": 3,
+      "afterRows": 3,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "owners",
+      "beforeRows": 8,
+      "afterRows": 8,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "projection_retries",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "projections",
+      "beforeRows": 25,
+      "afterRows": 25,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "publishers",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "recovery_actors",
+      "beforeRows": 3,
+      "afterRows": 3,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "release_links",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "release_media_requests",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "releases",
+      "beforeRows": 37,
+      "afterRows": 37,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "revisions",
+      "beforeRows": 57,
+      "afterRows": 57,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "sessions",
+      "beforeRows": 18,
+      "afterRows": 18,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "settings",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": true
+    },
+    {
+      "table": "site_admin_routes",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "sites",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "submissions",
+      "beforeRows": 5,
+      "afterRows": 5,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    },
+    {
+      "table": "translations",
+      "beforeRows": 2,
+      "afterRows": 2,
+      "allPriorCellsBlobsMultiplicityPreserved": true,
+      "onlyAdditionalRowIsExpectedResumeAudit": false,
+      "outboundPausedExcluded": false
+    }
+  ],
+  "rollbackRuntime": {
+    "revision": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+    "envRevision": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+    "sourceFiles": 129,
+    "mismatches": 0,
+    "workerPid": 62,
+    "workerCommandMatches": true,
+    "paused": "false",
+    "jobs": 0,
+    "media": 0,
+    "deliveries": 0,
+    "integrity": {
+      "integrity_check": "ok"
+    },
+    "foreignKeys": 0
+  },
+  "oldIdPreserved": true,
+  "failedCandidateStoppedRetained": true,
+  "databaseAutomaticRestore": false,
+  "health3457": 200,
+  "priorStage1BusinessConclusionUnchanged": true,
+  "nextGate": "Review controller attempt-suffix change and corrected standalone backup read harness before r2; retain r1 state/failure/execution evidence.",
+  "privateSourceOriginalSha256": "672a1d3005160f97e66eb480c4cf6833e5e2722cea0389d4584bcf14b94943e4",
+  "pathNormalization": "Private references are relative provenance; raw snapshots and local scripts are not shipped."
+}

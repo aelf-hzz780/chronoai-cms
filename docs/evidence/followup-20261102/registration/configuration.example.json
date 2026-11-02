@@ -1,0 +1,68 @@
+{
+  "HOST": "127.0.0.1",
+  "PORT": "<isolated-app-port; this local verification used3560>",
+  "PUBLIC_URL": "<app-origin>",
+  "NYXID_ISSUER": "<exact-discovery-issuer>",
+  "NYXID_API_URL": "<nyx-api-origin>",
+  "NYXID_DISCOVERY_URL": "<nyx-api-origin>/.well-known/openid-configuration",
+  "NYXID_INTROSPECTION_URL": "<nyx-api-origin>/oauth/introspect",
+  "NYXID_CLIENT_ID": "<new-confidential-client-id>",
+  "NYXID_CLIENT_SECRET": "<secret-manager-reference; never commit actual value>",
+  "NYXID_CMS_AUDIENCE": "<exact-CMS-access-token-audience>",
+  "NYXID_TOKEN_AUDIENCE": "<exact-delegation-token-audience>",
+  "NYXID_SERVICE_AUDIENCE": "<exact-service-identity-audience>",
+  "NYXID_SERVICE_ID": "<catalog-service-id>",
+  "NYXID_SERVICE_SLUG": "<unique-service-slug>",
+  "NYXID_OAUTH_SCOPES": "openid profile proxy",
+  "NYXID_CMS_CAPABILITY_SCOPES_JSON": {
+    "content:read": [
+      "profile"
+    ],
+    "content:write": [
+      "proxy"
+    ],
+    "publish": [
+      "proxy"
+    ],
+    "metrics:read": [
+      "proxy"
+    ],
+    "roles:write": [
+      "proxy"
+    ],
+    "connections:read": [
+      "proxy"
+    ]
+  },
+  "NYXID_SERVICE_CAPABILITY_SCOPES_JSON": {
+    "content:read": [
+      "account:read"
+    ],
+    "content:write": [
+      "account:read",
+      "proxy:*"
+    ],
+    "publish": [
+      "account:read",
+      "proxy:*"
+    ],
+    "metrics:read": [
+      "account:read",
+      "proxy:*"
+    ],
+    "roles:write": [
+      "account:read",
+      "proxy:*"
+    ],
+    "connections:read": [
+      "account:read",
+      "proxy:*"
+    ]
+  },
+  "NYXID_CONNECTIONS_FILE": "<private-empty-array-file-for-this-registration-only-test>",
+  "DATABASE_PATH": "<isolated-private-sqlite-path>",
+  "PUBLIC_MEDIA_DIRECTORY": "<isolated-media-directory>",
+  "ENCRYPTION_KEY": "<fresh-32-random-bytes-as-hex-in-private-config>",
+  "TRACKING_SECRET": "<fresh-private-random-secret>",
+  "note": "JSON mapping values must be serialized as JSON strings when placed in environment variables. Local loopback needs explicit ALLOW_LOOPBACK_HTTP=true; target deployment uses HTTPS. No legacy NYXID_OPERATION_SCOPES_JSON with entry-specific maps. PUBLIC_URL must use the externally reachable origin/port corresponding to HOST and PORT or the explicit container/relay port mapping; setting PUBLIC_URL alone does not change the listening port."
+}

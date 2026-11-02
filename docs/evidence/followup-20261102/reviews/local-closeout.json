@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-02T10:55:41.108873+00:00",
+  "reviewer": "evidence_audit",
+  "status": "PASS_BOUNDED_LOCAL_HANDOFF_AND_RUNTIME_STAGE2",
+  "blockingFindings": [],
+  "businessFixRequired": false,
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "businessFixSha": "83b4b8e5fa28cb18a6926f3a10d2205e04f49ab1",
+  "nyxidBackendLocalPatch": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "nyxidPortalLocalPatch": "c65dc4bedb7da79cf0fb477e6f5bd809f03aec9b",
+  "actualRuntime": {
+    "candidate": "blogsystem-command-candidate-386b9652dc43-r2",
+    "runtimeAndGitMatchedSourceFiles": 133,
+    "workerPidAtReadback": 82,
+    "workerScriptAndProcessVerified": true,
+    "schemaObjectsPreserved": 86,
+    "sqliteTablesWithEveryPriorRowCellBlobDuplicatePreserved": 36,
+    "onlyExpectedDataChanges": "outbound_paused restored false; one operator.outbound.resume audit added",
+    "integrity": "ok",
+    "foreignKeyViolations": 0,
+    "pendingJobs": 0,
+    "pendingMedia": 0,
+    "deliveryRows": 0,
+    "outboundPaused": false,
+    "oldAndFirstCandidateStoppedRetained": true,
+    "originalContainerIdentityImageMountsChecked": 18,
+    "healthyEndpoints": 9,
+    "localReleaseProjectionWorkerOnly": true
+  },
+  "registration": {
+    "isolatedActualNativeRegistration": "PASS",
+    "current3457OfficialCatalogRefresh": "PASS",
+    "beforeOperations": 0,
+    "afterOperations": 35,
+    "contractComparisons": 35,
+    "onlyChangedMetadata": [
+      "description",
+      "openapi_spec_url",
+      "api_spec_url",
+      "updated_at"
+    ],
+    "currentCatalogIndependentEvidence": "Private pre/immediate/post snapshots, actual official HTTP chain and script reviewed. Additional reviewer liveGET not repeated after session expired.",
+    "rollbackLimit": "Prepared only; original null description cannot be exactly restored by current API; empty-string residual and forward audit/generation documented."
+  },
+  "publicEvidenceReview": {
+    "filesAtReview": 101,
+    "allHashesMatch": true,
+    "relativeMarkdownTargets": 97,
+    "missingTargets": 0,
+    "actualPrivateCredentialValuesScanned": 41,
+    "secretMatches": 0,
+    "absoluteUserPathJwtPrivateKeyPatterns": 0,
+    "copiedReviewerConclusionsMatchOriginals": true,
+    "formalRequirementsAndAcceptanceMatrixUnchanged": true,
+    "businessSourceUnchangedSince303Tests": true
+  },
+  "retainedNonBlockingObservations": [
+    "Combined supplemental verifyfalse cause undetermined; conservative partial/uncertain and later fixed-source readonly recognition retained. Instrumented diagnostic excluded from exact-source controls.",
+    "W1-volume setup mistake retained; exact logical preservation independently verified, no byte-equality claim.",
+    "Cutover attempt1 host mode=ro failure reproduced on independent copies; complete backup immutable reads pass; actual automatic rollback verified. OS/VFS cause not claimed.",
+    "MCP pagination numeric bounds normalized in tools schema; business validation enforces limits. No all35-operation execution claim."
+  ],
+  "heartbeat": {
+    "id": "blogsystem",
+    "status": "PAUSED",
+    "verification": "Read actual local automation.toml status; no mutation"
+  },
+  "deliveryBoundary": {
+    "implemented": "YES_AT_FIXED_SOURCE",
+    "localTests": "303/303 recorded PASS",
+    "local3457Deployment": "YES_INDEPENDENTLY_READ_BACK",
+    "targetProductionOrExternalProviderAcceptance": "NOT_ASSERTED",
+    "overallD1D9Acceptance": "NOT_ACCEPTED",
+    "gitPushAndDraftPR": "Pending separate actual delivery receipt; not blocked by this local package review"
+  },
+  "scope": "Gist v0.7 D1-D9/applicable A01-A52, targeted changed paths; no new all-credential/transport requirements, schedule feature, production SLA or RPO/RTO numbers."
+}

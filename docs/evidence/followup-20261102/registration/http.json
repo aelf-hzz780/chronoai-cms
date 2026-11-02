@@ -1,0 +1,86 @@
+[
+  {
+    "at": "2026-11-02T10:09:15.113975+00:00",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:09:15.240906+00:00",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:09:15.476810+00:00",
+    "method": "DELETE",
+    "path": "/api/v1/api-keys/a3572544-ecf2-498e-af64-a351f4af6c37",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:09:15.711783+00:00",
+    "method": "PUT",
+    "path": "/api/v1/user-services/bd8fda72-134f-4d08-8e5d-0fe7d95813f8",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:09:15.767294+00:00",
+    "method": "PUT",
+    "path": "/api/v1/services/ab6f8d88-9f58-4067-8a22-7d04759c2757",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:09:15.995139+00:00",
+    "method": "GET",
+    "path": "/api/v1/services/ab6f8d88-9f58-4067-8a22-7d04759c2757",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:09:16.229495+00:00",
+    "method": "PATCH",
+    "path": "/api/v1/admin/oauth-clients/077c7587-1d20-4a99-b3e0-1d6c7a1d7bf0",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:09:16.487519+00:00",
+    "method": "PATCH",
+    "path": "/api/v1/admin/users/6489c266-2511-437c-b3f2-c918690d9ca0/status",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:09:16.712558+00:00",
+    "method": "GET",
+    "path": "/api/v1/admin/users/6489c266-2511-437c-b3f2-c918690d9ca0",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:11:08.162928+00:00",
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:11:08.288987+00:00",
+    "method": "GET",
+    "path": "/api/v1/admin/oauth-clients",
+    "status": 200,
+    "traceId": null
+  },
+  {
+    "at": "2026-11-02T10:11:08.302417+00:00",
+    "method": "POST",
+    "path": "/mcp",
+    "status": 401,
+    "traceId": null
+  }
+]
