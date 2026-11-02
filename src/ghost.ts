@@ -1,10 +1,11 @@
 import { SignJWT } from 'jose';
-import { mkdir, writeFile, rename, readFile, mkdtemp, chmod, rm } from 'node:fs/promises';
+import { writeFile, rename, readFile, mkdtemp, chmod, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Store, Row } from './store.ts';
 import type { OriginalAdapter, OriginalInput, OriginalResult } from './publishing.ts';
 import { remote, remoteJson, RemoteError } from './http-client.ts';
-import { requireValue } from './errors.ts';
+import { AppError, requireValue } from './errors.ts';
+import {MediaStaging} from './media-staging.ts';
 import { render } from './render.ts';
 import { safeUrl } from './config.ts';
 import { provesBody } from './html-proof.ts';
@@ -59,6 +60,7 @@ export class GhostAdapter implements OriginalAdapter {
   }
   async publish(input: OriginalInput): Promise<OriginalResult> {
     assertRenderBudget(this.controlledHtml(input));
+    if(this.images(input).length)await new MediaStaging(this.store,this.mediaRoot,this.environment).resolve(input.site.id);
     const author = this.store.get('SELECT ghost_author_id FROM author_mappings WHERE site_id=? AND credited_author=?', input.site.id, input.creditedAuthor);
     requireValue(author, 409, 'AUTHOR_MAPPING_REQUIRED', 'Operator must map the credited author to this Ghost site');
     const existing = await this.current(input);
@@ -109,20 +111,23 @@ export class GhostAdapter implements OriginalAdapter {
   }
   async materialize(input:OriginalInput,result:OriginalResult) {
     if(!await this.proveOriginal(input,result))return false;
+    const stagingPaths=new MediaStaging(this.store,this.mediaRoot,this.environment);
     for(const image of this.images(input)) {
       if(await this.publicImage(input,image))continue;
       requireValue(input.beforeMaterialize,409,'MATERIALIZATION_AUTHORITY_REQUIRED','公开图片需要当前发布授权；请使用“补齐公开图片”。');
       await input.beforeMaterialize();input.guard?.();
-      // Staging is a private sibling of the per-site directories mounted into
-      // Ghost. No image bytes are written to a publicly served temporary path.
-      await mkdir(this.mediaRoot,{recursive:true,mode:0o700});
-      const staging=await mkdtemp(join(this.mediaRoot,'.private-media-'));
+      const location=await stagingPaths.resolve(input.site.id);
+      // Operator-provisioned private directory on this site's filesystem/mount.
+      // Neither the staging root nor its children belong to Ghost public routes.
+      const staging=await mkdtemp(join(location.privateRoot,'media-'));
       try {
         const temporary=join(staging,image.filename);await writeFile(temporary,image.content,{mode:0o600});await chmod(temporary,0o644);
+        await stagingPaths.assertUnchanged(location);
         await input.beforeMaterialize();input.guard?.();
-        const directory=join(this.mediaRoot,input.site.id);await mkdir(directory,{recursive:true,mode:0o755});
-        await input.beforeMaterialize();input.guard?.();
-        await rename(temporary,join(directory,image.filename));input.onMaterialized?.(image.id);
+        stagingPaths.assertUnchangedSync(location);input.guard?.();
+        try{await rename(temporary,join(location.target,image.filename));}
+        catch(error){if((error as NodeJS.ErrnoException).code==='EXDEV')throw new AppError(503,'MEDIA_STAGING_FILESYSTEM','Private staging and public target no longer support atomic rename');throw error;}
+        input.onMaterialized?.(image.id);
       }finally{await rm(staging,{recursive:true,force:true});}
       if(!await this.publicImage(input,image))return false;
     }

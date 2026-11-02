@@ -1,7 +1,7 @@
 // Safe Ghost adapter fixture: mocked GETs, private temp directories, no live stack.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,readFile,readdir,rm,stat} from 'node:fs/promises';
+import {mkdtemp,mkdir,readFile,readdir,rm,stat,symlink,chmod} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {fixture} from './helpers.ts';
@@ -21,7 +21,9 @@ async function mediaFixture(t:any){
  for(let i=0;i<2;i++)assets.push(await media.upload(f.actors.solo,article.id,'image/png',Buffer.concat([Buffer.from('89504e470d0a1a0a','hex'),Buffer.from([i])]).toString('base64'),'asset'));
  article=await f.content.edit(f.actors.solo,article.id,article.revision.id,{markdown:'Exact body\n\n'+assets.map(a=>a.markdown).join('\n\n')},'revision');
  const release=await pub.confirm(f.actors.solo,article.id,{ownerId:'solo',revisionId:article.revision.id,creditedAuthor:'solo',rightsConfirmed:true,action:'publish',idempotencyKey:'original'},'original');
- const ghost=new GhostAdapter(f.store,directory,true,{},undefined,{async verify(){return true;}}),result={remoteId:'known',url:'http://localhost:3999/post/'};
+ const privateRoot=join(directory,'private-staging');await mkdir(privateRoot,{mode:0o700});await mkdir(join(directory,'site'));
+ const mediaRoot=join(directory,'public');await mkdir(mediaRoot);await symlink(join(directory,'site'),join(mediaRoot,'site'));
+ const ghost=new GhostAdapter(f.store,mediaRoot,true,{GHOST_MEDIA_STAGING_JSON:JSON.stringify({site:privateRoot})},undefined,{async verify(){return true;}}),result={remoteId:'known',url:'http://localhost:3999/post/'};
  const input=pub.input(release),html=ghost.controlledHtml(input);let corrupt=false;
  ghost.current=async()=>({id:'known',url:result.url,title:input.title,status:'published',html,authors:[{id:'author'}]});
  t.mock.method(globalThis,'fetch',async(url:any,options:any)=>{
@@ -31,7 +33,7 @@ async function mediaFixture(t:any){
   try{return new Response(await readFile(join(directory,'site',image.filename)),{headers:{'content-type':image.mime}});}catch(error:any){if(error.code==='ENOENT')return new Response('',{status:404});throw error;}
  });
  const publicFiles=async()=>{try{return await readdir(join(directory,'site'));}catch(error:any){if(error.code==='ENOENT')return [];throw error;}};
- return {...f,vault,pub,ghost,input,result,release,article,directory,publicFiles,setCorrupt:(value:boolean)=>{corrupt=value;}};
+ return {...f,vault,pub,ghost,input,result,release,article,directory,privateRoot,publicFiles,setCorrupt:(value:boolean)=>{corrupt=value;}};
 }
 
 test('R031: Ghost verify cannot create public image files or mappings',async t=>{
@@ -83,7 +85,7 @@ test('R031: partial media publication remains recorded and fresh authority can c
  assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',f.release.id)!.state,'published');assert.equal(f.store.get('SELECT public_files FROM release_media_requests WHERE id=?',first.id)!.public_files,1);assert.equal(f.store.get('SELECT public_files FROM release_media_requests WHERE id=?',second.id)!.public_files,1);
 });
 
-for(const scenario of ['body changed','remote changed','paused','paused before rename','site drift','version drift','lease lost','revoked before rename'])test(`R031: media completion blocks ${scenario} without exposing image bytes`,async t=>{
+for(const scenario of ['body changed','remote changed','paused','paused before rename','site drift','version drift','lease lost','symlink drift during authority','private mode drift during authority','revoked before rename'])test(`R031: media completion blocks ${scenario} without exposing image bytes`,async t=>{
  const f=await mediaFixture(t);f.store.run("UPDATE releases SET state='verifying',remote_id=?,url=? WHERE id=?",f.result.remoteId,f.result.url,f.release.id);f.store.run("UPDATE jobs SET state='done' WHERE resource_id=?",f.release.id);
  const request=await f.pub.materializeMedia(f.actors.solo,f.release.id,{ownerId:'solo',revisionId:f.release.revision_id,rightsConfirmed:true,idempotencyKey:scenario},'guard');
  if(scenario==='body changed')f.setCorrupt(true);
@@ -102,13 +104,16 @@ for(const scenario of ['body changed','remote changed','paused','paused before r
   if(scenario==='paused before rename')f.store.run("UPDATE settings SET value='true' WHERE key='outbound_paused'");
   if(scenario==='site drift')f.store.run("UPDATE sites SET url='http://localhost:4001' WHERE id='site'");
   if(scenario==='version drift')f.store.run("UPDATE releases SET revision_id=? WHERE id=?",changedRevision!.revision.id,f.release.id);
+  if(scenario==='symlink drift during authority'){const target=join(f.directory,'new-target');await mkdir(target);await rm(join(f.ghost.mediaRoot,'site'));await symlink(target,join(f.ghost.mediaRoot,'site'));}
+  if(scenario==='private mode drift during authority')await chmod(f.privateRoot,0o755);
   if(scenario==='lease lost')f.store.run("UPDATE jobs SET lease_until='2000-01-01' WHERE resource_id=?",f.release.id);
-  if(scenario==='revoked before rename'){const stages=(await readdir(f.directory)).filter(name=>name.startsWith('.private-media-'));assert.equal(stages.length,1);assert.equal((await stat(join(f.directory,stages[0]!))).mode&0o777,0o700);throw new AppError(403,'SOURCE_REVOKED','Revoked at final check');}
+  if(scenario==='revoked before rename'){const stages=(await readdir(f.privateRoot)).filter(name=>name.startsWith('media-'));assert.equal(stages.length,1);assert.equal((await stat(join(f.privateRoot,stages[0]!))).mode&0o777,0o700);throw new AppError(403,'SOURCE_REVOKED','Revoked at final check');}
  };
  await new ReleaseWorker(f.pub,f.ghost).once();assert.deepEqual(await f.publicFiles(),[]);assert.equal(f.store.get('SELECT count(*) n FROM asset_publications')!.n,0);
  assert.ok(!['published'].includes(f.store.get('SELECT state FROM releases WHERE id=?',f.release.id)!.state));
+ if(scenario==='symlink drift during authority'||scenario==='private mode drift during authority')assert.equal(f.store.get('SELECT error_code FROM releases WHERE id=?',f.release.id)!.error_code,'MEDIA_STAGING_CHANGED');
  assert.equal(f.store.get('SELECT public_files FROM release_media_requests WHERE id=?',request.id)!.public_files,0);
- assert.deepEqual((await readdir(f.directory)).filter(name=>name.startsWith('.private-media-')),[],'Private staging is removed on every exit');
+ assert.deepEqual((await readdir(f.privateRoot)).filter(name=>name.startsWith('media-')),[],'Private staging is removed on every exit');
 });
 
 test('R031: legacy recovery metadata and its correction cannot use the recovering CMS actor',async t=>{
@@ -124,4 +129,11 @@ test('R031: legacy recovery metadata and its correction cannot use the recoverin
  while(await worker.once()){}assert.equal(writes,0);
  for(const id of ['legacy-recovery','legacy-correction'])assert.equal(f.store.get('SELECT error_code FROM projections WHERE id=?',id)!.error_code,'RECOVERY_READ_ONLY');
  await new AlternateService(f.pub).request(f.actors.solo,f.article.id,'explicit-fresh-command');await worker.once();assert.equal(writes,1);
+});
+
+test('R031: missing staging configuration blocks a real Ghost adapter before any write',async t=>{
+ const f=await mediaFixture(t);delete f.ghost.environment.GHOST_MEDIA_STAGING_JSON;let reads=0,writes=0;
+ f.ghost.current=async()=>{reads++;return null;};f.input.beforeWrite=async()=>{writes++;};
+ await assert.rejects(f.ghost.publish(f.input),{code:'MEDIA_STAGING_CONFIGURATION'});
+ assert.equal(reads,0);assert.equal(writes,0);assert.deepEqual(await f.publicFiles(),[]);
 });

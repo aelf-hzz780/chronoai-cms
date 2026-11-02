@@ -21,7 +21,7 @@
 {"ownerId":"<release owner>","revisionId":"<release revision>","rightsConfirmed":true,"idempotencyKey":"<new unique key>"}
 ```
 
-该独立命令要求当前 owner／Publisher 及 queued-write 来源授权，service key/child 还须本次请求专用新 proof；不能复用原发布或 reconcile proof。只允许已有 remote ID／URL 的 uncertain/verifying 非下线记录；Worker 精确证明原文正文、作者、owner、marker 与页面后，仅公开该确认版本的本地图片，不调用 Ghost create/update，也不替换原发布 Actor。每次公开前重新核验当前来源、发布权限、lease、pause、版本、站点与作者映射。
+该独立命令要求当前 owner／Publisher 及 queued-write 来源授权，service key/child 还须本次请求专用新 proof；不能复用原发布或 reconcile proof。只允许已有 remote ID／URL 的 uncertain/verifying 非下线记录；Worker 精确证明原文正文、作者、owner、marker 与页面后，仅公开该确认版本的本地图片，不调用 Ghost create/update，也不替换原发布 Actor。每次公开前重新核验当前来源、发布权限、lease、pause、版本、站点与作者映射。新图片还要求运维预置每站私有staging及`GHOST_MEDIA_STAGING_JSON`，同filesystem／同mount并在公开路由外；配置错误保留诊断，不改用公开tmp，见[运维配置](operations.md#图片私有-staging-配置)。
 
 202 是排队结果，不代表补图成功。`GET /articles/:id/releases` 的 `media_history` 和 CMS 状态显示每次请求的 state、public_files、error_code、trace_id。`partial` 表示本次已有图片公开；检查原文后，以新幂等 key／新 proof 明确确认剩余补图。相同幂等 key 只读回原请求，不重启任务；补图完成也不自动同步译文链接，需另行授权 `syncPublishedAlternates`。已公开文件无需重写；仅缺 SQLite 映射时只读复核可补映射。
 

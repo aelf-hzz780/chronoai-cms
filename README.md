@@ -12,7 +12,7 @@
 
 最新实际联合验证在固定业务源码`0418652`完成真实官方NyxID＋四原版Ghost的CMS／service × 个人／组织 × 中英八组初始发布、非空浏览指标与12组两入口查询一致性；CMS个人更新、双向hreflang、译文stale与下线有界通过。后续 r3/r4 有界证据完成现有组织译文 stale→unpublish 生命周期、普通成员个人 CMS/service × EN/ZH 矩阵、两个未发送新图取消分支、同组织 Admin/member 精确角色私有资源拒绝，以及默认浏览器认证与退出后的旧 cookie 失效；首个 CMS-EN 仅公开补核，另三篇才是新增发布，未声称四篇重跑。恢复证据仍覆盖原 credential 退组阻断、旧 cookie 失效、实际 native 新卷全量恢复、22 payload 加密归档核对、权限／映射／媒体核对、恢复后新文章与素材验证，以及组织中文同ID只读认回和 projection complete；原组织中文首次 INTERNAL 原因仍未定。仍缺正式生产RPO/RTO、外部分发恢复、实际外部平台及普通 Nyx 门户 Launch；已发送或外部分发取消、显式垃圾回收不属于本轮新增证据范围。证据与边界见中英对照 [I20](docs/review-i20.md) 与 [I21](docs/review-i21.md)；dev原容器恢复仅为资源窗口收尾，不是正式RPO/RTO验收。
 
-2026-11-02 新增 [I22 R031 V1 consumer 候选](docs/review-i22.md)：接入专用签名 command authority、官方在线精确核验、持久唯一 jti 命令绑定及最终发送守卫。本轮独立发现后的修复补充签名版本／incarnation严格检查、全caller只读恢复零自动metadata、公开图片独立授权与CMS显式补图／partial计数。当前证据仅为本地模型；真实本地 NyxID 后端的固定 SHA 联合验证和独立验收待完成，原未支持来源继续拒绝，不据此关闭 R031 或提升正式签收。
+2026-11-02 新增 [I22 R031 V1 consumer 候选](docs/review-i22.md)：接入专用签名 command authority、官方在线精确核验、持久唯一 jti 命令绑定及最终发送守卫。本轮独立发现后的修复补充签名版本／incarnation严格检查、全caller只读恢复零自动metadata、公开图片独立授权与CMS显式补图／partial计数。后续独立发现的跨volume EXDEV部署阻塞另以每站私有staging配置和真实隔离mount专项修复，未获部署或联合验收。当前证据仅为本地模型；真实本地 NyxID 后端的固定 SHA 联合验证和独立验收待完成，原未支持来源继续拒绝，不据此关闭 R031 或提升正式签收。
 
 **完整 D1–D9／A01–A52 尚未正式签收。** 本地真实 NyxID 证据不自动提升正式 D/A；目标部署与运维责任、真实外部账号、精确内容／动作授权及约定 RPO/RTO 仍缺输入。当前证据与逐项边界见[交付台账](docs/delivery-status.md)及[验收矩阵与证据入口](docs/acceptance.md)。阶段 0 记录保留为历史。
 

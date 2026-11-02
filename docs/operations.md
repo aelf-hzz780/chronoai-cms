@@ -23,6 +23,22 @@ node --env-file=/etc/chronoai/platform.env scripts/provision.ts pause --confirme
 
 Ghost、MySQL和Docker由独立运维身份管理。开通 owner/site/admin-site/author/owner-name 见 development.md。Ghost Admin Integration key 使用对应 env keyRef；普通用户只使用 CMS/NyxID，不分配 Ghost staff 或后台密码。运维首次安装与定期私有读取要记录工单、actor、owner、时间、Trace ID。
 
+## 图片私有 staging 配置
+
+含图片的发布必须配置 `GHOST_MEDIA_STAGING_JSON`：exact site ID 到 **Worker 视角绝对私有目录** 的 JSON map。没有默认目录；缺配置／未预置目录／权限不符在真实 Ghost publish 前报 `MEDIA_STAGING_CONFIGURATION` 或 `MEDIA_STAGING_PERMISSIONS`，只读复核不依赖该写入配置。所有公开目标也需预创建。每个 staging 根由 Worker Unix UID 所有、权限0700；不要把 Worker 的私有根交给 Web 静态服务。
+
+原宿主机单卷＋`ghost-media.override.yaml` 布局可继续使用：公开 `${PUBLIC_MEDIA_DIRECTORY}/<site>`，另在同盘同mount的 `/var/lib/chronoai/private-media/<site>` 预置0700目录并配置map；私有根须位于整个 PUBLIC_MEDIA_DIRECTORY 外。Ghost仍只读挂载公开site子目录，私有根不挂入公开路由。示例（以实际 site ID 替换四个 key）：
+
+```dotenv
+GHOST_MEDIA_STAGING_JSON={"personal-en":"/var/lib/chronoai/private-media/personal-en","personal-zh":"/var/lib/chronoai/private-media/personal-zh","organization-en":"/var/lib/chronoai/private-media/organization-en","organization-zh":"/var/lib/chronoai/private-media/organization-zh"}
+```
+
+平台容器＋四独立Ghost content volumes布局：保留每站**整个内容卷**挂到 Worker 的 `/mounted/<site>`，公开site symlink指向 `/mounted/<site>/images/chrono`，在该内容卷根预置 `.chrono-private-staging`（0700、Worker UID），将map值改为 `/mounted/<site>/.chrono-private-staging`。这属于卷的非公开区域，不放在 `images`、`media`、`files`、`themes` 内；禁止把它单独映射到公开路径。已有整个内容卷挂载无需增加新volume。不要把staging子目录再单独bind到另一个mount：即使来自同一底层盘，不同mount也可能无法rename；可用symlink别名，校验以realpath为准。
+
+Worker校验所有site symlink的规范路径，拒绝与全部公开site根、整个PUBLIC_MEDIA_DIRECTORY及可识别的Ghost images/media/files/themes服务根重叠的staging；验证目标与私有根的 `st_dev` **以及 Linux mount ID**。不同Docker bind mount可能st_dev相同却仍EXDEV，因此设备号不足以证明原子rename可用。Linux Worker需可读 `/proc/self/mountinfo`；不可读则阻断。每次公开前重新核验目录inode／权限／mount与symlink，最后async来源／发布权限检查后以同步filesystem／queue守卫收口，再原子rename。没有公开tmp或copyfallback。`MEDIA_STAGING_FILESYSTEM` 表示设备／mount不匹配，`MEDIA_STAGING_PUBLIC` 表示公开路径配置，`MEDIA_STAGING_CHANGED` 表示授权期间布局变化；排障后需明确新命令补图。
+
+升级前先暂停外发、停止旧Worker，由运维按固定UID预置根目录和配置，验证隔离mount正反用例后再启动候选。恢复到新卷时重设map，不能沿用原卷绝对路径；清理残留私有 `media-*` 子目录须在停止Worker并记录工单后执行，不能将其复制到public绕过授权。元数据同步、只读恢复及partial计数约束见[API指南](api-guide.md#只读恢复与显式补图)。
+
 ## HTTPS 与网络
 
 `infra/platform/nginx.conf.example` 在 nginx http context 内部署，替换所有占位 host/certificate/port，为四 Ghost 各复制一块。80仅跳转HTTPS，443终止TLS；公开 `/ghost` 和 `/ghost/` 一律404。私有 Admin route 指向相应127.0.0.1端口，loopback HTTP只允许运维配置；public url仍强制HTTPS。运维后台如需访问，用受审计SSH tunnel，不开启公网Admin。MySQL不发布宿主端口。
