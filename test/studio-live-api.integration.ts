@@ -75,10 +75,15 @@ async function acceptanceServer(port=0){
   };
   const services=acceptanceServices(f,vault,config);
   const app=await createApp({...f,vault,...services,publicUrl:config.publicUrl,auth,authenticate:request=>auth.authenticate(request)});
-  if(process.argv.includes('--serve'))app.addHook('onSend',async(request,_reply,payload)=>{
-    if(request.url.split('?')[0]==='/studio'&&typeof payload==='string')return payload.replace('<body>','<body><div class="studio-notice" role="status">LOCAL ACCEPTANCE / 本地验收：真实 CMS API 与隔离数据库；身份、连接与外部发布结果为测试 fixture。不会向外部平台发文。</div>');
-    return payload;
-  });
+  if(process.argv.includes('--serve')){
+    app.get('/__acceptance/notice.css',async(_request,reply)=>reply.type('text/css').send('#acceptance-notice{position:fixed;z-index:100;bottom:0;left:0;right:0;margin:0;padding:10px 16px;background:#eee8ff;color:#3f2477;border-top:1px solid #d3c5ff;font:12px/1.6 system-ui,sans-serif}body{padding-bottom:58px}'));
+    app.addHook('onSend',async(request,_reply,payload)=>{
+      if(!['/studio','/studio/'].includes(request.url.split('?')[0]!))return payload;
+      const html=Buffer.isBuffer(payload)?payload.toString('utf8'):typeof payload==='string'?payload:null;
+      if(html===null)return payload;
+      return html.replace('</head>','<link rel="stylesheet" href="/__acceptance/notice.css"></head>').replace('<body>','<body><aside id="acceptance-notice" role="status">LOCAL ACCEPTANCE / 本地验收：真实 CMS API 与隔离数据库；身份、连接与外部发布结果为测试 fixture。不会向外部平台发文。</aside>');
+    });
+  }
   app.get('/__acceptance/session/:subject',async(request,reply)=>{
     const subject=(request.params as {subject:string}).subject;
     if(!f.actors[subject])return reply.code(404).send({error:'Unknown fixture actor'});
@@ -93,6 +98,7 @@ async function acceptanceServer(port=0){
 
 if(process.argv.includes('--serve')){
   const server=await acceptanceServer(Number(process.env.STUDIO_ACCEPTANCE_PORT??4174));
+  assert.match((await server.app.inject('/studio')).body,/id="acceptance-notice"/,'The actual buffered HTML must clearly identify the local fixture preview');
   const release=await server.publish(server.english);await server.publish(server.chinese);
   const manual=await server.distribution.request(server.f.actors.admin,release.id,{target:'medium',connectionId:'org-medium',action:'create',format:'full',rightsConfirmed:true,idempotencyKey:'preview-manual'},'preview-fixture');
   await server.distribution.report(server.f.actors.admin,manual.id,'reviewing',null,'preview-fixture','Local acceptance fixture: awaiting an editorial decision.');
