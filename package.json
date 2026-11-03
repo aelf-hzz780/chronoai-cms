@@ -7,6 +7,9 @@
     "node": ">=24.18.0 <25"
   },
   "scripts": {
+    "build:studio": "tsc -p tsconfig.studio.json",
+    "predev": "npm run build:studio",
+    "pretest": "npm run build:studio",
     "dev": "node --env-file-if-exists=.env src/main.ts",
     "worker": "node --env-file-if-exists=.env src/worker-main.ts",
     "test": "node --test test/*.test.ts",

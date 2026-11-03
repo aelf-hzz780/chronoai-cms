@@ -61,6 +61,25 @@ export class Store {
       INSERT OR IGNORE INTO settings VALUES ('outbound_paused','false');
       INSERT OR IGNORE INTO migrations VALUES (1,strftime('%Y-%m-%dT%H:%M:%fZ','now'));
     `);
+    this.migrateSubmissionLifecycle();
+  }
+  private migrateSubmissionLifecycle(){
+    if(this.get('SELECT 1 FROM migrations WHERE version=2'))return;
+    this.transaction(()=>{
+      if(this.get('SELECT 1 FROM migrations WHERE version=2'))return;
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS submission_history (id TEXT PRIMARY KEY,article_id TEXT NOT NULL REFERENCES articles(id),revision_id TEXT NOT NULL REFERENCES revisions(id),actor TEXT NOT NULL,created_at TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS submission_history_article ON submission_history(article_id,created_at);
+        CREATE TABLE IF NOT EXISTS submission_fulfillments (article_id TEXT NOT NULL REFERENCES articles(id),revision_id TEXT NOT NULL REFERENCES revisions(id),release_id TEXT NOT NULL REFERENCES releases(id),fulfilled_at TEXT NOT NULL,PRIMARY KEY(article_id,revision_id));
+        CREATE INDEX IF NOT EXISTS translations_source ON translations(source_article);
+        INSERT INTO submission_history SELECT 'legacy:'||s.article_id,s.article_id,s.revision_id,s.actor,s.created_at FROM submissions s WHERE NOT EXISTS (SELECT 1 FROM submission_history h WHERE h.article_id=s.article_id AND h.revision_id=s.revision_id AND h.created_at=s.created_at);
+        INSERT OR IGNORE INTO submission_fulfillments
+          SELECT r.article_id,r.revision_id,r.id,r.updated_at FROM releases r
+          WHERE r.state IN ('published','superseded') AND r.action IN ('publish','update')
+          ORDER BY r.created_at,r.rowid;
+        INSERT INTO migrations VALUES (2,strftime('%Y-%m-%dT%H:%M:%fZ','now'));
+      `);
+    });
   }
   get(sql: string, ...params: SQLInputValue[]): Row | undefined { return this.db.prepare(sql).get(...params) as Row | undefined; }
   all(sql: string, ...params: SQLInputValue[]): Row[] { return this.db.prepare(sql).all(...params) as Row[]; }

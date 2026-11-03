@@ -1,0 +1,7 @@
+<header class="journal-header">
+    <a class="journal-brand" href="{{@site.url}}">
+        {{#if @site.logo}}<img src="{{@site.logo}}" alt="{{@site.title}}" width="180" height="44">{{else}}<span class="brand-symbol" aria-hidden="true">◈</span><span>{{@site.title}}<small>{{t "The journal"}}</small></span>{{/if}}
+    </a>
+    {{#if @site.navigation}}<nav class="journal-navigation" aria-label="{{t "Main navigation"}}">{{navigation}}</nav>{{/if}}
+    <a class="journal-rss" href="{{@site.url}}/rss/">RSS ↗</a>
+</header>

@@ -1,0 +1,14 @@
+{
+  "name": "chronoai-b",
+  "version": "0.1.0",
+  "description": "The ChronoAI B journal: calm reading, native Ghost publishing, English and Simplified Chinese.",
+  "license": "MIT",
+  "engines": {"ghost": ">=6.0.0 <7.0.0"},
+  "author": {"name": "ChronoAI Project", "url": "https://github.com/aelf-hzz780/chronoai-cms"},
+  "keywords": ["ghost-theme", "journal", "multilingual"],
+  "config": {
+    "posts_per_page": 7,
+    "card_assets": true,
+    "image_sizes": {"small": {"width": 360}, "medium": {"width": 720}, "large": {"width": 1440}}
+  }
+}

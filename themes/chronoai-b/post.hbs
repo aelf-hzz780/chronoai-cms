@@ -1,0 +1,35 @@
+{{!< default}}
+<main id="main-content" class="journal-article">
+{{#post}}
+    <article class="{{post_class}}">
+        <a class="back-link" href="{{@site.url}}">← {{t "All stories"}}</a>
+        <header class="story-heading">
+            <div class="eyebrow">{{tags separator=" · "}}</div>
+            <h1>{{title}}</h1>
+            {{> "byline"}}
+        </header>
+        {{#if feature_image}}
+        <figure class="story-cover">
+            <img src="{{img_url feature_image size="large"}}" alt="{{feature_image_alt}}" width="1440" decoding="async">
+            {{#if feature_image_caption}}<figcaption>{{feature_image_caption}}</figcaption>{{/if}}
+        </figure>
+        {{/if}}
+        <div class="reading-grid">
+            <aside class="reading-rail"><span class="eyebrow">{{t "The journal"}}</span><a href="{{@site.url}}">{{t "Keep exploring"}} ↗</a></aside>
+            <section class="reading-body gh-content">{{content}}</section>
+        </div>
+        {{#primary_author}}
+        {{#if bio}}
+        <aside class="author-bio">
+            {{#if profile_image}}<img src="{{img_url profile_image size="small"}}" alt="" width="48" height="48" loading="lazy">{{/if}}
+            <div><a href="{{url}}">{{name}}</a><p>{{bio}}</p></div>
+        </aside>
+        {{/if}}
+        {{/primary_author}}
+        <nav class="related-stories" aria-label="{{t "More stories"}}">
+            {{#prev_post}}<a href="{{url}}"><span class="eyebrow">{{t "Previous story"}}</span><h2>{{title}}</h2><span>← {{t "Read story"}}</span></a>{{/prev_post}}
+            {{#next_post}}<a href="{{url}}"><span class="eyebrow">{{t "Next story"}}</span><h2>{{title}}</h2><span>{{t "Read story"}} →</span></a>{{/next_post}}
+        </nav>
+    </article>
+{{/post}}
+</main>

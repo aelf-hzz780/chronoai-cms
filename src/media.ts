@@ -2,6 +2,11 @@ import { randomUUID } from 'node:crypto';
 import { ContentService, digest } from './content.ts';
 import type { Actor } from './policy.ts';
 import { requireValue, text } from './errors.ts';
+import MarkdownIt from 'markdown-it';
+
+const taskMarkdown=new MarkdownIt({html:false,linkify:false,typographer:false});
+const validateLink=taskMarkdown.validateLink;
+taskMarkdown.validateLink=url=>/^asset:[a-f0-9-]{36}$/.test(url)||validateLink(url);
 
 export class MediaService {
   content: ContentService;
@@ -31,5 +36,15 @@ export class MediaService {
     const revision = await this.content.visibleRevision(actor, article);
     requireValue(article.creator === actor.subject || Buffer.from(revision.markdown).toString('utf8').includes(`asset:${id}`), 403, 'FORBIDDEN', 'Image is not part of an authorized revision');
     return { data: Buffer.from(asset.content), mime: asset.mime };
+  }
+  fromAuthorizedSnapshot(snapshot:{ownerId:string;articleId:string;markdown:string},id:string){
+    text(id,'assetId');
+    const asset=this.content.store.get('SELECT * FROM assets WHERE id=?',id);requireValue(asset,404,'NOT_FOUND','Image not found');
+    requireValue(asset.owner_id===snapshot.ownerId&&asset.article_id===snapshot.articleId,403,'FORBIDDEN','Image is outside the confirmed task');
+    const tokens=taskMarkdown.parse(snapshot.markdown,{});let referenced=false;
+    while(tokens.length){const token=tokens.pop()!;if(token.type==='image'&&token.attrGet('src')===`asset:${id}`){referenced=true;break;}if(token.children)for(const child of token.children)tokens.push(child);}
+    requireValue(referenced,403,'FORBIDDEN','Image is not referenced by this exact task content');
+    requireValue(['image/png','image/jpeg','image/gif','image/webp'].includes(asset.mime),409,'ASSET_UNAVAILABLE','Confirmed image is unavailable');
+    return {data:Buffer.from(asset.content),mime:asset.mime};
   }
 }

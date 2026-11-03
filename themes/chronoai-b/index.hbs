@@ -1,0 +1,16 @@
+{{!< default}}
+<main id="main-content" class="journal-main">
+    <section class="journal-intro">
+        <div>
+            <p class="eyebrow">{{t "Ideas. People. Possibilities."}}</p>
+            <h1>{{t "Thoughts for a more connected world."}}</h1>
+        </div>
+        {{#if @site.description}}<p class="journal-description">{{@site.description}}</p>{{/if}}
+    </section>
+    {{> "feed"}}
+    <section class="journal-manifesto">
+        <p class="eyebrow">{{t "Independent ideas. Shared possibilities."}}</p>
+        <h2>{{t "A new perspective starts here."}}</h2>
+        <p>{{@site.title}}</p>
+    </section>
+</main>

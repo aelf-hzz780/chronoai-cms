@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "ES2022", "moduleResolution": "Bundler",
+    "strict": true, "lib": ["ES2022", "DOM", "DOM.Iterable"], "types": [],
+    "rootDir": "web/studio/src", "outDir": "web/studio/dist", "skipLibCheck": true
+  },
+  "include": ["web/studio/src/**/*.ts"]
+}

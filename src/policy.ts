@@ -8,6 +8,7 @@ export type AuthorizationPurpose = 'access'|'queued-write';
 export interface Authority {
   validate(actor: Actor, purpose?: AuthorizationPurpose): Promise<void>;
   membership(actor: Actor, organization: string): Promise<'admin' | 'member' | null | string>;
+  organizationRoles?(actor:Actor):Promise<Map<string,'admin'|'member'>>;
 }
 export class Policy {
   store: Store; authority: Authority;

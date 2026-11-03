@@ -1,0 +1,10 @@
+{{!< default}}
+<main id="main-content" class="journal-main">
+    {{#tag}}
+    <header class="journal-intro archive-heading">
+        <div><a class="eyebrow" href="{{@site.url}}">{{t "All stories"}} ↗</a><h1>{{name}}</h1></div>
+        {{#if description}}<p class="journal-description">{{description}}</p>{{/if}}
+    </header>
+    {{/tag}}
+    {{> "feed"}}
+</main>

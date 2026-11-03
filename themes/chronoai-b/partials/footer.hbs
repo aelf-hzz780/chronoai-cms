@@ -1,0 +1,5 @@
+<footer class="journal-footer">
+    <a class="footer-brand" href="{{@site.url}}"><span class="brand-symbol" aria-hidden="true">◈</span><span>{{@site.title}}<small>{{t "Good ideas travel further."}}</small></span></a>
+    {{#if @site.secondary_navigation}}<nav aria-label="{{t "Footer navigation"}}">{{navigation type="secondary"}}</nav>{{/if}}
+    <small>© {{date format="YYYY"}} {{@site.title}}</small>
+</footer>

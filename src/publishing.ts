@@ -225,6 +225,7 @@ export class ReleaseWorker {
     this.queue.mutate(lease, () => {
       store.run("UPDATE releases SET state='superseded',updated_at=? WHERE article_id=? AND state='published' AND id<>?", now, row.article_id, row.id);
       store.run('UPDATE releases SET state=?,remote_id=?,url=?,error_code=NULL,updated_at=? WHERE id=?', row.action === 'unpublish' ? 'unpublished' : 'published', result.remoteId, result.url, now, row.id);
+      if(row.action!=='unpublish')store.run('INSERT OR IGNORE INTO submission_fulfillments VALUES (?,?,?,?)',row.article_id,row.revision_id,row.id,now);
       store.audit('worker', row.owner_id, `original.${row.action === 'unpublish' ? 'unpublished' : 'published'}`, row.id, row.trace_id, { revisionId: row.revision_id, url: result.url });
       if(mediaId)store.run("UPDATE release_media_requests SET state='complete',error_code=NULL,updated_at=? WHERE id=?",now,mediaId);
       if(!enqueueProjection)return;

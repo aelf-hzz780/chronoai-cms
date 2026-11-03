@@ -78,11 +78,18 @@ export class NyxAuthority implements Authority {
     requireValue(path.startsWith('/api/v1/') && !path.includes('..'),500,'NYXID_ROUTE','Invalid upstream route');
     return remoteJson(`${this.config.authorityUrl}${path}`,{method,headers:{authorization:`Bearer ${actor.credential}`,'content-type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
   }
-  async membership(actor:Actor,organization:string) {
+  async organizationRoles(actor:Actor):Promise<Map<string,'admin'|'member'>> {
     const result=await this.call(actor,'/api/v1/orgs');
-    requireValue(Array.isArray(result.orgs),502,'NYXID_CONTRACT','Invalid organization inventory');
-    const org=result.orgs.find((o:any)=>o.id===organization);
-    return org?.your_role==='admin'?'admin':org?.your_role==='member'?'member':null;
+    requireValue(result&&Array.isArray(result.orgs),502,'NYXID_CONTRACT','Invalid organization inventory');
+    const seen=new Set<string>(),roles=new Map<string,'admin'|'member'>();
+    for(const org of result.orgs){
+      requireValue(org&&typeof org.id==='string'&&org.id.trim().length>0&&org.id.length<=500&&typeof org.your_role==='string'&&org.your_role.length>0&&!seen.has(org.id),502,'NYXID_CONTRACT','Invalid or ambiguous organization inventory');
+      seen.add(org.id);if(org.your_role==='admin'||org.your_role==='member')roles.set(org.id,org.your_role);
+    }
+    return roles;
+  }
+  async membership(actor:Actor,organization:string) {
+    return (await this.organizationRoles(actor)).get(organization)??null;
   }
   async bindings():Promise<ConnectionBinding[]> {
     requireValue(this.config.connectionsFile,409,'CONNECTION_CONFIGURATION_REQUIRED','Operator must bind exact NyxID connections to owners and destinations');

@@ -1,0 +1,11 @@
+<article class="story-card {{post_class}}">
+    <a class="story-card-visual" href="{{url}}" aria-label="{{title}}">
+        {{#if feature_image}}<img src="{{img_url feature_image size="medium"}}" alt="{{feature_image_alt}}" width="720" height="480" loading="lazy" decoding="async">{{else}}<span class="story-art" aria-hidden="true"><span class="story-art-grid"></span><span class="story-art-disc"></span><span class="story-art-disc second"></span><span class="story-art-type">{{@site.title}}</span><span class="story-art-footer">{{t "Independent ideas. Shared possibilities."}}</span></span>{{/if}}
+    </a>
+    <div class="story-card-copy">
+        <div class="story-category">{{#if featured}}<span>{{t "Featured"}} · </span>{{/if}}{{tags separator=" · "}}</div>
+        <h2><a href="{{url}}">{{title}}</a></h2>
+        <p class="story-excerpt">{{excerpt words="35"}}</p>
+        {{> "byline"}}
+    </div>
+</article>

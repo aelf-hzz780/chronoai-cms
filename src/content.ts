@@ -78,7 +78,9 @@ export class ContentService {
     const article = this.article(id); await this.policy.owner(actor, article.owner_id, 'content:write');
     requireValue(article.creator === actor.subject && article.current_revision === revisionId, 403, 'FORBIDDEN', 'Submit your current draft revision');
     this.store.transaction(() => {
-      this.store.run('INSERT INTO submissions VALUES (?,?,?,?) ON CONFLICT(article_id) DO UPDATE SET revision_id=excluded.revision_id,actor=excluded.actor,created_at=excluded.created_at', id, revisionId, actor.subject, new Date().toISOString());
+      const now=new Date().toISOString();
+      this.store.run('INSERT INTO submissions VALUES (?,?,?,?) ON CONFLICT(article_id) DO UPDATE SET revision_id=excluded.revision_id,actor=excluded.actor,created_at=excluded.created_at', id, revisionId, actor.subject, now);
+      this.store.run('INSERT INTO submission_history VALUES (?,?,?,?,?)',randomUUID(),id,revisionId,actor.subject,now);
       this.store.audit(actor.subject, article.owner_id, 'article.submit', id, trace, { revision: revisionId });
     });
     return { articleId: id, revisionId, status: 'submitted' };

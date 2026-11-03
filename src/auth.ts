@@ -11,6 +11,11 @@ import type { Actor, Policy } from './policy.ts';
 import {CallerAuthorization} from './caller-authorization.ts';
 import {commandRequest} from './command-authority.ts';
 
+interface LoginReturn {stateHash:string;returnTo:'/'|'/studio';expiresAt:number;}
+function loginDestination(value:unknown){
+  requireValue(value===undefined||value==='/'||value==='/studio',400,'INVALID_INPUT','returnTo must be / or /studio');
+  return value??'/';
+}
 export class AuthManager {
   config: Config; store: Store; vault: Vault; policy: Policy;
   callers:CallerAuthorization;
@@ -81,14 +86,18 @@ export class AuthManager {
   }
   install(app: FastifyInstance) {
     const cookie = { httpOnly: true, secure: this.config.publicUrl.startsWith('https:'), sameSite: 'lax' as const, path: '/' };
-    app.get('/auth/login', async (_request, reply) => {
+    app.get('/auth/login', async (request, reply) => {
+      const returnTo=loginDestination((request.query as Record<string,unknown>).returnTo);
       const discovery = await this.discover(); const state = randomBytes(32).toString('base64url'), nonce = randomBytes(32).toString('base64url'), verifier = randomBytes(48).toString('base64url');
+      const expiresAt=Date.now()+300_000;
       this.store.run('DELETE FROM oidc_states WHERE expires_at<?', new Date().toISOString());
-      this.store.run('INSERT INTO oidc_states VALUES (?,?,?,?)', digest(state), nonce, verifier, new Date(Date.now() + 300_000).toISOString());
+      this.store.run('INSERT INTO oidc_states VALUES (?,?,?,?)', digest(state), nonce, verifier, new Date(expiresAt).toISOString());
       const url = new URL(discovery.authorization_endpoint);
       const challenge = Buffer.from(digest(verifier), 'hex').toString('base64url');
       url.search = new URLSearchParams({ client_id: this.config.clientId, response_type: 'code', redirect_uri: `${this.config.publicUrl}/auth/callback`, scope: this.config.oauthScopes ?? 'openid profile', state, nonce, code_challenge: challenge, code_challenge_method: 'S256' }).toString();
-      reply.setCookie('chrono_oidc', state, { ...cookie, maxAge: 300 }); return reply.redirect(url.href);
+      reply.setCookie('chrono_oidc', state, { ...cookie, maxAge: 300 });
+      reply.setCookie('chrono_oidc_return',this.vault.seal({stateHash:digest(state),returnTo,expiresAt} satisfies LoginReturn),{...cookie,maxAge:300});
+      return reply.redirect(url.href);
     });
     app.get('/auth/callback', async (request, reply) => {
       const query = request.query as Record<string, unknown>;
@@ -96,7 +105,19 @@ export class AuthManager {
       requireValue(state === request.cookies.chrono_oidc, 401, 'OIDC_STATE', 'Invalid login state');
       const saved = this.store.get('SELECT * FROM oidc_states WHERE state=? AND expires_at>?', digest(state), new Date().toISOString());
       requireValue(saved, 401, 'OIDC_STATE', 'Login state expired or already used');
-      this.store.run('DELETE FROM oidc_states WHERE state=?', digest(state)); reply.clearCookie('chrono_oidc', cookie);
+      let returnTo:'/'|'/studio'='/';
+      const sealed=request.cookies.chrono_oidc_return;
+      if(sealed){
+        try{
+          const destination=this.vault.open<LoginReturn>(sealed);
+          if(destination&&destination.stateHash===digest(state)&&(destination.returnTo==='/'||destination.returnTo==='/studio')&&typeof destination.expiresAt==='number'&&Number.isFinite(destination.expiresAt)&&destination.expiresAt>Date.now()&&destination.expiresAt<=Date.parse(saved.expires_at))returnTo=destination.returnTo;
+        }catch{/* Untrusted optional return metadata grants no redirect permission. */}
+      }
+      this.store.run('DELETE FROM oidc_states WHERE state=?', digest(state)); reply.clearCookie('chrono_oidc', cookie);reply.clearCookie('chrono_oidc_return',cookie);
+      if(query.error!==undefined){
+        if(query.error==='access_denied'&&returnTo==='/studio')return reply.redirect('/studio?authError=access_denied');
+        throw new AppError(401,'OIDC_DENIED','Sign-in was cancelled or declined');
+      }
       const discovery = await this.discover();
       const body = new URLSearchParams({ client_id: this.config.clientId, grant_type: 'authorization_code', code: text(query.code, 'code', 4096), redirect_uri: `${this.config.publicUrl}/auth/callback`, code_verifier: saved.verifier });
       if (this.config.clientSecret) body.set('client_secret', this.config.clientSecret);
@@ -112,7 +133,7 @@ export class AuthManager {
       const payload = JSON.parse(Buffer.from(tokens.access_token.split('.')[1], 'base64url').toString());
       this.store.run('INSERT INTO sessions VALUES (?,?,?,?)', digest(session), this.vault.seal(actor), csrf, new Date(Math.min(payload.exp * 1000, Date.now() + 3_600_000)).toISOString());
       this.store.audit(actor.subject, ownerId, 'identity.signin', ownerId, request.id);
-      reply.setCookie('chrono_session', session, { ...cookie, maxAge: 3600 }); return reply.redirect('/');
+      reply.setCookie('chrono_session', session, { ...cookie, maxAge: 3600 }); return reply.redirect(returnTo);
     });
     app.post('/auth/logout', async (request, reply) => {
       const actor = await this.authenticate(request); requireValue(actor, 401, 'UNAUTHENTICATED', 'Sign in required');

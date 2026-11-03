@@ -15,6 +15,10 @@ import { MetricsService } from './metrics.ts';
 import type { DistributionService } from './distribution.ts';
 import { AlternateService } from './alternates.ts';
 import {openApi} from './openapi.ts';
+import {WorkspaceReadService} from './workspace-read.ts';
+import {ContentReadService} from './content-read.ts';
+import {installStudioAssets} from './studio-assets.ts';
+import {TaskReadService} from './task-read.ts';
 
 declare module 'fastify' { interface FastifyRequest { actor: Actor; rawBody:Buffer|null; } }
 export interface AppDependencies {
@@ -50,6 +54,7 @@ export async function createApp(deps: AppDependencies) {
   app.get('/', async (_request, reply) => reply.type('text/html').send(await readFile(new URL('../web/index.html', import.meta.url))));
   app.get('/app.js', async (_request, reply) => reply.type('text/javascript').send(await readFile(new URL('../web/app.js', import.meta.url))));
   app.get('/style.css', async (_request, reply) => reply.type('text/css').send(await readFile(new URL('../web/style.css', import.meta.url))));
+  installStudioAssets(app);
   deps.auth?.install(app);
   const metrics = deps.metrics ?? new MetricsService(deps.content, { enabled: false, requireConsent: true, secret: randomUUID() });
   app.get('/track/:token.gif', async (request, reply) => {
@@ -61,6 +66,8 @@ export async function createApp(deps: AppDependencies) {
   app.get('/tracker.js', async (_request, reply) => reply.type('text/javascript').send(await readFile(new URL('../web/tracker.js', import.meta.url))));
   const media = new MediaService(deps.content);
   const publishing = new PublishingService(deps.content, deps.vault);
+  const workspaces = new WorkspaceReadService(deps.policy),contentRead = new ContentReadService(workspaces);
+  const tasks = new TaskReadService(workspaces,media);
   const distribution = () => { requireValue(deps.distribution, 503, 'DISTRIBUTION_UNAVAILABLE', 'Distribution is not configured'); return deps.distribution; };
   for (const entry of ['cms', 'service']) {
     await app.register(async api => {
@@ -68,16 +75,15 @@ export async function createApp(deps: AppDependencies) {
         const actor = await deps.authenticate(request); requireValue(actor, 401, 'UNAUTHENTICATED', 'Sign in with NyxID required'); request.actor = actor;
       });
       api.get('/me', async request => {
-        await deps.policy.scope(request.actor, 'content:read');
-        const workspaces = [];
-        for (const owner of deps.store.all('SELECT * FROM owners WHERE issuer=? AND (kind=? OR subject=?) LIMIT 1000', request.actor.issuer, 'organization', request.actor.subject)) {
-          try { await deps.policy.owner(request.actor, owner.id); }
-          catch (error) { if (error instanceof AppError && error.code === 'FORBIDDEN') continue; throw error; }
-          workspaces.push({ id: owner.id, kind: owner.kind, name: deps.store.get('SELECT display_name FROM owner_profiles WHERE owner_id=?',owner.id)?.display_name??owner.subject, canPublish: request.actor.scopes.includes('publish') && await deps.policy.canPublish(request.actor, owner) });
-        }
+        const directory = await workspaces.directory(request.actor);
         const session = deps.store.get('SELECT csrf FROM sessions WHERE id=?', (await import('./content.ts')).digest(request.cookies.chrono_session ?? ''));
-        return { subject: request.actor.subject, workspaces, csrf: entry === 'cms' ? session?.csrf : undefined };
+        return { ...directory, csrf: entry === 'cms' ? session?.csrf : undefined };
       });
+      api.get('/owners/:id/sites',async request=>workspaces.sites(request.actor,(request.params as {id:string}).id));
+      api.get('/owners/:id/content-summary',async request=>contentRead.summary(request.actor,(request.params as {id:string}).id,request.query as Record<string,string>));
+      api.get('/owners/:id/tasks',async request=>tasks.list(request.actor,(request.params as {id:string}).id,request.query as Record<string,string>));
+      api.get('/owners/:id/tasks/:kind/:taskId',async request=>{const p=request.params as {id:string;kind:string;taskId:string};return tasks.detail(request.actor,p.id,p.kind,p.taskId);});
+      api.get('/owners/:id/tasks/:kind/:taskId/assets/:assetId',async(request,reply)=>{const p=request.params as {id:string;kind:string;taskId:string;assetId:string};const asset=await tasks.asset(request.actor,p.id,p.kind,p.taskId,p.assetId);return reply.type(asset.mime).header('content-disposition','inline').send(asset.data);});
       api.get('/metrics', async request => { const q = request.query as Record<string,string>; return metrics.query(request.actor, text(q.ownerId, 'ownerId'), q); });
       api.get('/articles', async request => {
         const q = request.query as Record<string, string>;

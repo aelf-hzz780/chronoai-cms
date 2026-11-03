@@ -1,0 +1,10 @@
+<section class="journal-latest" aria-label="{{t "Latest stories"}}">
+    <div class="story-card-grid">
+        {{#foreach posts}}
+            {{> "post-card"}}
+        {{else}}
+            <p class="empty-feed">{{t "More stories are on the way."}}</p>
+        {{/foreach}}
+    </div>
+    {{pagination}}
+</section>
