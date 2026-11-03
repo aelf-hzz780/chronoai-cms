@@ -1,0 +1,218 @@
+{
+  "status": "PASS_BOUNDED_REAL_NYX_COMBINED_MEDIA_RECOVERY",
+  "runId": "combined-363dca9c2068",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "cleanup": [
+    {
+      "articleUnpublished": true,
+      "articleUrl": "http://localhost:3478/chrono-2bc56515-f12e-4b56-a8a9-b421d00d181f/",
+      "imagesRetained": true,
+      "reason": "Public files are immutable once legitimately exposed; exact artificial sample retained, no arbitrary Ghost file deletion."
+    },
+    {
+      "actor": "admin",
+      "keyId": "1968e051-d2e2-409e-a217-9ad3a6693624",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "77d72e60-8591-44d2-933a-dc381c2e31a8",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "ef429e44-2821-4ff1-b232-a8a9bf114886",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "717c0dc1-20cf-44ec-8727-4fb9458c7913",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "331bba3d-7d64-412d-ba5f-30bb729ff019",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "7a83cd92-ed8d-4d76-a53d-0d1ecf88cdf2",
+      "revoked": true
+    }
+  ],
+  "boundaries": {
+    "identity": "real Nyx049 signed identity/delegation/command source; exact own UserService; per-request formal approvals",
+    "destination": "actual local Ghost organization-en; actual private staged PNG rename and public bytes",
+    "restore": "actual encrypted/decrypted SQLite snapshots; running crash cut captured after first actual image; no four-Ghost full restore repeated",
+    "outsideScope": [
+      "external providers",
+      "production",
+      "all Nyx source modes",
+      "overall D1-D9"
+    ]
+  },
+  "articleId": "2bc56515-f12e-4b56-a8a9-b421d00d181f",
+  "releaseId": "f5355255-fd8f-42ec-8456-dac938965a88",
+  "phase": "suite_finished",
+  "updatedAt": "2026-11-02T10:13:24.063470+00:00",
+  "finalHistory": [
+    {
+      "id": "181509c7-613b-4c10-a088-9acec4b1a541",
+      "state": "blocked",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 0,
+      "error_code": "READ_ONLY_RECONCILIATION_REQUESTED"
+    },
+    {
+      "id": "a460da66-7373-4787-8302-caa014c55353",
+      "state": "blocked",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 0,
+      "error_code": "READ_ONLY_RECONCILIATION_REQUESTED"
+    },
+    {
+      "id": "e6e2f0c4-6df1-4d0c-9aad-734db1beb1e7",
+      "state": "blocked",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 0,
+      "error_code": "RESTORED_RECONCILIATION_REQUIRED"
+    },
+    {
+      "id": "6c96a96e-3dea-433a-abb2-d24247fe713e",
+      "state": "blocked",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 0,
+      "error_code": "IDENTITY_UNAVAILABLE"
+    },
+    {
+      "id": "0b940663-a0f8-4a7e-8219-2015370cb44d",
+      "state": "blocked",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 0,
+      "error_code": "IDENTITY_UNAVAILABLE"
+    },
+    {
+      "id": "ee89aa67-51b7-45e3-81ac-06e4e0b1dd45",
+      "state": "blocked",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 0,
+      "error_code": "FORBIDDEN"
+    },
+    {
+      "id": "224a5a05-2509-4b29-aab3-8c954935188e",
+      "state": "blocked",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 0,
+      "error_code": "FORBIDDEN"
+    },
+    {
+      "id": "2549ed27-baa4-497d-a9e5-242a224253fe",
+      "state": "partial",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 1,
+      "error_code": "RESTORED_RECONCILIATION_REQUIRED"
+    },
+    {
+      "id": "e6e1a53b-6ff2-4cd1-a3d7-ea20155027d6",
+      "state": "complete",
+      "confirmation_digest": "87b85824ccbf9ddb486bdf7d1abc370dea6f2a1fc14e722679a87127f8c9986d",
+      "public_files": 1,
+      "error_code": null
+    }
+  ],
+  "caseFiles": [
+    {
+      "case": "real-original-missing-images",
+      "path": "cases/real-original-missing-images.json",
+      "sha256": "5a153257949e99996c09d5acb462f7b541cd75e87d833527352799b77328d4b6",
+      "originalLocalResultSha256": "8b0fa14014d94e88d5a13199df5b6fe75acb920fe4fc45d446f038ada3dd8287",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "active-old-current-readonly",
+      "path": "cases/active-old-current-readonly.json",
+      "sha256": "9b08da7298e4aff3a2f4a02895d231d32eddb0243b69fb30afaae8359cecf030",
+      "originalLocalResultSha256": "31874d719d1e20a7545a0e4a5ad5201e3d5856d197920b470e35156ef66dbb63",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "revoked-old-current-readonly",
+      "path": "cases/revoked-old-current-readonly.json",
+      "sha256": "7671c4ea2b2e74513641603f5dc664c31dec4cc47619d57f1841590c7dcefb69",
+      "originalLocalResultSha256": "bae4fa934c691da95ac9c60769fe859385dfd41468d9527c1905d9ee141c35f2",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "encrypted-queued-restore",
+      "path": "cases/encrypted-queued-restore.json",
+      "sha256": "3617fd4d8cbceb178ea5fea052dffc010825ffe0ec71b2eadd68c844f7b0082f",
+      "originalLocalResultSha256": "80d0be85b12a3271c5f64c1a1a58c9e5a61ff2d8a2ef895270a218a0bde65d86",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "restored-queued-current-readonly",
+      "path": "cases/restored-queued-current-readonly.json",
+      "sha256": "2f86a0f87a6bda10b4b4b559a7126e3d17f6ab31b36d023d03ed5757132e0f1c",
+      "originalLocalResultSha256": "d13536a0ef04ae5f442490b302636757162ce78586cd6c9311c8286eb945662c",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "restored-source-revoked-execution",
+      "path": "cases/restored-source-revoked-execution.json",
+      "sha256": "7323b030444505579a30d8c7130482acaf4491dfc86e7347b6042d337dec975a",
+      "originalLocalResultSha256": "7d8d67c10e42187d0c353af8a53fad7fd84893b741093e27a0935b343a2e5402",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "restored-source-revoked-final",
+      "path": "cases/restored-source-revoked-final.json",
+      "sha256": "28d9cab40246493f0714e427e1d80e6247c6259821f7ae3d621d9f32eb3b5f97",
+      "originalLocalResultSha256": "a13d98428c4c9d0594d8eac0919e246cb7b82b3baeedacc5f38192f69e9662c7",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "restored-role-revoked-execution",
+      "path": "cases/restored-role-revoked-execution.json",
+      "sha256": "0567f6cd235608ef11dd6df120b58ee9cf9462fa0a690a884817460b6bdecf8b",
+      "originalLocalResultSha256": "2ed34f73b5ecdd137f01dfb504912bd4c9697028d786ad412e42b36545ad5813",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "restored-role-revoked-final",
+      "path": "cases/restored-role-revoked-final.json",
+      "sha256": "f7def54b2b14c624779abb4599c6de92895997c98f6be7abf6dbf8e369ab1300",
+      "originalLocalResultSha256": "67370da66b1acd66e4780c201287cef1383155d1cdb82e7bacc90764cc2af7c9",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "real-first-image-running-snapshot",
+      "path": "cases/real-first-image-running-snapshot.json",
+      "sha256": "5ba0cd1cdee71bdd6b9f11901d51f94fa6187c5ed51a940f988a3b92c43c9290",
+      "originalLocalResultSha256": "1248e4ea469202109525318de059bf906a51626e0a127e4255547d6c08164273",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "restored-running-current-readonly",
+      "path": "cases/restored-running-current-readonly.json",
+      "sha256": "dfee7983d60241ee2da3e31b877a129aa0b935cfc321abfde56fbec1f23a0b93",
+      "originalLocalResultSha256": "651954c88c62a43d10c17d0297f82e35d238bef506ed6d01c0e57764be1b8735",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "fresh-actual-materialization-success",
+      "path": "cases/fresh-actual-materialization-success.json",
+      "sha256": "4d92d54566fe5cd6fc198aabd95a0cb7bdf9febeb8034fa7ef3c6743b05139b9",
+      "originalLocalResultSha256": "3b057cd52f544b6a095a1c03917735b2e5560f3fd0c62f58008fe977359f0122",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "real-original-unpublish",
+      "path": "cases/real-original-unpublish.json",
+      "sha256": "acccd6504833d44e05080408a863eb875dca55a8f159b6e6a15ba16e0b777df1",
+      "originalLocalResultSha256": "4a908df8e3015d724062b39cb16fa21b1551b4a875f01aa24b285b58de6da085",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    }
+  ],
+  "originalLocalReportSha256": "3f2fe799387657e021bee4fad02edb9a71a2c66b383ff59e87814b757f1bfb39"
+}

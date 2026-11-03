@@ -1,0 +1,35 @@
+{
+  "status": "PASS_PUBLIC_GENERATED_IMAGE_READBACK",
+  "uniquePngCount": 4,
+  "unpublishedArticleUrlCount": 3,
+  "images": [
+    {
+      "url": "http://localhost:3478/content/images/chrono/69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8.png",
+      "status": 200,
+      "sha256": "69c75f635e66c71783d380118643a55f8feacd9bfa9b6ed73f52f50b5a0c19c8",
+      "bytes": 17715,
+      "matchesOriginalGeneratedPng": true
+    },
+    {
+      "url": "http://localhost:3478/content/images/chrono/40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea.png",
+      "status": 200,
+      "sha256": "40ec194c9364fadcc0655e5e256df880379ddf02173d9ba06a26eff214e7c0ea",
+      "bytes": 17752,
+      "matchesOriginalGeneratedPng": true
+    },
+    {
+      "url": "http://localhost:3478/content/images/chrono/aec8d770e88d8ea5459b5edf7ef52ba547e2c3e0b155818e73cb9e9597a3ccc8.png",
+      "status": 200,
+      "sha256": "aec8d770e88d8ea5459b5edf7ef52ba547e2c3e0b155818e73cb9e9597a3ccc8",
+      "bytes": 17688,
+      "matchesOriginalGeneratedPng": true
+    },
+    {
+      "url": "http://localhost:3478/content/images/chrono/ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50.png",
+      "status": 200,
+      "sha256": "ecc8b0ce077efad7b691c239d7f35d3d05e9f6afec2f3319d5373af5e24fbb50",
+      "bytes": 17754,
+      "matchesOriginalGeneratedPng": true
+    }
+  ]
+}

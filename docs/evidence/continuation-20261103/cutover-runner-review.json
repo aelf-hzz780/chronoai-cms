@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-03T03:01:39.755230+00:00",
+  "reviewer": "renderer_diagnosis",
+  "status": "PASS_CONDITIONAL_RUNNER_REVIEW",
+  "runnerPath": "execute-cutover.py",
+  "runnerSha256": "53a928171ef7ad52690b104501d16da93d7029f1ba4759f72a5c745b5706dbc9",
+  "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "findings": [],
+  "scope": "Read-only static review of exact local-cutover runner plus current read-only preflight facts. No switch or rollback executed by reviewer.",
+  "checked": [
+    {
+      "location": "execute-cutover.py:15",
+      "result": "PASS",
+      "check": "Requires independent code PASS_BOUNDED for exact c16 with no findings, exact candidate controller approval, matching runner self hash, and root-reviewed non-diagnostic PASS_FIXED_CANDIDATE_NATIVE gate before controller import or switching."
+    },
+    {
+      "location": "execute-cutover.py:22",
+      "result": "PASS",
+      "check": "All controller reviewed file hashes must still match. Every nonempty native report list entry is bound to a hash under the task root and all selected expectedFields must match parsed raw JSON."
+    },
+    {
+      "location": "execute-cutover.py:33",
+      "result": "PASS",
+      "check": "Exclusively creates existing runtime-heavy.lock path and retains any foreign existing lock; finally removes only matching inode and exact own contents."
+    },
+    {
+      "location": "execute-cutover.py:39",
+      "result": "PASS",
+      "check": "Immediately validates running old container ID, full Config/HostConfig equality, full Mounts object equality after sorting by Destination, network membership and exact app.env/runtime/Worker/topology/source-lock preimage bytes. No credentials are printed."
+    },
+    {
+      "location": "execute-cutover.py:47",
+      "result": "PASS",
+      "check": "Requires exactly old container to bind host3457; checks every actual old source hash, exact source/environment revision and live expected Worker PID/script; requires no pending jobs/media or external delivery rows."
+    },
+    {
+      "location": "execute-cutover.py:56",
+      "result": "PASS",
+      "check": "Writes preflight and exact root approval with evidence hashes and allowedSchemaAdditions=[] only after all checks and while holding resource lock."
+    },
+    {
+      "location": "execute-cutover.py:58",
+      "result": "PASS",
+      "check": "Controller handles its own switch exceptions; after it returns, both execution-result writeback and full runtime readback execute inside common try/except that invokes data-preserving rollback on any BaseException."
+    }
+  ],
+  "actualReadOnlyFacts": {
+    "independentCodeReviewStatus": "PASS_BOUNDED",
+    "independentCodeReviewCandidate": "c16cde700963959d3fd7fc226853b71f5551573a",
+    "runningContainersObserved": 21,
+    "nullPortBindingsObserved": [],
+    "single3457Owner": "blogsystem-command-candidate-386b9652dc43-r2",
+    "nativeGateExistedAtReview": false,
+    "allControllerReviewedHashesUnchanged": true
+  },
+  "resolvedReviewObservation": {
+    "location": "execute-cutover.py:60",
+    "issue": "Execution-result writeback originally occurred after successful switch but outside postflight exception handling.",
+    "resolution": "Root moved writeback into first line of postflight try; failure now invokes rollback."
+  },
+  "conditions": [
+    "Native gate is still pending and must be created only after root reads actual raw candidate reports. Gate and expectedFields must bind candidate c16cde700963959d3fd7fc226853b71f5551573a, diagnosticOnly=false and actual terminal successful status; its report hashes must identify the inspected originals.",
+    "This continuation native scope is original c16 renderer against real isolated Ghost with standard and smooth themes: real first-image materialization, precise service approvals, and formal unpublish. Do not require a successfully published release to be made uncertain or force reconcile; preserve the actual published-reconcile409 harness failure separately.",
+    "Partial failure/current Actor read-only/authorization final-boundary coverage comes from targeted c16 regressions and separately pinned historical native evidence. Neither the gate nor final handoff may claim all of those native paths reran on c16.",
+    "Revalidate runner hash and all controller reviewed hashes at execution. Any code/configuration/source drift, existing lock, nonempty queue, missing evidence, report hash mismatch, or failed expectedFields must stop before switching.",
+    "Keep old386-r2, old0b and all live volumes/private backups; if postflight fails, retain failure logs and call reviewed runtime-only rollback without restoring old DB contents.",
+    "Overall D1-D9 remains NOT_ACCEPTED; this approval covers local runtime switching only and grants no external publication, production rollout, purchase, automation resume or PR merge.",
+    "Mount sorting normalizes order only. Any differing mount field, missing/additional entry or multiplicity still fails; do not replace comparisons with destination-only sets."
+  ],
+  "executionPerformed": false,
+  "formalAcceptance": "NOT_ACCEPTED",
+  "reviewRevision": 2,
+  "priorReview": {
+    "path": "review/cutover-runner-review.v1.json",
+    "sha256": "9a4349efac72136af017af0dafc11e790e3d60ce41a26807656ea1af94963fd5"
+  },
+  "amendment": {
+    "change": "Compare full Docker Mounts objects sorted by Destination; Config and HostConfig retain full direct equality. No mount field, entry, or multiplicity is removed from comparison.",
+    "runnerPriorSha256": "3031c690a7c8527c076ab6e78baec94dcd038e2d91f3de761f03f1adc321fa73",
+    "runnerCurrentSha256": "53a928171ef7ad52690b104501d16da93d7029f1ba4759f72a5c745b5706dbc9",
+    "reversePatchMatchesExactPriorReviewedFile": true,
+    "controllerReviewSha256": "5fbf572c0756171d114034f41c001ab6836a544d65b71c0aad82fd6cc874848f",
+    "readerSha256": "4a086aff05383e821b8f7d4c2d332690f5f8df70515cbfed99ca94d4cd0ed577",
+    "servicesTouched": false,
+    "switchExecuted": false
+  },
+  "provenance": {
+    "privateSourcePath": "review/cutover-runner-review.json",
+    "originalSha256": "848aa4a98ed350bbf85171a52cb37344c8055ff5e871985cb82a74c6a0db2483",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

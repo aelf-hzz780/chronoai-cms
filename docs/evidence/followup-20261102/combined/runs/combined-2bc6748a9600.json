@@ -1,0 +1,55 @@
+{
+  "status": "PASS_READONLY_RECOVERY_AFTER_SUPPLEMENTAL_VERIFY_FALSE",
+  "runId": "combined-2bc6748a9600",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "cleanup": [
+    {
+      "articleUnpublished": true,
+      "articleUrl": "http://localhost:3478/chrono-5a273f5d-d6c7-4c59-8a5c-ec92cbb2bd4f/",
+      "imagesRetained": true
+    },
+    {
+      "actor": "admin",
+      "keyId": "64c9f370-edce-45b9-9101-f72824082568",
+      "revoked": true
+    }
+  ],
+  "boundaries": {
+    "identity": "real Nyx049 signed identity/delegation/command source; exact own UserService; per-request formal approvals",
+    "destination": "actual local Ghost organization-en; actual private staged PNG rename and public bytes",
+    "restore": "actual encrypted/decrypted SQLite snapshots; running crash cut captured after first actual image; no four-Ghost full restore repeated",
+    "outsideScope": [
+      "external providers",
+      "production",
+      "all Nyx source modes",
+      "overall D1-D9"
+    ]
+  },
+  "articleId": "5a273f5d-d6c7-4c59-8a5c-ec92cbb2bd4f",
+  "releaseId": "b00cf308-dacb-4486-b8a3-6fc691eee1eb",
+  "scope": "Explicit read-only recovery of supplemental post-materialization verification failure; no image or original resend",
+  "before": {
+    "state": "uncertain",
+    "error_code": "ORIGINAL_NOT_VERIFIED"
+  },
+  "phase": "suite_finished",
+  "updatedAt": "2026-11-02T10:18:50.776548+00:00",
+  "caseFiles": [
+    {
+      "case": "supplement-readonly-after-public-image",
+      "path": "cases/supplement-readonly-after-public-image.json",
+      "sha256": "d27fa0a266accc39423548adf32f46a0210e3af64bda8c1e13878597f6a466c8",
+      "originalLocalResultSha256": "c2961d7ab9ee9401625a519a0cb726a08393fe2808993cd2d263760704fc23f7",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    },
+    {
+      "case": "supplement-recovery-original-unpublish",
+      "path": "cases/supplement-recovery-original-unpublish.json",
+      "sha256": "532539fec1b61d9cb8f29ddb4fb3e0f1c5f0c16cb5b61776b49fc45f17e81312",
+      "originalLocalResultSha256": "819d86b0545206816a7bd4936dcf9e7231be33f2413952480c001f94e85f426e",
+      "driverAssertion": "Do not infer suite PASS from worker passed=true; use this run outcome and explicit index conclusions."
+    }
+  ],
+  "originalLocalReportSha256": "d4a2bc6b3a06c3398d7df4cca2ae602a2fdc4aa9397e330d8363432f69133a67"
+}

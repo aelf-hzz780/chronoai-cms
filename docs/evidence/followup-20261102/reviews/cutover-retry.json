@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-02T10:39:52.322676+00:00",
+  "status": "PASS_CONDITIONAL_LOCAL_CUTOVER_R2",
+  "reviewer": "evidence_audit",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "blockingFindings": [],
+  "businessSourceChanged": false,
+  "r1RollbackIndependentReviewSha256": "672a1d3005160f97e66eb480c4cf6833e5e2722cea0389d4584bcf14b94943e4",
+  "stage1ReviewRetainedUnchangedSha256": "31cbd94e651561c336f58411d944fadd1ba70cdeb41f3b7182c8c562930ebfc1",
+  "controllerSha256": "c47520ec5cf5d1d5648f4dcbc3708161f3418ecbdcb5369d9453e90364151d28",
+  "controllerDelta": [
+    "Candidate container name gains -r2 to retain failed attempt1 container.",
+    "Network-none staging initializer name gains -r2 to retain attempt1 initializer."
+  ],
+  "allOtherControllerBytesUnchangedFromReviewedVersion": true,
+  "runtimeVerificationHarnessSha256": "a83b4c13102287317f08b93321c63dc2d773b85a1a1deb079c499bc04a21c9d7",
+  "harnessAssessment": [
+    "immutable=1 is limited to complete closed standalone backups, not the active DB; independent r1 read confirms complete valid snapshots.",
+    "Precutover backup digest is verified against recorded state before table comparison.",
+    "All prior row/cell/BLOB/duplicate multiplicities preserved; expected pause setting excluded and new resume audit allowed.",
+    "Actual runtime/worker file hashes, candidate Image/mountshape/command/UID/loopback-port/network and preserved services now asserted."
+  ],
+  "r1Finding": "Original host mode=ro failures reproduced on reviewer-owned snapshot copies; immutable reads pass full integrity/FK/schema comparison. Exact OS/VFS cause not identified; no business corruption observed.",
+  "r1ActualRollback": "Exact preserved0b0 container running; source129files/workerPID62 matched, outboundfalse, jobs0/media0/deliveries0, integrityok/FK0,health200. Failed386 candidate stopped retained.",
+  "authorization": "Existing conditional user authorization remains; reviewer permits technical retry after root binds updated controller hash.",
+  "immediateGates": "Same stage1 empty queue/media/delivery, exact old ID/source and exclusive heavylock gates; stage2 actualruntime+finaldocumentation still required.",
+  "limitations": [
+    "No overallD1D9 acceptance or external deployment claim.",
+    "Current3457 catalog synchronization remains a separate readback gate."
+  ],
+  "privateSourceOriginalSha256": "372ac32a8b1777e0b17b8aafcd2fd167918ea3f371fbbaa15e71d995a2379d88",
+  "pathNormalization": "Private references are relative provenance; raw snapshots and local scripts are not shipped."
+}

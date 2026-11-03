@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-02T10:37:13.225056+00:00",
+  "status": "POSTFLIGHT_READER_FAILURE_AUTOMATIC_RUNTIME_ROLLBACK_SUCCEEDED",
+  "businessFailure": false,
+  "firstCandidateStarted": true,
+  "firstCandidateWorkerStarted": true,
+  "firstCandidateSchemaAdditions": [],
+  "error": "Host sqlite3 mode=ro could not read the copied standalone WAL-mode node:sqlite backup without sidecars",
+  "diagnosis": {
+    "preBackupHashMatched": true,
+    "postBackupHeaderValid": true,
+    "modeRoQuery": "OperationalError unable to open database file",
+    "immutableStandaloneBackupQuery": "86 schema objects read successfully"
+  },
+  "fix": "Read complete immutable snapshots with mode=ro&immutable=1; bind baseline SHA; verify runtime/worker template and actual candidate mounts/image/command/port",
+  "rollback": {
+    "runtime": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+    "apiAndWorkerResumed": true,
+    "databaseRestoredOrOverwritten": false
+  },
+  "retry": "Fresh r2 candidate and staging initializer names; first candidate/data/evidence retained",
+  "controllerBeforeSha256": "7efdc916c1df982d1b5229e17a86b28e5d15bb443207df6c10d407ac20992186",
+  "controllerAfterSha256": "c47520ec5cf5d1d5648f4dcbc3708161f3418ecbdcb5369d9453e90364151d28"
+}

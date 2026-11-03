@@ -1,0 +1,233 @@
+{
+  "status": "PASS_CURRENT_3457_REGISTERED_35",
+  "at": "2026-11-02T10:43:12.468314+00:00",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "container": "blogsystem-command-candidate-386b9652dc43-r2",
+  "authorization": "root explicitly approved exact current3457 specURL+description and official discover-endpoints after r2 cutover PASS",
+  "checks": {
+    "fresh_refresh_attempt": true,
+    "exact_cutover_container": true,
+    "expected_env_path": true,
+    "runtime_exact_catalog_binding": true,
+    "runtime_fixed_revision": true,
+    "runtime_final_openapi_paths_equal": true,
+    "same_active_admin_operator": true,
+    "catalog_full_preimage_unchanged": true,
+    "endpoint_full_preimage_unchanged_empty": true,
+    "spec_and_description_readback": true,
+    "only_approved_catalog_fields_changed": true,
+    "all35_contracts_match_independently_imported_final_openapi": true,
+    "no_existing_operations_withdrawn": true,
+    "final_only_approved_catalog_fields_changed": true,
+    "markdown_file_contract_preserved": true,
+    "materialize_media_contract_preserved": true,
+    "shared3457_health_after_refresh": true
+  },
+  "http": [
+    {
+      "at": "2026-11-02T10:43:12.598840+00:00",
+      "method": "GET",
+      "path": "/openapi.json",
+      "status": 200,
+      "traceId": "f509bcbc-aa48-47b5-8492-177efad26c43"
+    },
+    {
+      "at": "2026-11-02T10:43:12.725827+00:00",
+      "method": "GET",
+      "path": "/api/v1/admin/users/<same-operator>",
+      "status": 200,
+      "traceId": null
+    },
+    {
+      "at": "2026-11-02T10:43:12.948272+00:00",
+      "method": "GET",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "status": 200,
+      "traceId": null
+    },
+    {
+      "at": "2026-11-02T10:43:13.172300+00:00",
+      "method": "GET",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b/endpoints",
+      "status": 200,
+      "traceId": null
+    },
+    {
+      "at": "2026-11-02T10:43:13.417550+00:00",
+      "method": "PUT",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "status": 200,
+      "traceId": null
+    },
+    {
+      "at": "2026-11-02T10:43:13.643362+00:00",
+      "method": "GET",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "status": 200,
+      "traceId": null
+    },
+    {
+      "at": "2026-11-02T10:43:13.788647+00:00",
+      "method": "POST",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b/discover-endpoints",
+      "status": 200,
+      "traceId": null
+    },
+    {
+      "at": "2026-11-02T10:43:14.020869+00:00",
+      "method": "GET",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "status": 200,
+      "traceId": null
+    },
+    {
+      "at": "2026-11-02T10:43:14.247633+00:00",
+      "method": "GET",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b/endpoints",
+      "status": 200,
+      "traceId": null
+    },
+    {
+      "at": "2026-11-02T10:43:14.258060+00:00",
+      "method": "GET",
+      "path": "/health",
+      "status": 200,
+      "traceId": "0dbd604c-d725-45de-a383-bcfa6b812b03"
+    }
+  ],
+  "mutations": [
+    {
+      "method": "PUT",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "body": {
+        "openapi_spec_url": "http://127.0.0.1:3457/openapi.json",
+        "description": "Local ChronoAI CMS: bilingual personal and organization content, Markdown, publishing status and metrics. Registered from the fixed W1/W2 integration OpenAPI; local NyxID patch dependency and external acceptance limits are documented in the delivery handoff."
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b/discover-endpoints",
+      "body": {}
+    }
+  ],
+  "operator": {
+    "subjectUnchanged": true,
+    "activeAdminVerified": true,
+    "sameOperatorReauthenticated": false,
+    "sessionExpiresAtUtc": "2026-11-02T10:46:28+00:00",
+    "credentialsOmitted": true
+  },
+  "serviceId": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+  "serviceSlug": "blog-root-native041",
+  "before": {
+    "activeEndpointCount": 0,
+    "openapi_spec_url": null,
+    "description": null
+  },
+  "after": {
+    "activeEndpointCount": 35,
+    "openapi_spec_url": "http://127.0.0.1:3457/openapi.json",
+    "description": "Local ChronoAI CMS: bilingual personal and organization content, Markdown, publishing status and metrics. Registered from the fixed W1/W2 integration OpenAPI; local NyxID patch dependency and external acceptance limits are documented in the delivery handoff."
+  },
+  "changedCatalogFields": [
+    "description",
+    "openapi_spec_url",
+    "api_spec_url",
+    "updated_at"
+  ],
+  "preservedFields": {
+    "base_url": "http://127.0.0.1:3457",
+    "homepage_url": "http://localhost:3457/auth/login",
+    "identity_propagation_mode": "jwt",
+    "identity_jwt_audience": "blog-root-native041",
+    "identity_include_user_id": true,
+    "identity_include_email": false,
+    "identity_include_name": false,
+    "forward_access_token": false,
+    "inject_delegation_token": true,
+    "delegation_token_scope": "account:read proxy:*",
+    "introspection_client_ids": [
+      "98c50286-3699-4676-9973-767e93fb1768"
+    ],
+    "auth_method": "none",
+    "is_active": true
+  },
+  "createdEndpointIds": [
+    "01bbc0de-9a78-4bf3-9e86-74d1799048c1",
+    "513b9cf6-1b1d-49da-8e90-fbb1bc42310b",
+    "fc533445-550c-4281-9e1f-76fabcf40374",
+    "dd0cef97-42e2-49de-a424-51348abfe0e4",
+    "7aab953e-9f94-4333-aa36-526bbcc5702e",
+    "568cfa82-4e6d-474a-b72c-d0aefa3d01ed",
+    "13cf5245-46a7-42ef-b230-39cb81486779",
+    "8c483db1-82ed-4480-a474-d71d2df8c1cf",
+    "c1218770-ad9b-4bec-9fca-8b75d1543b13",
+    "b1f40909-d208-4cb9-ad1e-d27380f56523",
+    "cfcf436e-6fa2-4d6f-9ee1-20d5adda6532",
+    "71db34cd-fae4-4016-884e-8fcde51cbcd3",
+    "09327f6f-519b-46f7-935a-8a94d317e40f",
+    "2935a331-ba25-4d06-aa79-98aed679f1c4",
+    "7a5ab96d-42fb-488c-9a0b-c983c4cef4aa",
+    "983b19cc-6b1e-47b1-a497-8fa191bc87f3",
+    "46cd117c-f241-4aca-8606-06518163b27d",
+    "adf0c59a-0921-4460-9ea6-c6fc3295a1d5",
+    "b17d50b2-217d-420e-8ef3-c5d006ccb40a",
+    "b72658b9-635e-4794-8aeb-f4c3d35b5bd6",
+    "c89f0a34-447e-42d2-b2fc-6472b794d90e",
+    "53ded878-276a-4685-821f-c976c8891996",
+    "50f36134-1c11-4c1a-8548-4b784a026dca",
+    "2edc2abf-56f6-4853-ac55-cb7eed924d0e",
+    "c5e24e81-4c9e-4ea7-a688-6b8d64542409",
+    "1ece34dc-53d7-4cd4-a7dd-d8bc816b054c",
+    "ffcd5e56-b320-43c3-9471-619286f0b4ba",
+    "8791c4ef-efa7-49a7-9833-77f58cabdc79",
+    "f114c415-7ed9-4ee6-9f72-64e8f60ef648",
+    "fe20ef8a-169d-4bd2-9228-1dd7cf7545c6",
+    "1161dee5-8738-4e14-b193-119f15c669bf",
+    "f22ba4af-899c-4a60-9798-af1fada187b2",
+    "e607bfb4-adc4-4583-9c8a-3f82bb9910e8",
+    "c176aa3a-6c9b-436c-a2ac-b2b242cf3594",
+    "e495a2e1-2eae-4c3e-a69e-093ee5d0dab7"
+  ],
+  "snapshots": {
+    "current-service-preimage.json": {
+      "sha256": "59f6a2abf6f34f803ef51262dbad4ae82aa46d1c194c60424b746947f609528c",
+      "private": true
+    },
+    "current-endpoints-preimage.json": {
+      "sha256": "32760e703e3ce69b19bf35a5537d9dd7a495c7d4fff7466cb2e0200572dcaf71",
+      "private": true
+    },
+    "current-service-immediate-preimage.json": {
+      "sha256": "59f6a2abf6f34f803ef51262dbad4ae82aa46d1c194c60424b746947f609528c",
+      "private": true
+    },
+    "current-endpoints-immediate-preimage.json": {
+      "sha256": "32760e703e3ce69b19bf35a5537d9dd7a495c7d4fff7466cb2e0200572dcaf71",
+      "private": true
+    },
+    "current-service-postimage.json": {
+      "sha256": "a9dd26aee0d7c4022fec5644cbda77d1c62932054dad8eeed35a3eac8b685633",
+      "private": true
+    },
+    "current-endpoints-postimage.json": {
+      "sha256": "3b60d4dea855f3de12b26525b90c27f25803f01cf9ff71f3c6e5a27e61b2efc9",
+      "private": true
+    }
+  },
+  "unchangedByThisOperation": [
+    "UserService",
+    "API keys",
+    "users and roles",
+    "approval policies",
+    "runtime process and worker",
+    "Ghost and external content"
+  ],
+  "limitations": [
+    "Local registration, not target production or all operation execution acceptance.",
+    "MCP tools numeric pagination constraints may be simplified; backend validates them."
+  ],
+  "completedAt": "2026-11-02T10:43:14.258895+00:00",
+  "rollbackPrepared": "rollback.md; not executed; API cannot restore description null exactly, empty string residual disclosed"
+}

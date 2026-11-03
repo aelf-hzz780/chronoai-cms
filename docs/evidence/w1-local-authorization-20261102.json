@@ -1,0 +1,1441 @@
+{
+  "status": "PASS_W1_BOUNDED_LOCAL_AUTHORIZATION_ACCEPTANCE",
+  "at": "2026-11-02T09:15:59.693277+00:00",
+  "scope": {
+    "requirements": [
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6",
+      "R8",
+      "R9",
+      "R10"
+    ],
+    "deliverables": [
+      "D2",
+      "D3",
+      "D5"
+    ],
+    "finding": "R031",
+    "gistRevision": "79e69842f5bacba7f8204f62d151018bacf98d91",
+    "requirementSourceHashes": {
+      "requirements.md": "2d90ca6a258456cd2fdd0f07a6a695a3204fa4752fadd34c766ead37fea0c3d5",
+      "supporting-deliverables.md": "7b5e91deaad61d23233a834dac68aa7f8ced77e36c7676f3fa34143e8c001cc4"
+    }
+  },
+  "versions": {
+    "blogBusinessCommit": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+    "nyxidBackendCommit": "049ee1c2ca811a002590dc8330ce646078bb1158",
+    "nyxidBackendBinarySha256": "37bbb047eef49e460bde3b8acb669bcecafe1439aec1d05565a0813e1e41a7e1",
+    "businessSourceChanged": false
+  },
+  "selectedPath": "Exact UserService-selected HTTP proxy with real identity/delegation/command proof, per-request approval and live source introspection. No CMS return required for service operations.",
+  "r031": {
+    "verdict": "CLOSED_BOUNDED_LOCAL_SELECTED_SERVICE_PATH",
+    "originalOrganizationRegressions": [
+      {
+        "actor": "publisher",
+        "language": "en",
+        "case": "parent-scope-remove",
+        "articleId": "d7811dae-b9a1-4ca2-83e8-23598a44d1d5",
+        "releaseId": "27fc9439-8f46-4bfd-948a-618ea4af1272",
+        "siteId": "organization-en",
+        "siteUrl": "http://localhost:3478",
+        "ownerId": "w1-org",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "7dbf2d7e-09dd-4720-b70c-f9bb6799cc22",
+        "action": "publish",
+        "state": "blocked",
+        "traceId": "16e3e15e-e8d8-4398-9dce-ab5ea5834d89",
+        "authorizedWrites": 0,
+        "commandProofSha256": "42216a0ccf883d4571529dc95fdab80f6e033413ba13e61fca044c4f2f83351f",
+        "serviceState": null,
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-a334294ca33e42ec/report.json",
+          "sha256": "951df602f6b51cc35bd4d47c090550adb124bdd1be75c2ebcefe4696fd804528"
+        }
+      },
+      {
+        "actor": "publisher",
+        "language": "en",
+        "case": "parent-delete",
+        "articleId": "de1ebc9d-d350-465e-a69b-91efe18a0523",
+        "releaseId": "71707be3-3b87-48fd-bb55-8e50478f28b2",
+        "siteId": "organization-en",
+        "siteUrl": "http://localhost:3478",
+        "ownerId": "w1-org",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "ed562f5f-961a-456c-b0ce-2b344a31b1f8",
+        "action": "publish",
+        "state": "blocked",
+        "traceId": "57fd2e72-17b1-443b-991d-59a3cb907cee",
+        "authorizedWrites": 0,
+        "commandProofSha256": "5f3b6d07b480c747333dd194415cb427fa8d2559ffd4d296f7d57dc55382d9fa",
+        "serviceState": null,
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-54e201f4f570477d/report.json",
+          "sha256": "0447eb940cbb800ce9b82e38a54e96cca49e4e30d93de4c8fe7fe93eb3bf6310"
+        }
+      }
+    ],
+    "sameVersionHistoricalSourceControls": [
+      {
+        "case": "child-reissue",
+        "state": "blocked",
+        "authorizedWrites": 0,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-5ca712061e604f51/report.json",
+          "sha256": "7d703203cabac39a98060dc0e911f9c8079e3aec89580a07bcca1631fecbd003"
+        }
+      },
+      {
+        "case": "child-parent-rotate",
+        "state": "blocked",
+        "authorizedWrites": 0,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-b8459e4f69be4618/report.json",
+          "sha256": "443362deab63f3d8068839788ed75fb65d8ca58eb455c71c28bb8cbf026c302e"
+        }
+      },
+      {
+        "case": "parent-scope-remove",
+        "state": "blocked",
+        "authorizedWrites": 0,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-312ad5779e28456e/report.json",
+          "sha256": "51eaa39852f6dcd4d592a2591bab310a7e83762ad7f4ace37b6e8a2fd778b8b7"
+        }
+      },
+      {
+        "case": "child-valid",
+        "state": "published",
+        "authorizedWrites": 1,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-2358ad5c0eb543ad/report.json",
+          "sha256": "d41aad38d4cce846fef40ff0a9642b7c97fa554c5e3badc4cfb37a747e7c2312"
+        }
+      },
+      {
+        "case": "parent-valid",
+        "state": "published",
+        "authorizedWrites": 1,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-d8a52f33bbcb4c65/report.json",
+          "sha256": "94723ff88fbc1db2843efc0217129d6a9c14d9119486a1f9b120a4044efb114a"
+        }
+      },
+      {
+        "case": "parent-final-revoke",
+        "state": "blocked",
+        "authorizedWrites": 0,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-cb37bb8c1242467e/report.json",
+          "sha256": "4cb215e95f5f10ad16e593ccd7e150e5f5e9339cb14bab0f2995f1753630e599"
+        }
+      },
+      {
+        "case": "parent-scope-restore",
+        "state": "blocked",
+        "authorizedWrites": 0,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-1b977c56cfb245ec/report.json",
+          "sha256": "3bbab0d3f7886e28cfc73e46713fa6bdb413dfef35ec8c6a92e74dba91ddc54f"
+        }
+      },
+      {
+        "case": "child-revoke",
+        "state": "blocked",
+        "authorizedWrites": 0,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-15ed8bb20d6d4289/report.json",
+          "sha256": "c080de1d9a115cf99d7d37943f2e8c3dcb238f0d5d6acc97adb544cc9c589ed7"
+        }
+      },
+      {
+        "case": "parent-delete",
+        "state": "blocked",
+        "authorizedWrites": 0,
+        "destination": "safe adapter",
+        "report": {
+          "path": "local-runtime-20261102/r031-live/private/r031-475843a9a41b4cf0/report.json",
+          "sha256": "a1adbec33938af842ba81573f7f67fba46c533a560fbd92199e824057a085579"
+        }
+      }
+    ],
+    "deliveryWorkerCases": [
+      {
+        "case": "parent-valid",
+        "status": "PASS_BOUNDED",
+        "deliveryState": "published",
+        "errorCode": null,
+        "authorizedWrites": 1,
+        "commandProofUnexpired": true,
+        "actorCipherUnchanged": true,
+        "finalBoundary": {
+          "beforeWriteSequence": 12,
+          "passedSequence": 15
+        }
+      },
+      {
+        "case": "parent-scope-restored",
+        "status": "PASS_BOUNDED",
+        "deliveryState": "blocked",
+        "errorCode": "IDENTITY_UNAVAILABLE",
+        "authorizedWrites": 0,
+        "commandProofUnexpired": true,
+        "actorCipherUnchanged": true,
+        "finalBoundary": {}
+      },
+      {
+        "case": "final-before-send-revoke",
+        "status": "PASS_BOUNDED",
+        "deliveryState": "blocked",
+        "errorCode": "IDENTITY_UNAVAILABLE",
+        "authorizedWrites": 0,
+        "commandProofUnexpired": true,
+        "actorCipherUnchanged": true,
+        "finalBoundary": {
+          "readySequence": 12,
+          "revocationAcknowledgedSequence": 13,
+          "revocationStatus": 200,
+          "beforeWriteSequence": 14,
+          "rejectedSequence": 17
+        }
+      }
+    ],
+    "deliveryDestination": "local_test in-process fixture; real source/Policy/Worker and readonly real Ghost verification",
+    "independentReview": {
+      "path": "parallel-local-20261102/w1/final-independent-review.json",
+      "sha256": "784cdf53112ac69ca3ea9a69a1759956236fd4d95a47f7f1886e111f6461e6d1"
+    }
+  },
+  "organizationPermissions": {
+    "checks": [
+      "Member personal create/edit/Markdown and Admin isolation",
+      "Member draft/edit/submit allowed, publish/self-escalation denied, Admin grants Publisher",
+      "Admin accepts submitted Member draft; live update/unpublish by author Member denied",
+      "Queued and final real Admin service role revocation blocks; personal rights retained",
+      "Operator provisions dedicated personal local_test fixture site",
+      "Ordinary Member personal publish succeeds independently of org permission",
+      "Real NyxID membership removal blocks queued org release; personal rights retained"
+    ],
+    "workerControls": [
+      {
+        "case": "admin-submitted-valid",
+        "passed": true,
+        "state": "published",
+        "errorCode": null,
+        "traceId": "24fbb2ce-25a8-47a4-b0f9-aaf2cc843c9e",
+        "adapterCalls": 1,
+        "authorizedWrites": 1,
+        "finalRevokeCompleted": false,
+        "sourceAuthorityObserved": {
+          "active": true,
+          "observedAt": [
+            "preflight"
+          ]
+        }
+      },
+      {
+        "case": "queued-role-revoke",
+        "passed": true,
+        "state": "blocked",
+        "errorCode": "FORBIDDEN",
+        "traceId": "b7d424b1-47f2-492f-893a-960699058cc0",
+        "adapterCalls": 0,
+        "authorizedWrites": 0,
+        "finalRevokeCompleted": false,
+        "sourceAuthorityObserved": {
+          "active": true,
+          "observedAt": [
+            "preflight"
+          ]
+        }
+      },
+      {
+        "case": "final-role-revoke",
+        "passed": true,
+        "state": "blocked",
+        "errorCode": "FORBIDDEN",
+        "traceId": "0aabc612-1a70-4957-8662-bf4a5eb72fe1",
+        "adapterCalls": 1,
+        "authorizedWrites": 0,
+        "finalRevokeCompleted": true,
+        "sourceAuthorityObserved": {
+          "active": true,
+          "observedAt": [
+            "preflight",
+            "after-real-admin-revoke"
+          ]
+        }
+      },
+      {
+        "case": "member-personal-valid",
+        "passed": true,
+        "state": "published",
+        "errorCode": null,
+        "traceId": "e99b57ec-b8b4-4efb-acb6-73b68a12e8fb",
+        "adapterCalls": 1,
+        "authorizedWrites": 1,
+        "finalRevokeCompleted": false,
+        "sourceAuthorityObserved": {
+          "active": true,
+          "observedAt": [
+            "preflight"
+          ]
+        }
+      },
+      {
+        "case": "queued-membership-revoke",
+        "passed": true,
+        "state": "blocked",
+        "errorCode": "FORBIDDEN",
+        "traceId": "59af1eda-9f56-4268-acc0-8f37de0a6a74",
+        "adapterCalls": 0,
+        "authorizedWrites": 0,
+        "finalRevokeCompleted": false,
+        "sourceAuthorityObserved": {
+          "active": true,
+          "observedAt": [
+            "preflight"
+          ]
+        }
+      }
+    ],
+    "destination": "local_test safe adapter",
+    "report": {
+      "path": "parallel-local-20261102/w1/org-harness/review.json",
+      "sha256": "c3238573aa99aa5e3adb43eaec7c288075fedf232e4bbd61e6c785de4557b827"
+    }
+  },
+  "cmsServiceParity": {
+    "checkCount": 10,
+    "checks": [
+      "same-article-metadata-and-source",
+      "same-search-result",
+      "actual-md-download-via-both-entries",
+      "same-markdown-file-envelope",
+      "same-queued-publication-status",
+      "same-cancelled-publication-status",
+      "metrics-workspace-ghost",
+      "metrics-article-zh-ghost",
+      "metrics-article-zh-dev-unavailable",
+      "same-destination-status"
+    ],
+    "sourceBytes": 177,
+    "sourceSha256": "4aca13f37b3fa5fcfa3f730393b2a39b1ef5f4c8e6dc42542f70fd9a435ce432",
+    "bomAndCrlfPreserved": true,
+    "normalOidcPkceLogin": true,
+    "normalizedOnly": "distribution.updated_at; query creation time, verified against independently observed runtime clock bounds. Source/readership/external updated_at compared unchanged.",
+    "report": {
+      "path": "parallel-local-20261102/w1/parity-harness/result.json",
+      "sha256": "b84b12914f4ed75051df2da41f477f30d664eddd9be89d1ca9ee4ef5aba1ac31"
+    }
+  },
+  "actualLocalGhost": {
+    "publications": [
+      {
+        "actor": "solo",
+        "language": "en",
+        "case": "parent-valid",
+        "articleId": "ed32acfc-4c56-403c-9960-945ef8d433d8",
+        "releaseId": "b6ad0b53-bdbe-4be9-9507-db5cf235a0c2",
+        "siteId": "personal-en",
+        "siteUrl": "http://localhost:3468",
+        "ownerId": "w1-personal",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "e7789b9d-e7e6-430b-936b-eaa9bf865abe",
+        "action": "publish",
+        "state": "published",
+        "traceId": "08871dfc-b7a4-4c92-b9a5-687f061441b8",
+        "authorizedWrites": 1,
+        "commandProofSha256": "19462aba88e6c46b8317895524a77172e37f62834b9461858847249a34a7d0ef",
+        "serviceState": "published",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-2e126ef7bfa64256/report.json",
+          "sha256": "47735d83a4c13171fe87af576b4998fea7d90635f60c384fc27ea9b96b60d111"
+        }
+      },
+      {
+        "actor": "solo",
+        "language": "zh",
+        "case": "parent-valid",
+        "articleId": "73727010-5deb-41ab-8079-0cf026f4a65c",
+        "releaseId": "32cf009f-10fb-47f8-9983-df0f58a8ac90",
+        "siteId": "personal-zh",
+        "siteUrl": "http://localhost:3469",
+        "ownerId": "w1-personal",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "b380f1f5-38f0-49f5-b799-9c1f61fb192f",
+        "action": "publish",
+        "state": "published",
+        "traceId": "244604be-26a6-4528-b037-d6321b0cfd1e",
+        "authorizedWrites": 1,
+        "commandProofSha256": "fd6569eca54481d25fd3bab9d91bb9aba6c1f143cd406bfee14cbdbbda8f015a",
+        "serviceState": "published",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-ff1fa6746f9b4e7b/report.json",
+          "sha256": "2fcaeeda4e8667555eb5eca971a33d314883e2b7532fb57c3325c709f7d0f7e9"
+        }
+      },
+      {
+        "actor": "publisher",
+        "language": "en",
+        "case": "parent-valid",
+        "articleId": "b8892d88-5ab6-4794-b847-4f57ce6f9c29",
+        "releaseId": "fff67fd4-477b-44b8-b67f-740bdec8f571",
+        "siteId": "organization-en",
+        "siteUrl": "http://localhost:3478",
+        "ownerId": "w1-org",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "b6a8104c-e9b3-441b-9d24-b3b20fd66335",
+        "action": "publish",
+        "state": "published",
+        "traceId": "c2ac8e23-29d8-4e6c-9419-b253e4302ffc",
+        "authorizedWrites": 1,
+        "commandProofSha256": "1dc05190c77641e5f731cf8c33ce733f5b426969349b505ef7831e16a818080d",
+        "serviceState": "published",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-4513dab3bcad4584/report.json",
+          "sha256": "e8676a0c4efa82aac5c9ca33b3fa8beca7b247da27f0e3e3b64586b7ff949ac7"
+        }
+      },
+      {
+        "actor": "admin",
+        "language": "zh",
+        "case": "parent-valid",
+        "articleId": "55678b50-df78-425e-9b74-c0e231e1ee46",
+        "releaseId": "81df1c9c-03a3-4310-b21e-6283e415de59",
+        "siteId": "organization-zh",
+        "siteUrl": "http://localhost:3479",
+        "ownerId": "w1-org",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "d811c877-73b8-4845-bdb6-adab3beeb618",
+        "action": "publish",
+        "state": "published",
+        "traceId": "dc2cafdd-ea74-4a40-9790-e0d93c35c92d",
+        "authorizedWrites": 1,
+        "commandProofSha256": "a94d01b28025dc83810b28de11a2e038e56ac596226f3c053985a0e7f8f0d820",
+        "serviceState": "published",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-d104f4ec62784148/report.json",
+          "sha256": "34af02da73ffff2b9510d5a8e192f0d4f8b85eb45c85c7bd1d2e84c18e11f52d"
+        }
+      }
+    ],
+    "corrections": [
+      {
+        "actor": "solo",
+        "language": "en",
+        "case": "ghost-update",
+        "articleId": "ed32acfc-4c56-403c-9960-945ef8d433d8",
+        "releaseId": "36e30a79-23b6-4bf6-908c-7f106c1ba2bf",
+        "siteId": "personal-en",
+        "siteUrl": "http://localhost:3468",
+        "ownerId": "w1-personal",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "902de618-0f14-421a-8672-6871f3889dac",
+        "action": "update",
+        "state": "published",
+        "traceId": "d2275c01-f5a2-434c-96b8-d60152c2c368",
+        "authorizedWrites": 1,
+        "commandProofSha256": "076f20b3af9ac050efb8294c39f58319e7612c07618da6b758d692bcb23ef3b6",
+        "serviceState": "published",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-4c4e39fa37d848d2/report.json",
+          "sha256": "afe5d8fd1e6553ebc9175e937fdb9a35688be2e8fd4d941b7cf84bf75d30688d"
+        }
+      },
+      {
+        "actor": "publisher",
+        "language": "en",
+        "case": "ghost-update",
+        "articleId": "b8892d88-5ab6-4794-b847-4f57ce6f9c29",
+        "releaseId": "db38b53a-d300-49c0-8f3e-65ee2ea8b32b",
+        "siteId": "organization-en",
+        "siteUrl": "http://localhost:3478",
+        "ownerId": "w1-org",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "c01b031a-4a26-4c7c-a984-3006af9053d1",
+        "action": "update",
+        "state": "published",
+        "traceId": "20312bba-9354-410b-b781-fcb07baffbab",
+        "authorizedWrites": 1,
+        "commandProofSha256": "252b47b5c67b8ee7951fef9c85e772a585d8bb2f7a5c863b9f41c2b8dc33e66d",
+        "serviceState": "published",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-cdd5cd201b5049e0/report.json",
+          "sha256": "77294c61686289362da4804b0293969863f1c11e93405e6c6aa9854608820f41"
+        }
+      }
+    ],
+    "unpublishes": [
+      {
+        "actor": "solo",
+        "language": "en",
+        "case": "ghost-unpublish",
+        "articleId": "ed32acfc-4c56-403c-9960-945ef8d433d8",
+        "releaseId": "6dbc00c8-43b7-49c8-94fa-6c4ef29b3402",
+        "siteId": "personal-en",
+        "siteUrl": "http://localhost:3468",
+        "ownerId": "w1-personal",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "902de618-0f14-421a-8672-6871f3889dac",
+        "action": "unpublish",
+        "state": "unpublished",
+        "traceId": "feb3674d-3313-4d79-8e2b-a2579f17fffb",
+        "authorizedWrites": 1,
+        "commandProofSha256": "04185dc42ff5ef91c5342395db6f21c4477fe2adad1c7ec23e32b3ef53f487d5",
+        "serviceState": "unpublished",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-a50998f6e6784855/report.json",
+          "sha256": "d0b8d31a4bcc6bf709c1e6e73eb2b52655758e7464ecfbf9e83440c4d8ab0b7a"
+        }
+      },
+      {
+        "actor": "solo",
+        "language": "zh",
+        "case": "ghost-unpublish",
+        "articleId": "73727010-5deb-41ab-8079-0cf026f4a65c",
+        "releaseId": "c3d5f15c-cd9d-413c-9c19-d59391c741cf",
+        "siteId": "personal-zh",
+        "siteUrl": "http://localhost:3469",
+        "ownerId": "w1-personal",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "b380f1f5-38f0-49f5-b799-9c1f61fb192f",
+        "action": "unpublish",
+        "state": "unpublished",
+        "traceId": "d0c88056-9f75-4e0c-a7a6-1c01c845dcd7",
+        "authorizedWrites": 1,
+        "commandProofSha256": "8b989ed7badd3946b01b8012465e1a73b720e9d11360e5a21c2446dfaeb70b03",
+        "serviceState": "unpublished",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-5a4b5cba3a714609/report.json",
+          "sha256": "ee9fdb39addc29b54eccd935264d716bbdd7b093fc3606e33dcd5d57f88674da"
+        }
+      },
+      {
+        "actor": "publisher",
+        "language": "en",
+        "case": "ghost-unpublish",
+        "articleId": "b8892d88-5ab6-4794-b847-4f57ce6f9c29",
+        "releaseId": "c1bbbc40-a6ac-495a-8698-8ee88c0d1155",
+        "siteId": "organization-en",
+        "siteUrl": "http://localhost:3478",
+        "ownerId": "w1-org",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "c01b031a-4a26-4c7c-a984-3006af9053d1",
+        "action": "unpublish",
+        "state": "unpublished",
+        "traceId": "a5a4afee-0ffb-4162-91b0-5c5d0ff2d83c",
+        "authorizedWrites": 1,
+        "commandProofSha256": "94392d135a32cc467b81309d52994268a62b0b2641a1d6faf0594c83adc3dedb",
+        "serviceState": "unpublished",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-48a611d15a004974/report.json",
+          "sha256": "8a51c8d14c84751b8ca052164e4c1769c4dc1585b32800da67f9acb48e2d76bf"
+        }
+      },
+      {
+        "actor": "admin",
+        "language": "zh",
+        "case": "ghost-unpublish",
+        "articleId": "55678b50-df78-425e-9b74-c0e231e1ee46",
+        "releaseId": "a10390b7-2931-40f5-882c-1baa13b3a62e",
+        "siteId": "organization-zh",
+        "siteUrl": "http://localhost:3479",
+        "ownerId": "w1-org",
+        "creditedAuthor": "BlogSystem Local Operator",
+        "revisionId": "d811c877-73b8-4845-bdb6-adab3beeb618",
+        "action": "unpublish",
+        "state": "unpublished",
+        "traceId": "ee8c4181-bc5b-45bc-b7a1-457f660c1cd0",
+        "authorizedWrites": 1,
+        "commandProofSha256": "1284ec7d43dbbb03351f6bfe8192416d539772678ed06dbaf03413814a276538",
+        "serviceState": "unpublished",
+        "sourceFence": [
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "preflight",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": false
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "ordinary_token",
+            "httpStatus": 200,
+            "active": true
+          },
+          {
+            "phase": "worker",
+            "kind": "command_authority",
+            "httpStatus": 200,
+            "active": true
+          }
+        ],
+        "report": {
+          "path": "parallel-local-20261102/w1/release-harness/private/r031-362484552b234c0a/report.json",
+          "sha256": "aa64f6f041e4c46f6fe75273f7dfe4f5a644297822fea8b5f1fa1a096126f652"
+        }
+      }
+    ],
+    "publicCleanup": {
+      "status": "PASS_EXACT_FOUR_W1_GHOST_PUBLIC_SAMPLES_UNPUBLISHED",
+      "at": "2026-11-02T09:06:43.933297+00:00",
+      "samples": [
+        {
+          "articleId": "ed32acfc-4c56-403c-9960-945ef8d433d8",
+          "siteId": "personal-en",
+          "url": "http://localhost:3468/chrono-ed32acfc-4c56-403c-9960-945ef8d433d8/",
+          "httpStatus": 404,
+          "publiclyAccessible": false
+        },
+        {
+          "articleId": "73727010-5deb-41ab-8079-0cf026f4a65c",
+          "siteId": "personal-zh",
+          "url": "http://localhost:3469/chrono-73727010-5deb-41ab-8079-0cf026f4a65c/",
+          "httpStatus": 404,
+          "publiclyAccessible": false
+        },
+        {
+          "articleId": "b8892d88-5ab6-4794-b847-4f57ce6f9c29",
+          "siteId": "organization-en",
+          "url": "http://localhost:3478/chrono-b8892d88-5ab6-4794-b847-4f57ce6f9c29/",
+          "httpStatus": 404,
+          "publiclyAccessible": false
+        },
+        {
+          "articleId": "55678b50-df78-425e-9b74-c0e231e1ee46",
+          "siteId": "organization-zh",
+          "url": "http://localhost:3479/chrono-55678b50-df78-425e-9b74-c0e231e1ee46/",
+          "httpStatus": 404,
+          "publiclyAccessible": false
+        }
+      ]
+    },
+    "imageBoundary": "New service Ghost samples are image-free; existing same-business-version CMS four-site image evidence is reused, not rerun."
+  },
+  "cleanup": {
+    "main": {
+      "path": "parallel-local-20261102/w1/cleanup.json",
+      "sha256": "a55a02be53443ad00df19d3a449593ab20a0f73e27b9591505da1d712e259a81"
+    },
+    "delivery": {
+      "path": "parallel-local-20261102/w1/delivery-harness/runs/1102165943-0f389a20/registration-cleanup.json",
+      "sha256": "6adece910b51727f2faf141685f85a8f82cee605c25df38057ff6880e609e730"
+    },
+    "postflight": {
+      "blogsystem-command-candidate-0b0e9d11dacd": {
+        "running": true,
+        "status": "running"
+      },
+      "blogsystem-w1-20261102": {
+        "running": false,
+        "status": "exited"
+      },
+      "live3457Queue": {
+        "outboundPaused": "false",
+        "activeJobs": 0
+      },
+      "live3457Health": {
+        "status": "ok",
+        "database": true
+      },
+      "currentHeavyLockOwner": null,
+      "status": "PASS_W1_STOPPED_ORIGINAL_CMS_PRESERVED",
+      "at": "2026-11-02T09:09:29.249974+00:00"
+    },
+    "retainedData": {
+      "path": "parallel-local-20261102/w1/retained-data.json",
+      "sha256": "ef54ec4339c9f92aefacad86219e05aa44514efb8b7883d6076bdea877a58b74"
+    },
+    "allOwnRuntimeWorkersStopped": true,
+    "allOwnSourceKeysRevoked": true,
+    "allOwnTemporaryServiceRegistrationsInactive": true,
+    "fourPublicSamplesUnpublished": true,
+    "privateDataAndHistoriesRetained": true,
+    "heartbeat": "PAUSED_UNCHANGED"
+  },
+  "coverageBoundaries": [
+    "Four current Ghost samples are solo personal EN/ZH, Publisher own organization EN, Admin own organization ZH. Ordinary-member personal publish and Admin publishing a submitted member draft are separately verified with safe adapters.",
+    "Delivery results do not claim DEV/Hashnode Live or real organization exact-execution approval.",
+    "Only the selected documented NyxID service path and explicit source cases are covered, not every credential/transport.",
+    "Metrics parity is representative current API comparison; prior actual traffic collection evidence is reused.",
+    "Local NyxID patch is required; no upstream push/merge or target-production approval occurred.",
+    "W2 pending-media recovery fix 83b4b8e5fa28cb18a6926f3a10d2205e04f49ab1 is outside this tested business SHA; merge/reconcile/materialize authority regressions remain for the combined version.",
+    "This closes the bounded local W1 request, not overall D1-D9 delivery or external live-account prerequisites.",
+    "Within positive Ghost cases, preflight command active=false observations are intentional wrong-body/service/delegation/method contract probes; actual positive Worker authority checks remain active=true. Organization source-revocation cases explicitly require Worker command inactive while ordinary delegation remains active."
+  ],
+  "evidenceRoot": ".runtime/acceptance-review",
+  "supportingEvidence": [
+    {
+      "path": "parallel-local-20261102/w1/ghost-suite.json",
+      "sha256": "6a0997611702542769312f828f52f65b218c1691eb81eea90feaf2190a9b13bd"
+    },
+    {
+      "path": "parallel-local-20261102/w1/ghost-public-cleanup.json",
+      "sha256": "93532017a0c22daed42425af266e1b2690f34c9fb4b8a53e95c5f6c1041c2ce6"
+    },
+    {
+      "path": "parallel-local-20261102/w1/org-harness/review.json",
+      "sha256": "c3238573aa99aa5e3adb43eaec7c288075fedf232e4bbd61e6c785de4557b827"
+    },
+    {
+      "path": "parallel-local-20261102/w1/parity-harness/result.json",
+      "sha256": "b84b12914f4ed75051df2da41f477f30d664eddd9be89d1ca9ee4ef5aba1ac31"
+    },
+    {
+      "path": "parallel-local-20261102/w1/delivery-harness/summary.json",
+      "sha256": "c605c8c385c6ef1b0f4f2accf2b03318d900dce442bfea41362ec0e66055c991"
+    },
+    {
+      "path": "parallel-local-20261102/w1/final-independent-review.json",
+      "sha256": "784cdf53112ac69ca3ea9a69a1759956236fd4d95a47f7f1886e111f6461e6d1"
+    },
+    {
+      "path": "parallel-local-20261102/w1/cleanup.json",
+      "sha256": "a55a02be53443ad00df19d3a449593ab20a0f73e27b9591505da1d712e259a81"
+    },
+    {
+      "path": "parallel-local-20261102/w1/cleanup-initial-http.json",
+      "sha256": "0b25332a093573e8d1922f57de9e72f8ce34335a5b7ca6360409905b75400c2c"
+    },
+    {
+      "path": "parallel-local-20261102/w1/cleanup-http.json",
+      "sha256": "13a0882ed325d3e85226016f03903d3db16b714722d3ab2a6b28070e27b43fcb"
+    },
+    {
+      "path": "parallel-local-20261102/w1/postflight.json",
+      "sha256": "19e4a8b0a636849ae41e246b3820aeb4db1f71b8e2bfbb05a6923af357bb7d04"
+    },
+    {
+      "path": "parallel-local-20261102/w1/retained-data.json",
+      "sha256": "ef54ec4339c9f92aefacad86219e05aa44514efb8b7883d6076bdea877a58b74"
+    },
+    {
+      "path": "local-runtime-20261102/media-live/runs/20261102T132610-8c6bb439ed88/review.json",
+      "sha256": "98d251838aae676c14ad65442e5a03120750f7cc9fbbf96cf554a842e3d16419"
+    },
+    {
+      "path": "local-runtime-20261102/media-live/runs/20261102T132704-d6b6478f3a3c/review.json",
+      "sha256": "b68ef77d6f52220d0328597390a15e42c58cc967b39e69622ebed9e617419674"
+    },
+    {
+      "path": "local-runtime-20261102/media-live/runs/20261102T132727-21f221f00083/review.json",
+      "sha256": "37a311ed112db006252f8113fb3a8d797095fba0d735ca8e64fab47663a3f4cf"
+    },
+    {
+      "path": "local-runtime-20261102/media-live/runs/20261102T132757-3dcaaeab5163/review.json",
+      "sha256": "b7e60497f6f7ac1f324018edefdedc39faf176ab2bacd07354056e7a1c694326"
+    }
+  ]
+}

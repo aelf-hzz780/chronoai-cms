@@ -1,0 +1,920 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_BOUNDED_LOCAL_W2",
+  "recordedAt": "2026-11-02T09:01:37.378130+00:00",
+  "sanitizedAt": "2026-11-02T10:01:15.263193+00:00",
+  "publicArtifact": "docs/evidence/followup-20261102/w2-recovery.json",
+  "provenance": {
+    "method": "Explicit field allowlist from retained W2 reports; original manifests and reviewed-source hashes independently verified. This is a portable result record, not publication of raw archives or private database values.",
+    "sourceManifestsVerified": [
+      {
+        "manifest": ".runtime/acceptance-review/parallel-local-20261102/w1/final-independent-review.json",
+        "manifestSha256": "784cdf53112ac69ca3ea9a69a1759956236fd4d95a47f7f1886e111f6461e6d1",
+        "filesChecked": 43,
+        "mismatches": []
+      },
+      {
+        "manifest": ".runtime/acceptance-review/parallel-local-20261102/w2/report.json",
+        "manifestSha256": "c2ecd72a0cd7712b58237e580acf039c02fd2f95e4b3aed5de95e46d828b73ac",
+        "filesChecked": 15,
+        "mismatches": []
+      }
+    ],
+    "sourceFilesBoundToFinalCommit": [
+      {
+        "path": "src/recovery.ts",
+        "reviewedSha256": "a0494cf8d12970512cf4aae7f610f8ea166382e12100c3aa0080bd3e3917cc2b",
+        "matchesTestedCommit": true,
+        "matchesIntegratedCommit": true,
+        "integratedSha256": "a0494cf8d12970512cf4aae7f610f8ea166382e12100c3aa0080bd3e3917cc2b",
+        "boundary": "exact source match"
+      },
+      {
+        "path": "src/publishing.ts",
+        "reviewedSha256": "7c066826a969cb5a59cd21a13ff81791e51bd121da43b2018602c1c885ba2ce8",
+        "matchesTestedCommit": true,
+        "matchesIntegratedCommit": true,
+        "integratedSha256": "7c066826a969cb5a59cd21a13ff81791e51bd121da43b2018602c1c885ba2ce8",
+        "boundary": "exact source match"
+      },
+      {
+        "path": "test/recovery-media.test.ts",
+        "reviewedSha256": "64ddececbfb63520e06e6d3a8bee4bfa3e8733c9caeb96d4d9bb8b1b57b6936c",
+        "matchesTestedCommit": true,
+        "matchesIntegratedCommit": true,
+        "integratedSha256": "64ddececbfb63520e06e6d3a8bee4bfa3e8733c9caeb96d4d9bb8b1b57b6936c",
+        "boundary": "exact source match"
+      },
+      {
+        "path": "docs/operations.md",
+        "reviewedSha256": "2d03317b0c05f1c6713d6d08b6ea826a3fc19b123054c6e5c04dd94092205949",
+        "matchesTestedCommit": true,
+        "matchesIntegratedCommit": false,
+        "integratedSha256": "4f59995c36c3be0d4965449d787438c20b176987cf4c45ad5d8708dd704a0d28",
+        "boundary": "documentation changed after review"
+      }
+    ]
+  },
+  "versions": {
+    "sourceBusinessSha": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+    "testedBusinessSha": "83b4b8e5fa28cb18a6926f3a10d2205e04f49ab1",
+    "handoffHead": "7ea7d097977ee76ea74379946ff0f6ed93ba8356",
+    "handoffDelta": "documentation only; checked business/test/config source diff is empty"
+  },
+  "integratedBusinessCompatibility": {
+    "head": "386b9652dc431bb83e4864d5b046b378110ee88d",
+    "businessSourceSameAsW2": true,
+    "combinedNativeNyxValidation": "separate followup result; not asserted by this W2 record"
+  },
+  "scope": {
+    "gistRevision": "79e69842f5bacba7f8204f62d151018bacf98d91",
+    "requirementsVersion": "v0.7",
+    "requirements": [
+      "R8",
+      "R10"
+    ],
+    "primaryDeliverable": "D9",
+    "affectedDeliverables": [
+      "D2",
+      "D4",
+      "D5",
+      "D7",
+      "D8"
+    ],
+    "cases": [
+      "A47",
+      "A48",
+      "A49",
+      "A50",
+      "A51"
+    ],
+    "overallD1D9": "NOT_ACCEPTED"
+  },
+  "fixedFindings": [
+    {
+      "id": "W2-F01",
+      "severity": "P1",
+      "baseline": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+      "scope": [
+        "R8",
+        "R10",
+        "D7",
+        "D9",
+        "A36",
+        "A49",
+        "A50"
+      ],
+      "trigger": "Restored or explicit read-only reconciliation while old queued media command exists",
+      "before": "Old media Actor displaced current recovery Actor; revoked source prevented read-only recognition; active old source selected materialization despite read-only request",
+      "after": "Pending media command ends blocked/partial with audit; current authorized Actor performs only read-only recognition; fresh authorization required for further media writes",
+      "independentReview": "PASS"
+    },
+    {
+      "id": "W2-F02",
+      "severity": "P2",
+      "baseline": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+      "scope": [
+        "R8",
+        "R10",
+        "D9",
+        "A49",
+        "A50"
+      ],
+      "trigger": "Crash database contains running media plus running job; clean capture correctly refuses such active jobs",
+      "before": "Isolate ended release job but left media running indefinitely",
+      "after": "Isolate ends queued/running media as blocked/partial, preserving Actor/revision/digest/count",
+      "independentReview": "PASS"
+    }
+  ],
+  "actualValidation": {
+    "officialGhostInstallationsRestored": 4,
+    "platformTablesAllCellCompared": 36,
+    "ghostMysqlTablesSchemaCompared": 404,
+    "ghostMysqlTablesStillByteIdenticalAfterRegressions": 394,
+    "unexpectedSourceRowLoss": 0,
+    "privateStagingPublic404Probes": 20,
+    "duplicateManagedCopies": 0,
+    "unauthorizedPrivateImageExposures": 0,
+    "readonlyGhostWrites": 0,
+    "readonlyMaterializations": 0,
+    "oldCookieStatus": 401,
+    "sourceCommandAuthorities": 5,
+    "sourceCommandDerivations": 2,
+    "sourcePrivateAssets": 8,
+    "sourceRevisions": 16,
+    "priorAuditRowsRetained": 54,
+    "deliveryRecovery": {
+      "deliveries": 5,
+      "payloads": 5,
+      "approvals": 2,
+      "commandAuthorities": 12,
+      "postRestoreWrites": 0,
+      "postRestoreApprovalRedeem": 0,
+      "nativeNyxId": false,
+      "realExternalProvider": false
+    },
+    "testEvidence": {
+      "affectedSuite": "47/47",
+      "newTdd": "8/8; baseline7 failures",
+      "fileSQLiteCases": 10,
+      "independentTransactionConcurrencyCases": 5,
+      "typecheck": "PASS",
+      "diffCheck": "PASS"
+    },
+    "captureSeconds": 2.138,
+    "restoreCliSeconds": 38.298,
+    "timingScope": "Restore CLI new target to four healthy Ghost sites; local public-origin rebind and subsequent validation are separate phases; no production SLA"
+  },
+  "restoredReadOnly": {
+    "writes": 0,
+    "materializations": 0,
+    "sourceRevoked": true,
+    "currentAuthorizedReadback": true,
+    "partialPrivateStill404": true,
+    "acceptedRemoteIdUnchanged": true,
+    "actorsAndRevisionIdsUnchanged": true
+  },
+  "postRestore": {
+    "mediaCompletedWithCurrentActor": true,
+    "ghostPostWritesDuringMediaCompletion": 0,
+    "revokedPendingBlocked": true,
+    "revokedPendingNoRemote": true,
+    "revokedPrivateImage404": true,
+    "bilingualLinksRetained": true,
+    "originalActorsUnchanged": true,
+    "outboundPaused": true,
+    "oldSessionHttpStatus": 401,
+    "cmsServiceMetrics": [
+      {
+        "owner": "personal",
+        "entry": "cms",
+        "views": 2
+      },
+      {
+        "owner": "personal",
+        "entry": "service",
+        "views": 2
+      },
+      {
+        "owner": "organization",
+        "entry": "cms",
+        "views": 2
+      },
+      {
+        "owner": "organization",
+        "entry": "service",
+        "views": 2
+      }
+    ],
+    "verifiedPublications": 7,
+    "remoteCopyCounts": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "independentWholeRestoreAudit": {
+    "status": "PASS",
+    "reviewer": "full_restore_audit",
+    "sqlite": {
+      "tables": 36,
+      "unexpectedChanges": 0,
+      "shape": {
+        "owners": {
+          "personal": 1,
+          "organization": 1
+        },
+        "articlesByOwnerAndLanguage": {
+          "personal:en": 1,
+          "personal:zh": 3,
+          "organization:en": 2,
+          "organization:zh": 2
+        },
+        "sourceReleaseStates": {
+          "published": 4,
+          "blocked": 1,
+          "verifying": 1,
+          "uncertain": 1,
+          "queued": 1
+        },
+        "sourceMediaStates": {
+          "queued": 1
+        },
+        "restoredMediaStates": {
+          "blocked": 1
+        }
+      }
+    },
+    "archive": {
+      "checks": 109,
+      "findings": 0,
+      "allExistingNonLogContentBytesMatch": true,
+      "privateStagingHashMatchesAcrossFourSites": true,
+      "privateRouteProbes": 20,
+      "allPrivateRoutes404": true,
+      "expectedNewPublicImagesAfterExplicitAuthorization": 2
+    },
+    "ghostMySql": {
+      "sites": 4,
+      "tables": 404,
+      "sourceRowsLost": 0,
+      "allSchemaBodiesEqual": true,
+      "postRegressionCorrelationChecks": 226,
+      "postRegressionUnchangedTables": 394,
+      "acceptedDifferences": [
+        "Personal EN: one explicit restored new article and its Ghost relationship/audit rows",
+        "Organization EN: explicit sync-links action/revision and original post.updated_at only",
+        "Personal EN: Ghost background members=0 milestone",
+        "Ghost logs append and entrypoint ownership normalization; all non-log archived file bytes preserved"
+      ]
+    },
+    "sqliteTableResults": [
+      {
+        "table": "articles",
+        "sourceRows": 8,
+        "restoredRows": 8,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "asset_publications",
+        "sourceRows": 4,
+        "restoredRows": 4,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "assets",
+        "sourceRows": 8,
+        "restoredRows": 8,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "audit",
+        "sourceRows": 54,
+        "restoredRows": 55,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "author_mappings",
+        "sourceRows": 4,
+        "restoredRows": 4,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "collection_attempts",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "collection_gaps",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "command_authorities",
+        "sourceRows": 5,
+        "restoredRows": 5,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "command_derivations",
+        "sourceRows": 2,
+        "restoredRows": 2,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "deliveries",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "delivery_events",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "delivery_payloads",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "external_metrics",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "idempotency",
+        "sourceRows": 9,
+        "restoredRows": 9,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "job_leases",
+        "sourceRows": 11,
+        "restoredRows": 11,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "jobs",
+        "sourceRows": 12,
+        "restoredRows": 12,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "migrations",
+        "sourceRows": 1,
+        "restoredRows": 1,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "nyx_approvals",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "observations",
+        "sourceRows": 4,
+        "restoredRows": 4,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "oidc_states",
+        "sourceRows": 1,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "owner_profiles",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "owners",
+        "sourceRows": 2,
+        "restoredRows": 2,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "projection_retries",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "projections",
+        "sourceRows": 4,
+        "restoredRows": 4,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "publishers",
+        "sourceRows": 1,
+        "restoredRows": 1,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "recovery_actors",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "release_links",
+        "sourceRows": 3,
+        "restoredRows": 3,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "release_media_requests",
+        "sourceRows": 1,
+        "restoredRows": 1,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": [
+          {
+            "fields": [
+              "state",
+              "error_code",
+              "updated_at"
+            ],
+            "allowed": true
+          }
+        ]
+      },
+      {
+        "table": "releases",
+        "sourceRows": 8,
+        "restoredRows": 8,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": [
+          {
+            "fields": [
+              "state",
+              "error_code"
+            ],
+            "allowed": true
+          }
+        ]
+      },
+      {
+        "table": "revisions",
+        "sourceRows": 16,
+        "restoredRows": 16,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "sessions",
+        "sourceRows": 1,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "settings",
+        "sourceRows": 1,
+        "restoredRows": 1,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "site_admin_routes",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "sites",
+        "sourceRows": 4,
+        "restoredRows": 4,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "submissions",
+        "sourceRows": 0,
+        "restoredRows": 0,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      },
+      {
+        "table": "translations",
+        "sourceRows": 3,
+        "restoredRows": 3,
+        "pass": true,
+        "unexpectedChangesCount": 0,
+        "expectedTransitions": []
+      }
+    ],
+    "schemaExact": {
+      "pass": true,
+      "objectCount": 48,
+      "sourceSha256": "d3a93543bd6a1fc360d2a0a119f82e7d5507114cdc6611f6556f23716699dc2b",
+      "restoredSha256": "d3a93543bd6a1fc360d2a0a119f82e7d5507114cdc6611f6556f23716699dc2b"
+    },
+    "limitations": [
+      "All checks are local; no production SLA or actual external destination result is asserted.",
+      "Native NyxID authentication, real live revocation and connector approval coverage remain in separately identified evidence; this restore harness uses controlled local identity."
+    ]
+  },
+  "independentFixReview": {
+    "verdict": "PASS_NO_ACTIONABLE_FINDINGS_WITHIN_REVIEWED_SCOPE",
+    "reviewer": "Independent sqlite_regression agent (not fix author recovery_audit)",
+    "findings": [],
+    "validation": {
+      "baselineTdd": {
+        "tests": 8,
+        "pass": 1,
+        "fail": 7
+      },
+      "fixedNewTests": {
+        "tests": 8,
+        "pass": 8,
+        "fail": 0
+      },
+      "independentAdditionalTests": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0
+      },
+      "fileSQLiteRegression": {
+        "status": "PASS",
+        "checks": 10
+      },
+      "typecheck": "PASS",
+      "diffCheck": "PASS"
+    },
+    "independentChecks": [
+      "Audit failure rolls back reconcile",
+      "Audit failure rolls back isolation, pause and session removal",
+      "Actual second DB handle claim prevents concurrent reconcile mutation",
+      "Historical media idempotency key cannot requeue writes",
+      "Current membership revoked after enqueue blocks remote reads"
+    ],
+    "reasoning": [
+      {
+        "topic": "Current authorization and read-only behavior",
+        "assessment": "Terminal media state prevents ReleaseWorker selecting the old media Actor for explicit current-caller reconcile. Existing Policy.publish(access), worker revalidation, beforeWrite denial, beforeMaterialize denial and enqueueProjection=false remain unchanged. Lost current membership after enqueue caused FORBIDDEN before reads in an independent probe."
+      },
+      {
+        "topic": "Transaction and concurrency",
+        "assessment": "Media normalization is inside the same BEGIN IMMEDIATE transaction as queue/recovery Actor/audit updates. Reconcile checks running-job exclusion first. A second Store handle claimed a real Queue lease while current-caller authority validation awaited; reconcile rejected IN_PROGRESS and preserved state. Injected audit failures rolled back whole reconcile and isolate transactions."
+      },
+      {
+        "topic": "Historical evidence",
+        "assessment": "Only state/error_code/updated_at change on unfinished media requests. Actor ciphertext, confirmation_digest, revision_id, Trace ID and public_files are preserved. Original release Actor/revision/audit rows remain intact. Existing terminal media records are not rewritten by isolation."
+      },
+      {
+        "topic": "Idempotency and index",
+        "assessment": "release_media_pending remains enforced and loses abandoned running entries after crash isolation. Historical media idempotency-key replay returns the same terminal record without queuing writes. New authorization and key are needed for further materialization."
+      },
+      {
+        "topic": "TDD quality",
+        "assessment": "The 8 tests assert observable read/dispatch/media effects and immutable history, distinguish clean capture rejection from crash isolation, and cover paused/unpaused with source revoked/valid. Independently running on original 0b reproduced 7 failures and 1 pass; fixed copy passes all 8."
+      },
+      {
+        "topic": "Operational guidance",
+        "assessment": "Docs match SQLite retention, in-volume staging backup, external staging reconstruction from asset BLOBs, UID/mount/0700 checks, paused restore, read-only recognition and fresh media authorization. No new product scope or numerical SLA was introduced."
+      }
+    ],
+    "bindingNote": "The review captured an uncommitted patch; this export independently matched every reviewed file to 83b4b8e and business/test files to integrated386b965."
+  },
+  "controlledDeliveryRestore": {
+    "status": "PASS_BOUNDED_DELIVERY_RECOVERY",
+    "revision": "83b4b8e5fa28cb18a6926f3a10d2205e04f49ab1",
+    "nativeNyxID": false,
+    "realGhost": false,
+    "externalProvider": false,
+    "manualDeliveryTableSeeding": false,
+    "checks": [
+      {
+        "id": "business API generated nonempty personal/org delivery ledgers",
+        "status": "PASS",
+        "manualSeeding": false
+      },
+      {
+        "id": "snapshot decrypt isolate preserves all populated tables",
+        "status": "PASS",
+        "byteExactDecryption": true
+      },
+      {
+        "id": "restored command-bound payloads and exact approval fences remain usable",
+        "status": "PASS"
+      },
+      {
+        "id": "revoked sources rejected; current personal and org callers recognize exact copies without writes",
+        "status": "PASS",
+        "providerGets": 4,
+        "providerWrites": 0,
+        "exactRedeems": 0,
+        "knownRemoteMappingPreserved": true
+      },
+      {
+        "id": "changed personal connection provenance and expired org approval block pending writes",
+        "status": "PASS",
+        "providerWrites": 0,
+        "exactRedeems": 0
+      },
+      {
+        "id": "immutable payload Actor, command bindings, approval fences, prior audits and mappings preserved",
+        "status": "PASS",
+        "originalPayloadRows": 5,
+        "authorityRows": 12,
+        "approvalRows": 2,
+        "priorAuditRows": 37,
+        "lostRows": 0,
+        "duplicateCopies": 0,
+        "restoredLeftPaused": true
+      }
+    ],
+    "counts": {
+      "providerWrites": 3,
+      "providerReads": 5,
+      "redeemAttempts": 1,
+      "originalWrites": 5,
+      "deliveries": 5,
+      "payloads": 5,
+      "approvals": 2,
+      "commandAuthorities": 12,
+      "sourceAudit": 37,
+      "postRestoreProviderWrites": 0
+    },
+    "limits": [
+      "Signed issuer, source revocation, approval decisions and provider side effects are controlled loopback fixtures; not a native NyxID or real DEV account demonstration.",
+      "AuthManager, NyxAuthority, signed command checks, DevAdapter, request/prepareApproval/authorize routes, queues, SQLite capture/isolation and reconciliation are unmodified fixed-source business code.",
+      "Owned Ghost verification is an explicit OriginalAdapter fixture; real four-Ghost restore is separate parent evidence.",
+      "Initial owners/sites/publisher assignment use isolated provisioning; deliveries, payloads, approvals, commands, audit and mappings are generated through actual business operations.",
+      "No production RPO/RTO conclusion; only this local bounded recovery is established."
+    ]
+  },
+  "preservedFailures": {
+    "archiveNegativeCases": [
+      {
+        "case": "wrong-key",
+        "exit": 1,
+        "destinationCreated": false,
+        "elapsedSeconds": 0.08,
+        "restoredEnvironmentUnchanged": true
+      },
+      {
+        "case": "tampered-envelope",
+        "exit": 1,
+        "destinationCreated": false,
+        "elapsedSeconds": 0.079,
+        "restoredEnvironmentUnchanged": true
+      }
+    ],
+    "sourceSetup": [
+      {
+        "attempt": 1,
+        "cause": "Harness used article.owner_id instead of public DTO ownerId; rejected before first publication",
+        "businessChangeNeeded": false
+      },
+      {
+        "attempt": 2,
+        "cause": "Suggested port3659 is blocked by WHATWG fetch; changed own zh source to3660",
+        "businessChangeNeeded": false,
+        "firstPersonalEnPublicationRetainedAsAbandonedFixture": true
+      },
+      {
+        "attempt": 3,
+        "cause": "Own Ghost zh recreation changed private staging owner to Ghost UID; helper initially set mode but not Worker UID",
+        "businessChangeNeeded": false,
+        "resolution": "Explicit operator preflight now sets only W2 private staging directories to current Worker UID and0700, as existing operations documentation requires",
+        "priorSuccessPreserved": true
+      }
+    ],
+    "tddBefore": {
+      "tests": 8,
+      "passed": 1,
+      "failed": 7
+    },
+    "tddAfter": {
+      "tests": 8,
+      "passed": 8,
+      "failed": 0
+    },
+    "actualBusinessDefects": "See fixedFindings; neither the seven baseline TDD failures nor setup failures were discarded."
+  },
+  "cleanup": {
+    "W2ContainersStopped": 18,
+    "W2VolumesRetained": 18,
+    "archivesAndDatabasesRetained": true,
+    "resourceLockReleased": true,
+    "temporaryBackgroundProcessesStopped": true,
+    "originalRunningContainers": 18,
+    "originalCmsOutboundPaused": false,
+    "nyxDataMutated": false,
+    "w1KeysRevoked": false,
+    "heartbeatResumedOrCreated": false
+  },
+  "evidenceBoundaries": {
+    "real": "Official Ghost/MySQL, actual encrypted capture and fresh-volume restore, real rendered pages and public/private image paths",
+    "controlled": "Four-Ghost integration identity is injected Authority; delivery regression uses signed loopback issuer/proxy through AuthManager/NyxAuthority/DevAdapter and real service routes",
+    "historical": "0418652 native sign-in/service/restore evidence is background only; none substituted for current-version restoration",
+    "notClaimed": [
+      "Native NyxID entire source-mode acceptance",
+      "Real external DEV/Hashnode publishing or restore",
+      "Production RPO/RTO",
+      "Overall D1-D9 completion"
+    ]
+  },
+  "publicPrivateBoundary": {
+    "publicContents": [
+      "Fixed revisions and source hashes",
+      "Test observations, counts, states and error categories",
+      "Per-table row counts and schema comparison result",
+      "Named failures and repairs",
+      "Relative private provenance references and SHA256 digests"
+    ],
+    "withheld": [
+      "Database and MySQL dumps",
+      "User content, Markdown, private image bytes and filenames",
+      "Environment values, cookies, bearer tokens and raw keys",
+      "Complete Actor ciphertext, approval or credential material",
+      "Encrypted archives and encryption keys"
+    ],
+    "privateReferenceSemantics": "privateLocalPath is repository-relative for custodial lookup only; those files are intentionally not shipped or required to parse this public record. Recomputing their hashes requires separately authorized private evidence access. Public package integrity is provided by the enclosing public manifest."
+  },
+  "reproduction": {
+    "prerequisites": [
+      "Node.js 24.18.x and locked npm dependencies",
+      "Disposable local platform database and four isolated official Ghost/MySQL instances; digest-pinned images cached",
+      "Dedicated injected test authority for the W2 controlled tier; fresh actual native identity for the separate followup tier",
+      "New restore project names, ports and volumes; no production provider connections or credentials",
+      "Backup key supplied by secure environment and kept separate from encrypted archive"
+    ],
+    "repositoryCommands": [
+      "npm ci",
+      "npm run typecheck",
+      "node --test test/recovery.test.ts test/recovery-media.test.ts test/auth-recovery.test.ts test/media-authority.test.ts test/publishing.test.ts test/alternates.test.ts"
+    ],
+    "operatorWorkflow": [
+      "Follow docs/operations.md to capture with scripts/recovery.ts and a private plan after outbound pause and active-worker drain.",
+      "Restore into a new directory/project/volumes with the complete four-site mapping; compare all SQLite schemas/cells, MySQL schemas/rows and content hashes.",
+      "Rebind only isolated public/admin origins and private staging; confirm restore remains outbound-paused and old sessions fail.",
+      "Use the reviewed acceptance recipe to check current-caller read-only recognition, terminal pending-media history, fresh authorization and permission rejection; private W2 harnesses are retained under the relative source references.",
+      "The commands reproduce committed unit/affected regressions. The original 36-table/404-table run additionally requires private fixture state; the public record does not pretend to include raw evidence or offer a one-command replay of that exact private run."
+    ]
+  },
+  "privateSourceManifest": [
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/report.json",
+      "sha256": "c2ecd72a0cd7712b58237e580acf039c02fd2f95e4b3aed5de95e46d828b73ac",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/source-review.json",
+      "sha256": "0e24d2fb293374d9961cfb4f6c93815753b430629df26a92a204196867b30257",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/restored-review.json",
+      "sha256": "d6d0230626051f5ea8d209cc5f2fb81bd5bcfb83c6c1feca571b30f258cb1f1d",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/restore-execution.json",
+      "sha256": "785ed8113ee2822fdb0f8a95b0c50065ba7224d7b03335264e14483734785d47",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/full-audit/summary.json",
+      "sha256": "58730b8d0aa3a3d59bf4e358e01fc7e54ca1a018324929d278926346055c2e0a",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/full-audit/sqlite-comparison.json",
+      "sha256": "08a41377471e737b7324449e60504760f2484ae6652feba0c80747199fc2e739",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/full-audit/archive-comparison.json",
+      "sha256": "31c9d67db38d87437fa17cf388c7cf9d4cf5d4db91dfaf821da8dc3f574fcfca",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/full-audit/mysql-comparison.json",
+      "sha256": "ec9040f21c9abe4f4b021d62212151247e4d45a442d626ae796e83b18f2fbd9d",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/full-audit/mysql-correlation.json",
+      "sha256": "792de309409ea3a7f2d24b766e7bebae551c2356b5b2b8b62c392a26e335503f",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/archive-failure-checks.json",
+      "sha256": "9b482aa60545b5bde615be15dec02a517ea2fa3aa3839be77a10c822024d5e93",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/source-setup-failures.json",
+      "sha256": "45b815bfb57bb8d92225b6ae93c626506f0c38be807a69acf44658d01aafe7f0",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/static-review/review.json",
+      "sha256": "54fad07f42478980251ab78b44c4b0c15c8b77b554839a66b1f89742a25a1a5b",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/sqlite-regression/review-fix/review.json",
+      "sha256": "9f9abab220d771cb03868d86eded3a3946731f31f09d1e39b2d3765a11bbd1fd",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/sqlite-regression/latest-result.json",
+      "sha256": "d6060e588dc5807fc8c8910c71982057eac30260b053a04ec8fe616c2e1ada7b",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/delivery-regression/latest-result.json",
+      "sha256": "774ce22b55af8949b7c1939397e9e15fd72000210decd332ef0d1cc7ee5fd433",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/cleanup.json",
+      "sha256": "880f5b35e7b76bbe9f114323a43043732e5cb7df66352b0729027eda960bf437",
+      "includedRaw": false
+    },
+    {
+      "privateLocalPath": ".runtime/acceptance-review/parallel-local-20261102/w2/original-environment-preserved.json",
+      "sha256": "f57205b2c74c724e5dfca147fe3f3550ecad7e7c98cb58a49d2f61bf239f0fd1",
+      "includedRaw": false
+    }
+  ]
+}

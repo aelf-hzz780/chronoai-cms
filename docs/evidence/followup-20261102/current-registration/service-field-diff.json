@@ -1,0 +1,48 @@
+{
+  "changed": {
+    "api_spec_url": {
+      "before": null,
+      "after": "http://127.0.0.1:3457/openapi.json"
+    },
+    "description": {
+      "before": null,
+      "after": "Local ChronoAI CMS: bilingual personal and organization content, Markdown, publishing status and metrics. Registered from the fixed W1/W2 integration OpenAPI; local NyxID patch dependency and external acceptance limits are documented in the delivery handoff."
+    },
+    "openapi_spec_url": {
+      "before": null,
+      "after": "http://127.0.0.1:3457/openapi.json"
+    },
+    "updated_at": {
+      "before": "2026-11-02T06:09:05.873+00:00",
+      "after": "2026-11-02T10:43:13.399+00:00"
+    }
+  },
+  "allOtherReturnedFieldsEqual": true,
+  "rawPrePostimagePrivateHashes": {
+    "current-service-preimage.json": {
+      "sha256": "59f6a2abf6f34f803ef51262dbad4ae82aa46d1c194c60424b746947f609528c",
+      "private": true
+    },
+    "current-endpoints-preimage.json": {
+      "sha256": "32760e703e3ce69b19bf35a5537d9dd7a495c7d4fff7466cb2e0200572dcaf71",
+      "private": true
+    },
+    "current-service-immediate-preimage.json": {
+      "sha256": "59f6a2abf6f34f803ef51262dbad4ae82aa46d1c194c60424b746947f609528c",
+      "private": true
+    },
+    "current-endpoints-immediate-preimage.json": {
+      "sha256": "32760e703e3ce69b19bf35a5537d9dd7a495c7d4fff7466cb2e0200572dcaf71",
+      "private": true
+    },
+    "current-service-postimage.json": {
+      "sha256": "a9dd26aee0d7c4022fec5644cbda77d1c62932054dad8eeed35a3eac8b685633",
+      "private": true
+    },
+    "current-endpoints-postimage.json": {
+      "sha256": "3b60d4dea855f3de12b26525b90c27f25803f01cf9ff71f3c6e5a27e61b2efc9",
+      "private": true
+    }
+  },
+  "comparisonBeforeUpdate": "full immediate preimage equal to saved original preimage"
+}

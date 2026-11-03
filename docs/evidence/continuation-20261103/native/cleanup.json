@@ -1,0 +1,596 @@
+{
+  "status": "PASS_OWN_RESOURCES_RETIRED_OLD_SYSTEM_PRESERVED",
+  "actions": [
+    {
+      "container": "blogsystem-continuation-native-20261103-api",
+      "stopped": true,
+      "retained": true
+    },
+    {
+      "container": "blogsystem-continuation-native-20261103-api-c16",
+      "stopped": true,
+      "retained": true
+    },
+    {
+      "container": "blogsystem-continuation-native-20261103-ghost-1",
+      "stopped": true,
+      "retained": true
+    },
+    {
+      "container": "blogsystem-continuation-native-20261103-db-1",
+      "stopped": true,
+      "retained": true
+    }
+  ],
+  "registrationsInactive": true,
+  "testUsersInactive": true,
+  "connectionsInactive": "Original cleanup checked PUT response plus list readback; preserved metadata-only HTTP receipt, no retired user reactivation.",
+  "queue": {
+    "outboundPaused": true,
+    "cancelledProjectionJobs": 0,
+    "activeJobs": 0,
+    "activeMedia": 0,
+    "integrity": "ok"
+  },
+  "baselineQueue": {
+    "outboundPaused": true,
+    "cancelledProjectionJobs": 2,
+    "activeJobs": 0,
+    "activeMedia": 0,
+    "integrity": "ok"
+  },
+  "health": [
+    {
+      "port": 3457,
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "port": 3001,
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "port": 3000,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3469,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3478,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3479,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2469,
+      "path": "/",
+      "status": 200
+    }
+  ],
+  "preservedOriginalContainers": [
+    {
+      "name": "blogsystem-media-init-386b9652dc43-r2",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-command-candidate-386b9652dc43-r2",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-media-init-386b9652dc43",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-command-candidate-386b9652dc43",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-followup-combined-20261102",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-followup-combined-setup-failed-20261102",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-delivery-1102165943-0f389a20-bootstrap",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-delivery-1102165943-0f389a20",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-restore-helper",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-w2-r1-organization-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-w2-r1-organization-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-w2-r1-organization-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-w2-r1-organization-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-w2-r1-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-w2-r1-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-w2-r1-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-w2-r1-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-helper",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-organization-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-organization-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-organization-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-organization-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w2-source-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-w1-20261102",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-media-init-0b0e9d11dacd",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-command-candidate-0b0e9d11dacd",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "nyxid-native-http-relay-20261102",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "nyxid-native-mongo-relay-20261102",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "nyxid-command-test-mongo-20261102",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "nyxid-native-mongo-relay-20261102-legacy-27018",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-frontend-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-restored-r1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-app",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-organization-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-organization-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-organization-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-organization-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-native-041-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-backend-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-mongodb-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-mongodb-init-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-restored-app-r2",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-review-74978bc-r2-organization-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-review-74978bc-r2-organization-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-review-74978bc-r2-organization-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-review-74978bc-r2-organization-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-review-74978bc-r2-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-review-74978bc-r2-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-review-74978bc-r2-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-review-74978bc-r2-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-app",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-identity",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-organization-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-organization-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-organization-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-organization-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-review-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-77b017f2-org-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-77b017f2-org-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-77b017f2-org-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-77b017f2-org-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-77b017f2-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-77b017f2-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-77b017f2-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-77b017f2-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-c1ae5635-org-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-c1ae5635-org-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-c1ae5635-org-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-c1ae5635-org-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-c1ae5635-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-c1ae5635-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-c1ae5635-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-c1ae5635-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-integration-runtime-c882beac",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-finalx-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-finalx-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-finalx-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-finalx-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-35ade641-org-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-35ade641-org-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-35ade641-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-35ade641-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-35ade641-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-35ade641-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-4b16eee0-org-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-4b16eee0-org-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-4b16eee0-org-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-4b16eee0-org-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-4b16eee0-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-4b16eee0-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-4b16eee0-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-restore-4b16eee0-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-dev-organization-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-dev-organization-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-dev-organization-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-dev-organization-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-dev-personal-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-dev-personal-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-dev-personal-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-dev-personal-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-current-machine-db-zh-1",
+      "identityImageMountsAndRunningUnchanged": true
+    },
+    {
+      "name": "blogsystem-current-machine-db-en-1",
+      "identityImageMountsAndRunningUnchanged": true
+    }
+  ],
+  "heavyLockPresent": false,
+  "dataAndVolumesRetained": true,
+  "retainedVolumes": [
+    "blogsystem-continuation-native-20261103-runtime",
+    "blogsystem-continuation-native-20261103-runtime-c16",
+    "blogsystem-continuation-native-20261103_content",
+    "blogsystem-continuation-native-20261103_database"
+  ],
+  "publicationReadbackBoundary": "All four exact generated article URLs were asserted 404 before owned Ghost was stopped in the first cleanup attempt. That attempt reached final mount-array comparison after all URL checks and stops; current Ghost is deliberately stopped.",
+  "cleanupValidationFailures": [
+    {
+      "stage": "final original-container comparison",
+      "reason": "Compared unordered Docker Mounts arrays positionally; same items were returned in different order.",
+      "revalidation": "Sorted by unique Destination; every original mount, image, ID and running state unchanged."
+    },
+    {
+      "stage": "stopped volume queue read",
+      "reason": "Read-only mount could not open WAL-mode database due to missing writable SHM support.",
+      "revalidation": "Only exact own stopped-volume mounts used writable helper; assert no active release/media, cancel own queued projections, integrity ok; no existing user volume touched."
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "at": "2026-11-02T10:23:22.287835+00:00",
+  "reviewer": "evidence_audit",
+  "status": "PASS_BOUNDED_LOCAL_REGISTRATION_DISCOVERY",
+  "blockingFindings": [],
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "independentChecks": {
+    "sourceFilesMatchedAgainstGitObject": 133,
+    "operationSetSize": 35,
+    "discoveryEndpointConfigSchemaComparisons": 105,
+    "toolNameTypeRequiredSchemas": 35,
+    "actualRawMcpReadMatchesPublicDigestAndDedicatedIdentity": true,
+    "apiKeyExactNewPersonalUserServiceOnly": true,
+    "knownSecretValueScan": {
+      "comparedSecretValues": 6,
+      "matches": 0
+    },
+    "portableAbsoluteUserPaths": 0,
+    "portableJwtPatterns": 0
+  },
+  "importPath": "Actual Admin POST discover-endpoints {} invokes Nyx openapi_parser::parse_openapi_spec against isolated running app. This is a real parser/import check, not a manually fabricated endpoint list.",
+  "schemaNormalization": [
+    {
+      "operation": "listarticles",
+      "parameter": "limit",
+      "sourceSchema": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100
+      },
+      "toolSchema": {
+        "type": "integer"
+      }
+    },
+    {
+      "operation": "listarticles",
+      "parameter": "offset",
+      "sourceSchema": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "toolSchema": {
+        "type": "integer"
+      }
+    }
+  ],
+  "normalizationAssessment": "Non-blocking for required service availability. Admin/config retain numeric bounds, MCP tools omit two pagination bounds; source content.ts validates integer limit1..100 and offset>=0. No claim of exact whole tool schema or all35 MCP executions.",
+  "binaryRequestMapping": [
+    "importmarkdownfile",
+    "replacemarkdownfile"
+  ],
+  "identityConfiguration": {
+    "callback": "http://localhost:3560/auth/callback",
+    "clientType": "confidential",
+    "oauthScopes": [
+      "openid",
+      "profile",
+      "proxy"
+    ],
+    "propagation": "jwt + delegation",
+    "identityAudience": "exact dedicated slug",
+    "introspectionTrust": "exact dedicated confidential client",
+    "requirePkceReadback": "Absent/null; not claimed as independently verified provider setting. CMS uses PKCE in existing code."
+  },
+  "preservedFailures": [
+    "Python tar extraction compatibility",
+    "Spec-url-only PUT400; description plus specURL succeeds",
+    "First Admin discovery400 while isolated Node had exited; same{} succeeds after restart",
+    "User catalog dynamic loopback spec rejected400 by SSRF policy; distinct from Admin parser path",
+    "MCP raw key in Bearer403; selected X-API-Key path works",
+    "Stateless initialization lacked MCP session header",
+    "Search cap25, full35 confirmed by tools/list/config"
+  ],
+  "cleanupAssessment": {
+    "keyRevokedReadback401": true,
+    "ownConnectionDisabled": true,
+    "ownCatalogClientUserInactive": true,
+    "own3560ProcessStoppedPortClosed": true,
+    "noWorkerDaemon": true,
+    "noSharedServiceStop": true
+  },
+  "boundaries": {
+    "Document": "Precise registration/configuration and rerun sequence, repository-relative portable evidence.",
+    "Local": "Actual patched native049 Admin OpenAPI parser/import, durable discovery and one approved own-workspace MCP read.",
+    "Live": "Not asserted; no external provider lifecycle or target deployment/overallD1D9 acceptance."
+  },
+  "evidence": [
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/openapi.json",
+      "sha256": "181bcb926418208fb47a541c1e4468756b5eea6cf2d556977008a5f402ebbe1d"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/operations.json",
+      "sha256": "eb47aff79b8617dee8a1ae35c26e07efe7cc3e7211772a162b285aba58c713cc"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/discovery.json",
+      "sha256": "d54746ab54d1b5b2fc6f4331a51306627463e5f6d02c1931c6c0a8b356eb86d1"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/endpoints.json",
+      "sha256": "5ad99c9644f4d6e5da0c6a79f55f7b452b5abd1ac3f3a55a89e2c3ab3078a375"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/mcp-selected-config.json",
+      "sha256": "d712089f6960dc44ef3691ad70a359c00be1e82b0ce68159485b8582efb49688"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/mcp-selected-tools.json",
+      "sha256": "4c56be71fc6544baf2e2a6ac23d7f2f81cc1cd55cc05b22fa84d5dd3b570dc59"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/mcp-getworkspaces.json",
+      "sha256": "ea23c6acf72e42f45b64bec10ab74ab5c022e78cfb942a0f084278a4fd111199"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/mcp-report.json",
+      "sha256": "192abf2fca3c8842724dbd639cb5f707a797c3cb4e08e0ed447c940878a6797a"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/registration-readback.json",
+      "sha256": "6abf9c47b49903fb59206addb6e2716ec0ec30c8952ca0129072473edb5640e7"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/client-readback.json",
+      "sha256": "73f2f638606aef391dbd29205bfa06ad65b8dc1c0aa38c26fc4211e2b4606721"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/cleanup.json",
+      "sha256": "5166f0c5d0e3f8ebb6fff3b8d29e6de34b05dadc4d2f451bf95c5ebe0d7c4d91"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/cleanup-readback.json",
+      "sha256": "c8dd738b673edfea94bad3a8dd5b7546fc62ba0035e97174f546bd407df2e88b"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/runtime-cleanup.json",
+      "sha256": "81133036a126229d487221817faea044cf9a3d98173811ae1991cd076f676309"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/source-readback.json",
+      "sha256": "998b5b1882990f282a3c70179ab9c4e2660ba7bc919fec214fa0e4b1c0d1ae40"
+    },
+    {
+      "path": ".runtime/acceptance-review/parallel-local-20261102/followup/registration/backend-readback.json",
+      "sha256": "6fc5e4341454f418abc11b41e9a079778c7d85c90553523883a2d414e7f7ce0a"
+    }
+  ],
+  "privateVerification": "Read raw MCP result and restricted-key metadata in memory; no secret or user response body included in this report."
+}

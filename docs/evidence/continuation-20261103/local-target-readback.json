@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-03T03:08:21.941277+00:00",
+  "status": "PASS_EXISTING_LOCAL_TARGET_REGISTERED_CONTRACT",
+  "targetSelection": "User selected existing local NyxID/CMS for this acceptance continuation on 2026-11-03. No separate remote deployment selection is a current local blocker.",
+  "cmsBusinessSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "nyxBackendSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "nyxPortalSha": "c65dc4bedb7da79cf0fb477e6f5bd809f03aec9b",
+  "cms": "http://localhost:3457",
+  "nyxPortal": "http://localhost:3000",
+  "nyxApi": "http://localhost:3001",
+  "catalogUnchangedFromRegisteredPostimage": true,
+  "runtimeCatalogBindingMatches": true,
+  "activeOperations": 35,
+  "allRegisteredContractsEqual": true,
+  "openapiPathsUnchanged": true,
+  "catalogMutations": 0,
+  "http": [
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/services/eb713005-29ce-42f6-ab1d-929993aa2e7b/endpoints",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/openapi.json",
+      "status": 200
+    }
+  ],
+  "priorPortalAndAuthEvidence": "docs/handoff-20261102.md (pinned historical versions; not a new browser login/parity rerun)",
+  "limitations": [
+    "This readback verifies current registration/version binding, not execution of every operation or all transport modes.",
+    "Public Ghost domains, real external providers, required operations responsibilities and overall D1-D9 acceptance remain required. Separate remote CMS/Nyx deployment and numeric RPO/RTO are not newly imposed."
+  ],
+  "provenance": {
+    "privateSourcePath": "local-target-readback.json",
+    "originalSha256": "539cbeecdd9ee651115b8d5cc2cb48642c76c086376d1f7833eeb3a086dee93d",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

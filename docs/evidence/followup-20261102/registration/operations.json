@@ -1,0 +1,1707 @@
+[
+  {
+    "operationId": "getWorkspaces",
+    "nyxName": "getworkspaces",
+    "method": "GET",
+    "path": "/api/service/me",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [],
+    "requestBody": null
+  },
+  {
+    "operationId": "listArticles",
+    "nyxName": "listarticles",
+    "method": "GET",
+    "path": "/api/service/articles",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "ownerId",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "createArticle",
+    "nyxName": "createarticle",
+    "method": "POST",
+    "path": "/api/service/articles",
+    "success": {
+      "201": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "ownerId": {
+                "type": "string"
+              },
+              "language": {
+                "type": "string",
+                "enum": [
+                  "en",
+                  "zh"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 250
+              },
+              "markdown": {
+                "type": "string",
+                "maxLength": 2000000
+              },
+              "creditedAuthor": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ownerId",
+              "language",
+              "title",
+              "markdown",
+              "creditedAuthor"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "importMarkdownFile",
+    "nyxName": "importmarkdownfile",
+    "method": "POST",
+    "path": "/api/service/articles/import",
+    "success": {
+      "201": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "ownerId",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "language",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "en",
+            "zh"
+          ]
+        }
+      },
+      {
+        "name": "title",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "creditedAuthor",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "text/markdown": {
+          "schema": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "replaceMarkdownFile",
+    "nyxName": "replacemarkdownfile",
+    "method": "PUT",
+    "path": "/api/service/articles/{id}/markdown",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "expectedRevision",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "text/markdown": {
+          "schema": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "getArticle",
+    "nyxName": "getarticle",
+    "method": "GET",
+    "path": "/api/service/articles/{id}",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "revision",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Optional authorized revision"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "editArticle",
+    "nyxName": "editarticle",
+    "method": "PATCH",
+    "path": "/api/service/articles/{id}",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "expectedRevision": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "markdown": {
+                "type": "string"
+              },
+              "creditedAuthor": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "expectedRevision"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "submitDraft",
+    "nyxName": "submitdraft",
+    "method": "POST",
+    "path": "/api/service/articles/{id}/submit",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "revisionId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "revisionId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "downloadMarkdown",
+    "nyxName": "downloadmarkdown",
+    "method": "GET",
+    "path": "/api/service/articles/{id}/markdown-file",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "articleId": {
+                  "type": "string"
+                },
+                "revisionId": {
+                  "type": "string"
+                },
+                "filename": {
+                  "type": "string",
+                  "const": "article.md"
+                },
+                "mediaType": {
+                  "type": "string",
+                  "const": "text/markdown"
+                },
+                "encoding": {
+                  "type": "string",
+                  "const": "base64"
+                },
+                "byteLength": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2000000
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "data": {
+                  "type": "string",
+                  "contentEncoding": "base64",
+                  "contentMediaType": "text/markdown",
+                  "maxLength": 2666668
+                }
+              },
+              "required": [
+                "articleId",
+                "revisionId",
+                "filename",
+                "mediaType",
+                "encoding",
+                "byteLength",
+                "sha256",
+                "data"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "revision",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "listRevisions",
+    "nyxName": "listrevisions",
+    "method": "GET",
+    "path": "/api/service/articles/{id}/revisions",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "previewArticle",
+    "nyxName": "previewarticle",
+    "method": "GET",
+    "path": "/api/service/articles/{id}/preview",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "revision",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "description": "Optional authorized revision; defaults to the caller-visible revision"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "linkTranslation",
+    "nyxName": "linktranslation",
+    "method": "POST",
+    "path": "/api/service/articles/{id}/translation",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "sourceArticleId": {
+                "type": "string"
+              },
+              "sourceRevisionId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sourceArticleId",
+              "sourceRevisionId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "uploadPrivateImage",
+    "nyxName": "uploadprivateimage",
+    "method": "POST",
+    "path": "/api/service/articles/{id}/assets",
+    "success": {
+      "201": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "mime": {
+                "type": "string",
+                "enum": [
+                  "image/png",
+                  "image/jpeg",
+                  "image/gif",
+                  "image/webp"
+                ]
+              },
+              "base64": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "mime",
+              "base64"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "getPrivateImage",
+    "nyxName": "getprivateimage",
+    "method": "GET",
+    "path": "/api/service/assets/{id}",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "image/png": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "image/jpeg": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "image/gif": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "image/webp": {
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "confirmOriginal",
+    "nyxName": "confirmoriginal",
+    "method": "POST",
+    "path": "/api/service/articles/{id}/releases",
+    "success": {
+      "202": {
+        "description": "Confirmation accepted; inspect the returned state and publication history before treating it as published",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "ownerId": {
+                "type": "string"
+              },
+              "revisionId": {
+                "type": "string"
+              },
+              "creditedAuthor": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "publish",
+                  "update",
+                  "unpublish"
+                ]
+              },
+              "rightsConfirmed": {
+                "const": true,
+                "type": "boolean"
+              },
+              "idempotencyKey": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ownerId",
+              "revisionId",
+              "creditedAuthor",
+              "action",
+              "rightsConfirmed",
+              "idempotencyKey"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "listOriginals",
+    "nyxName": "listoriginals",
+    "method": "GET",
+    "path": "/api/service/articles/{id}/releases",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "cancelOriginal",
+    "nyxName": "canceloriginal",
+    "method": "POST",
+    "path": "/api/service/releases/{id}/cancel",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "reconcileOriginal",
+    "nyxName": "reconcileoriginal",
+    "method": "POST",
+    "path": "/api/service/releases/{id}/reconcile",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "materializeOriginalMedia",
+    "nyxName": "materializeoriginalmedia",
+    "method": "POST",
+    "path": "/api/service/releases/{id}/materialize-media",
+    "success": {
+      "202": {
+        "description": "Media command queued; inspect original media_history and state. Partial file publication remains visible; reconciliation itself never creates public files.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "ownerId": {
+                "type": "string"
+              },
+              "revisionId": {
+                "type": "string"
+              },
+              "rightsConfirmed": {
+                "const": true,
+                "type": "boolean"
+              },
+              "idempotencyKey": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ownerId",
+              "revisionId",
+              "rightsConfirmed",
+              "idempotencyKey"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "listDestinations",
+    "nyxName": "listdestinations",
+    "method": "GET",
+    "path": "/api/service/targets",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": [],
+    "requestBody": null
+  },
+  {
+    "operationId": "listOwnerConnections",
+    "nyxName": "listownerconnections",
+    "method": "GET",
+    "path": "/api/service/owners/{id}/connections",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "confirmDistribution",
+    "nyxName": "confirmdistribution",
+    "method": "POST",
+    "path": "/api/service/releases/{id}/deliveries",
+    "success": {
+      "202": {
+        "description": "Delivery confirmation accepted; approval, worker or manual follow-up may still be required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "ownerId": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string",
+                "enum": [
+                  "dev",
+                  "hashnode",
+                  "medium",
+                  "hackernoon"
+                ]
+              },
+              "connectionId": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "create",
+                  "update",
+                  "remove"
+                ]
+              },
+              "format": {
+                "type": "string",
+                "enum": [
+                  "full",
+                  "excerpt"
+                ]
+              },
+              "excerpt": {
+                "type": "string"
+              },
+              "copyId": {
+                "type": "string"
+              },
+              "rightsConfirmed": {
+                "type": "boolean",
+                "const": true
+              },
+              "idempotencyKey": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "target",
+              "connectionId",
+              "action",
+              "format",
+              "rightsConfirmed",
+              "idempotencyKey"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "listDistribution",
+    "nyxName": "listdistribution",
+    "method": "GET",
+    "path": "/api/service/articles/{id}/deliveries",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "getAssistedPackage",
+    "nyxName": "getassistedpackage",
+    "method": "GET",
+    "path": "/api/service/deliveries/{id}/package",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "requestExactApproval",
+    "nyxName": "requestexactapproval",
+    "method": "POST",
+    "path": "/api/service/deliveries/{id}/request-approval",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "attachExactApproval",
+    "nyxName": "attachexactapproval",
+    "method": "POST",
+    "path": "/api/service/deliveries/{id}/authorize",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "approvalRef": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "approvalRef"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "cancelDistribution",
+    "nyxName": "canceldistribution",
+    "method": "POST",
+    "path": "/api/service/deliveries/{id}/cancel",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "reconcileDistribution",
+    "nyxName": "reconciledistribution",
+    "method": "POST",
+    "path": "/api/service/deliveries/{id}/reconcile",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "reportAssistedSubmission",
+    "nyxName": "reportassistedsubmission",
+    "method": "POST",
+    "path": "/api/service/deliveries/{id}/report",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "state": {
+                "type": "string",
+                "enum": [
+                  "submitted",
+                  "reviewing",
+                  "rejected",
+                  "manual_action_needed",
+                  "published",
+                  "removed"
+                ]
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "state"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "refreshExternalMetrics",
+    "nyxName": "refreshexternalmetrics",
+    "method": "POST",
+    "path": "/api/service/deliveries/{id}/metrics/refresh",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "queryMetrics",
+    "nyxName": "querymetrics",
+    "method": "GET",
+    "path": "/api/service/metrics",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "ownerId",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "from",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "to",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      {
+        "name": "article",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "language",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "en",
+            "zh"
+          ]
+        }
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ghost",
+            "dev",
+            "hashnode",
+            "medium",
+            "hackernoon"
+          ]
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "setPublishingPermission",
+    "nyxName": "setpublishingpermission",
+    "method": "PUT",
+    "path": "/api/service/owners/{ownerId}/publishers/{subject}",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "ownerId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "subject",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "enabled"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "readAudit",
+    "nyxName": "readaudit",
+    "method": "GET",
+    "path": "/api/service/owners/{id}/audit",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  },
+  {
+    "operationId": "syncPublishedAlternates",
+    "nyxName": "syncpublishedalternates",
+    "method": "POST",
+    "path": "/api/service/articles/{id}/sync-links",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "operationId": "getPublishedAlternatesStatus",
+    "nyxName": "getpublishedalternatesstatus",
+    "method": "GET",
+    "path": "/api/service/articles/{id}/link-status",
+    "success": {
+      "200": {
+        "description": "Authorized result",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": null
+  }
+]

@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-03T03:21:20.572449+00:00",
+  "reviewer": "renderer_diagnosis",
+  "status": "PASS_BOUNDED_DELIVERY_DOCUMENT_REVIEW",
+  "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "baselineIncomingHead": "3df0f2196c53fa6ddc1069a474d9202351157421",
+  "reviewedDocuments": [
+    {
+      "path": "README.md",
+      "sha256": "d60617b5c061be90e07944816ccb19985f6c2df39da067c757755cb24c4c498a"
+    },
+    {
+      "path": "docs/delivery-status.md",
+      "sha256": "49e529ff78ff9808412c467468574914534d082c40b2957d1a8538c368dc03be"
+    },
+    {
+      "path": "docs/continuation-20261103.md",
+      "sha256": "3839dc9d5eee4f39655728916c0aa394c168b03ee73fced1875dfea0dcdc9196"
+    },
+    {
+      "path": "docs/continuation-external-handoff-20261103.md",
+      "sha256": "e86f8d2533aff751ba9bd50559f63aa70829eb20e5df0f50a620f82af3b4c950"
+    },
+    {
+      "path": "docs/draft-pr-body-20261103.md",
+      "sha256": "8540c42f7249897703545255b6cda235bf874549f3ddafd98dd8816f21d11cce"
+    }
+  ],
+  "manifestChecks": [
+    {
+      "path": "docs/evidence/continuation-20261103/manifest.json",
+      "sha256": "7640f85b6aa9154bdcf3aaa4fc4e727751d648057c3cae72573f3a1635821b7a",
+      "fileCount": 23,
+      "hashMismatches": [],
+      "allPathsRepositoryRelative": true
+    },
+    {
+      "path": "docs/evidence/followup-20261102/manifest.json",
+      "sha256": "3275b290587db261d02f03030b898fde38aa3092a1e1fb0f92d2ea169c01eff9",
+      "fileCount": 103,
+      "hashMismatches": [],
+      "allPathsRepositoryRelative": true
+    }
+  ],
+  "nestedNativeManifest": {
+    "fileCount": 10,
+    "allHashesMatch": true
+  },
+  "requirementsAndFormalMatrix": [
+    {
+      "path": "docs/source/requirements.md",
+      "sha256": "2d90ca6a258456cd2fdd0f07a6a695a3204fa4752fadd34c766ead37fea0c3d5",
+      "unchangedFromIncomingHead": true
+    },
+    {
+      "path": "docs/source/supporting-deliverables.md",
+      "sha256": "7b5e91deaad61d23233a834dac68aa7f8ced77e36c7676f3fa34143e8c001cc4",
+      "unchangedFromIncomingHead": true
+    },
+    {
+      "path": "docs/source/manifest.json",
+      "sha256": "f58b43af5669841639b114ce51a0b2dee4b66571e221501fbf4c7d5fba74c1b1",
+      "unchangedFromIncomingHead": true
+    },
+    {
+      "path": "docs/acceptance.md",
+      "sha256": "c2f41478adca59f174481d716e5f622761af8c64cd87a1aacffe2e5c849ba4e1",
+      "unchangedFromIncomingHead": true
+    }
+  ],
+  "historicalDeliveryA01A52TableUnchanged": true,
+  "old103EvidenceTreeUnchangedFromIncomingHead": true,
+  "relativeLocalLinks": {
+    "checked": 73,
+    "broken": []
+  },
+  "privacyScan": {
+    "newFilesAndAddedLinesScanned": 29,
+    "publicEvidenceFilesIncludingManifest": 24,
+    "patternCategories": [
+      "localHome",
+      "jwt",
+      "privateKey",
+      "githubToken",
+      "authHeader",
+      "ghostSecret",
+      "awsAccess"
+    ],
+    "hits": [],
+    "sensitiveValueKeys": [],
+    "existingHistoricalHomePaths": {
+      "path": "docs/delivery-status.md",
+      "before": 2,
+      "after": 2,
+      "newOccurrences": 0
+    },
+    "note": "Patterns and selected field review do not certify absence of every possible secret; no databases, env, keys or raw sessions are included in the reviewed package."
+  },
+  "scopeReview": {
+    "existingLocalNyx3000And3001Cms3457Selected": true,
+    "separateRemoteNyxOrCmsNotCurrentBlocker": true,
+    "localTargetReadbackRegisteredContracts": 35,
+    "localTargetReadbackZeroCatalogMutations": true,
+    "historicalSingleImageRootCauseStillUndetermined": true,
+    "smoothScrollDefectNotClaimedAsHistoricalRootCause": true,
+    "historical303NotClaimedRerunOnCandidate": true,
+    "candidate54AndIndependentChecksVersionBounded": true,
+    "candidateNativeOriginalRendererStandardAndSmoothThemes": true,
+    "candidateNativeOldActiveRevokedMediaReadOnlyZeroWrite": true,
+    "candidateNativeSuccessfulPublishedReleaseNotForcedToReconcile": true,
+    "postMaterializationPartialThenReadOnlySuccessSeparatedAsTargetedRegressionAndHistoricalNative": true,
+    "diagnosticCopySuccessExcludedFromOriginalControls": true,
+    "publicGhostDomainsRealProvidersLifecycleOpsAndSignoffRemainRequired": true,
+    "noAllTransportOrSchedulingOrExtraPlatformScopeAdded": true,
+    "formalD1D9AndApplicableA01A52NotAccepted": true,
+    "heartbeatPaused": true
+  },
+  "resolvedWording": [
+    {
+      "document": "docs/continuation-20261103.md",
+      "change": "Clarified existing Nyx APIs manage the dedicated cohort; no direct connection to or clearing of live Mongo, and no separate Nyx database is implied."
+    },
+    {
+      "document": "docs/continuation-20261103.md",
+      "change": "Git delivery receipts are appended after actual readback; no completed new push/PR update is claimed by current package."
+    }
+  ],
+  "findings": [],
+  "gitDelivery": {
+    "newPushVerifiedByThisReview": false,
+    "existingPRUpdateVerifiedByThisReview": false,
+    "stateAtReview": "Pending actual delivery receipt; this document review does not claim merge."
+  },
+  "reviewBoundary": "Read-only file/hash/scope/privacy/link review only; no tests, live service requests or mutations. This report is not part of the currently reviewed 23-file manifest; regenerate manifest and rescan if exported.",
+  "formalAcceptance": "NOT_ACCEPTED",
+  "provenance": {
+    "privateSourcePath": "review/delivery-document-review.json",
+    "originalSha256": "d07fb7b4b3bc4ff1f1052d791c3381e1ae2c07839c0d66dfcde1195f88626d92"
+  }
+}

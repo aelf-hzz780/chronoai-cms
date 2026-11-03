@@ -1,0 +1,15 @@
+[
+  {
+    "id": "exact-nyxid-user-service-id",
+    "target": "dev",
+    "owner": {"kind": "organization", "issuer": "nyxid", "subject": "exact-nyxid-org-id"},
+    "slug": "configured-dev-service-slug",
+    "remoteBaseUrl": "https://dev.to/api",
+    "accountId": "verified-dev-author-id",
+    "organizationId": "verified-dev-organization-id",
+    "label": "Organization DEV author account",
+    "canPublish": true,
+    "canUpdate": true,
+    "canRemove": false
+  }
+]

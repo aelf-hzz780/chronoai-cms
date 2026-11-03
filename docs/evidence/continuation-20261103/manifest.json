@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-03T03:30:04.290080+00:00",
+  "status": "BOUNDED_LOCAL_FIX_DEPLOYED_NOT_FORMALLY_ACCEPTED",
+  "businessSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "baselineBusinessSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "overallAcceptance": "NOT_ACCEPTED",
+  "currentTarget": "Existing local NyxID3000/3001 and CMS3457, selected by user; public Ghost and external workflow requirements retained.",
+  "historicalSingleImageRootCause": "NOT_DETERMINED",
+  "boundary": "Field-selected portable evidence. Private source/log/script paths are provenance only unless listed in files. No database, credential, environment, raw session or backup included. Diagnostic-copy success is separate from fixed-source native controls.",
+  "files": [
+    {
+      "path": "docs/evidence/continuation-20261103/code-review.json",
+      "sha256": "fc5251550a208166ef8d9abd0e9fe31082f9e89baa1755763a48250cb334c0f8"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/cutover-controller-review.json",
+      "sha256": "cb8573fe3d0de47910551a207faa23700af0c9f73ca79f5334f160afaf2e4aa5"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/cutover-runner-review.json",
+      "sha256": "fc11c9027389ee1fabace8604d9d35de7fe1df2113ff75be126014442837d53b"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/delivery-document-review.json",
+      "sha256": "08d5426cabecec7d9582bd2ce436bb5c52eb012e7bec3bb1fb70ed070dd583af"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/diagnostic-copy-manifest.json",
+      "sha256": "76a20688c7fadcd78ac495f9f1260bc520ad39e0bd28cdc9f0a035bd4276556b"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/diagnostic-generation-check.json",
+      "sha256": "996a0c22675c3f0fc9cc6ca9b4b006c5d445d88570bb9d0826e04151e3f51609"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/git-delivery-receipt.json",
+      "sha256": "a6477108f66022a8608b6aea99c3a54e2a95a842b1ab6c92a460464700f089b9"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/local-target-readback-attempt1.json",
+      "sha256": "21b93245e3287b63b4173df629042cc350339acb8e16296439c9b9ce50fd9336"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/local-target-readback.json",
+      "sha256": "61f5b8ee590e1282ceef09f30b53cf96bc80ec161020562a06df84cdfb68d928"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/baseline-source-lock.json",
+      "sha256": "e46ac5e766d3998e9dd372ce6ab8c8edbc87ab5d3669d18ee4246daab7111481"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/candidate-source-lock.json",
+      "sha256": "c800fe1ffc8c658a873f16642c7430e7df6e7a0fa1e54459fa62549743f06d9d"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/cleanup.json",
+      "sha256": "d8a2b17b045a9fceb75ec3a00e1033785b0d4eb096c978f64f76bf8eb14e4798"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/manifest.json",
+      "sha256": "5032bc7b0c0b3cf2bf65eee2daddbe88d211a50fc40bb8b296283b626e4a8639"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/native-859896892942.json",
+      "sha256": "3f9085d89109ec9d64a6ff5b74c4b60d56af505c540fbca488f819b3734eef04"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/native-aa23abb98c50.json",
+      "sha256": "e5427d8eae62fc59cd88fd5faaa7e6f99613d46e7adfa582b1e23d00d91090cb"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/native-c46b0ca1cc76.json",
+      "sha256": "70b224a6996f64ea9c92411dacc7851ed3fcc692d9b48a33711d17fc4654b2cd"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/native-d14310edcdfc.json",
+      "sha256": "8b2c9dabbe4ef91fb2fc5c9da235f8936046ef3079d291f302d13102f921f37e"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/network-recovery.json",
+      "sha256": "b75eb347aeaaaec9e99444796c94290f9067a661545c527874e91d0da87cddb7"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/summary.json",
+      "sha256": "5b0955b7ecd0fbb87505d8edca8088a1e326a6311435b17799eecacab1c719ea"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native/theme-control-attempt1.json",
+      "sha256": "ce6cb1dab42735d37b06efabfd59f11197acc52508aec6ca9981f6fe4db698a6"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native-candidate-review.json",
+      "sha256": "c36f122b25d477334aa8ae2cc86c272e79d12409c95a54a0a3561ce3041c22df"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/native-cutover-gate.json",
+      "sha256": "65123607b655fb6c1de5aca27ded8009bde50ff3afb7145faad16dc917a5b2fb"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/runtime-independent-review.json",
+      "sha256": "bc762c157d916cf8081dcdbf12b10acd6d74d10b916414a588445ff7ec0e6d6d"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/runtime-readback.json",
+      "sha256": "664b3057bc6667b7a7d900a318e985bb33ec6e7d922b5b6d81923cfc29844f5a"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/synthetic.json",
+      "sha256": "c2b404c65f70f1f005c88fad82867d09330ebea0cdd969ba865b03bc4a76dcc3"
+    }
+  ]
+}

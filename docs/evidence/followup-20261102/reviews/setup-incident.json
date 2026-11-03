@@ -1,0 +1,275 @@
+{
+  "status": "PASS_INDEPENDENT_EXACT_LOGICAL_PRESERVATION",
+  "at": "2026-11-02T10:05:10.912321+00:00",
+  "reviewer": "evidence_audit",
+  "method": "Independent Python Counter compares every raw cell, including BLOBs and duplicate multiplicity, every schema object, integrity and foreign keys. Independently copied actual stopped W1 volume via docker cp, confirmed no WAL, opened immutable. No database values exposed.",
+  "baselineBoundToPriorManifest": true,
+  "baselineSha256": "0fc944ab9e440192f831eee2635ad7fff7b4a7b710b039cbb49e9d965e29ba9f",
+  "incidentDifferences": [
+    {
+      "table": "owner_profiles",
+      "addedRows": 2,
+      "removedRows": 0
+    },
+    {
+      "table": "owners",
+      "addedRows": 2,
+      "removedRows": 0
+    }
+  ],
+  "tableCount": 36,
+  "tableResults": [
+    {
+      "table": "articles",
+      "rows": 16,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "asset_publications",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "assets",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "audit",
+      "rows": 72,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "author_mappings",
+      "rows": 4,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "collection_attempts",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "collection_gaps",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "command_authorities",
+      "rows": 19,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "command_derivations",
+      "rows": 12,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "deliveries",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "delivery_events",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "delivery_payloads",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "external_metrics",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "idempotency",
+      "rows": 19,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "job_leases",
+      "rows": 15,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "jobs",
+      "rows": 31,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "migrations",
+      "rows": 1,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "nyx_approvals",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "observations",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "oidc_states",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "owner_profiles",
+      "rows": 2,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "owners",
+      "rows": 5,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "projection_retries",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "projections",
+      "rows": 12,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "publishers",
+      "rows": 1,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "recovery_actors",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "release_links",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "release_media_requests",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "releases",
+      "rows": 19,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "revisions",
+      "rows": 24,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "sessions",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "settings",
+      "rows": 1,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "site_admin_routes",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "sites",
+      "rows": 5,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "submissions",
+      "rows": 1,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    },
+    {
+      "table": "translations",
+      "rows": 0,
+      "evidenceEqualsBaseline": true,
+      "actualVolumeEqualsBaseline": true
+    }
+  ],
+  "schemaEquality": {
+    "baseline": true,
+    "incident": true,
+    "repairedEvidence": true,
+    "actualRetainedVolume": true
+  },
+  "health": {
+    "baseline": {
+      "integrity": "ok",
+      "foreignKeyFailures": 0
+    },
+    "incident": {
+      "integrity": "ok",
+      "foreignKeyFailures": 0
+    },
+    "repairedEvidence": {
+      "integrity": "ok",
+      "foreignKeyFailures": 0
+    },
+    "actualRetainedVolume": {
+      "integrity": "ok",
+      "foreignKeyFailures": 0
+    }
+  },
+  "rawDatabaseFilesPrivate": true,
+  "noWholeFileByteEqualityClaim": "Repair may change SQLite page layout; logical cells/schema are exact to the pre-incident retained baseline.",
+  "externalSideEffectBoundary": "Failure container command starts API only; no worker daemon in its command. jobs/releases/audit and all other business tables exact to baseline; this review did not independently replay Ghost access logs.",
+  "nextRunGate": [
+    "New empty dedicated volume must be verified by actual docker inspect before seeding.",
+    "Fail before mutations if volume exists, unexpected mounts, existing business rows, wrong source-lock or nonzero worker queues."
+  ],
+  "privateSource": {
+    "relativePath": "parallel-local-20261102/followup/independent/setup-incident-independent-review.json",
+    "sha256": "53838f80aaae35bf9d9a40bae7b61764e5c9e7fbe1e43d29af86a7e9ca29949c",
+    "includedInGit": false
+  }
+}

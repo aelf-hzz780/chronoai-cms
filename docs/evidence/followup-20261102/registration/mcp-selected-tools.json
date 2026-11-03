@@ -1,0 +1,1028 @@
+[
+  {
+    "name": "blog-followup-registration-20261102__confirmoriginal",
+    "description": "[Followup registration isolated BlogSystem] Confirm exact revision, author, owner, rights and Ghost action",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "creditedAuthor": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "publish",
+            "update",
+            "unpublish"
+          ]
+        },
+        "rightsConfirmed": {
+          "const": true,
+          "type": "boolean"
+        },
+        "idempotencyKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "ownerId",
+        "revisionId",
+        "creditedAuthor",
+        "action",
+        "rightsConfirmed",
+        "idempotencyKey"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Confirmoriginal",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Confirmoriginal",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__getassistedpackage",
+    "description": "[Followup registration isolated BlogSystem] Retrieve content/images/source attribution and submission instructions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Getassistedpackage",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Getassistedpackage",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__listoriginals",
+    "description": "[Followup registration isolated BlogSystem] Read original publication history",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Listoriginals",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Listoriginals",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__listdistribution",
+    "description": "[Followup registration isolated BlogSystem] Read per-target status, URLs, source verification and history",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Listdistribution",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Listdistribution",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__reconcileoriginal",
+    "description": "[Followup registration isolated BlogSystem] Read-only reconciliation of uncertain original",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Reconcileoriginal",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Reconcileoriginal",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__confirmdistribution",
+    "description": "[Followup registration isolated BlogSystem] Confirm destination, exact owner connection and full/excerpt copy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string",
+          "enum": [
+            "dev",
+            "hashnode",
+            "medium",
+            "hackernoon"
+          ]
+        },
+        "connectionId": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "create",
+            "update",
+            "remove"
+          ]
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "full",
+            "excerpt"
+          ]
+        },
+        "excerpt": {
+          "type": "string"
+        },
+        "copyId": {
+          "type": "string"
+        },
+        "rightsConfirmed": {
+          "type": "boolean",
+          "const": true
+        },
+        "idempotencyKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "target",
+        "connectionId",
+        "action",
+        "format",
+        "rightsConfirmed",
+        "idempotencyKey"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Confirmdistribution",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Confirmdistribution",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__listrevisions",
+    "description": "[Followup registration isolated BlogSystem] List only authorized revision history",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Listrevisions",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Listrevisions",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__getarticle",
+    "description": "[Followup registration isolated BlogSystem] Read an authorized article revision",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string",
+          "description": "Optional authorized revision"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Getarticle",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Getarticle",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__importmarkdownfile",
+    "description": "[Followup registration isolated BlogSystem] Import an original UTF-8 .md file preserving BOM, CRLF and source bytes",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "zh"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "creditedAuthor": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string",
+          "description": "Base64-encoded binary content for text/markdown request body",
+          "contentEncoding": "base64",
+          "contentMediaType": "text/markdown"
+        }
+      },
+      "required": [
+        "ownerId",
+        "language",
+        "title",
+        "creditedAuthor",
+        "body"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Importmarkdownfile",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Importmarkdownfile",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__requestexactapproval",
+    "description": "[Followup registration isolated BlogSystem] Create native NyxID exact request for Admin authorization",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Requestexactapproval",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Requestexactapproval",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__uploadprivateimage",
+    "description": "[Followup registration isolated BlogSystem] Upload a private PNG/JPEG/GIF/WebP asset",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "mime": {
+          "type": "string",
+          "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/webp"
+          ]
+        },
+        "base64": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "mime",
+        "base64"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Uploadprivateimage",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Uploadprivateimage",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__getpublishedalternatesstatus",
+    "description": "[Followup registration isolated BlogSystem] Read translation metadata projection status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Getpublishedalternatesstatus",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Getpublishedalternatesstatus",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__getprivateimage",
+    "description": "[Followup registration isolated BlogSystem] Read an image only through an authorized corresponding revision",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Getprivateimage",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Getprivateimage",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__linktranslation",
+    "description": "[Followup registration isolated BlogSystem] Link a translation to an authorized source revision",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceArticleId": {
+          "type": "string"
+        },
+        "sourceRevisionId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "sourceArticleId",
+        "sourceRevisionId"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Linktranslation",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Linktranslation",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__getworkspaces",
+    "description": "[Followup registration isolated BlogSystem] Read current caller and authorized workspaces",
+    "inputSchema": {
+      "type": "object",
+      "properties": {}
+    },
+    "title": "Followup registration isolated BlogSystem: Getworkspaces",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Getworkspaces",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__reconciledistribution",
+    "description": "[Followup registration isolated BlogSystem] reconcile a delivery; uncertain recovery never re-sends",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Reconciledistribution",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Reconciledistribution",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__querymetrics",
+    "description": "[Followup registration isolated BlogSystem] Query the same workspace metrics as CMS with availability/source/update time",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string",
+          "format": "date"
+        },
+        "to": {
+          "type": "string",
+          "format": "date"
+        },
+        "article": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "zh"
+          ]
+        },
+        "destination": {
+          "type": "string",
+          "enum": [
+            "ghost",
+            "dev",
+            "hashnode",
+            "medium",
+            "hackernoon"
+          ]
+        }
+      },
+      "required": [
+        "ownerId"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Querymetrics",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Querymetrics",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__editarticle",
+    "description": "[Followup registration isolated BlogSystem] Save an immutable revision with conflict protection",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "expectedRevision": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "markdown": {
+          "type": "string"
+        },
+        "creditedAuthor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "expectedRevision"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Editarticle",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Editarticle",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__submitdraft",
+    "description": "[Followup registration isolated BlogSystem] Submit this exact draft revision",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revisionId"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Submitdraft",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Submitdraft",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__downloadmarkdown",
+    "description": "[Followup registration isolated BlogSystem] Retrieve the original .md file as a base64 JSON envelope. Decode data as base64 bytes, verify byteLength and SHA-256, then save as filename; never save the JSON or normalized text as Markdown.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "revision"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Downloadmarkdown",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Downloadmarkdown",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__listarticles",
+    "description": "[Followup registration isolated BlogSystem] List/search authorized revisions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string"
+        },
+        "q": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ownerId"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Listarticles",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Listarticles",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__replacemarkdownfile",
+    "description": "[Followup registration isolated BlogSystem] Replace a draft from a UTF-8 .md file with revision conflict protection",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "expectedRevision": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string",
+          "description": "Base64-encoded binary content for text/markdown request body",
+          "contentEncoding": "base64",
+          "contentMediaType": "text/markdown"
+        }
+      },
+      "required": [
+        "id",
+        "expectedRevision",
+        "body"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Replacemarkdownfile",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Replacemarkdownfile",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__canceldistribution",
+    "description": "[Followup registration isolated BlogSystem] cancel a delivery; uncertain recovery never re-sends",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Canceldistribution",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Canceldistribution",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__syncpublishedalternates",
+    "description": "[Followup registration isolated BlogSystem] Retry published-only translation metadata projection",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Syncpublishedalternates",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Syncpublishedalternates",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__canceloriginal",
+    "description": "[Followup registration isolated BlogSystem] Cancel unsent original",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Canceloriginal",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Canceloriginal",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__listdestinations",
+    "description": "[Followup registration isolated BlogSystem] Read enabled destinations and automatic/assisted capability",
+    "inputSchema": {
+      "type": "object",
+      "properties": {}
+    },
+    "title": "Followup registration isolated BlogSystem: Listdestinations",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Listdestinations",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__listownerconnections",
+    "description": "[Followup registration isolated BlogSystem] List only configured exact owner connections and current availability",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Listownerconnections",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Listownerconnections",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__refreshexternalmetrics",
+    "description": "[Followup registration isolated BlogSystem] Read supported authorized provider counters for this exact known copy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Refreshexternalmetrics",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Refreshexternalmetrics",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__setpublishingpermission",
+    "description": "[Followup registration isolated BlogSystem] Current organization Admin grants or revokes Can publish",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ownerId",
+        "subject",
+        "enabled"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Setpublishingpermission",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Setpublishingpermission",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__createarticle",
+    "description": "[Followup registration isolated BlogSystem] Create original English or Chinese Markdown",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "en",
+            "zh"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 250
+        },
+        "markdown": {
+          "type": "string",
+          "maxLength": 2000000
+        },
+        "creditedAuthor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ownerId",
+        "language",
+        "title",
+        "markdown",
+        "creditedAuthor"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Createarticle",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Createarticle",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__reportassistedsubmission",
+    "description": "[Followup registration isolated BlogSystem] Record manual follow-up; published requires public verification, removed requires a confirmed removal action and the exact known copy URL returning 404/410",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "submitted",
+            "reviewing",
+            "rejected",
+            "manual_action_needed",
+            "published",
+            "removed"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "state"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Reportassistedsubmission",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Reportassistedsubmission",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__attachexactapproval",
+    "description": "[Followup registration isolated BlogSystem] Check and queue exact approved content/action/connection",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "approvalRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "approvalRef"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Attachexactapproval",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Attachexactapproval",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__materializeoriginalmedia",
+    "description": "[Followup registration isolated BlogSystem] Explicitly authorize public images for an already accepted exact Ghost revision; never create or update a Ghost post",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "revisionId": {
+          "type": "string"
+        },
+        "rightsConfirmed": {
+          "const": true,
+          "type": "boolean"
+        },
+        "idempotencyKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "ownerId",
+        "revisionId",
+        "rightsConfirmed",
+        "idempotencyKey"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Materializeoriginalmedia",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Materializeoriginalmedia",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__previewarticle",
+    "description": "[Followup registration isolated BlogSystem] Privately preview an authorized saved revision",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string",
+          "description": "Optional authorized revision; defaults to the caller-visible revision"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Previewarticle",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Previewarticle",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "blog-followup-registration-20261102__readaudit",
+    "description": "[Followup registration isolated BlogSystem] Owner or current organization Admin reads access/action audit",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "title": "Followup registration isolated BlogSystem: Readaudit",
+    "annotations": {
+      "title": "Followup registration isolated BlogSystem: Readaudit",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  }
+]

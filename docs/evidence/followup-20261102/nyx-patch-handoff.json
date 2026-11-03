@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-02T10:11:03.823107+00:00",
+  "status": "PRIVATE_INCREMENTAL_BUNDLES_PREPARED",
+  "upstreamPushOrMerge": false,
+  "entries": [
+    {
+      "component": "backend",
+      "baseCommitRequired": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+      "commit": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "branch": "codex/004-nyxid-local-integration",
+      "bundleBasename": "backend.bundle",
+      "bundleSha256": "c4011ed115cbf6b8485c8939ad2ed867d2316bf5266cbaba8002792968d93678",
+      "bundleBytes": 30942,
+      "bundleVerified": true,
+      "includedInGit": false,
+      "secretConfigurationIncluded": false
+    },
+    {
+      "component": "portal",
+      "baseCommitRequired": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+      "commit": "c65dc4bedb7da79cf0fb477e6f5bd809f03aec9b",
+      "branch": "codex/004-nyxid-portal-launch",
+      "bundleBasename": "portal.bundle",
+      "bundleSha256": "5af879f4646cab804940f781611f453caa94e31ea6ea49ea1406ec6286628d70",
+      "bundleBytes": 2591,
+      "bundleVerified": true,
+      "includedInGit": false,
+      "secretConfigurationIncluded": false
+    }
+  ],
+  "handoff": "Authorized operator supplies these incremental git bundles privately together with an official checkout containing base38bae2f; fetch the named branch and verify the exact commit. Runtime secrets and databases are not included."
+}

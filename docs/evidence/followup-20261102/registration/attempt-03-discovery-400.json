@@ -1,0 +1,24 @@
+{
+  "status": "FAILED",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "checks": {
+    "source_head": true,
+    "fresh_owned_objects": true,
+    "service_identity_and_trust_readback": true,
+    "operation_ids_unique": true,
+    "operation_count_35_current_fact": true
+  },
+  "limitations": [
+    "Local native NyxID with local patch; not upstream original, production or external publication acceptance.",
+    "Discovery does not prove every operation executes through every transport."
+  ],
+  "initialFailures": [
+    "attempt-01-python-tar-compatibility.json",
+    "attempt-02-spec-only-update-400.json"
+  ],
+  "failure": {
+    "type": "RuntimeError",
+    "code": "HTTP_400_POST_/api/v1/services/ab6f8d88-9f58-4067-8a22-7d04759c2757/discover-endpoints"
+  }
+}

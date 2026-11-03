@@ -1,0 +1,7 @@
+{
+  "actions": [
+    "owned_key_revoked",
+    "owned_connection_inactive"
+  ],
+  "status": "PASS_OWNED_REGISTRATION_DISABLED"
+}

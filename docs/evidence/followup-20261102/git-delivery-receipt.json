@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-11-02T11:14:20.295972+00:00",
+  "status": "PUSH_AND_DRAFT_PR_VERIFIED",
+  "remote": "git@github.com:aelf-hzz780/chronoai-cms.git",
+  "branch": "codex/003-blogsystem-delivery",
+  "verifiedDeliveryParentCommit": "834fb6e125575cf33db409cd5f576313563e8297",
+  "originalMainCommit": "019222c73f406015ba00557d782103f6b61500d5",
+  "remoteReadback": {
+    "refs/heads/codex/003-blogsystem-delivery": "834fb6e125575cf33db409cd5f576313563e8297",
+    "refs/heads/main": "019222c73f406015ba00557d782103f6b61500d5"
+  },
+  "normalPush": true,
+  "forcePush": false,
+  "mainUnchanged": true,
+  "upstreamNyxPushOrMerge": false,
+  "prCreation": {
+    "connectorAttempt": {
+      "httpStatus": 403,
+      "message": "Resource not accessible by integration",
+      "currentAttempt": true
+    },
+    "successfulMethod": "Existing authenticated Chrome session; native CUA form submission",
+    "readback": {
+      "verifiedAt": "2026-11-02T11:12:24.170742+00:00",
+      "httpStatus": 200,
+      "url": "https://github.com/aelf-hzz780/chronoai-cms/pull/1",
+      "number": 1,
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "title": "feat: ✨ deliver bilingual CMS with NyxID authorization and recovery",
+      "bodyMatchesPrepared": true,
+      "base": {
+        "ref": "main",
+        "sha": "019222c73f406015ba00557d782103f6b61500d5",
+        "repo": "aelf-hzz780/chronoai-cms"
+      },
+      "head": {
+        "ref": "codex/003-blogsystem-delivery",
+        "sha": "834fb6e125575cf33db409cd5f576313563e8297",
+        "repo": "aelf-hzz780/chronoai-cms"
+      },
+      "createdAt": "2026-11-02T11:10:34Z"
+    },
+    "attachedToCurrentChat": true
+  },
+  "localEvidenceParent": {
+    "manifestSha256": "3ef5f4bfba40871032000d046dff9fe6da9086853ab93d63c98fb62a15e5e668",
+    "files": 102
+  },
+  "finalReceiptCommitPolicy": "This receipt and updated handoff are appended to the verified feature branch. To avoid a self-referential commit hash, final appended HEAD, remote and PR-head readbacks are recorded in the restricted local final ledger and final response.",
+  "businessRuntimeCommit": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "formalAcceptance": "NOT_ACCEPTED",
+  "heartbeat": "PAUSED_UNCHANGED"
+}

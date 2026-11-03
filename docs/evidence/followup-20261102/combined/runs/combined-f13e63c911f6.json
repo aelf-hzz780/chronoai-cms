@@ -1,0 +1,37 @@
+{
+  "status": "FAILED_OR_INCOMPLETE",
+  "runId": "combined-f13e63c911f6",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "cleanup": [
+    {
+      "actor": "admin",
+      "keyId": "aba50bc7-c853-484e-aee9-cd4bdc727aa8",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "c31f369f-be68-4025-859e-82a902da1d22",
+      "revoked": true
+    }
+  ],
+  "boundaries": {
+    "identity": "real Nyx049 signed identity/delegation/command source; exact own UserService; per-request formal approvals",
+    "destination": "actual local Ghost organization-en; actual private staged PNG rename and public bytes",
+    "restore": "actual encrypted/decrypted SQLite snapshots; running crash cut captured after first actual image; no four-Ghost full restore repeated",
+    "outsideScope": [
+      "external providers",
+      "production",
+      "all Nyx source modes",
+      "overall D1-D9"
+    ]
+  },
+  "failure": {
+    "type": "Stop",
+    "code": "LOCAL_HTTP_UNAVAILABLE"
+  },
+  "phase": "suite_finished",
+  "updatedAt": "2026-11-02T10:09:51.503011+00:00",
+  "caseFiles": [],
+  "originalLocalReportSha256": "0817353907b1be71d565622daf85edeed150f9f4c72ceea627bee5af9e0709cc"
+}

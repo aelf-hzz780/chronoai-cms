@@ -1,0 +1,83 @@
+{
+  "candidateNativeVerified": true,
+  "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "baselineSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "runs": [
+    {
+      "runId": "native-d14310edcdfc",
+      "status": "FAILED_OR_INCOMPLETE",
+      "fullDriverPass": false,
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "diagnosticOnly": false,
+      "theme": "standard",
+      "sourceFilesVerified": [
+        133
+      ],
+      "privateSourcePath": "private/native-d14310edcdfc/report.json",
+      "privateSourceSha256": "5c1d126d3c0d805a12969bbd7bc67a6a9967c7da3a138e0be4b904bc054eae49",
+      "sampleUnpublished": true
+    },
+    {
+      "runId": "native-859896892942",
+      "status": "PASS_BOUNDED_NATIVE_OBSERVATION",
+      "fullDriverPass": true,
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "diagnosticOnly": true,
+      "theme": "standard",
+      "sourceFilesVerified": [
+        133
+      ],
+      "privateSourcePath": "private/native-859896892942/report.json",
+      "privateSourceSha256": "445fa00a3bbae1dfad37c56e75187e1ad2401d53c42209696793d87b43bce0dc",
+      "sampleUnpublished": true
+    },
+    {
+      "runId": "native-c46b0ca1cc76",
+      "status": "PASS_BOUNDED_NATIVE_OBSERVATION",
+      "fullDriverPass": true,
+      "consumerSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "diagnosticOnly": false,
+      "theme": "standard",
+      "sourceFilesVerified": [
+        231
+      ],
+      "privateSourcePath": "private/native-c46b0ca1cc76/report.json",
+      "privateSourceSha256": "46cdba23e607809a679d5005a2dbd880632b10930001f0d189e61f797d30498e",
+      "sampleUnpublished": true
+    },
+    {
+      "runId": "native-aa23abb98c50",
+      "status": "PASS_BOUNDED_NATIVE_OBSERVATION",
+      "fullDriverPass": true,
+      "consumerSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "diagnosticOnly": false,
+      "theme": "smooth",
+      "sourceFilesVerified": [
+        231
+      ],
+      "privateSourcePath": "private/native-aa23abb98c50/report.json",
+      "privateSourceSha256": "a74bb5de5c729658ac521576e8fae9b5c0cc0716f7edf70978408e2f06fd9688",
+      "sampleUnpublished": true
+    }
+  ],
+  "historicalSingleImageRootCause": "NOT_DETERMINED",
+  "historicalFailureNotReproduced": true,
+  "boundedConclusion": "Candidate passes one complete standard-theme and one complete synthetic smooth-theme native driver. The old standard run materialized correctly before a harness-only invalid terminal reconcile was rejected with 409; the diagnostic old run passes but does not count as unchanged renderer proof.",
+  "readOnlyBoundary": "Current Admin zero-write recovery of old active/revoked missing-media requests is exercised. Successful terminal published releases are not forced into uncertain state merely to test post-publication recovery.",
+  "scope": "Real local Nyx049 dedicated new users/org/client/catalog/UserServices, real independent Ghost3588/MySQL and isolated Blog3578; not external providers, production, all transports, or overall D1-D9 acceptance.",
+  "cleanup": {
+    "status": "PASS_OWN_RESOURCES_RETIRED_OLD_SYSTEM_PRESERVED",
+    "healthEndpoints": 9,
+    "originalContainersPreserved": 121,
+    "ownNewContainersStopped": true,
+    "newNyxObjectsInactive": true,
+    "volumesAndEvidenceRetained": true,
+    "heavyLockPresentAtCleanup": false
+  },
+  "overallAcceptance": "NOT_ACCEPTED"
+}

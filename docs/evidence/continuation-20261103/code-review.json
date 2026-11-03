@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-03T02:47:10.354191+00:00",
+  "reviewer": "independent handoff_checklist agent",
+  "status": "PASS_BOUNDED",
+  "formalAcceptance": "NOT_ACCEPTED",
+  "baselineBusinessSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "redTestSha": "7365344c7ddbda4dec311840d68b636b4fd009a4",
+  "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "isolation": {
+    "source": "git archive of exact candidate into separate checkout",
+    "checkout": "candidate-c16cde7",
+    "sourceLock": "source-lock.json",
+    "sourceLockReverified": true,
+    "dependencies": "existing node_modules reused without writes or installation",
+    "liveServicesOrQueuesModified": false,
+    "browser": "headless installed Google Chrome; synthetic route-fulfilled pages only",
+    "nodeVersion": "v24.18.0",
+    "heavyLock": "O_CREAT|O_EXCL file, owner/pid and inode; released only matching inode; coordinated with isolated_native",
+    "businessOrTrackedTestFilesModified": false
+  },
+  "staticReview": [
+    {
+      "path": "src/render-proof.ts",
+      "lines": [
+        58,
+        66
+      ],
+      "result": "PASS",
+      "finding": "Only explicit behavior:instant was added to both text/image scrollIntoView calls. This positions geometry synchronously before unchanged hit-testing; no acceptance condition or visibility fallback was removed."
+    },
+    {
+      "paths": [
+        "src/render-integrity.ts",
+        "src/paint-proof.ts",
+        "src/render-proof.ts"
+      ],
+      "result": "PASS",
+      "finding": "Original DOM equality, unique revision container, mutation history including restored text, ancestor visibility, image geometry/filter/mask/srcset checks, text paint proof, resource restrictions and final integrity remain unchanged. Existing paint proof already uses instant scrollBy."
+    },
+    {
+      "path": "test/render-scroll.test.ts",
+      "result": "PASS_STATIC_AND_ROOT_LOG_REVIEW",
+      "finding": "Three regressions isolate offscreen text in smooth viewport, text in smooth nested scroller, and image-only viewport geometry. Root red log shows 0/3 before fix; green log shows 3/3 after fix. These exact three tests were not rerun by this reviewer."
+    },
+    {
+      "path": "test/recovery-media.test.ts",
+      "lines": [
+        42,
+        68
+      ],
+      "result": "PASS_STATIC_AND_INDEPENDENT_EXECUTION",
+      "finding": "New test retains partial/public_files=1/ORIGINAL_NOT_VERIFIED and uncertain release; no automatic materialization retry; revoked original actor and currently authorized publisher perform read-only recognition; remote ID/URL/revision/old actor and full media row retained; one total materialization, two reads, no publish/unpublish/projection and no repeated command."
+    },
+    {
+      "path": "src/publishing.ts",
+      "lines": [
+        138,
+        218
+      ],
+      "result": "PASS_UNCHANGED_BOUNDARIES",
+      "finding": "Read-only recovery selects current recovery Actor and access purpose, while beforeWrite rejects recovering and beforeMaterialize rejects recovery without explicit new media. New media rechecks current authority, command binding, lease, pause and final fingerprint. The renderer patch does not alter these boundaries."
+    }
+  ],
+  "independentlyExecuted": [
+    {
+      "command": "node --test --test-reporter=tap independent-adversarial.test.mjs",
+      "log": "adversarial.tap",
+      "script": "independent-adversarial.test.mjs",
+      "result": "PASS",
+      "tests": 2,
+      "rendererCalls": 4,
+      "checks": [
+        "smooth baseline true; synchronous scroll hook changes then restores body text: false",
+        "smooth baseline true; fixed full-viewport opaque overlay: false"
+      ],
+      "run": "adversarial-run.json"
+    },
+    {
+      "command": "node --test --test-reporter=tap --test-name-pattern=post-materialization verification failure test/recovery-media.test.ts",
+      "log": "recovery-partial.tap",
+      "result": "PASS",
+      "tests": 1,
+      "scope": "Synthetic authority and adapter only; no real NyxID, Ghost or external provider call"
+    }
+  ],
+  "reviewedNotIndependentlyExecuted": [
+    {
+      "path": "../synthetic/scroll-regression-red.tap",
+      "result": "3 expected failures reviewed",
+      "binding": "red test commit7365344; parent supplied execution evidence"
+    },
+    {
+      "path": "../synthetic/scroll-regression-green.tap",
+      "result": "3 passes reviewed",
+      "binding": "candidate renderer; parent supplied execution evidence"
+    },
+    {
+      "path": "../synthetic/targeted-regression.tap",
+      "result": "54 passes reviewed",
+      "scope": "Parent target run, including existing render tampering, media and publishing guard regressions; not a reviewer rerun"
+    },
+    {
+      "check": "TypeScript",
+      "result": "Parent-reported PASS; not independently executed by this reviewer"
+    },
+    {
+      "check": "Native Nyx/Ghost",
+      "result": "Not part of this review execution; separate isolated_native result required"
+    }
+  ],
+  "findings": [],
+  "limits": [
+    "The reproduced smooth-scroll timing defect is a supported cause of synthetic false negatives; the original historical supplement-fresh-materialize failure remains of undetermined cause. This review does not establish that historical failure used this cause.",
+    "The image-only regression tests layout and hit-testing with a no-src image element; actual image MIME/byte verification belongs to the Ghost/media path and is not claimed by that test.",
+    "The partial/recovery regression uses a controlled adapter and cannot replace real NyxID/Ghost/external-copy evidence.",
+    "This is approval of the bounded candidate change and tests, not deployment approval or formal D1-D9 acceptance. No source tests, service registration, production operation, push or merge were performed by this reviewer."
+  ],
+  "cleanup": {
+    "heavyLockReleased": true,
+    "browserClosedByRendererFinally": true,
+    "recoveryFixtureClosedByTestCleanup": true,
+    "privateReviewFilesRetained": true
+  },
+  "artifacts": [
+    {
+      "path": "source-lock.json",
+      "sha256": "d043b1d36c44dbe71c63074930de5abc2357eebe7f438f0444b90918e153d116"
+    },
+    {
+      "path": "adversarial.tap",
+      "sha256": "dcf63e6b67dc18248b9b3ac7a1013f463446ecab3b6c35f1dcb534e250bf59fd"
+    },
+    {
+      "path": "adversarial-run.json",
+      "sha256": "e1dff8228c60dee0b3158e823162e6e5f7b028d829a0a1604b8b2053d8e30502"
+    },
+    {
+      "path": "independent-adversarial.test.mjs",
+      "sha256": "7ab305d1ee8b7c4af4644f8044549dfcd6a938ed4c166eb9df1ba5b84ff7e8cb"
+    },
+    {
+      "path": "recovery-partial.tap",
+      "sha256": "4c57be4af477d700a254c8d8fcc82e13834a29140e1150c35a1e648ec7766ad8"
+    }
+  ],
+  "provenance": {
+    "privateSourcePath": "review/independent-review.json",
+    "originalSha256": "e63cd8347e2bc96cc963184d56f68264d3024a226d6b1e785ed61e1585a8dfbf",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

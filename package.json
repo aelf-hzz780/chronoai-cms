@@ -1,0 +1,34 @@
+{
+  "name": "chronoai-cms",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.18.0 <25"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env src/main.ts",
+    "worker": "node --env-file-if-exists=.env src/worker-main.ts",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.5",
+    "domutils": "^4.0.2",
+    "fastify": "^5.12.7",
+    "htmlparser2": "^12.0.0",
+    "jose": "^6.2.13",
+    "markdown-it": "^15.0.3",
+    "playwright-core": "^1.58.2",
+    "pngjs": "^7.0.0",
+    "sanitize-html": "^2.18.1"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.2.0",
+    "@types/node": "^26.6.5",
+    "@types/pngjs": "^6.0.5",
+    "@types/sanitize-html": "^2.16.2",
+    "typescript": "^7.0.2"
+  }
+}

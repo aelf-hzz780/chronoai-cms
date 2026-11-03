@@ -1,0 +1,7 @@
+{
+  "clientInactive": true,
+  "revokedKeyMcpInitializeStatus": 401,
+  "ownedServiceInactive": true,
+  "ownedUserInactive": true,
+  "registrationRetainedAsInactiveAuditHistory": true
+}

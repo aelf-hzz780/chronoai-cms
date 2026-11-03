@@ -1,6 +1,21 @@
 # 需求追踪与验收矩阵
 
-R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 对应 [supporting-deliverables.md](source/supporting-deliverables.md) 的九项交付。A 编号为本文测试场景，不代表测试已实现。实际证据见 [phase-0.md](phase-0.md)。
+R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 对应 [supporting-deliverables.md](source/supporting-deliverables.md) 的九项交付。A 编号为必需场景索引，不能由同名测试或测试数量推断完整通过。本文的正式范围与通过条件保持 v0.7 基线，当前实现、逐项证据和外部缺口见[交付台账](delivery-status.md)。D1–D9／A01–A52 尚未整体签收。
+
+## 当前证据与交接入口
+
+| 入口 | 内容与证据边界 |
+| --- | --- |
+| [开发运行](development.md)、[API 指南](api-guide.md)、[NyxID 注册](nyxid-registration.md)、[部署运维](operations.md) | 当前运行与维护路径；目标 NyxID／provider／生产配置需真实输入，文档与模板不是 Live 证据 |
+| [交付台账](delivery-status.md)及其迭代记录 | 按固定源码记录开发自测、独立有界复验、未完成分支；Document／Local／Live 分开，不以修复关闭替代整体验收 |
+| [74978bc 独立 Local 恢复](review-local-recovery-749.md) | 实际四 Ghost 与平台加密捕获／新卷恢复、全字段审计、旧会话失效及只读对账；本地身份 fixture，不包含真实外部 delivery 恢复或生产 RPO/RTO |
+| [阶段 0](phase-0.md)、[迁移复验](local-revalidation.md) | 历史双站与基础实验；仅适用于其记录的源码和环境，不能代表当前 CMS／service 或四站完整结果 |
+
+当前可移交证据以 [W1/W2 整合交接](handoff-20261102.md)与[相对路径 manifest](evidence/followup-20261102/manifest.json)为准。W1 在 `0b0e9d1`＋本地 Nyx `049ee1c` 的选定 service 路径有界关闭 R031；W2 在 `83b4b8e` 修复旧 media 抢占当前恢复 Actor／crash running 并完成真实四 Ghost 新卷加密恢复。共同版本的受影响路径另行真实补验，不把不同 SHA 或受控 Authority 的结果合并冒充完整 Native 通过。
+
+普通 Nyx 门户 Launch 已由本地门户补丁 `c65dc4be` 实现、部署并完成个人／组织 Admin 浏览器有界验证，见[版本绑定记录](evidence/portal-local-launch-20261102.json)。后端 `049ee1c` 是本地补丁依赖，未向 Nyx upstream push／merge。目标 Nyx 注册部署、真实外部分发／恢复、生产责任及数值 RPO/RTO 仍缺输入；正式 D1–D9 保持 NOT_ACCEPTED。
+
+历史 [I13](review-i13.md)、[I15](review-i15.md)、[I17](review-i17.md)、[I18](review-i18.md)、[I19](review-i19.md)、[I20](review-i20.md)、[I21](review-i21.md)、[I22](review-i22.md)保留其 SHA、失败、修复、临时保护与统计。旧 R031 OPEN 与门户缺口是历史状态；当前有界闭合不回填历史 modeled 统计，也不改变下列原文通过条件。原组织中文首次 INTERNAL 原因未定，后续同 ID 只读认回证据不抹去该失败。不以重发替代对账，不以测试数量推断完整场景签收。
 
 ## 1. 交付追踪
 

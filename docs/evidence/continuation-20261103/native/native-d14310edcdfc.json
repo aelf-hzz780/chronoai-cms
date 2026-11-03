@@ -1,0 +1,529 @@
+{
+  "runId": "native-d14310edcdfc",
+  "status": "FAILED_OR_INCOMPLETE",
+  "fullDriverPass": false,
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "diagnosticOnly": false,
+  "theme": "standard",
+  "sourceFilesVerified": [
+    133
+  ],
+  "privateSourcePath": "private/native-d14310edcdfc/report.json",
+  "privateSourceSha256": "5c1d126d3c0d805a12969bbd7bc67a6a9967c7da3a138e0be4b904bc054eae49",
+  "privateSourceBoundary": "Relative to restricted native runtime directory, provenance only; raw reports are not included in this public package.",
+  "scope": "Bounded single generated PNG on fresh dedicated Ghost/MySQL/API and new real Nyx049 objects",
+  "firstMaterialization": {
+    "release": {
+      "id": "f8c4ddd4-a62e-41f2-bff6-2812443e43b6",
+      "state": "published",
+      "error_code": null,
+      "remote_id": "6ae94aecaad28c0001b6e1f1",
+      "url": "http://localhost:3588/chrono-2c53b5ba-b856-4c9a-9c3d-add658158516/"
+    },
+    "media": {
+      "id": "91d5c66f-83eb-46bf-a0fa-ce44209e6468",
+      "state": "complete",
+      "actorSha256": "27c379bdd9fc524dbed1e5dc06c4f9230c36c907430e6458d30c92c215354567",
+      "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+      "publicFiles": 1,
+      "error": null
+    },
+    "materialized": 1,
+    "ghostWrites": 0,
+    "proofEvents": [
+      {
+        "kind": "original-start",
+        "number": 1
+      },
+      {
+        "kind": "renderer-start",
+        "number": 1,
+        "htmlSha256": "71ff7bd5c21eef6cba22e5e28416617c9d9cadefdfdb51e5e419ac0aec2779fe"
+      },
+      {
+        "kind": "renderer-end",
+        "number": 1,
+        "value": true,
+        "elapsedMs": 3603.582267
+      },
+      {
+        "kind": "original-end",
+        "number": 1,
+        "value": true,
+        "elapsedMs": 3715.566148
+      },
+      {
+        "kind": "original-start",
+        "number": 2
+      },
+      {
+        "kind": "renderer-start",
+        "number": 2,
+        "htmlSha256": "71ff7bd5c21eef6cba22e5e28416617c9d9cadefdfdb51e5e419ac0aec2779fe"
+      },
+      {
+        "kind": "renderer-end",
+        "number": 2,
+        "value": true,
+        "elapsedMs": 3394.378633999999
+      },
+      {
+        "kind": "original-end",
+        "number": 2,
+        "value": true,
+        "elapsedMs": 3538.4852769999998
+      }
+    ]
+  },
+  "readOnlyRecognition": null,
+  "themeFixture": null,
+  "failure": {
+    "type": "Stop",
+    "code": "HTTP_409_POST_/api/v1/proxy/s/blog-continuation-native-20261103/api/service/releases/f8c4ddd4-a62e-41f2-bff6-2812443e43b6/reconcile"
+  },
+  "sampleUnpublished": true,
+  "approvals": {
+    "freshPerRequestApprovedCount": 15,
+    "allRequesterStatusVerified": true,
+    "revokedTestSourceKeys": 3
+  },
+  "cleanup": [
+    {
+      "articleUnpublished": true,
+      "articleUrl": "http://localhost:3588/chrono-2c53b5ba-b856-4c9a-9c3d-add658158516/",
+      "imagesRetained": true
+    },
+    {
+      "actor": "admin",
+      "keyId": "1364afef-e1bf-4915-af79-102c9174d6c9",
+      "revoked": true
+    },
+    {
+      "actor": "admin",
+      "keyId": "cff28a3c-f160-4703-b967-f550ce266087",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "028b5f80-6855-4e56-a5fa-80a54d7924c7",
+      "revoked": true
+    }
+  ],
+  "checks": [
+    {
+      "case": "single-image-missing",
+      "operation": "publish-missing",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [],
+      "afterHistory": [],
+      "release": {
+        "id": "f8c4ddd4-a62e-41f2-bff6-2812443e43b6",
+        "state": "verifying",
+        "error_code": "ORIGINAL_NOT_VERIFIED",
+        "remote_id": "6ae94aecaad28c0001b6e1f1",
+        "url": "http://localhost:3588/chrono-2c53b5ba-b856-4c9a-9c3d-add658158516/"
+      },
+      "pendingMedia": 0,
+      "actor": {
+        "subject": "f2014b2b-1062-4045-9363-f06173b34a9d",
+        "fromCurrentRecovery": false
+      },
+      "assets": [
+        {
+          "id": "e57eb940-fbfd-457c-8862-f2d1136b8995",
+          "sha256": "8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147",
+          "url": "http://localhost:3588/content/images/chrono/8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147.png",
+          "publicMatches": false
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 0,
+      "projectionsAfter": 0,
+      "ghostWrites": 1,
+      "ghostReads": 1,
+      "materializeCalls": 1,
+      "materialized": 0,
+      "boundaryCalls": 0,
+      "revoked": false,
+      "proofEvents": [],
+      "workerCompleted": true,
+      "driverOutcome": "FAILED_OR_INCOMPLETE"
+    },
+    {
+      "case": "active-old-readonly",
+      "operation": "readonly",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [
+        {
+          "id": "11f29c30-a7dd-4f79-923a-d41f622260c6",
+          "state": "blocked",
+          "actorSha256": "d33ae68fa92d31ce60db880aed5fe908445a46cb950f4e90c40f4b36deda1981",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        }
+      ],
+      "afterHistory": [
+        {
+          "id": "11f29c30-a7dd-4f79-923a-d41f622260c6",
+          "state": "blocked",
+          "actorSha256": "d33ae68fa92d31ce60db880aed5fe908445a46cb950f4e90c40f4b36deda1981",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        }
+      ],
+      "release": {
+        "id": "f8c4ddd4-a62e-41f2-bff6-2812443e43b6",
+        "state": "uncertain",
+        "error_code": "REMOTE_RESULT_UNPROVEN",
+        "remote_id": "6ae94aecaad28c0001b6e1f1",
+        "url": "http://localhost:3588/chrono-2c53b5ba-b856-4c9a-9c3d-add658158516/"
+      },
+      "pendingMedia": 0,
+      "oldSource": {
+        "requestId": "11f29c30-a7dd-4f79-923a-d41f622260c6",
+        "active": true
+      },
+      "actor": {
+        "subject": "42f9a6a3-1b28-4eda-98ff-b0bbc4e7f9c1",
+        "fromCurrentRecovery": true
+      },
+      "assets": [
+        {
+          "id": "e57eb940-fbfd-457c-8862-f2d1136b8995",
+          "sha256": "8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147",
+          "url": "http://localhost:3588/content/images/chrono/8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147.png",
+          "publicMatches": false
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 0,
+      "projectionsAfter": 0,
+      "ghostWrites": 0,
+      "ghostReads": 3,
+      "materializeCalls": 0,
+      "materialized": 0,
+      "boundaryCalls": 0,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "original-start",
+          "number": 1
+        },
+        {
+          "kind": "renderer-start",
+          "number": 1,
+          "htmlSha256": "71ff7bd5c21eef6cba22e5e28416617c9d9cadefdfdb51e5e419ac0aec2779fe"
+        },
+        {
+          "kind": "renderer-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 3785.6554879999994
+        },
+        {
+          "kind": "original-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 4008.2979539999997
+        }
+      ],
+      "workerCompleted": true,
+      "driverOutcome": "FAILED_OR_INCOMPLETE"
+    },
+    {
+      "case": "revoked-old-readonly",
+      "operation": "readonly",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [
+        {
+          "id": "11f29c30-a7dd-4f79-923a-d41f622260c6",
+          "state": "blocked",
+          "actorSha256": "d33ae68fa92d31ce60db880aed5fe908445a46cb950f4e90c40f4b36deda1981",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "fcadc258-03bf-4358-bdf6-980108a5faf7",
+          "state": "blocked",
+          "actorSha256": "a67f6d4c8237aad830e1b4deebc4c74dad939bd5ac90be35c0af79cc5fa87c6e",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        }
+      ],
+      "afterHistory": [
+        {
+          "id": "11f29c30-a7dd-4f79-923a-d41f622260c6",
+          "state": "blocked",
+          "actorSha256": "d33ae68fa92d31ce60db880aed5fe908445a46cb950f4e90c40f4b36deda1981",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "fcadc258-03bf-4358-bdf6-980108a5faf7",
+          "state": "blocked",
+          "actorSha256": "a67f6d4c8237aad830e1b4deebc4c74dad939bd5ac90be35c0af79cc5fa87c6e",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        }
+      ],
+      "release": {
+        "id": "f8c4ddd4-a62e-41f2-bff6-2812443e43b6",
+        "state": "uncertain",
+        "error_code": "REMOTE_RESULT_UNPROVEN",
+        "remote_id": "6ae94aecaad28c0001b6e1f1",
+        "url": "http://localhost:3588/chrono-2c53b5ba-b856-4c9a-9c3d-add658158516/"
+      },
+      "pendingMedia": 0,
+      "oldSource": {
+        "requestId": "fcadc258-03bf-4358-bdf6-980108a5faf7",
+        "active": false,
+        "code": "REVOKED"
+      },
+      "actor": {
+        "subject": "42f9a6a3-1b28-4eda-98ff-b0bbc4e7f9c1",
+        "fromCurrentRecovery": true
+      },
+      "assets": [
+        {
+          "id": "e57eb940-fbfd-457c-8862-f2d1136b8995",
+          "sha256": "8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147",
+          "url": "http://localhost:3588/content/images/chrono/8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147.png",
+          "publicMatches": false
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 0,
+      "projectionsAfter": 0,
+      "ghostWrites": 0,
+      "ghostReads": 3,
+      "materializeCalls": 0,
+      "materialized": 0,
+      "boundaryCalls": 0,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "original-start",
+          "number": 1
+        },
+        {
+          "kind": "renderer-start",
+          "number": 1,
+          "htmlSha256": "71ff7bd5c21eef6cba22e5e28416617c9d9cadefdfdb51e5e419ac0aec2779fe"
+        },
+        {
+          "kind": "renderer-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 3990.3846550000003
+        },
+        {
+          "kind": "original-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 4153.820666
+        }
+      ],
+      "workerCompleted": true,
+      "driverOutcome": "FAILED_OR_INCOMPLETE"
+    },
+    {
+      "case": "fresh-single-image",
+      "operation": "media",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [
+        {
+          "id": "11f29c30-a7dd-4f79-923a-d41f622260c6",
+          "state": "blocked",
+          "actorSha256": "d33ae68fa92d31ce60db880aed5fe908445a46cb950f4e90c40f4b36deda1981",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "fcadc258-03bf-4358-bdf6-980108a5faf7",
+          "state": "blocked",
+          "actorSha256": "a67f6d4c8237aad830e1b4deebc4c74dad939bd5ac90be35c0af79cc5fa87c6e",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "91d5c66f-83eb-46bf-a0fa-ce44209e6468",
+          "state": "queued",
+          "actorSha256": "27c379bdd9fc524dbed1e5dc06c4f9230c36c907430e6458d30c92c215354567",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": null
+        }
+      ],
+      "afterHistory": [
+        {
+          "id": "11f29c30-a7dd-4f79-923a-d41f622260c6",
+          "state": "blocked",
+          "actorSha256": "d33ae68fa92d31ce60db880aed5fe908445a46cb950f4e90c40f4b36deda1981",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "fcadc258-03bf-4358-bdf6-980108a5faf7",
+          "state": "blocked",
+          "actorSha256": "a67f6d4c8237aad830e1b4deebc4c74dad939bd5ac90be35c0af79cc5fa87c6e",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "91d5c66f-83eb-46bf-a0fa-ce44209e6468",
+          "state": "complete",
+          "actorSha256": "27c379bdd9fc524dbed1e5dc06c4f9230c36c907430e6458d30c92c215354567",
+          "confirmationDigest": "9976439690ebc5b73cf32c0ecf207fabff83c220e7362e7326b2e1f9763acd7f",
+          "publicFiles": 1,
+          "error": null
+        }
+      ],
+      "release": {
+        "id": "f8c4ddd4-a62e-41f2-bff6-2812443e43b6",
+        "state": "published",
+        "error_code": null,
+        "remote_id": "6ae94aecaad28c0001b6e1f1",
+        "url": "http://localhost:3588/chrono-2c53b5ba-b856-4c9a-9c3d-add658158516/"
+      },
+      "pendingMedia": 0,
+      "actor": {
+        "subject": "42f9a6a3-1b28-4eda-98ff-b0bbc4e7f9c1",
+        "fromCurrentRecovery": false
+      },
+      "assets": [
+        {
+          "id": "e57eb940-fbfd-457c-8862-f2d1136b8995",
+          "sha256": "8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147",
+          "url": "http://localhost:3588/content/images/chrono/8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147.png",
+          "publicMatches": true
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 0,
+      "projectionsAfter": 0,
+      "ghostWrites": 0,
+      "ghostReads": 9,
+      "materializeCalls": 1,
+      "materialized": 1,
+      "boundaryCalls": 2,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "original-start",
+          "number": 1
+        },
+        {
+          "kind": "renderer-start",
+          "number": 1,
+          "htmlSha256": "71ff7bd5c21eef6cba22e5e28416617c9d9cadefdfdb51e5e419ac0aec2779fe"
+        },
+        {
+          "kind": "renderer-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 3603.582267
+        },
+        {
+          "kind": "original-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 3715.566148
+        },
+        {
+          "kind": "original-start",
+          "number": 2
+        },
+        {
+          "kind": "renderer-start",
+          "number": 2,
+          "htmlSha256": "71ff7bd5c21eef6cba22e5e28416617c9d9cadefdfdb51e5e419ac0aec2779fe"
+        },
+        {
+          "kind": "renderer-end",
+          "number": 2,
+          "value": true,
+          "elapsedMs": 3394.378633999999
+        },
+        {
+          "kind": "original-end",
+          "number": 2,
+          "value": true,
+          "elapsedMs": 3538.4852769999998
+        }
+      ],
+      "workerCompleted": true,
+      "driverOutcome": "FAILED_OR_INCOMPLETE"
+    },
+    {
+      "case": "single-image-unpublish",
+      "operation": "unpublish",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [],
+      "afterHistory": [],
+      "release": {
+        "id": "f745a8a7-6ab2-4df8-aa2b-fb2d6465db87",
+        "state": "unpublished",
+        "error_code": null,
+        "remote_id": "6ae94aecaad28c0001b6e1f1",
+        "url": "http://localhost:3588/chrono-2c53b5ba-b856-4c9a-9c3d-add658158516/"
+      },
+      "pendingMedia": 0,
+      "actor": {
+        "subject": "42f9a6a3-1b28-4eda-98ff-b0bbc4e7f9c1",
+        "fromCurrentRecovery": false
+      },
+      "assets": [
+        {
+          "id": "e57eb940-fbfd-457c-8862-f2d1136b8995",
+          "sha256": "8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147",
+          "url": "http://localhost:3588/content/images/chrono/8010038d970a3774055cfee375d6e87dfae564a8d0abb51bdbc0f84458d68147.png",
+          "publicMatches": true
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 0,
+      "projectionsAfter": 1,
+      "ghostWrites": 1,
+      "ghostReads": 4,
+      "materializeCalls": 0,
+      "materialized": 0,
+      "boundaryCalls": 0,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "original-start",
+          "number": 1
+        },
+        {
+          "kind": "original-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 116.34902000000011
+        }
+      ],
+      "workerCompleted": true,
+      "driverOutcome": "FAILED_OR_INCOMPLETE"
+    }
+  ]
+}

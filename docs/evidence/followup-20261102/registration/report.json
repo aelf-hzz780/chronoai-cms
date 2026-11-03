@@ -1,0 +1,56 @@
+{
+  "status": "PASS_BOUNDED_LOCAL_REGISTRATION_DISCOVERY",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "timeWindowUtc": [
+    "2026-11-02T10:01:04Z",
+    "2026-11-02T10:14:32.122693+00:00"
+  ],
+  "operationCount": 35,
+  "checks": {
+    "fixedSource133FilesMatch": true,
+    "reviewedNyxRuntimeBinaryMatch": true,
+    "adminImportedEndpointSetExact": true,
+    "mcpConfigEndpointSetExact": true,
+    "mcpToolsListEndpointSetExact": true,
+    "actualMcpGetWorkspacesPassed": true,
+    "actualOwnIdentityAndWorkspace": true,
+    "callbackClientScopesReadBack": true,
+    "serviceIdentityAudienceDelegationTrustReadBack": true,
+    "markdownFileJsonAndRequiredRevisionImported": true,
+    "materializeMediaRequiredAuthorizationFieldsImported": true,
+    "cleanupCompleted": true
+  },
+  "boundaries": {
+    "Document": "Final OpenAPI, operation mappings and reproducible registration/configuration handoff.",
+    "Local": "Actual independent registration and Admin-triggered OpenAPI fetch/parse import (POST discover-endpoints with {}), durable MCP discovery and one authorized read through native049 with fixedBlog386b965.",
+    "Live": "No production Nyx registration, external provider lifecycle, or overall D1–D9 acceptance claimed."
+  },
+  "limitations": [
+    "049 is a local NyxID patch, not upstream38bae2f.",
+    "Dynamic user catalog /endpoints cannot fetch loopback spec URLs (400 SSRF guard); explicit Admin-triggered OpenAPI fetch/parse via discover-endpoints {} and durable MCP config/tools discovery worked. Verify real public spec URL in target environment.",
+    "MCP search is capped at25 results; full set verified through tools/list and config.",
+    "Raw API key in Authorization Bearer receives403 at MCP; X-API-Key works for this selected native path. This is not all-credential/all-transport acceptance.",
+    "Discovery proves operation/schema availability; execution of all35 operations through MCP was not repeated or claimed.",
+    "Import uses normalized lower-case operation names; original OpenAPI operationIds remain stable.",
+    "MCP tools/list preserves all35 operation names and required parameter/body structure, but its schema generator omits listArticles.limit minimum1/maximum100 and offset minimum0 while keeping integer types. Admin endpoints and MCP config retain those constraints. Blog src/content.ts:88 still validates integer limit in1..100 and offset>=0 at runtime; tool-schema field equality is not claimed."
+  ],
+  "cleanup": {
+    "clientInactive": true,
+    "revokedKeyMcpInitializeStatus": 401,
+    "ownedServiceInactive": true,
+    "ownedUserInactive": true,
+    "registrationRetainedAsInactiveAuditHistory": true
+  },
+  "failureEvidencePreserved": [
+    "attempt-01-python-tar-compatibility.json",
+    "attempt-02-spec-only-update-400.json",
+    "attempt-03-discovery-400.json",
+    "attempt-04-catalog-private-url.json",
+    "attempt-05-mcp-scope.json",
+    "attempt-06-mcp-stateless-initialization.json",
+    "supplementary-probe-corrections.json"
+  ],
+  "reportConstruction": "Final summary rederived from stored API responses and exact source hashes; prior harness report was overwritten by cleanup checks, whose HTTP evidence is separately retained. No missing verification is inferred from the cleanup report.",
+  "summarizedAt": "2026-11-02T10:14:32.122693+00:00"
+}

@@ -1,0 +1,16 @@
+{
+  "status": "FAILED",
+  "checks": {},
+  "transport": "actual native NyxID MCP 2025-03-26",
+  "sourceKeyScope": "proxy; exact newly created personal UserService only",
+  "calls": [
+    {
+      "method": "initialize",
+      "rpcError": false
+    }
+  ],
+  "failure": {
+    "type": "StopIteration",
+    "code": ""
+  }
+}

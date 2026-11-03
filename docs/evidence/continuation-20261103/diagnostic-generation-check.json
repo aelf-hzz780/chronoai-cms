@@ -1,0 +1,29 @@
+{
+  "status": "PREPARATION_VERIFIED_NO_BROWSER_RUN",
+  "fixedBase": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "syntaxCheck": "Node 24.18.0 node --check: all four generated TS files passed",
+  "hashesVerified": true,
+  "awaitCounts": [
+    {
+      "path": "ghost.ts",
+      "originalAwaitCount": 34,
+      "diagnosticAwaitCount": 34
+    },
+    {
+      "path": "render-proof.ts",
+      "originalAwaitCount": 18,
+      "diagnosticAwaitCount": 18
+    },
+    {
+      "path": "paint-proof.ts",
+      "originalAwaitCount": 21,
+      "diagnosticAwaitCount": 21
+    }
+  ],
+  "note": "Equal await counts are a preparation guard, not semantic equivalence proof. Diagnostics have observational overhead.",
+  "provenance": {
+    "privateSourcePath": "diagnostic/generation-check.json",
+    "originalSha256": "02f5fbd96922fbdf47bc937f7b40afabc07d0778d6d7a6bbb443c511a94a3950",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. No raw database, environment, credential or backup is included."
+  }
+}

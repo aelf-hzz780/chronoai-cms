@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-02T10:48:12.693291+00:00",
+  "status": "PASS_INDEPENDENT_CURRENT_3457_CATALOG_REFRESH",
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "preimageDriftCheck": "Full original and immediate service/endpoints equal",
+  "beforeEndpointCount": 0,
+  "afterEndpointCount": 35,
+  "operationContractComparisons": 35,
+  "fullMetadataKeysEqual": true,
+  "onlyChangedFields": [
+    "api_spec_url",
+    "description",
+    "openapi_spec_url",
+    "updated_at"
+  ],
+  "openapiPathsEqualIndependentlyReviewedFixedSource": true,
+  "all35NewIdsUniqueAndBoundToReport": true,
+  "withdrawnExistingOperations": 0,
+  "onlyMutations": "Exact service PUT description/specURL and official discover-endpoints POST{}",
+  "currentReadback": {
+    "attempted": false,
+    "reason": "Existing session expired; no reauthentication performed by reviewer"
+  },
+  "portableFilesVerified": 7,
+  "portableManifestSha256": "02af12aea8aac090e98daad488bdcf1567bd44239294b10599025c3f818563d7",
+  "privateSnapshotHashesVerified": 6,
+  "noCredentialsInReport": true,
+  "rollbackLimitation": "Prepared only. Original null description cannot be exactly restored using current Option<String> update API; documented empty-string residual, inactive retained endpoints and forward-only generation/audit are not claimed as exact rollback.",
+  "scope": "Actual shared local3457 catalog refreshed; does not assert all35 operations executed, target production registration or overall acceptance.",
+  "supersedesStage1Observation": "Earlier lack of current3457 durable catalog verification was followed by actual0-entry observation and authorized35-entry refresh; stage1 report remains historical.",
+  "evidence": [
+    {
+      "path": "registration/current-refresh-report.json",
+      "sha256": "6b0d110dea155fce1166c505aaf01b1e94738334fbd41d4c5a34bc9ce90149d2"
+    },
+    {
+      "path": "registration/refresh-current.py",
+      "sha256": "08c21f28180fe9b0f8f46a68326141c83b417d9e294c571ae07b6e13aed89957"
+    }
+  ],
+  "privateSourceOriginalSha256": "29afdc036332227dfdb6a0d33833213fb72536c2b477bd89e7f09da65520c6fd",
+  "privatePathsAreProvenanceOnly": true
+}

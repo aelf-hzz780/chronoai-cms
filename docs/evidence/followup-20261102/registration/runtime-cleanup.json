@@ -1,0 +1,8 @@
+{
+  "isolatedPort": 3560,
+  "ownProcessTerminated": true,
+  "portClosed": true,
+  "workerDaemonStarted": false,
+  "existingServicesStopped": false,
+  "databaseRetainedPrivate": true
+}

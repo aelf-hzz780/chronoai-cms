@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-02T10:25:34.657902+00:00",
+  "original3457": {
+    "container": "blogsystem-command-candidate-0b0e9d11dacd",
+    "expectedSourceSha": "0b0e9d11dacd0c4c069bc0ee9ce8706142036922",
+    "database": {
+      "outboundPaused": "false",
+      "activeJobs": 0,
+      "integrity": "ok"
+    }
+  },
+  "nativeNyxHealthCommit": "native-sha256-37bbb047eef49e46",
+  "original18ContainersRunning": true,
+  "runningContainers": [
+    "blogsystem-command-candidate-0b0e9d11dacd",
+    "nyxid-native-http-relay-20261102",
+    "nyxid-native-mongo-relay-20261102",
+    "nyxid-command-test-mongo-20261102",
+    "nyxid-blogsystem-local-frontend-1",
+    "blogsystem-restore-native-041-r1-organization-ghost-zh-1",
+    "blogsystem-restore-native-041-r1-organization-ghost-en-1",
+    "blogsystem-restore-native-041-r1-organization-db-zh-1",
+    "blogsystem-restore-native-041-r1-organization-db-en-1",
+    "blogsystem-restore-native-041-r1-personal-ghost-zh-1",
+    "blogsystem-restore-native-041-r1-personal-ghost-en-1",
+    "blogsystem-restore-native-041-r1-personal-db-zh-1",
+    "blogsystem-restore-native-041-r1-personal-db-en-1",
+    "nyxid-blogsystem-local-mongodb-1",
+    "blogsystem-current-machine-ghost-zh-1",
+    "blogsystem-current-machine-ghost-en-1",
+    "blogsystem-current-machine-db-zh-1",
+    "blogsystem-current-machine-db-en-1"
+  ],
+  "ownApiStopped": true,
+  "failedSetupContainerStopped": true,
+  "heavyLockReleased": true,
+  "businessSourceUnchanged": true
+}

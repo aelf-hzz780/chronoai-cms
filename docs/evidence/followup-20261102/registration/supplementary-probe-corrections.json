@@ -1,0 +1,5 @@
+{
+  "oauthReadback": "allowed_scopes is space-delimited string, normalized to an exact set; callback/client_type exact",
+  "mcpSearch": "Initial supplementary assumption of35 search matches was rejected; actual search cap25 retained, complete35 exact set independently asserted from tools/list",
+  "sourceLock": "All fixed-source file hashes match after runtime execution"
+}

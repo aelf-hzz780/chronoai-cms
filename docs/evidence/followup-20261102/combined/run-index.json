@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-02T10:28:49.078153+00:00",
+  "status": "REVIEW_READY_BOUNDED_CORE_PASS_WITH_FAILURE_HISTORY",
+  "fixedVersions": {
+    "blog": "386b9652dc431bb83e4864d5b046b378110ee88d",
+    "businessSourceSameAsW2": "83b4b8e5fa28cb18a6926f3a10d2205e04f49ab1",
+    "nyxidBackend": "049ee1c2ca811a002590dc8330ce646078bb1158",
+    "nativeBinarySha256": "37bbb047eef49e460bde3b8acb669bcecafe1439aec1d05565a0813e1e41a7e1",
+    "upstreamNyxidUnmodifiedClaim": false
+  },
+  "primaryResult": {
+    "runId": "combined-363dca9c2068",
+    "cases": 13,
+    "status": "PASS_BOUNDED_REAL_NYX_COMBINED_MEDIA_RECOVERY"
+  },
+  "supplementalConclusions": {
+    "activeAndRevokedOldCommandIntrospectionObserved": true,
+    "currentAdminReadOnlyPreservesOriginalActorRevisionAndMediaHistory": true,
+    "noReadOnlyGhostWritesOrImageMaterializationsOrNewProjections": true,
+    "samePublisherNewActiveKeyTerminalReplayReturnsOriginalBlockedRequest": true,
+    "terminalReplayLeavesHistoryUnchangedAndWorkerIdleWithOutboundEnabled": true,
+    "postMaterializationVerifyFalseRetainedAsPartial": true,
+    "explicitCurrentAdminReadOnlyRecoveredSameRemoteIdURLRevisionAndImageHashWithoutWrites": true
+  },
+  "failuresAndResolution": [
+    {
+      "stage": "setup",
+      "failure": "Copied setup initially referenced stopped W1 volume. Only two combined owners and profiles inserted before duplicate sites.id aborted.",
+      "resolution": "Exact four added rows reversed; all 36 tables, duplicate counts, cells/BLOBs and full schema independently match retained W1 baseline. New exclusive empty volume guard added.",
+      "evidence": "setup-incident.json",
+      "independentReview": "Owned by parent: independent/setup-incident-independent-review.json"
+    },
+    {
+      "runId": "combined-f13e63c911f6",
+      "failure": "Approval-list GET transport timeout after submit returned200; no publication command was sent in this failed run.",
+      "resolution": "Mutations not auto-retried. Fresh isolated sample in primary run; bounded read-only GET retries retained as metadata."
+    },
+    {
+      "runId": "combined-8c03b97bc8c4",
+      "failure": "Supplemental fresh single image atomically published and bytes matched, subsequent verify returnedfalse. State remained partial/ORIGINAL_NOT_VERIFIED; run failed honestly.",
+      "resolutionRunId": "combined-2bc6748a9600",
+      "resolution": "New current Admin explicit read-only reconciliation using original production renderer passed with same remote ID/URL/revision/image SHA, zero Ghost write and zero materialization. Formal unpublish then succeeded.",
+      "rootCause": "NOT_DETERMINED; do not label environment fault or claim fixed by a code change."
+    },
+    {
+      "runId": "combined-83699b929b1f",
+      "purpose": "One bounded same-structure diagnostic reproduction with renderer/paint logging copy.",
+      "result": "Did not reproduce false; both pre/post render sub-stages true. Diagnostic-only and excluded from primary pass count."
+    },
+    {
+      "stage": "cleanup",
+      "failure": "Initial helper assumed inactive UserService remains in active inventory.",
+      "resolution": "Official update response is_active=false plus absence from active inventory verified; exact own credentials/registrations/users disabled.",
+      "initialHttpLogSha256": "776791ea50140e08d9ceeaf3640a2c167f173932ebaecab95426b6f74b063487"
+    }
+  ],
+  "runs": [
+    {
+      "runId": "combined-f13e63c911f6",
+      "recordedStatus": "FAILED_OR_INCOMPLETE",
+      "failure": {
+        "type": "Stop",
+        "code": "LOCAL_HTTP_UNAVAILABLE"
+      },
+      "caseCount": 0,
+      "path": "runs/combined-f13e63c911f6.json",
+      "sha256": "150afc03a8de91e9bec196bad2fd65416e05f261f481b23d7fafff6fd85c2457",
+      "originalLocalReportSha256": "0817353907b1be71d565622daf85edeed150f9f4c72ceea627bee5af9e0709cc",
+      "diagnosticOnly": false
+    },
+    {
+      "runId": "combined-363dca9c2068",
+      "recordedStatus": "PASS_BOUNDED_REAL_NYX_COMBINED_MEDIA_RECOVERY",
+      "failure": null,
+      "caseCount": 13,
+      "path": "runs/combined-363dca9c2068.json",
+      "sha256": "4bc36776f714ca4aefa1ec827020769812899c941c8e9936a08313a68e255b26",
+      "originalLocalReportSha256": "3f2fe799387657e021bee4fad02edb9a71a2c66b383ff59e87814b757f1bfb39",
+      "diagnosticOnly": false
+    },
+    {
+      "runId": "combined-8c03b97bc8c4",
+      "recordedStatus": "FAILED_OR_INCOMPLETE",
+      "failure": {
+        "type": "Stop",
+        "code": "SUPPLEMENT_FRESH"
+      },
+      "caseCount": 5,
+      "path": "runs/combined-8c03b97bc8c4.json",
+      "sha256": "6ba4f33c37d94c6e7daa188431bbd28029f66c9c85af7f7ac5e0262210f04c74",
+      "originalLocalReportSha256": "994e374ac0ac0e33c935f9cab6a234cd9605716883cbc588eef657415bb1de70",
+      "diagnosticOnly": false
+    },
+    {
+      "runId": "combined-2bc6748a9600",
+      "recordedStatus": "PASS_READONLY_RECOVERY_AFTER_SUPPLEMENTAL_VERIFY_FALSE",
+      "failure": null,
+      "caseCount": 2,
+      "path": "runs/combined-2bc6748a9600.json",
+      "sha256": "f65b200fa2513f7c85f77fa552421e43e6ca7b15483652d2256a94eda6e97999",
+      "originalLocalReportSha256": "d4a2bc6b3a06c3398d7df4cca2ae602a2fdc4aa9397e330d8363432f69133a67",
+      "diagnosticOnly": false
+    },
+    {
+      "runId": "combined-83699b929b1f",
+      "recordedStatus": "DIAGNOSTIC_COMPLETED_WITH_ORIGINAL_RECORDED_RESULT",
+      "failure": null,
+      "caseCount": 3,
+      "path": "runs/combined-83699b929b1f.json",
+      "sha256": "029fcf3f77426a2d14fa18f1a0f4ecb934c88be0805a70f7fd7ea1d72b47a111",
+      "originalLocalReportSha256": "c2cb763e6178abfa191eeda1ccb1a968f17fe949f97c3cae4611f77a9ae23f8b",
+      "diagnosticOnly": true
+    }
+  ],
+  "cleanupEvidence": "cleanup.json",
+  "postflightEvidence": "postflight.json",
+  "scopeBoundaries": {
+    "Document": "Fixed source and reproducible case contract; no credential/DB content published.",
+    "Local": "Actual native NyxID049, selected own personal UserService route, actual local Ghost organization EN, actual SQLite encrypted snapshots and real image atomic writes. Main 13 cases use original business renderer.",
+    "Live": "No real external provider/production lifecycle or numerical RPO/RTO evidence; D1-D9 not accepted."
+  },
+  "codeChanges": false,
+  "overallD1D9Accepted": false,
+  "privateRawArtifactsOmitted": [
+    "Credentials/env/cookies/tokens/keys",
+    "SQLite databases and source snapshots",
+    "Raw private config containing test credentials",
+    "Original generated article Markdown and raw HTML; public summaries contain metadata only"
+  ],
+  "reproductionGuide": "reproduction.md"
+}

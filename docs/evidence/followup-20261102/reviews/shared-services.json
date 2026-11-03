@@ -1,0 +1,151 @@
+{
+  "at": "2026-11-02T10:42:10.834374+00:00",
+  "status": "PASS_INDEPENDENT_POSTCUTOVER_SHARED_SERVICES",
+  "preservedOriginalContainers": [
+    {
+      "name": "blogsystem-command-candidate-0b0e9d11dacd",
+      "sameIdImageMounts": true,
+      "running": false
+    },
+    {
+      "name": "nyxid-native-http-relay-20261102",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-native-mongo-relay-20261102",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-command-test-mongo-20261102",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-frontend-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-mongodb-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-en-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-zh-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-en-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-zh-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-en-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-zh-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-en-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-zh-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-en-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-zh-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-db-en-1",
+      "sameIdImageMounts": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-db-zh-1",
+      "sameIdImageMounts": true,
+      "running": true
+    }
+  ],
+  "candidateSameImageUidNetworksAsOriginal": true,
+  "candidateExpectedRuntimeCommand": true,
+  "candidatePortBinding": "127.0.0.1:3457",
+  "priorCandidateStoppedRetained": true,
+  "healthReadbacks": [
+    {
+      "port": 3457,
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "port": 3000,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3001,
+      "path": "/.well-known/openid-configuration",
+      "status": 200
+    },
+    {
+      "port": 3468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3469,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3478,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3479,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2469,
+      "path": "/",
+      "status": 200
+    }
+  ],
+  "runtimeHeavyLockReleased": true,
+  "mutation": "Read-only Docker inspect and HTTP GET only",
+  "privateSourceOriginalSha256": "6ad089100143c0a0c5d03f3ba77c46a83d5e2ab84908e87e760f4ad6d3ea5b24",
+  "pathNormalization": "Private references are relative provenance; raw snapshots and local scripts are not shipped."
+}

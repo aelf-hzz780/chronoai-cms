@@ -1,0 +1,1730 @@
+{
+  "endpoints": [
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "01bbc0de-9a78-4bf3-9e86-74d1799048c1",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "getworkspaces",
+      "description": "Read current caller and authorized workspaces",
+      "method": "GET",
+      "path": "/api/service/me",
+      "parameters": null,
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.739+00:00",
+      "updated_at": "2026-11-02T10:43:13.739+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "513b9cf6-1b1d-49da-8e90-fbb1bc42310b",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "listarticles",
+      "description": "List/search authorized revisions",
+      "method": "GET",
+      "path": "/api/service/articles",
+      "parameters": [
+        {
+          "name": "ownerId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "fc533445-550c-4281-9e1f-76fabcf40374",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "createarticle",
+      "description": "Create original English or Chinese Markdown",
+      "method": "POST",
+      "path": "/api/service/articles",
+      "parameters": null,
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "ownerId": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "zh"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 250
+          },
+          "markdown": {
+            "type": "string",
+            "maxLength": 2000000
+          },
+          "creditedAuthor": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ownerId",
+          "language",
+          "title",
+          "markdown",
+          "creditedAuthor"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "dd0cef97-42e2-49de-a424-51348abfe0e4",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "importmarkdownfile",
+      "description": "Import an original UTF-8 .md file preserving BOM, CRLF and source bytes",
+      "method": "POST",
+      "path": "/api/service/articles/import",
+      "parameters": [
+        {
+          "name": "ownerId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "en",
+              "zh"
+            ]
+          }
+        },
+        {
+          "name": "title",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "creditedAuthor",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "string",
+        "format": "binary"
+      },
+      "request_content_type": "text/markdown",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "7aab953e-9f94-4333-aa36-526bbcc5702e",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "replacemarkdownfile",
+      "description": "Replace a draft from a UTF-8 .md file with revision conflict protection",
+      "method": "PUT",
+      "path": "/api/service/articles/{id}/markdown",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "expectedRevision",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "string",
+        "format": "binary"
+      },
+      "request_content_type": "text/markdown",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "568cfa82-4e6d-474a-b72c-d0aefa3d01ed",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "getarticle",
+      "description": "Read an authorized article revision",
+      "method": "GET",
+      "path": "/api/service/articles/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "revision",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Optional authorized revision"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "13cf5245-46a7-42ef-b230-39cb81486779",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "editarticle",
+      "description": "Save an immutable revision with conflict protection",
+      "method": "PATCH",
+      "path": "/api/service/articles/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "expectedRevision": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "markdown": {
+            "type": "string"
+          },
+          "creditedAuthor": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "8c483db1-82ed-4480-a474-d71d2df8c1cf",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "submitdraft",
+      "description": "Submit this exact draft revision",
+      "method": "POST",
+      "path": "/api/service/articles/{id}/submit",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "revisionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "revisionId"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "c1218770-ad9b-4bec-9fca-8b75d1543b13",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "downloadmarkdown",
+      "description": "Retrieve the original .md file as a base64 JSON envelope. Decode data as base64 bytes, verify byteLength and SHA-256, then save as filename; never save the JSON or normalized text as Markdown.",
+      "method": "GET",
+      "path": "/api/service/articles/{id}/markdown-file",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "revision",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "b1f40909-d208-4cb9-ad1e-d27380f56523",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "listrevisions",
+      "description": "List only authorized revision history",
+      "method": "GET",
+      "path": "/api/service/articles/{id}/revisions",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "cfcf436e-6fa2-4d6f-9ee1-20d5adda6532",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "previewarticle",
+      "description": "Privately preview an authorized saved revision",
+      "method": "GET",
+      "path": "/api/service/articles/{id}/preview",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "revision",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Optional authorized revision; defaults to the caller-visible revision"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "71db34cd-fae4-4016-884e-8fcde51cbcd3",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "linktranslation",
+      "description": "Link a translation to an authorized source revision",
+      "method": "POST",
+      "path": "/api/service/articles/{id}/translation",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "sourceArticleId": {
+            "type": "string"
+          },
+          "sourceRevisionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceArticleId",
+          "sourceRevisionId"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "09327f6f-519b-46f7-935a-8a94d317e40f",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "uploadprivateimage",
+      "description": "Upload a private PNG/JPEG/GIF/WebP asset",
+      "method": "POST",
+      "path": "/api/service/articles/{id}/assets",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "mime": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/gif",
+              "image/webp"
+            ]
+          },
+          "base64": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mime",
+          "base64"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "2935a331-ba25-4d06-aa79-98aed679f1c4",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "getprivateimage",
+      "description": "Read an image only through an authorized corresponding revision",
+      "method": "GET",
+      "path": "/api/service/assets/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "image/gif",
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "binary_artifact": true
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "7a5ab96d-42fb-488c-9a0b-c983c4cef4aa",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "listoriginals",
+      "description": "Read original publication history",
+      "method": "GET",
+      "path": "/api/service/articles/{id}/releases",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "983b19cc-6b1e-47b1-a497-8fa191bc87f3",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "confirmoriginal",
+      "description": "Confirm exact revision, author, owner, rights and Ghost action",
+      "method": "POST",
+      "path": "/api/service/articles/{id}/releases",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "ownerId": {
+            "type": "string"
+          },
+          "revisionId": {
+            "type": "string"
+          },
+          "creditedAuthor": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "publish",
+              "update",
+              "unpublish"
+            ]
+          },
+          "rightsConfirmed": {
+            "const": true,
+            "type": "boolean"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ownerId",
+          "revisionId",
+          "creditedAuthor",
+          "action",
+          "rightsConfirmed",
+          "idempotencyKey"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "46cd117c-f241-4aca-8606-06518163b27d",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "canceloriginal",
+      "description": "Cancel unsent original",
+      "method": "POST",
+      "path": "/api/service/releases/{id}/cancel",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "adf0c59a-0921-4460-9ea6-c6fc3295a1d5",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "reconcileoriginal",
+      "description": "Read-only reconciliation of uncertain original",
+      "method": "POST",
+      "path": "/api/service/releases/{id}/reconcile",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "b17d50b2-217d-420e-8ef3-c5d006ccb40a",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "materializeoriginalmedia",
+      "description": "Explicitly authorize public images for an already accepted exact Ghost revision; never create or update a Ghost post",
+      "method": "POST",
+      "path": "/api/service/releases/{id}/materialize-media",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "ownerId": {
+            "type": "string"
+          },
+          "revisionId": {
+            "type": "string"
+          },
+          "rightsConfirmed": {
+            "const": true,
+            "type": "boolean"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ownerId",
+          "revisionId",
+          "rightsConfirmed",
+          "idempotencyKey"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "b72658b9-635e-4794-8aeb-f4c3d35b5bd6",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "listdestinations",
+      "description": "Read enabled destinations and automatic/assisted capability",
+      "method": "GET",
+      "path": "/api/service/targets",
+      "parameters": null,
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "c89f0a34-447e-42d2-b2fc-6472b794d90e",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "listownerconnections",
+      "description": "List only configured exact owner connections and current availability",
+      "method": "GET",
+      "path": "/api/service/owners/{id}/connections",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "53ded878-276a-4685-821f-c976c8891996",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "confirmdistribution",
+      "description": "Confirm destination, exact owner connection and full/excerpt copy",
+      "method": "POST",
+      "path": "/api/service/releases/{id}/deliveries",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "ownerId": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string",
+            "enum": [
+              "dev",
+              "hashnode",
+              "medium",
+              "hackernoon"
+            ]
+          },
+          "connectionId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "create",
+              "update",
+              "remove"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "full",
+              "excerpt"
+            ]
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "copyId": {
+            "type": "string"
+          },
+          "rightsConfirmed": {
+            "type": "boolean",
+            "const": true
+          },
+          "idempotencyKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "connectionId",
+          "action",
+          "format",
+          "rightsConfirmed",
+          "idempotencyKey"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "50f36134-1c11-4c1a-8548-4b784a026dca",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "listdistribution",
+      "description": "Read per-target status, URLs, source verification and history",
+      "method": "GET",
+      "path": "/api/service/articles/{id}/deliveries",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "2edc2abf-56f6-4853-ac55-cb7eed924d0e",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "getassistedpackage",
+      "description": "Retrieve content/images/source attribution and submission instructions",
+      "method": "GET",
+      "path": "/api/service/deliveries/{id}/package",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "c5e24e81-4c9e-4ea7-a688-6b8d64542409",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "requestexactapproval",
+      "description": "Create native NyxID exact request for Admin authorization",
+      "method": "POST",
+      "path": "/api/service/deliveries/{id}/request-approval",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "1ece34dc-53d7-4cd4-a7dd-d8bc816b054c",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "attachexactapproval",
+      "description": "Check and queue exact approved content/action/connection",
+      "method": "POST",
+      "path": "/api/service/deliveries/{id}/authorize",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "approvalRef": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "approvalRef"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "ffcd5e56-b320-43c3-9471-619286f0b4ba",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "canceldistribution",
+      "description": "cancel a delivery; uncertain recovery never re-sends",
+      "method": "POST",
+      "path": "/api/service/deliveries/{id}/cancel",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "8791c4ef-efa7-49a7-9833-77f58cabdc79",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "reconciledistribution",
+      "description": "reconcile a delivery; uncertain recovery never re-sends",
+      "method": "POST",
+      "path": "/api/service/deliveries/{id}/reconcile",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "f114c415-7ed9-4ee6-9f72-64e8f60ef648",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "reportassistedsubmission",
+      "description": "Record manual follow-up; published requires public verification, removed requires a confirmed removal action and the exact known copy URL returning 404/410",
+      "method": "POST",
+      "path": "/api/service/deliveries/{id}/report",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "submitted",
+              "reviewing",
+              "rejected",
+              "manual_action_needed",
+              "published",
+              "removed"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "fe20ef8a-169d-4bd2-9228-1dd7cf7545c6",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "refreshexternalmetrics",
+      "description": "Read supported authorized provider counters for this exact known copy",
+      "method": "POST",
+      "path": "/api/service/deliveries/{id}/metrics/refresh",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "1161dee5-8738-4e14-b193-119f15c669bf",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "querymetrics",
+      "description": "Query the same workspace metrics as CMS with availability/source/update time",
+      "method": "GET",
+      "path": "/api/service/metrics",
+      "parameters": [
+        {
+          "name": "ownerId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "from",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "to",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "article",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "en",
+              "zh"
+            ]
+          }
+        },
+        {
+          "name": "destination",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ghost",
+              "dev",
+              "hashnode",
+              "medium",
+              "hackernoon"
+            ]
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "f22ba4af-899c-4a60-9798-af1fada187b2",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "setpublishingpermission",
+      "description": "Current organization Admin grants or revokes Can publish",
+      "method": "PUT",
+      "path": "/api/service/owners/{ownerId}/publishers/{subject}",
+      "parameters": [
+        {
+          "name": "ownerId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "subject",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "e607bfb4-adc4-4583-9c8a-3f82bb9910e8",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "readaudit",
+      "description": "Owner or current organization Admin reads access/action audit",
+      "method": "GET",
+      "path": "/api/service/owners/{id}/audit",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "c176aa3a-6c9b-436c-a2ac-b2b242cf3594",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "syncpublishedalternates",
+      "description": "Retry published-only translation metadata projection",
+      "method": "POST",
+      "path": "/api/service/articles/{id}/sync-links",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request_content_type": "application/json",
+      "request_body_required": true,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    },
+    {
+      "publication": "published",
+      "data_scope": null,
+      "cost_class": null,
+      "execution": "http_operation",
+      "id": "e495a2e1-2eae-4c3e-a69e-093ee5d0dab7",
+      "service_id": "eb713005-29ce-42f6-ab1d-929993aa2e7b",
+      "name": "getpublishedalternatesstatus",
+      "description": "Read translation metadata projection status",
+      "method": "GET",
+      "path": "/api/service/articles/{id}/link-status",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body_schema": null,
+      "request_content_type": null,
+      "request_body_required": false,
+      "response_description": null,
+      "response": {
+        "content_types": [
+          "application/json"
+        ],
+        "binary_artifact": false
+      },
+      "risk": null,
+      "supports_idempotency_key": false,
+      "is_active": true,
+      "created_at": "2026-11-02T10:43:13.740+00:00",
+      "updated_at": "2026-11-02T10:43:13.740+00:00"
+    }
+  ]
+}

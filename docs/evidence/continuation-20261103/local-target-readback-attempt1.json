@@ -1,0 +1,12 @@
+{
+  "stage": "after operator login response",
+  "failure": "Python Request.method attribute is unavailable; use get_method()",
+  "businessMutation": false,
+  "catalogMutation": false,
+  "credentialsExposed": false,
+  "provenance": {
+    "privateSourcePath": "local-target-readback-attempt1.json",
+    "originalSha256": "605fb4be4ecb3210d9f2c241c703e9cc2dc12034c31f70b2cf5467c601b5f25f",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

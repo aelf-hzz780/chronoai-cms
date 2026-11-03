@@ -1,0 +1,46 @@
+{
+  "at": "2026-11-03T03:00:49.640240+00:00",
+  "status": "PASS_FIXED_CANDIDATE_NATIVE",
+  "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "diagnosticOnly": false,
+  "rootReviewed": true,
+  "reports": [
+    {
+      "path": "native/private/native-c46b0ca1cc76/report.json",
+      "sha256": "46cdba23e607809a679d5005a2dbd880632b10930001f0d189e61f797d30498e",
+      "expectedFields": {
+        "consumerSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+        "diagnosticOnly": false,
+        "status": "PASS_BOUNDED_NATIVE_OBSERVATION",
+        "sampleUnpublished": true,
+        "theme": "standard"
+      }
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/report.json",
+      "sha256": "a74bb5de5c729658ac521576e8fae9b5c0cc0716f7edf70978408e2f06fd9688",
+      "expectedFields": {
+        "consumerSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+        "diagnosticOnly": false,
+        "status": "PASS_BOUNDED_NATIVE_OBSERVATION",
+        "sampleUnpublished": true,
+        "theme": "smooth"
+      }
+    },
+    {
+      "path": "review/native-candidate-review.json",
+      "sha256": "c992b867aed12bb37bd108fcf2a88db6960df1515793be93083744d0ddc9f2af",
+      "expectedFields": {
+        "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+        "status": "PASS_BOUNDED_NATIVE_CANDIDATE_EVIDENCE",
+        "findings": []
+      }
+    }
+  ],
+  "scope": "Original candidate renderer, standard and smooth synthetic posts on isolated real Ghost/Nyx; old active/revoked media retired read-only, fresh single-image materialization and formal unpublish. Post-completion reconciliation not executed; no full matrix or external provider claim.",
+  "provenance": {
+    "privateSourcePath": "native-cutover-gate.json",
+    "originalSha256": "d3f857306ee0e26c84cd991b07035a113d21d18ef69aca8b2e5a1f71ef34af6f",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

@@ -1,0 +1,1426 @@
+[
+  {
+    "service_id": "bd8fda72-134f-4d08-8e5d-0fe7d95813f8",
+    "service_name": "Followup registration isolated BlogSystem",
+    "service_slug": "blog-followup-registration-20261102",
+    "description": null,
+    "service_category": "user_service",
+    "is_user_service": true,
+    "is_generic_proxy": false,
+    "recommended_skill_refs": null,
+    "skills_revision": 0,
+    "endpoints": [
+      {
+        "endpoint_id": "04ed918d-2297-4ba1-b131-c6787dc0095d",
+        "name": "confirmoriginal",
+        "description": "Confirm exact revision, author, owner, rights and Ghost action",
+        "method": "POST",
+        "path": "/api/service/articles/{id}/releases",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "ownerId": {
+              "type": "string"
+            },
+            "revisionId": {
+              "type": "string"
+            },
+            "creditedAuthor": {
+              "type": "string"
+            },
+            "action": {
+              "type": "string",
+              "enum": [
+                "publish",
+                "update",
+                "unpublish"
+              ]
+            },
+            "rightsConfirmed": {
+              "const": true,
+              "type": "boolean"
+            },
+            "idempotencyKey": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerId",
+            "revisionId",
+            "creditedAuthor",
+            "action",
+            "rightsConfirmed",
+            "idempotencyKey"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:fdce6ce2552da79de9b02a0e8cccb5f18248cd67696cd774c66f0aa18094fbc4"
+      },
+      {
+        "endpoint_id": "0cf2a398-9b6b-4038-9357-fa781b2efb97",
+        "name": "getassistedpackage",
+        "description": "Retrieve content/images/source attribution and submission instructions",
+        "method": "GET",
+        "path": "/api/service/deliveries/{id}/package",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:ce0f518047bc1425a2cdce746db906ac3f2ec33cca184db34defb84f7eac9563"
+      },
+      {
+        "endpoint_id": "10900e0b-e11b-4f3c-9af1-ae0ac144cde2",
+        "name": "listoriginals",
+        "description": "Read original publication history",
+        "method": "GET",
+        "path": "/api/service/articles/{id}/releases",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:bb887add2bde4f6091268cf645b51a97eab68014f3e44aaeb564ed5ad2df65a7"
+      },
+      {
+        "endpoint_id": "1cf9063c-a6b3-45e2-ba4f-e54a2052cd88",
+        "name": "listdistribution",
+        "description": "Read per-target status, URLs, source verification and history",
+        "method": "GET",
+        "path": "/api/service/articles/{id}/deliveries",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:b4e7351dcedc8c1cff5826e940cb8b4bf6e840a9fdef8dfc1baaae01d524ed93"
+      },
+      {
+        "endpoint_id": "28ec551e-bf31-4326-9891-3efd76aef6a9",
+        "name": "reconcileoriginal",
+        "description": "Read-only reconciliation of uncertain original",
+        "method": "POST",
+        "path": "/api/service/releases/{id}/reconcile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:407f916088cf4bceb679ee2bbdc644431f0952558a1840c00bd02aff5186d46f"
+      },
+      {
+        "endpoint_id": "2b88bc63-c077-408b-95a3-b075076c0f75",
+        "name": "confirmdistribution",
+        "description": "Confirm destination, exact owner connection and full/excerpt copy",
+        "method": "POST",
+        "path": "/api/service/releases/{id}/deliveries",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "ownerId": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string",
+              "enum": [
+                "dev",
+                "hashnode",
+                "medium",
+                "hackernoon"
+              ]
+            },
+            "connectionId": {
+              "type": "string"
+            },
+            "action": {
+              "type": "string",
+              "enum": [
+                "create",
+                "update",
+                "remove"
+              ]
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "full",
+                "excerpt"
+              ]
+            },
+            "excerpt": {
+              "type": "string"
+            },
+            "copyId": {
+              "type": "string"
+            },
+            "rightsConfirmed": {
+              "type": "boolean",
+              "const": true
+            },
+            "idempotencyKey": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target",
+            "connectionId",
+            "action",
+            "format",
+            "rightsConfirmed",
+            "idempotencyKey"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:c2263a65ea2be25a2cf3de6551fe78cb2483ffc44fdf41d671e15fc8e7c919cf"
+      },
+      {
+        "endpoint_id": "31636ed8-1cb1-4c1e-a7d7-d8431cbc7aca",
+        "name": "listrevisions",
+        "description": "List only authorized revision history",
+        "method": "GET",
+        "path": "/api/service/articles/{id}/revisions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:9d1a069f6c477a39f68cdd690ecbc9ed9cd6435a9c9e7663603ea4e0ed1db1b5"
+      },
+      {
+        "endpoint_id": "327823ea-b709-448d-91cd-2e722dad3e5b",
+        "name": "getarticle",
+        "description": "Read an authorized article revision",
+        "method": "GET",
+        "path": "/api/service/articles/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Optional authorized revision"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:47b695c331e9f51026f1b3323d76103aabf028054aa40802dde82f98d4e5ab05"
+      },
+      {
+        "endpoint_id": "34167b6c-0896-48b2-981c-a9fdfaeb27ea",
+        "name": "importmarkdownfile",
+        "description": "Import an original UTF-8 .md file preserving BOM, CRLF and source bytes",
+        "method": "POST",
+        "path": "/api/service/articles/import",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "creditedAuthor",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "string",
+          "format": "binary"
+        },
+        "request_content_type": "text/markdown",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:d793f0a830fd11582bb2069612cf8f6b3c2348cffb1e89a5881adcafb0128910"
+      },
+      {
+        "endpoint_id": "36910fcb-bf2b-4d84-aa48-54a6fac45d50",
+        "name": "requestexactapproval",
+        "description": "Create native NyxID exact request for Admin authorization",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/request-approval",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:c5f2b80d4155647efcd0d7985d11ec8bf0664b1abdc472aa0b9d7d44e6287a75"
+      },
+      {
+        "endpoint_id": "3c3a28b9-d79a-415f-9db5-b11321941027",
+        "name": "uploadprivateimage",
+        "description": "Upload a private PNG/JPEG/GIF/WebP asset",
+        "method": "POST",
+        "path": "/api/service/articles/{id}/assets",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "mime": {
+              "type": "string",
+              "enum": [
+                "image/png",
+                "image/jpeg",
+                "image/gif",
+                "image/webp"
+              ]
+            },
+            "base64": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "mime",
+            "base64"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:04f4861a994e66a64d53a102442ddc2e441dcbfbd13604b3500fe3554772798b"
+      },
+      {
+        "endpoint_id": "411571a4-4dfc-4cb7-aab0-15d8914e1136",
+        "name": "getpublishedalternatesstatus",
+        "description": "Read translation metadata projection status",
+        "method": "GET",
+        "path": "/api/service/articles/{id}/link-status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:e37820d00fbd90e1cbe6d91ecc2a2d8d5091e4c58426cdafbcb472c39448b42b"
+      },
+      {
+        "endpoint_id": "472fad15-12b4-4e45-ad06-fa34292a6a96",
+        "name": "getprivateimage",
+        "description": "Read an image only through an authorized corresponding revision",
+        "method": "GET",
+        "path": "/api/service/assets/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "image/gif",
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+          ],
+          "binary_artifact": true
+        },
+        "operation_digest": "sha256:7c05bd14929b973fe6acc6c27175dd3a0fe61ee61ca1658e0bfa8ee0bc0e085a"
+      },
+      {
+        "endpoint_id": "5bccd47e-0dd0-44ae-aa4e-8b66b347f20d",
+        "name": "linktranslation",
+        "description": "Link a translation to an authorized source revision",
+        "method": "POST",
+        "path": "/api/service/articles/{id}/translation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "sourceArticleId": {
+              "type": "string"
+            },
+            "sourceRevisionId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "sourceArticleId",
+            "sourceRevisionId"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:0c1e9de9aa4489b3a1795c347a8d4d5071ec8455f5e7bb2d5a748d0c1b82141f"
+      },
+      {
+        "endpoint_id": "5d47376f-999a-4a44-ba5f-4bde5fb1c9b1",
+        "name": "getworkspaces",
+        "description": "Read current caller and authorized workspaces",
+        "method": "GET",
+        "path": "/api/service/me",
+        "parameters": null,
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:e6c17047b026b29ac79c1379c5c5c450fb9f77c48add5e2f8d28a31d23a09dee"
+      },
+      {
+        "endpoint_id": "6465912a-9979-49ff-aa53-a48210ef7070",
+        "name": "reconciledistribution",
+        "description": "reconcile a delivery; uncertain recovery never re-sends",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/reconcile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:8dfd1be9846f154c89901b30a2865a3a907596352f41a2a23fd5d32c42daf857"
+      },
+      {
+        "endpoint_id": "6d6b5f9a-ce13-4d41-a8f9-f87232431907",
+        "name": "querymetrics",
+        "description": "Query the same workspace metrics as CMS with availability/source/update time",
+        "method": "GET",
+        "path": "/api/service/metrics",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "article",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ghost",
+                "dev",
+                "hashnode",
+                "medium",
+                "hackernoon"
+              ]
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:8737bb758cfbdbb6a60b8232f39e7ef7fa569a535be4d4c501a170300713bf89"
+      },
+      {
+        "endpoint_id": "700cc876-0677-44ed-8556-bfb45847017a",
+        "name": "editarticle",
+        "description": "Save an immutable revision with conflict protection",
+        "method": "PATCH",
+        "path": "/api/service/articles/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "expectedRevision": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "markdown": {
+              "type": "string"
+            },
+            "creditedAuthor": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "expectedRevision"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:81b26ab859c8ff1dd9b7ff612c60c484648ba3944663841757d45f8f9c8b0c16"
+      },
+      {
+        "endpoint_id": "7bfd9fe2-c102-4569-8ea6-baa40313743c",
+        "name": "submitdraft",
+        "description": "Submit this exact draft revision",
+        "method": "POST",
+        "path": "/api/service/articles/{id}/submit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "revisionId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "revisionId"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:5bc4671017f7f4c8755fd2379453cb8971a67abb5b32723ef6568235d0acda69"
+      },
+      {
+        "endpoint_id": "8355141f-a798-48d6-864e-530defa14880",
+        "name": "downloadmarkdown",
+        "description": "Retrieve the original .md file as a base64 JSON envelope. Decode data as base64 bytes, verify byteLength and SHA-256, then save as filename; never save the JSON or normalized text as Markdown.",
+        "method": "GET",
+        "path": "/api/service/articles/{id}/markdown-file",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:7fb1a43cff993cd03ba9188a950cb7230d0d0999c494a872e6a37f7e2dc3021f"
+      },
+      {
+        "endpoint_id": "8b9ceb41-5832-40a5-a8b6-8b90174185fe",
+        "name": "listarticles",
+        "description": "List/search authorized revisions",
+        "method": "GET",
+        "path": "/api/service/articles",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:00820451133fb1e491c04d50ba710b3eca5afd4b5851790510dfc9db6ee928b3"
+      },
+      {
+        "endpoint_id": "8daa12a9-cda2-4b49-9207-218001c7e974",
+        "name": "replacemarkdownfile",
+        "description": "Replace a draft from a UTF-8 .md file with revision conflict protection",
+        "method": "PUT",
+        "path": "/api/service/articles/{id}/markdown",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expectedRevision",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "string",
+          "format": "binary"
+        },
+        "request_content_type": "text/markdown",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:51da8b6684b7c5a4491a7023bc2e3fe1a1583617e8c8260c2349be41451b108c"
+      },
+      {
+        "endpoint_id": "8e9355db-fdc7-4bd5-aa7d-90858b4f6457",
+        "name": "canceldistribution",
+        "description": "cancel a delivery; uncertain recovery never re-sends",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:613e83b0ec389203ffb52c36a3bf1188793bc4483665ed55dcee4369faff79fb"
+      },
+      {
+        "endpoint_id": "a6dbca03-274f-4880-a046-7749f4372a0b",
+        "name": "syncpublishedalternates",
+        "description": "Retry published-only translation metadata projection",
+        "method": "POST",
+        "path": "/api/service/articles/{id}/sync-links",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:f6b7f3a1d953d3e34edf2fccba6936a3ef4d8c0cfce93a945b9b45623137d878"
+      },
+      {
+        "endpoint_id": "b148de0d-1bc6-4e2b-a7ec-22eb8c19ef03",
+        "name": "canceloriginal",
+        "description": "Cancel unsent original",
+        "method": "POST",
+        "path": "/api/service/releases/{id}/cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:9b3add10869074fbc87a33caf701be00106917286413679eb1f271bf8cd8cef3"
+      },
+      {
+        "endpoint_id": "b3408171-8583-4c34-8ea9-a77f404cf705",
+        "name": "listdestinations",
+        "description": "Read enabled destinations and automatic/assisted capability",
+        "method": "GET",
+        "path": "/api/service/targets",
+        "parameters": null,
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:e5efee9cbb75fe2278e7644f0e1588e3755cfb54ca15599ab2bfc5b926f9ee55"
+      },
+      {
+        "endpoint_id": "b6915962-0653-45a2-8c84-0e91a5b2bf23",
+        "name": "listownerconnections",
+        "description": "List only configured exact owner connections and current availability",
+        "method": "GET",
+        "path": "/api/service/owners/{id}/connections",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:e16ed07cdf6baed123eb6c95d9533d71ead94e14ae60b95bce302d9b4f0a2e46"
+      },
+      {
+        "endpoint_id": "bbfd5f8d-e240-4b72-9196-fd814b395d5c",
+        "name": "refreshexternalmetrics",
+        "description": "Read supported authorized provider counters for this exact known copy",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/metrics/refresh",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:7b454d8fa4eac6c38e57ccb11598f8460eb3ee86ad21b0959a160226e694c9cc"
+      },
+      {
+        "endpoint_id": "bc24f54e-2a17-4563-bd6d-e90c150eb14d",
+        "name": "setpublishingpermission",
+        "description": "Current organization Admin grants or revokes Can publish",
+        "method": "PUT",
+        "path": "/api/service/owners/{ownerId}/publishers/{subject}",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subject",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:4692f0067a94ff1bcea9310b6bdccfa8e1ec31c0ef3a78a1f4b70fb13d67b878"
+      },
+      {
+        "endpoint_id": "c855b471-bf6d-45b6-8fd0-30f8643cb847",
+        "name": "createarticle",
+        "description": "Create original English or Chinese Markdown",
+        "method": "POST",
+        "path": "/api/service/articles",
+        "parameters": null,
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "ownerId": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            },
+            "title": {
+              "type": "string",
+              "maxLength": 250
+            },
+            "markdown": {
+              "type": "string",
+              "maxLength": 2000000
+            },
+            "creditedAuthor": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerId",
+            "language",
+            "title",
+            "markdown",
+            "creditedAuthor"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:c8dcdcab984eb4ef60eff294a975f0af3b51cc0b904d65666184dc25d418c978"
+      },
+      {
+        "endpoint_id": "cf2117cd-0276-4a5a-949e-3562a3c94c0b",
+        "name": "reportassistedsubmission",
+        "description": "Record manual follow-up; published requires public verification, removed requires a confirmed removal action and the exact known copy URL returning 404/410",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/report",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "submitted",
+                "reviewing",
+                "rejected",
+                "manual_action_needed",
+                "published",
+                "removed"
+              ]
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "state"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:6e284f5e9c4c0a3ccda351d3d75ddcc907f9925b2da5cb1e31adbc38198efd78"
+      },
+      {
+        "endpoint_id": "e3ad6cc4-c4ea-4870-9576-71fc4fba699b",
+        "name": "attachexactapproval",
+        "description": "Check and queue exact approved content/action/connection",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/authorize",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "approvalRef": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "approvalRef"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:66282351c66036ca208ad3b06965782250f0ea3f13bce77b2aa821cf10ecd616"
+      },
+      {
+        "endpoint_id": "e53e23e2-324c-45a7-b26d-4420fdafc87e",
+        "name": "materializeoriginalmedia",
+        "description": "Explicitly authorize public images for an already accepted exact Ghost revision; never create or update a Ghost post",
+        "method": "POST",
+        "path": "/api/service/releases/{id}/materialize-media",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": {
+          "type": "object",
+          "properties": {
+            "ownerId": {
+              "type": "string"
+            },
+            "revisionId": {
+              "type": "string"
+            },
+            "rightsConfirmed": {
+              "const": true,
+              "type": "boolean"
+            },
+            "idempotencyKey": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "ownerId",
+            "revisionId",
+            "rightsConfirmed",
+            "idempotencyKey"
+          ],
+          "additionalProperties": false
+        },
+        "request_content_type": "application/json",
+        "request_body_required": true,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:6cebd1fdd09dfa0505cfeee02ea780ce4875de15dfb4cf1535e7e7ab38c8aee1"
+      },
+      {
+        "endpoint_id": "eaebc843-82cb-43c9-a0be-b683a89777ca",
+        "name": "previewarticle",
+        "description": "Privately preview an authorized saved revision",
+        "method": "GET",
+        "path": "/api/service/articles/{id}/preview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Optional authorized revision; defaults to the caller-visible revision"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:80c37333092b28a19a40d7e5330ac6541a8b1f183152e37cfebcab6befd42717"
+      },
+      {
+        "endpoint_id": "f2c0eb65-2b6f-4e42-9fcb-edad040479c2",
+        "name": "readaudit",
+        "description": "Owner or current organization Admin reads access/action audit",
+        "method": "GET",
+        "path": "/api/service/owners/{id}/audit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "request_body_schema": null,
+        "request_content_type": null,
+        "request_body_required": false,
+        "response_description": null,
+        "response": {
+          "content_types": [
+            "application/json"
+          ],
+          "binary_artifact": false
+        },
+        "operation_digest": "sha256:2431bae0f1ed9ba8a6488378b6348f5ad675f3e85e4fa3c867337d8abdcf5ee7"
+      }
+    ]
+  }
+]
