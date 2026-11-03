@@ -39,6 +39,33 @@ function assertEvidence(f:Awaited<ReturnType<typeof pendingMediaFixture>>,store:
   assert.deepEqual(store.get('SELECT * FROM revisions WHERE id=?',f.article.revision.id),f.revision);
 }
 
+test('post-materialization verification failure stays partial until current-actor read-only proof succeeds',async t=>{
+  const f=await pendingMediaFixture(t);
+  let images=0,materializations=0,verified=false,reads=0;
+  const worker=new ReleaseWorker(f.pub,{
+    async publish(){assert.fail('The existing original must not be resent');},
+    async unpublish(){assert.fail('Recognition must not change the original');},
+    async reconcile(){reads++;return f.result;},
+    async materialize(input){materializations++;await input.beforeMaterialize!();images++;input.onMaterialized!('image');return true;},
+    async verify(){return verified;},
+  });
+  await worker.once();
+  const partial=f.store.get('SELECT * FROM release_media_requests WHERE id=?',f.request.id)!;
+  assert.equal(partial.state,'partial');assert.equal(partial.public_files,1);
+  assert.equal(partial.error_code,'ORIGINAL_NOT_VERIFIED');
+  assert.equal(f.store.get('SELECT state FROM releases WHERE id=?',f.release.id)!.state,'uncertain');
+  assert.equal(await worker.once(),false,'A conservative failure never automatically repeats materialization');
+  f.revoked.add('admin');verified=true;
+  await f.pub.reconcile(f.actors.publisher,f.release.id,'current-actor-readonly');await worker.once();
+  const release=f.store.get('SELECT * FROM releases WHERE id=?',f.release.id)!;
+  assert.equal(release.state,'published');assert.equal(release.remote_id,f.result.remoteId);assert.equal(release.url,f.result.url);
+  assert.equal(release.actor_json,f.originalActor);assert.equal(release.revision_id,f.article.revision.id);
+  assert.deepEqual(f.store.get('SELECT * FROM release_media_requests WHERE id=?',f.request.id),partial);
+  assert.equal(images,1);assert.equal(materializations,1);assert.equal(reads,2);
+  assert.equal(f.store.get('SELECT count(*) n FROM projections')!.n,0);
+  assert.equal(await worker.once(),false,'Completed recognition leaves no repeated command');
+});
+
 for(const publicFiles of [0,1])test(`restore terminates queued media (${publicFiles} public) and permits current read-only recovery then fresh authorized completion`,async t=>{
   const f=await pendingMediaFixture(t,publicFiles),directory=await mkdtemp(join(tmpdir(),'chrono-media-recovery-'));
   t.after(()=>rm(directory,{recursive:true,force:true}));

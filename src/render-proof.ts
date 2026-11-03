@@ -55,7 +55,7 @@ export class BrowserRenderProof implements RenderProof {
           if(!shown(element))return false;
           if(element.tagName==='IMG'){
             for(let node:Element|null=element;node;node=node.parentElement){const style=getComputedStyle(node);if(style.filter!=='none'||style.maskImage!=='none')return false;}
-            element.scrollIntoView({block:'center',inline:'center'});
+            element.scrollIntoView({block:'center',inline:'center',behavior:'instant'});
             const rect=element.getBoundingClientRect();
             if(rect.width<1||rect.height<1||(element as HTMLImageElement).srcset)return false;
             const x=Math.max(0,Math.min(innerWidth-1,rect.left+rect.width/2)),y=Math.max(0,Math.min(innerHeight-1,rect.top+rect.height/2));
@@ -63,7 +63,7 @@ export class BrowserRenderProof implements RenderProof {
           }
           for(const node of element.childNodes){if(node.nodeType!==Node.TEXT_NODE||!node.textContent?.trim())continue;
             const range=document.createRange();range.selectNodeContents(node);const rect=[...range.getClientRects()].find(rect=>rect.width>0&&rect.height>0);if(!rect)return false;
-            element.scrollIntoView({block:'center',inline:'center'});const visibleRect=[...range.getClientRects()].find(rect=>rect.width>0&&rect.height>0);if(!visibleRect)return false;
+            element.scrollIntoView({block:'center',inline:'center',behavior:'instant'});const visibleRect=[...range.getClientRects()].find(rect=>rect.width>0&&rect.height>0);if(!visibleRect)return false;
             const x=Math.max(0,Math.min(innerWidth-1,visibleRect.left+Math.min(visibleRect.width/2,10))),y=Math.max(0,Math.min(innerHeight-1,visibleRect.top+visibleRect.height/2));
             const hit=document.elementFromPoint(x,y);if(!hit||!(hit===element||element.contains(hit)))return false;
           }
