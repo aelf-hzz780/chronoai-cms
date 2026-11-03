@@ -4,6 +4,8 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomBytes} from 'node:crypto';
 import {mkdir, readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {chromium} from 'playwright-core';
 import {fixture} from './helpers.ts';
 import {createApp} from '../src/app.ts';
@@ -19,6 +21,8 @@ import {TargetRegistry,DevAdapter,HashnodeAdapter,AssistedAdapter} from '../src/
 import {NyxAuthority} from '../src/nyxid.ts';
 import {ConnectionAttemptService} from '../src/connection-attempts.ts';
 import {WorkspaceReadService} from '../src/workspace-read.ts';
+
+const evidenceDirectory=(name:string)=>pathToFileURL(resolve(process.env.STUDIO_EVIDENCE_DIR??'.runtime/studio-acceptance',name)+'/');
 
 function acceptanceServices(f:ReturnType<typeof fixture>,vault:Vault,config:Config){
   // This adapter is an explicit external-provider fixture. Real CMS services,
@@ -106,15 +110,15 @@ if(process.argv.includes('--serve')){
     await page.goto(`${server.url}/studio`);await page.locator('#signin').waitFor();
     await page.goto(`${server.url}/__acceptance/session/member`);await page.locator('#workspace').waitFor();
     await page.locator('#workspace').selectOption('org');await page.getByRole('link',{name:'A calmer place to publish',exact:true}).waitFor();
-    const evidence=new URL('../docs/evidence/cms-b-m1/',import.meta.url);await mkdir(evidence,{recursive:true});
-    await page.screenshot({path:new URL('content.png',evidence).pathname,fullPage:true});
+    const evidence=evidenceDirectory('m1');await mkdir(evidence,{recursive:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('content.png',evidence).pathname,fullPage:true});
     await page.getByRole('link',{name:'A calmer place to publish',exact:true}).click();await page.locator('#article-title').waitFor();
     // Follow the actual peer, then verify the Chinese article loads from the API.
     const peer=page.locator(`a[href="#/article/${server.chinese.id}"]`).first();await peer.click();
     await page.waitForFunction(()=>document.querySelector<HTMLInputElement>('#article-title')?.value==='让内容发布更清晰');
     await page.locator(`a[href="#/article/${server.english.id}"]`).first().click();
     await page.waitForFunction(()=>document.querySelector<HTMLInputElement>('#article-title')?.value==='A calmer place to publish');
-    await page.screenshot({path:new URL('editor.png',evidence).pathname,fullPage:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('editor.png',evidence).pathname,fullPage:true});
     await page.locator('#locale').selectOption('zh');assert.match(await page.locator('.editor-title-label').innerText(),/English/);
     await page.locator('#locale').selectOption('en');
     const raw='\uFEFF# Browser-imported source\r\n\r\n中文 UTF-8 stays intact.\r\n';
@@ -144,7 +148,7 @@ if(process.argv.includes('--serve')){
     await page.locator('#markdown').fill('Keep this unsaved local text');await page.locator('[data-action="save"]').click();
     await page.locator('.conflict-banner').waitFor();assert.equal(await page.locator('#markdown').inputValue(),'Keep this unsaved local text');
     assert.match(await page.locator('#notice').innerText(),/CONFLICT.*Trace ID/);assert.ok(me.csrf);
-    await page.screenshot({path:new URL('conflict.png',evidence).pathname,fullPage:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('conflict.png',evidence).pathname,fullPage:true});
     // An organization Admin may publish submitted material, not edit its author’s draft.
     const adminPage=await context.newPage();await adminPage.goto(`${server.url}/__acceptance/session/admin`);
     await adminPage.locator('#workspace').selectOption('org');await adminPage.goto(`${server.url}/studio#/article/${server.english.id}`);
@@ -159,6 +163,97 @@ if(process.argv.includes('--serve')){
     await adminPage.waitForFunction(()=>document.documentElement.scrollWidth<=innerWidth);
     await adminPage.screenshot({path:new URL('mobile.png',evidence).pathname,fullPage:true});
     assert.deepEqual(errors,[]);
+  });
+  test('WP04 real API browser: connection intent survives refresh and binds only the selected organization account',async t=>{
+    const server=await acceptanceServer();t.after(()=>server.close());
+    const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
+    const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
+    await page.goto(`${server.url}/__acceptance/session/admin`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/studio#/connections`);await page.locator('#connections-target').selectOption('dev');
+    await page.locator('[data-action="connection-create"]').click();await page.locator('.studio-attempt').waitFor();
+    const attempt=server.f.store.get('SELECT * FROM connection_attempts WHERE owner_id=?','org')!;
+    assert.ok(attempt);assert.equal(attempt.status,'binding_required');assert.equal(attempt.flow,'operator');
+    await page.reload();await page.locator('.studio-attempt').waitFor();assert.match(await page.locator('.studio-attempt').innerText(),new RegExp(attempt.id));
+    await page.locator('#connections-connection').selectOption('org-dev');
+    await page.locator('[data-action="connection-recheck"]').click();
+    await page.waitForFunction(()=>document.querySelector('.studio-attempt .badge')?.textContent==='Exact binding verified');
+    assert.equal(server.f.store.get('SELECT connection_id FROM connection_attempts WHERE id=?',attempt.id)!.connection_id,'org-dev');
+    assert.equal(server.f.store.get('SELECT count(*) n FROM connection_attempts')!.n,1,'choosing the binding retains the existing attempt');
+    assert.equal(server.f.store.get('SELECT count(*) n FROM jobs')!.n,0);
+    const storage=await page.evaluate(()=>JSON.stringify({local:{...localStorage},session:{...sessionStorage}}));assert.doesNotMatch(storage,/connectUrl|managementUrl|token=|fixture-only/);
+    const evidence=evidenceDirectory('wp04');await mkdir(evidence,{recursive:true});await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('connections.png',evidence).pathname,fullPage:true});
+  });
+  test('WP05 real API browser: manual notes and deferred human confirmation persist without outbound work',async t=>{
+    const server=await acceptanceServer();t.after(()=>server.close());const release=await server.publish(server.english);
+    const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
+    const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
+    page.on('dialog',dialog=>dialog.accept());
+    await page.goto(`${server.url}/__acceptance/session/publisher`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/studio#/distribution/${server.english.id}`);
+    await page.locator('#distribution-target').selectOption('medium');await page.locator('#distribution-connection').selectOption('org-medium');
+    await page.locator('#distribution-format').selectOption('excerpt');await page.locator('#distribution-excerpt').fill('A private, confirmed excerpt for this exact copy.');
+    const evidence=evidenceDirectory('wp05');await mkdir(evidence,{recursive:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('distribution.png',evidence).pathname,fullPage:true});
+    await page.locator('#distribution-rights').check();await page.locator('[data-action="dist-confirm"]').click();
+    await page.waitForURL(url=>url.hash.startsWith('#/task/delivery/'));await page.locator('#delivery-report-state').waitFor();
+    const manualId=new URL(page.url()).hash.split('/').at(-1)!;
+    assert.equal(server.f.store.get('SELECT state FROM deliveries WHERE id=?',manualId)!.state,'manual_action_needed');
+    await page.locator('#delivery-report-state').selectOption('submitted');await page.locator('#delivery-report-note').fill('Submitted via the editorial workflow.');
+    await page.locator('[data-action="delivery-report"]').click();await page.waitForFunction(()=>document.querySelector('.page-heading .badge')?.textContent==='Submitted');
+    assert.equal(server.f.store.get('SELECT state FROM deliveries WHERE id=?',manualId)!.state,'submitted');
+    assert.equal(server.f.store.get('SELECT note FROM delivery_notes WHERE delivery_id=?',manualId)!.note,'Submitted via the editorial workflow.');
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('manual-followup.png',evidence).pathname,fullPage:true});
+    const mobile=await context.newPage();await mobile.setViewportSize({width:390,height:844});
+    await mobile.goto(`${server.url}/studio`);await mobile.locator('#workspace').selectOption('org');
+    await mobile.goto(`${server.url}/studio#/distribution/${server.english.id}`);await mobile.locator('#distribution-target').selectOption('medium');
+    await mobile.locator('#distribution-connection').selectOption('org-medium');
+    assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    await mobile.screenshot({path:new URL('distribution-mobile.png',evidence).pathname,fullPage:true});await mobile.close();
+    const jobsBefore=server.f.store.get('SELECT count(*) n FROM jobs')!.n;
+    await page.goto(`${server.url}/studio#/distribution/${server.english.id}`);
+    await page.locator('#distribution-target').selectOption('hackernoon');await page.locator('#distribution-connection').selectOption('org-hackernoon');
+    await page.locator('#distribution-format').selectOption('full');
+    await page.locator('.studio-plan-create summary').click();
+    await page.locator('#distribution-not-before').fill(new Date(Date.now()+3*86_400_000).toISOString().slice(0,16));await page.locator('#distribution-rights').check();
+    await page.locator('[data-action="dist-plan"]').click();await page.waitForURL(url=>url.hash.startsWith('#/task/plan/'));
+    const planId=new URL(page.url()).hash.split('/').at(-1)!;await page.locator('.page-heading').waitFor();
+    assert.equal(server.f.store.get('SELECT state FROM distribution_plans WHERE id=?',planId)!.state,'scheduled');
+    assert.equal(server.f.store.get('SELECT count(*) n FROM jobs')!.n,jobsBefore);
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('scheduled-plan.png',evidence).pathname,fullPage:true});
+    server.f.store.run('UPDATE distribution_plans SET not_before_at=? WHERE id=?',new Date(Date.now()-1000).toISOString(),planId);
+    await page.reload();await page.locator('#plan-rights').check();await page.locator('[data-action="plan-confirm"]').click();
+    await page.waitForURL(url=>url.hash.startsWith('#/task/delivery/'));await page.locator('#delivery-report-state').waitFor();
+    const plan=server.f.store.get('SELECT * FROM distribution_plans WHERE id=?',planId)!;
+    assert.equal(plan.state,'confirmed');assert.equal(new URL(page.url()).hash.split('/').at(-1),plan.delivery_id);
+    assert.equal(server.f.store.get('SELECT count(*) n FROM jobs')!.n,jobsBefore,'manual confirmation never fabricates a provider job');
+    // Historical follow-up remains a separate append-only action after the source changes.
+    server.f.store.run("UPDATE releases SET state='superseded' WHERE id=?",release.id);
+    await page.goto(`${server.url}/studio#/task/delivery/${manualId}`);await page.locator('#delivery-note').fill('Historical copy needs review after source update.');
+    await page.locator('[data-action="delivery-note"]').click();
+    await page.getByText('Historical copy needs review after source update.',{exact:true}).waitFor();
+    assert.equal(server.f.store.get('SELECT state FROM releases WHERE id=?',release.id)!.state,'superseded');
+    assert.equal(server.f.store.get('SELECT state FROM deliveries WHERE id=?',manualId)!.state,'submitted');
+    assert.equal(server.f.store.get('SELECT count(*) n FROM delivery_notes WHERE delivery_id=?',manualId)!.n,2);
+    await page.reload();await page.getByText('Historical copy needs review after source update.',{exact:true}).waitFor();
+  });
+  test('WP04 real API browser: exact approval attachment alone queues the frozen organization copy',async t=>{
+    const server=await acceptanceServer();t.after(()=>server.close());await server.publish(server.english);
+    const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
+    const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
+    page.on('dialog',dialog=>dialog.accept());
+    await page.goto(`${server.url}/__acceptance/session/admin`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/studio#/distribution/${server.english.id}`);await page.locator('#distribution-target').selectOption('dev');
+    await page.locator('#distribution-connection').selectOption('org-dev');await page.locator('#distribution-rights').check();
+    await page.locator('[data-action="dist-confirm"]').click();await page.waitForURL(url=>url.hash.startsWith('#/task/delivery/'));
+    const id=new URL(page.url()).hash.split('/').at(-1)!;await page.locator('[data-action="delivery-request-approval"]').click();
+    await page.waitForFunction(()=>Boolean(document.querySelector<HTMLInputElement>('#approval-reference')?.value));
+    const reference=await page.locator('#approval-reference').inputValue();assert.equal(server.f.store.get('SELECT approval_ref FROM deliveries WHERE id=?',id)!.approval_ref,reference);
+    assert.equal(server.f.store.get("SELECT count(*) n FROM jobs WHERE kind='delivery' AND resource_id=?",id)!.n,0);
+    server.acceptApproval(reference);await page.locator('#approval-rights').check();await page.locator('[data-action="delivery-authorize"]').click();
+    await page.waitForFunction(()=>document.querySelector('.page-heading .badge')?.textContent==='Queued');
+    assert.equal(server.f.store.get('SELECT state FROM deliveries WHERE id=?',id)!.state,'queued');
+    assert.equal(server.f.store.get("SELECT count(*) n FROM jobs WHERE kind='delivery' AND resource_id=? AND state='queued'",id)!.n,1);
+    const evidence=evidenceDirectory('wp04');await mkdir(evidence,{recursive:true});await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('approved-copy.png',evidence).pathname,fullPage:true});
   });
   test('WP08 real API browser: legacy and Studio share immutable revisions and permit UI-only rollback',async t=>{
     const server=await acceptanceServer();t.after(()=>server.close());
@@ -187,7 +282,7 @@ if(process.argv.includes('--serve')){
     const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
     const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
-    const evidence=new URL('../docs/evidence/cms-b-wp06/',import.meta.url);await mkdir(evidence,{recursive:true});
+    const evidence=evidenceDirectory('wp06');await mkdir(evidence,{recursive:true});
     await page.goto(`${server.url}/__acceptance/session/admin`);await page.locator('#workspace').selectOption('org');
     await page.goto(`${server.url}/studio#/members`);await page.locator('.studio-member-directory').waitFor();
     await page.locator('[data-action="member-select"][data-identity="member"][data-enabled="true"]').click();
@@ -195,7 +290,7 @@ if(process.argv.includes('--serve')){
     await page.locator('[data-action="member-confirm"]').click();
     await page.locator('[data-action="member-select"][data-identity="member"][data-enabled="false"]').waitFor();
     assert.ok(server.f.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?','org','member'));
-    await page.screenshot({path:new URL('members.png',evidence).pathname,fullPage:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('members.png',evidence).pathname,fullPage:true});
     // A current directory outage must not prevent explicit revocation of a known subject.
     server.f.policy.authority.organizationMembers=async()=>{throw new Error('Acceptance directory outage');};
     await page.locator('[data-action="refresh"]').click();await page.locator('.studio-member-unavailable').waitFor();
@@ -210,13 +305,13 @@ if(process.argv.includes('--serve')){
     assert.equal(metrics.externalEngagement.metrics.views.value,null);
     assert.equal(await page.locator('[data-metric="views"] strong').innerText(),'Unavailable');
     assert.equal(await page.locator('.studio-trend').count(),0,'external lifetime captures do not invent a daily traffic chart');
-    await page.screenshot({path:new URL('analytics.png',evidence).pathname,fullPage:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('analytics.png',evidence).pathname,fullPage:true});
     await page.goto(`${server.url}/studio#/settings`);await page.locator('#settings-locale').waitFor();
     assert.equal(await page.locator('.studio-settings-layout input').count(),0,'unsupported workspace settings have no false editable inputs');
     assert.match(await page.locator('.studio-settings-layout').innerText(),/https:\/\/en.example.invalid/);
     assert.match(await page.locator('.studio-settings-layout').innerText(),/https:\/\/zh.example.invalid/);
     await page.locator('#settings-locale').selectOption('zh');await page.locator('h1').filter({hasText:'站点与工作区'}).waitFor();
-    await page.screenshot({path:new URL('settings-zh.png',evidence).pathname,fullPage:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('settings-zh.png',evidence).pathname,fullPage:true});
     await page.goto(`${server.url}/studio#/guide`);await page.locator('.studio-guide-grid').waitFor();
     assert.match(await page.locator('.studio-guide-grid').innerText(),/Ghost/);
     // Losing Admin after page entry must block the actual API, not just hide a button.
@@ -238,8 +333,8 @@ if(process.argv.includes('--serve')){
     assert.equal(await page.locator('[data-action="confirm-original"]').isDisabled(),true);
     assert.match(await page.locator('.review-summary').innerText(),/English.*Ghost/s);
     assert.match(await page.locator('.studio-confirm-preview').innerText(),/One workspace. Two independent originals./);
-    const evidence=new URL('../docs/evidence/cms-b-wp03/',import.meta.url);await mkdir(evidence,{recursive:true});
-    await page.screenshot({path:new URL('publication-review.png',evidence).pathname,fullPage:true});
+    const evidence=evidenceDirectory('wp03');await mkdir(evidence,{recursive:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('publication-review.png',evidence).pathname,fullPage:true});
     await page.locator('#publication-rights').check();await page.locator('[data-action="confirm-original"]').click();
     await page.waitForURL(url=>url.hash.startsWith('#/task/release/'));await page.locator('.studio-task-preview').waitFor();
     const id=new URL(page.url()).hash.split('/').at(-1)!;
@@ -253,7 +348,7 @@ if(process.argv.includes('--serve')){
     await page.reload();await page.locator('.studio-task-preview').waitFor();
     assert.match(await page.locator('.studio-task-preview').innerText(),/One workspace. Two independent originals./);
     assert.doesNotMatch(await page.locator('.studio-task-preview').innerText(),/New submission after confirmation/);
-    await page.screenshot({path:new URL('queued-task.png',evidence).pathname,fullPage:true});
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('queued-task.png',evidence).pathname,fullPage:true});
     page.once('dialog',dialog=>dialog.accept());await page.locator('[data-action="task-cancel"]').click();
     await page.waitForFunction(()=>document.querySelector('.page-heading .badge')?.textContent==='Cancelled');
     assert.equal(server.f.store.get('SELECT state FROM releases WHERE id=?',id)!.state,'cancelled');

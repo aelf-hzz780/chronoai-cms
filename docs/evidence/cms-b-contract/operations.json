@@ -1,0 +1,95 @@
+{
+  "level": "local-contract-only-not-registration",
+  "baseRevision": "ce4fb1a9bc3f5785aca141ea7e17f77bb0da006a",
+  "baseOperations": 35,
+  "currentOperations": 49,
+  "added": [
+    {
+      "path": "/api/service/deliveries/{id}/notes",
+      "method": "POST",
+      "operationId": "appendDeliveryNote"
+    },
+    {
+      "path": "/api/service/owners/{id}/connection-attempts/{attemptId}/cancel",
+      "method": "POST",
+      "operationId": "cancelConnectionAttempt"
+    },
+    {
+      "path": "/api/service/distribution-plans/{id}/cancel",
+      "method": "POST",
+      "operationId": "cancelDistributionPlan"
+    },
+    {
+      "path": "/api/service/owners/{id}/connection-attempts",
+      "method": "POST",
+      "operationId": "createConnectionAttempt"
+    },
+    {
+      "path": "/api/service/releases/{id}/distribution-plans",
+      "method": "POST",
+      "operationId": "createDistributionPlan"
+    },
+    {
+      "path": "/api/service/owners/{id}/connection-attempts/{attemptId}",
+      "method": "GET",
+      "operationId": "getConnectionAttempt"
+    },
+    {
+      "path": "/api/service/owners/{id}/tasks/{kind}/{taskId}",
+      "method": "GET",
+      "operationId": "getOwnerTask"
+    },
+    {
+      "path": "/api/service/owners/{id}/tasks/{kind}/{taskId}/assets/{assetId}",
+      "method": "GET",
+      "operationId": "getTaskImage"
+    },
+    {
+      "path": "/api/service/owners/{id}/content-summary",
+      "method": "GET",
+      "operationId": "listOwnerContentSummary"
+    },
+    {
+      "path": "/api/service/owners/{id}/members",
+      "method": "GET",
+      "operationId": "listOwnerMembers"
+    },
+    {
+      "path": "/api/service/owners/{id}/sites",
+      "method": "GET",
+      "operationId": "listOwnerSites"
+    },
+    {
+      "path": "/api/service/owners/{id}/tasks",
+      "method": "GET",
+      "operationId": "listOwnerTasks"
+    },
+    {
+      "path": "/api/service/owners/{id}/connection-attempts/{attemptId}/recheck",
+      "method": "POST",
+      "operationId": "recheckConnectionAttempt"
+    },
+    {
+      "path": "/api/service/deliveries/{id}/verify-observation",
+      "method": "POST",
+      "operationId": "verifyAssistedObservation"
+    }
+  ],
+  "removed": [],
+  "changedExistingRequests": [
+    {
+      "path": "/api/service/releases/{id}/deliveries",
+      "method": "POST",
+      "operationId": "confirmDistribution"
+    },
+    {
+      "path": "/api/service/deliveries/{id}/report",
+      "method": "POST",
+      "operationId": "reportAssistedSubmission"
+    }
+  ],
+  "baseOpenApiSha256": "29ced7e763ba5564635054f8efd45f6c061e096b6cfeabb659b5793d8d6d7559",
+  "currentOpenApiSha256": "6e47800aac3ab98bbb1b13e585d0d631b4b229d2fa2e72a57dc58a0b10b77788",
+  "digestMeaning": "SHA-256 of canonically sorted complete local OpenAPI; not a Nyx native endpoint-contract digest or proof of registration",
+  "contractRevision": "6ee1a71a5d571921b275a11d47e543167647c6d2"
+}
