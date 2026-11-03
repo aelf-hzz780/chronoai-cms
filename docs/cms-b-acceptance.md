@@ -11,13 +11,13 @@ This matrix covers the accepted fourteen-page scope, WP00–08 and C01–C10. Im
 | Content 内容库 | Authorized server pagination/counts; draft/submission/live independent; no private UUID/title leak | C02 tests; actual API browser; EN/ZH and mobile screenshots |
 | Editor 编辑器 | Distinct articles and immutable revisions; save/submit/conflict; exact Markdown bytes; scoped images; explicit translation peers | Actual API browser, BOM/CRLF download, private media denial, stale translation tests |
 | Publish 发布确认 | Exact owner/site/language/revision/byline/action/rights; stable retry intent; 202 only queues | b8d1daf actual API browser and UI failure/race fixtures PASS |
-| Distribution 分发详情 | Frozen payload and copy identity; current exact connection/approval; manual workflow; persistent plans/notes; historical-copy observation | WP04/05 in progress |
-| Tasks 全局任务 | Authorized paginated aggregate; exact snapshot/asset access; bounded polling; unknown result never resends a write | C03/WP03 fixed gate and actual API frozen-readback/cancel/mobile PASS; plan extension pending |
-| Analytics 数据 | Availability/source/capture-time/coverage; UTC daily estimates; external lifetime snapshots; authorized refresh | WP06 UI pending; existing metrics/collector baseline retained |
+| Distribution 分发详情 | Frozen payload and copy identity; current exact connection/approval; manual workflow; persistent plans/notes; historical-copy observation | C07–09 backend fixed gate PASS; final Studio workflow in progress |
+| Tasks 全局任务 | Authorized paginated aggregate; exact snapshot/asset access; bounded polling; unknown result never resends a write | C03/WP03 fixed gate and actual API frozen-readback/cancel/mobile PASS; plan persistence, due state and private-read extension PASS |
+| Analytics 数据 | Availability/source/capture-time/coverage; UTC daily estimates; external lifetime snapshots; authorized refresh | 1745f44 actual API browser: unavailable counters remain null/Unavailable; filters, UTC/capture semantics and precise refresh fixture regressions PASS |
 | Connections 连接 | Subject/owner/target-bound attempt; trusted callback requery; binding_required; no implicit personal fallback | C06 fixture and actual session tests PASS at d761db7; UI pending, live provider deferred |
 | Settings 设置 | Actual per-language site configuration, read-only unsupported settings | C04/Studio M1; no false save form |
-| Members 成员 | Current org directory; Admin+roles:write; eligible live target for grant; revoke possible during directory outage | C05 tests PASS; WP06 UI in progress |
-| Guide 帮助 | Current permissions and meaningful recovery links; automatic/manual and approval/publication distinguished | Full guide pending |
+| Members 成员 | Current org directory; Admin+roles:write; eligible live target for grant; revoke possible during directory outage | C05 + real API browser grant/revoke/directory-outage/current-Admin revocation PASS |
+| Guide 帮助 | Current permissions and meaningful recovery links; automatic/manual and approval/publication distinguished | WP06 permission-aware bilingual guide, real settings/sites, local browser and fixture navigation PASS |
 | Public home 公开首页 | Ghost-native feed, locale, navigation, pagination, stable URLs, no private CMS API | Official GScan; local EN/ZH actual upload/render/rollback |
 | Public story 公开文章 | Correct byline, canonical/hreflang, content, code/tables, consent; remains readable with CMS stopped | Actual local CMS API → workers → dual Ghost, consent and offline-read acceptance PASS |
 
@@ -37,6 +37,7 @@ This matrix covers the accepted fourteen-page scope, WP00–08 and C01–C10. Im
 - Baseline `ce4fb1a`: typecheck and 307/307 tests in an isolated export.
 - M1/C03/theme-source `ce4203b`: typecheck and 353/353 tests; separate actual Fastify/SQLite/session/CSRF browser acceptance.
 - WP03+C05/C06 `b8d1daf`: typecheck and 379/379 tests; independent exported source with actual API browser M1/WP03, 2/2 PASS. Screenshots under `docs/evidence/cms-b-wp03`.
+- WP05/WP06 `0a7c931`: isolated typecheck + 402/402 tests PASS; separate actual API governance and legacy/Studio parity browser scenarios PASS.
 - Ghost theme: `docs/evidence/ghost-b-local/` contains both-language native rendering and restoration results.
 - CMS→Ghost: `docs/evidence/cms-ghost-local/` contains both-language publishing, attribution, translation and consent evidence. Test articles are intentionally drafts after cleanup, so their public URLs now return 404.
 - 所有本机身份来源均明确为隔离 fixture；生产模块没有注入测试登录。真实 Nyx、外部分发渠道、公开域名/素材、目标注册更新、维护邮箱和具名运维签收另列，不据本机测试推定通过。

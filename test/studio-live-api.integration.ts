@@ -13,6 +13,40 @@ import {Vault} from '../src/vault.ts';
 import {digest} from '../src/content.ts';
 import {AppError} from '../src/errors.ts';
 import {BrowserRenderProof} from '../src/render-proof.ts';
+import {PublishingService,ReleaseWorker} from '../src/publishing.ts';
+import {DistributionService} from '../src/distribution.ts';
+import {TargetRegistry,DevAdapter,HashnodeAdapter,AssistedAdapter} from '../src/targets.ts';
+import {NyxAuthority} from '../src/nyxid.ts';
+import {ConnectionAttemptService} from '../src/connection-attempts.ts';
+import {WorkspaceReadService} from '../src/workspace-read.ts';
+
+function acceptanceServices(f:ReturnType<typeof fixture>,vault:Vault,config:Config){
+  // This adapter is an explicit external-provider fixture. Real CMS services,
+  // policy, queue persistence and HTTP routes still run without interception.
+  const targets=['dev','hashnode','medium','hackernoon'];
+  const bindings=(owner:any)=>targets.map(target=>({id:`${owner.subject}-${target}`,owner,target,slug:`fixture-${target}`,accountId:`fixture-${owner.subject}-account`,generation:'fixture-generation-1',active:true,canPublish:true,canUpdate:true,organizationId:owner.kind==='organization'?'fixture-org':undefined,publicationId:'fixture-publication',remoteBaseUrl:target==='dev'?'https://dev.to/api':'https://gql.hashnode.com'}));
+  const approvals=new Map<string,{digest:string;connectionId:string;action:string;accepted:boolean}>();
+  const originals=new PublishingService(f.content,vault);
+  const connections={
+    async connection(_actor:any,owner:any,id:string,target:string){const value=bindings(owner).find(binding=>binding.id===id&&binding.target===target);if(!value)throw new AppError(403,'CONNECTION_MISMATCH','Unknown acceptance connection');return value;},
+    async listConnections(_actor:any,owner:any){return bindings(owner).map(({id,target,accountId,active})=>({id,target,label:`Local fixture · ${target}`,accountId,active}));},
+    async execute(){throw new Error('External provider writes are disabled in the local acceptance preview');},
+    async prepareApproval(_actor:any,_owner:any,connectionId:string,_target:string,_request:any,deliveryId:string,contentDigest:string,action:string){const reference=`fixture-approval-${deliveryId}`;approvals.set(reference,{digest:contentDigest,connectionId,action,accepted:false});return {reference,state:'pending',expiresAt:new Date(Date.now()+900_000).toISOString()};},
+    async approval(_actor:any,_owner:any,reference:string,contentDigest:string,connectionId:string,action:string){const value=approvals.get(reference);if(!value?.accepted||value.digest!==contentDigest||value.connectionId!==connectionId||value.action!==action)throw new AppError(403,'APPROVAL_INVALID','This exact fixture approval has not been accepted');return {};}
+  };
+  const distribution=new DistributionService(originals,connections,new TargetRegistry([new DevAdapter('https://dev.to/api'),new HashnodeAdapter('https://gql.hashnode.com'),new AssistedAdapter('medium'),new AssistedAdapter('hackernoon')]));
+  config.connectionSetup={managementUrl:'https://identity.example/services',ttlSeconds:900,targets:{dev:{enabled:true,serviceSlug:'fixture-dev',scopes:['write:articles']}}};
+  const nyx=new NyxAuthority(config,f.store);
+  nyx.bindings=async()=>f.store.all('SELECT * FROM owners').flatMap(owner=>bindings({kind:owner.kind,issuer:owner.issuer,subject:owner.subject}));
+  nyx.call=async(actor,path,method='GET',_body?:any)=>{
+    if(path==='/api/v1/user-services')return {services:(await nyx.bindings()).filter(binding=>binding.owner.subject===actor.subject||binding.owner.kind==='organization').map(binding=>({id:binding.id,slug:binding.slug,is_active:true,state_version:1,credential_source:binding.owner.kind==='organization'?{type:'org',org_id:binding.owner.subject,allowed:true}:{type:'personal'}}))};
+    if(path==='/api/v1/connect-links'&&method==='POST')return {id:'fixture-link',connect_url:'https://identity.example/connect?token=fixture-only',expires_at:new Date(Date.now()+900_000).toISOString()};
+    if(path.startsWith('/api/v1/connect-links/fixture-link'))return {id:'fixture-link',status:path.endsWith('/cancel')?'cancelled':'pending',service_slug:'fixture-dev',service_name:'DEV',scopes:['write:articles'],expires_at:new Date(Date.now()+900_000).toISOString()};
+    throw new Error('Unexpected acceptance identity request');
+  };
+  const connectionAttempts=new ConnectionAttemptService(new WorkspaceReadService(f.policy),nyx,vault,config);
+  return {originals,distribution,connectionAttempts,acceptApproval(reference:string){const value=approvals.get(reference);assert.ok(value);value.accepted=true;},async publish(article:any){const release=await originals.confirm(f.actors.admin,article.id,{ownerId:'org',revisionId:article.revision.id,creditedAuthor:article.revision.creditedAuthor,action:'publish',rightsConfirmed:true,idempotencyKey:`acceptance-${article.id}`},'acceptance-original');await new ReleaseWorker(originals,{async publish(input){return {remoteId:`fixture-${input.articleId}`,url:`https://${input.language}.example.invalid/${input.articleId}/`};},async verify(){return true;},async reconcile(){return null;},async unpublish(){}}).once();return f.store.get('SELECT * FROM releases WHERE id=?',release.id)!;}};
+}
 
 async function acceptanceServer(port=0){
   const f=fixture(),vault=new Vault(randomBytes(32).toString('hex'));
@@ -35,7 +69,12 @@ async function acceptanceServer(port=0){
     if(!actor)throw new AppError(401,'INVALID_TOKEN','Unknown acceptance identity');
     await f.policy.scope(actor,'content:read');return actor;
   };
-  const app=await createApp({...f,vault,publicUrl:config.publicUrl,auth,authenticate:request=>auth.authenticate(request)});
+  const services=acceptanceServices(f,vault,config);
+  const app=await createApp({...f,vault,...services,publicUrl:config.publicUrl,auth,authenticate:request=>auth.authenticate(request)});
+  if(process.argv.includes('--serve'))app.addHook('onSend',async(request,_reply,payload)=>{
+    if(request.url.split('?')[0]==='/studio'&&typeof payload==='string')return payload.replace('<body>','<body><div class="studio-notice" role="status">LOCAL ACCEPTANCE / 本地验收：真实 CMS API 与隔离数据库；身份、连接与外部发布结果为测试 fixture。不会向外部平台发文。</div>');
+    return payload;
+  });
   app.get('/__acceptance/session/:subject',async(request,reply)=>{
     const subject=(request.params as {subject:string}).subject;
     if(!f.actors[subject])return reply.code(404).send({error:'Unknown fixture actor'});
@@ -45,12 +84,17 @@ async function acceptanceServer(port=0){
     return reply.redirect('/studio');
   });
   const url=await app.listen({host:'127.0.0.1',port});config.publicUrl=url;
-  return {f,app,url,english,chinese,async close(){await app.close();f.store.close();}};
+  return {f,app,url,english,chinese,...services,async close(){await app.close();f.store.close();}};
 }
 
 if(process.argv.includes('--serve')){
   const server=await acceptanceServer(Number(process.env.STUDIO_ACCEPTANCE_PORT??4174));
-  process.stdout.write(`Isolated acceptance only; no real Nyx identity or external publishing.\n${server.url}/__acceptance/session/member\n`);
+  const release=await server.publish(server.english);await server.publish(server.chinese);
+  const manual=await server.distribution.request(server.f.actors.admin,release.id,{target:'medium',connectionId:'org-medium',action:'create',format:'full',rightsConfirmed:true,idempotencyKey:'preview-manual'},'preview-fixture');
+  await server.distribution.report(server.f.actors.admin,manual.id,'reviewing',null,'preview-fixture','Local acceptance fixture: awaiting an editorial decision.');
+  await server.distribution.request(server.f.actors.admin,release.id,{target:'dev',connectionId:'org-dev',action:'create',format:'excerpt',excerpt:'One workspace. Two independent originals. A deliberate confirmation before every destination.',rightsConfirmed:true,idempotencyKey:'preview-automatic'},'preview-fixture');
+  await server.distribution.createPlan(server.f.actors.admin,release.id,{target:'hackernoon',connectionId:'org-hackernoon',action:'create',format:'full',rightsConfirmed:true,idempotencyKey:'preview-plan',notBeforeAt:new Date(Date.now()+86_400_000).toISOString()},'preview-fixture');
+  process.stdout.write(`Isolated acceptance only; no real Nyx identity or external publishing.\n${server.url}/__acceptance/session/admin\n${server.url}/__acceptance/session/member\n`);
   const stop=async()=>{await server.close();process.exit(0);};
   process.once('SIGINT',stop);process.once('SIGTERM',stop);
 }else{
@@ -115,6 +159,28 @@ if(process.argv.includes('--serve')){
     await adminPage.waitForFunction(()=>document.documentElement.scrollWidth<=innerWidth);
     await adminPage.screenshot({path:new URL('mobile.png',evidence).pathname,fullPage:true});
     assert.deepEqual(errors,[]);
+  });
+  test('WP08 real API browser: legacy and Studio share immutable revisions and permit UI-only rollback',async t=>{
+    const server=await acceptanceServer();t.after(()=>server.close());
+    const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
+    const context=await browser.newContext(),page=await context.newPage();
+    await page.goto(`${server.url}/__acceptance/session/member`);await page.goto(server.url);
+    await page.locator('#owner').selectOption('org');await page.locator('#title').fill('Legacy and Studio share this draft');
+    await page.locator('#markdown').fill('# Original from legacy\n\nThe same revision store.');await page.locator('#save').click();
+    await page.waitForFunction(()=>document.querySelector('#notice')?.textContent==='已保存新版本。');
+    const first=server.f.store.get('SELECT a.id,a.current_revision FROM articles a JOIN revisions r ON r.id=a.current_revision WHERE r.title=?','Legacy and Studio share this draft')!;
+    const before=server.f.store.all('SELECT version FROM migrations ORDER BY version');
+    await page.goto(`${server.url}/studio`);await page.locator('#workspace').selectOption('org');
+    await page.getByRole('link',{name:'Legacy and Studio share this draft',exact:true}).click();await page.locator('#article-title').waitFor();
+    await page.locator('#article-title').fill('Saved in Studio, read in legacy');await page.locator('[data-action="save"]').click();
+    await page.waitForFunction(()=>document.querySelector('.editor-state')?.textContent?.includes('Saved'));
+    const after=await server.f.content.get(server.f.actors.member,first.id);assert.notEqual(after.revision.id,first.current_revision);
+    await page.goto(server.url);await page.locator('#owner').selectOption('org');
+    await page.getByRole('button',{name:'EN · Saved in Studio, read in legacy',exact:true}).click();
+    assert.equal(await page.locator('#title').inputValue(),after.revision.title);assert.equal(await page.locator('#markdown').inputValue(),after.revision.markdown);
+    assert.deepEqual(server.f.store.all('SELECT version FROM migrations ORDER BY version'),before,'switching entry points never rewinds the schema');
+    assert.equal(server.f.store.get('SELECT count(*) n FROM revisions WHERE article_id=?',first.id)!.n,2,'both immutable revisions survive UI rollback');
+    assert.equal(server.f.store.get('SELECT count(*) n FROM jobs')!.n,0,'UI-only rollback creates no remote work');
   });
   test('WP06 real API browser: current membership, grant/revoke, unavailable counters and read-only settings',async t=>{
     const server=await acceptanceServer();t.after(()=>server.close());
