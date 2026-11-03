@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "b8d1daf",
+  "isolatedSource": true,
+  "runtime": "Node 24.18.0",
+  "wholeSuite": {"typecheck": "passed", "tests": 379, "failures": 0},
+  "actualApiBrowser": {"tests": 2, "failures": 0, "apiInterception": false},
+  "authority": "isolated identity fixture; real Fastify, SQLite, session and CSRF",
+  "scenarios": ["M1 editing and byte preservation", "exact saved revision confirmation", "202 displayed as queued", "later submission does not rewrite task snapshot", "actual cancellation and queue readback", "fresh 390px workspace and task navigation"],
+  "notClaimed": ["real NyxID", "external provider execution", "production deployment", "remote operation registration"]
+}

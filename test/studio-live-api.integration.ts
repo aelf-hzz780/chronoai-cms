@@ -116,4 +116,45 @@ if(process.argv.includes('--serve')){
     await adminPage.screenshot({path:new URL('mobile.png',evidence).pathname,fullPage:true});
     assert.deepEqual(errors,[]);
   });
+  test('WP03 real API browser: frozen original confirmation, task readback and safe cancellation',async t=>{
+    const server=await acceptanceServer();t.after(()=>server.close());
+    const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
+    const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
+    const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+    await page.goto(`${server.url}/__acceptance/session/publisher`);await page.locator('#workspace').selectOption('org');
+    await page.getByRole('link',{name:'A calmer place to publish',exact:true}).click();
+    await page.locator('[data-action="review-publication"]').click();await page.locator('#publication-rights').waitFor();
+    assert.equal(await page.locator('[data-action="confirm-original"]').isDisabled(),true);
+    assert.match(await page.locator('.review-summary').innerText(),/English.*Ghost/s);
+    assert.match(await page.locator('.studio-confirm-preview').innerText(),/One workspace. Two independent originals./);
+    const evidence=new URL('../docs/evidence/cms-b-wp03/',import.meta.url);await mkdir(evidence,{recursive:true});
+    await page.screenshot({path:new URL('publication-review.png',evidence).pathname,fullPage:true});
+    await page.locator('#publication-rights').check();await page.locator('[data-action="confirm-original"]').click();
+    await page.waitForURL(url=>url.hash.startsWith('#/task/release/'));await page.locator('.studio-task-preview').waitFor();
+    const id=new URL(page.url()).hash.split('/').at(-1)!;
+    const row=server.f.store.get('SELECT * FROM releases WHERE id=?',id)!;
+    assert.equal(row.owner_id,'org');assert.equal(row.article_id,server.english.id);assert.equal(row.revision_id,server.english.revision.id);assert.equal(row.state,'queued');
+    assert.equal(server.f.store.get("SELECT count(*) n FROM jobs WHERE kind='release' AND resource_id=? AND state='queued'",id)!.n,1);
+    assert.match(await page.locator('.page-heading .badge').innerText(),/Queued/);
+    // A later author's submitted revision must not rewrite this confirmed task.
+    const newer=await server.f.content.edit(server.f.actors.member,server.english.id,server.english.revision.id,{markdown:'New submission after confirmation'},'wp03-newer');
+    await server.f.content.submit(server.f.actors.member,newer.id,newer.revision.id,'wp03-newer');
+    await page.reload();await page.locator('.studio-task-preview').waitFor();
+    assert.match(await page.locator('.studio-task-preview').innerText(),/One workspace. Two independent originals./);
+    assert.doesNotMatch(await page.locator('.studio-task-preview').innerText(),/New submission after confirmation/);
+    await page.screenshot({path:new URL('queued-task.png',evidence).pathname,fullPage:true});
+    page.once('dialog',dialog=>dialog.accept());await page.locator('[data-action="task-cancel"]').click();
+    await page.waitForFunction(()=>document.querySelector('.page-heading .badge')?.textContent==='Cancelled');
+    assert.equal(server.f.store.get('SELECT state FROM releases WHERE id=?',id)!.state,'cancelled');
+    assert.equal(server.f.store.get("SELECT state FROM jobs WHERE kind='release' AND resource_id=?",id)!.state,'cancelled');
+    await page.goto(`${server.url}/studio#/tasks?articleId=${server.english.id}`);await page.locator('.studio-task-table').waitFor();
+    assert.match(await page.locator('.studio-task-table').innerText(),/Cancelled/);
+    const mobile=await context.newPage();await mobile.setViewportSize({width:390,height:844});
+    await mobile.goto(`${server.url}/studio#/tasks?articleId=${server.english.id}`);await mobile.locator('#workspace').selectOption('org');
+    await mobile.goto(`${server.url}/studio#/tasks?articleId=${server.english.id}`);await mobile.locator('.studio-task-table').waitFor();
+    assert.equal(await mobile.locator('#workspace').isVisible(),true);assert.equal(await mobile.locator('.sidebar').count(),1);
+    assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    await mobile.screenshot({path:new URL('tasks-mobile.png',evidence).pathname,fullPage:true});
+    assert.deepEqual(errors,[]);
+  });
 }

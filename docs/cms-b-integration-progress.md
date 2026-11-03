@@ -13,10 +13,10 @@ Approved WP00–08, C01–C10 and 14-page B experience. Root owns architecture/a
 | 00 contracts | in progress | Architecture contract written; isolated ce4fb1a typecheck + 307/307 baseline PASS; remaining wire schemas completed with each package |
 | 01 shell/workspaces | local accepted | C01/C04, shell, state-bound OIDC return, responsive owner switching; real Nyx Live deferred by user |
 | 02 content/editor | local accepted | Real API browser PASS: save/refresh, exact Markdown bytes, media, permissions, conflict, translations, mobile |
-| 03 original/tasks | in progress | C03 backend accepted in 353-test gate; UI implementation in progress |
-| 04 connections/approvals | in progress | Pinned Nyx contract confirmed; C06 attempt implementation underway |
-| 05 distribution/manual | pending | Plans, note persistence and historical-copy observations required |
-| 06 governance/metrics | in progress | C05 directory implementation underway; real metric views pending |
+| 03 original/tasks | local accepted | 379-test combined gate; fixed b8d1daf actual API browser confirms frozen revision, authoritative queued/cancelled state, task list and mobile |
+| 04 connections/approvals | in progress | C06 backend accepted (d761db7); connection/approval UI remains; live Nyx deferred |
+| 05 distribution/manual | in progress | Plans, note persistence and historical-copy observations implementing from frozen contracts |
+| 06 governance/metrics | in progress | C05 directory accepted; members/metrics/help UI implementation underway |
 | 07 Ghost theme | local accepted, bounded | Theme/GScan fixture PASS; actual local EN/ZH upload/render/restore PASS; real CMS publishing, authors, links, consent and offline reading PASS; private media volume promotion on this host and release-email configuration remain separate |
 | 08 integration/handoff | in progress | Baseline and acceptance matrix preparation; no Live claim |
 
@@ -31,6 +31,8 @@ Approved WP00–08, C01–C10 and 14-page B experience. Root owns architecture/a
 - Existing local Ghost EN 2468 and ZH 2469 recovered when Docker Desktop started. Read-only `infra/ghost/experiment.py --verify` passed for both existing posts, language/author/code/table/sitemap and cross-site 404. No volume or credential reset.
 - User explicitly deferred real NyxID integration on the other host. It remains an external acceptance item rather than a blocker for local implementation; no remote integration claim is made.
 - `test/cms-ghost-local.integration.ts` passed actual CMS API/Worker/Ghost publication, author mapping, bidirectional hreflang, consent allow/decline/withdraw/GPC/DNT and reading after CMS stopped (53.2s). Initial harness failure was missing the already required Ghost CDN origin configuration; no business verification was weakened. Synthetic posts were restored to drafts and both themes restored. This run excludes private-image volume promotion and Nyx Live.
+- Fixed combined WP03+C05/C06 gate: typecheck + 379/379 tests, 0 failures (`/tmp/cms-b-wp03-c05-c06-check.log`). Backend `d761db7`, frontend `b8d1daf`. C05 covers current member eligibility; C06 covers exact upstream fixtures, actual session/CSRF, return replay/forgery, mid-flight revocation and migration reopen.
+- Exported `b8d1daf` independently to `/tmp/cms-b-wp03-acceptance`, built its Studio and ran root real-API acceptance: M1 and WP03, 2/2 passed. WP03 proves actual frozen confirmation, subsequent submitted revision isolation, authoritative cancellation and queue state, plus fresh 390px task navigation. Screenshots: `docs/evidence/cms-b-wp03/`. No live provider/Worker execution is claimed for this UI run.
 - No external publication, connection creation, role mutation, deployment or push occurred in this task.
 
 所有验证需标明固定版本/本地/fixture/真实外部边界；尚无最终完成声明。
