@@ -12,7 +12,7 @@ export class WorkspaceReadService {
   async role(actor:Actor,owner:Row,roles?:Map<string,'admin'|'member'>):Promise<WorkspaceAccess|null>{
     if(owner.kind==='personal')return owner.subject===actor.subject?{owner,role:'owner',publishingRole:true}:null;
     const membership=roles?roles.get(owner.subject):await this.policy.membership(actor,owner);
-    if(!membership)return null;
+    if(membership!=='admin'&&membership!=='member')return null;
     const role:WorkspaceRole=membership==='admin'?'admin':this.policy.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?',owner.id,actor.subject)?'publisher':'member';
     return {owner,role,publishingRole:role==='admin'||role==='publisher'};
   }
@@ -56,7 +56,7 @@ export class WorkspaceReadService {
     requireValue(this.capabilities(actor,access).canManagePublishers,403,'FORBIDDEN','Current organization Admin and roles:write required');
     try{
       const members=await this.policy.members(actor,access.owner),publishers=new Set(this.policy.store.all('SELECT subject FROM publishers WHERE owner_id=?',ownerId).map(row=>row.subject));
-      return {ownerId,status:'available' as const,members:members.map(member=>({...member,publisher:member.active&&member.role!=='viewer'&&publishers.has(member.identity)}))};
+      return {ownerId,status:'available' as const,members:members.map(member=>({...member,publisher:member.active&&member.role!=='viewer'&&publishers.has(member.identity),publisherAssigned:publishers.has(member.identity)}))};
     }catch(error){if(error instanceof AppError&&error.code==='DIRECTORY_UNAVAILABLE')return {ownerId,status:'unavailable' as const,members:[],code:'DIRECTORY_UNAVAILABLE'};throw error;}
   }
 }

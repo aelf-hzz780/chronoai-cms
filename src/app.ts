@@ -131,13 +131,17 @@ export async function createApp(deps: AppDependencies) {
       api.get('/targets', async request => { await deps.policy.scope(request.actor, 'publish'); return distribution().targets.list(); });
       api.get('/owners/:id/connections',async request=>distribution().availableConnections(request.actor,(request.params as {id:string}).id));
       api.post('/releases/:id/deliveries', async (request, reply) => reply.code(202).send(await distribution().request(request.actor, (request.params as {id:string}).id, object(request.body), request.id)));
+      api.post('/releases/:id/distribution-plans',async(request,reply)=>reply.code(201).send(await distribution().createPlan(request.actor,(request.params as {id:string}).id,object(request.body),request.id)));
+      api.post('/distribution-plans/:id/cancel',async request=>distribution().cancelPlan(request.actor,(request.params as {id:string}).id,request.id));
       api.get('/articles/:id/deliveries', async request => distribution().list(request.actor, (request.params as {id:string}).id));
       api.get('/deliveries/:id/package', async request => distribution().package(request.actor, (request.params as {id:string}).id));
       api.post('/deliveries/:id/authorize', async request => distribution().authorize(request.actor, (request.params as {id:string}).id, text(object(request.body).approvalRef, 'approvalRef'), request.id));
       api.post('/deliveries/:id/request-approval', async request => distribution().requestApproval(request.actor,(request.params as {id:string}).id,request.id));
       api.post('/deliveries/:id/cancel', async request => distribution().cancel(request.actor, (request.params as {id:string}).id, request.id));
       api.post('/deliveries/:id/reconcile', async request => distribution().reconcile(request.actor, (request.params as {id:string}).id, request.id));
-      api.post('/deliveries/:id/report', async request => { const b = object(request.body); return distribution().report(request.actor, (request.params as {id:string}).id, text(b.state, 'state'), b.url ? text(b.url, 'url', 2000) : null, request.id); });
+      api.post('/deliveries/:id/report', async request => { const b = object(request.body); return distribution().report(request.actor, (request.params as {id:string}).id, text(b.state, 'state'), b.url ? text(b.url, 'url', 2000) : null, request.id,b.note); });
+      api.post('/deliveries/:id/verify-observation',async request=>distribution().verifyObservation(request.actor,(request.params as {id:string}).id,object(request.body),request.id));
+      api.post('/deliveries/:id/notes',async(request,reply)=>reply.code(201).send(await distribution().addNote(request.actor,(request.params as {id:string}).id,object(request.body),request.id)));
       api.post('/deliveries/:id/metrics/refresh',async request=>distribution().refreshMetrics(request.actor,(request.params as {id:string}).id,request.id));
       api.get('/articles/:id/markdown', async (request, reply) => {
         const data = await deps.content.markdown(request.actor, (request.params as {id:string}).id, text((request.query as {revision:string}).revision, 'revision'));

@@ -65,6 +65,8 @@ export function isolateRestoredPlatform(store:Store,trace:string) {
     store.run("UPDATE jobs SET state='done',lease_until=NULL WHERE kind IN ('release','delivery') AND state='running'");
     store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE kind='projection' AND state='running'");
     store.run('DELETE FROM sessions');store.run('DELETE FROM oidc_states');
-    store.audit('operator','system','recovery.isolated','platform',trace,{outboundPaused:true,sessionsInvalidated:true,interruptedMediaRequests:Number(media.changes)});
+    const attempts=store.run("UPDATE connection_attempts SET phase='unknown',status='failed',code='RESTORED_CONNECTION_RECHECK_REQUIRED',updated_at=? WHERE status NOT IN ('connected','cancelled','expired') OR phase IN ('create_dispatched','unknown')",new Date().toISOString());
+    store.run('UPDATE connection_attempts SET connect_url_cipher=NULL,nonce_hash=NULL,return_consumed_at=NULL');
+    store.audit('operator','system','recovery.isolated','platform',trace,{outboundPaused:true,sessionsInvalidated:true,interruptedMediaRequests:Number(media.changes),connectionAttemptsRequiringRecheck:Number(attempts.changes)});
   });
 }

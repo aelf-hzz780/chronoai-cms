@@ -29,7 +29,7 @@ export class Policy {
     return owner;
   }
   async membership(actor: Actor, owner: Row) {
-    try { return await this.authority.membership(actor, owner.subject); }
+    try { const role=await this.authority.membership(actor, owner.subject);return role==='admin'||role==='member'?role:null; }
     catch { throw new AppError(503, 'MEMBERSHIP_UNAVAILABLE', 'Current organization permissions unavailable'); }
   }
   async canPublish(actor: Actor, owner: Row) {

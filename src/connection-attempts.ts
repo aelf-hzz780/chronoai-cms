@@ -8,6 +8,7 @@ import {AppError,requireValue,text} from './errors.ts';
 import {digest} from './content.ts';
 import {assertCommandRequest} from './command-authority.ts';
 import {WorkspaceReadService,type WorkspaceAccess} from './workspace-read.ts';
+import {Queue} from './queue.ts';
 
 export interface ConnectionSetupAuthority {
   call(actor:Actor,path:string,method?:string,body?:unknown):Promise<any>;
@@ -70,6 +71,7 @@ export class ConnectionAttemptService {
     const unknown=this.store.get("SELECT 1 FROM connection_attempts WHERE owner_id=? AND issuer=? AND subject=? AND target=? AND phase IN ('create_dispatched','unknown')",ownerId,actor.issuer,actor.subject,target);
     requireValue(!unknown||input.acknowledgeUnknownResult===true,409,'CONNECT_RESULT_UNKNOWN','A prior link may still be active; explicitly acknowledge its unknown result before a new intent');
     const id=randomUUID(),now=new Date().toISOString(),flow=access.owner.kind==='personal'?'hosted':'operator',expires=new Date(Date.now()+config.setup.ttlSeconds*1000).toISOString();
+    if(flow==='hosted')new Queue(this.store).assertWritable();
     this.store.transaction(()=>{
       this.store.run('INSERT INTO connection_attempts VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',id,ownerId,actor.issuer,actor.subject,target,flow,flow==='hosted'?'pending':'binding_required',flow==='hosted'?'create_dispatched':'known',config.digest,null,null,requested,null,null,null,expires,flow==='operator'?'CONNECTION_BINDING_REQUIRED':null,now,now,trace);
       this.store.run('INSERT INTO idempotency VALUES (?,?,?,?,?)',actorKey,'connection-attempt',key,fingerprint,id);

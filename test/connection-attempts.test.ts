@@ -12,6 +12,7 @@ import {Store} from '../src/store.ts';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
+import {isolateRestoredPlatform} from '../src/recovery.ts';
 
 async function connectionFixture(t:any){
   const f=fixture(),vault=new Vault('ab'.repeat(32));let actor=f.actors.solo;
@@ -126,4 +127,19 @@ test('C05/C06: service OpenAPI publishes current-member and safe connection-atte
   const create=spec.paths['/api/service/owners/{id}/connection-attempts'].post;assert.ok(create.requestBody.content['application/json'].schema.required.includes('idempotencyKey'));assert.ok('acknowledgeUnknownResult' in create.requestBody.content['application/json'].schema.properties);
   const read=spec.paths['/api/service/owners/{id}/connection-attempts/{attemptId}'].get.responses['200'].content['application/json'].schema;assert.ok(!('connectUrl' in read.properties));assert.deepEqual(read.properties.status.enum,['pending','connected','binding_required','cancelled','expired','failed']);
   assert.ok(spec.paths['/api/service/owners/{id}/members'].get.responses['200'].content['application/json'].schema.properties.members);assert.ok(!spec.paths['/api/service/connections/return']);
+});
+
+test('C06/WP08: outbound pause blocks only new hosted links; read-only status, operator setup and explicit cancellation remain available',async t=>{
+  const f=await connectionFixture(t),existing=(await f.create()).json();f.store.run("UPDATE settings SET value='true' WHERE key='outbound_paused'");
+  const blocked=await f.create('solo',{idempotencyKey:'paused'});assert.equal(blocked.statusCode,409,blocked.body);assert.equal(blocked.json().code,'OUTBOUND_PAUSED');assert.equal(f.creates(),1);
+  assert.equal((await f.app.inject({url:`/api/cms/owners/solo/connection-attempts/${existing.id}`})).statusCode,200);
+  assert.equal((await f.app.inject({method:'POST',url:`/api/cms/owners/solo/connection-attempts/${existing.id}/cancel`,payload:{}})).json().status,'cancelled');
+  f.use('admin');assert.equal((await f.create('org')).json().flow,'operator');assert.equal(f.creates(),1);
+});
+
+test('C06/WP08: restore invalidates return capabilities and preserves unknown fences without falsely cancelling upstream links',async t=>{
+  const f=await connectionFixture(t),created=await f.create(),attempt=created.json(),cookie=created.cookies.find(cookie=>cookie.name==='chrono_connection_return')!;
+  f.use('admin');const operator=(await f.create('org')).json();isolateRestoredPlatform(f.store,'restore');
+  for(const id of [attempt.id,operator.id]){const row=f.store.get('SELECT * FROM connection_attempts WHERE id=?',id)!;assert.equal(row.connect_url_cipher,null);assert.equal(row.nonce_hash,null);assert.equal(row.phase,'unknown');assert.equal(row.status,'failed');assert.equal(row.code,'RESTORED_CONNECTION_RECHECK_REQUIRED');}
+  await assert.rejects(f.connectionAttempts.returned(f.actors.solo,cookie.value,'return'),{code:'CONNECT_RETURN_INVALID'});f.use('solo');const retry=await f.create();assert.equal(retry.json().connectUrl,null);assert.equal(f.creates(),1);assert.equal((await f.create('solo',{idempotencyKey:'new'})).statusCode,409);assert.ok(!f.calls.some(call=>call.path.endsWith('/cancel')));
 });

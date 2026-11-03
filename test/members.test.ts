@@ -17,10 +17,11 @@ test('C05: Admin reads current safe directory with explicit Publisher assignment
   const f=await memberFixture(t);for(const subject of ['member','viewer','revoked'])f.store.run('INSERT INTO publishers VALUES (?,?)','org',subject);
   for(const entry of ['cms','service']){
     const response=await f.app.inject({url:`/api/${entry}/owners/org/members`});assert.equal(response.statusCode,200,response.body);
-    assert.deepEqual(response.json(),{ownerId:'org',status:'available',members:[{identity:'admin',displayName:'Name admin',role:'admin',active:true,publisher:false},{identity:'member',displayName:'Name member',role:'member',active:true,publisher:true},{identity:'viewer',displayName:'Name viewer',role:'viewer',active:true,publisher:false},{identity:'revoked',displayName:'Name revoked',role:'member',active:false,publisher:false}]});
+    assert.deepEqual(response.json(),{ownerId:'org',status:'available',members:[{identity:'admin',displayName:'Name admin',role:'admin',active:true,publisher:false,publisherAssigned:false},{identity:'member',displayName:'Name member',role:'member',active:true,publisher:true,publisherAssigned:true},{identity:'viewer',displayName:'Name viewer',role:'viewer',active:true,publisher:false,publisherAssigned:true},{identity:'revoked',displayName:'Name revoked',role:'member',active:false,publisher:false,publisherAssigned:true}]});
     assert.doesNotMatch(response.body,/PRIVATE_EMAIL|PRIVATE_SCOPE|scope_source|allowed_service_ids/);
   }
   assert.equal(f.calls(),2);f.inventory({members:[{...member('member'),display_name:null}]});assert.equal((await f.app.inject({url:'/api/cms/owners/org/members'})).json().members[0].displayName,'member');
+  await f.policy.setPublisher(f.actors.admin,'org','viewer',false,'revoke');assert.equal(f.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?','org','viewer'),undefined);
 });
 test('C05: member directory requires current organization Admin and roles:write, not publishing authority',async t=>{
   const f=await memberFixture(t);f.store.run('INSERT INTO publishers VALUES (?,?)','org','publisher');
@@ -42,4 +43,13 @@ test('C05: granting Publisher validates an active eligible target and fails clos
   f.policy.authority.organizationMembers=async()=>{throw Error('PRIVATE_PROVIDER_ERROR');};await assert.rejects(f.policy.setPublisher(f.actors.admin,'org','publisher',true,'trace'),{code:'DIRECTORY_UNAVAILABLE'});
   await f.policy.setPublisher(f.actors.admin,'org','member',false,'trace');assert.equal(f.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?','org','member'),undefined);
   delete f.policy.authority.organizationMembers;await assert.rejects(f.policy.setPublisher(f.actors.admin,'org','publisher',true,'trace'),{code:'DIRECTORY_UNAVAILABLE'});
+});
+test('C05: a previously assigned Publisher downgraded to Viewer or an unknown role loses every organization capability at the Policy boundary',async t=>{
+  const f=await memberFixture(t);f.store.run('INSERT INTO publishers VALUES (?,?)','org','publisher');
+  for(const role of ['viewer','unknown']){
+    f.memberships.set('publisher:org',role);f.use('publisher');
+    await assert.rejects(f.policy.owner(f.actors.publisher,'org'),{code:'FORBIDDEN'});await assert.rejects(f.policy.publish(f.actors.publisher,'org'),{code:'FORBIDDEN'});
+    await assert.rejects(f.content.create(f.actors.publisher,{ownerId:'org',language:'en',title:'No',markdown:'No',creditedAuthor:'No'},'denied'),{code:'FORBIDDEN'});
+    const directory=(await f.app.inject({url:'/api/cms/me'})).json();assert.ok(!directory.workspaces.some((owner:any)=>owner.id==='org'));
+  }
 });

@@ -63,6 +63,7 @@ export class Store {
     `);
     this.migrateSubmissionLifecycle();
     this.migrateConnectionAttempts();
+    this.migrateDistributionFollowup();
   }
   private migrateSubmissionLifecycle(){
     if(this.get('SELECT 1 FROM migrations WHERE version=2'))return;
@@ -93,6 +94,23 @@ export class Store {
         connect_url_cipher TEXT,nonce_hash TEXT,return_consumed_at TEXT,expires_at TEXT NOT NULL,code TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL,trace_id TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS connection_attempt_owner_actor ON connection_attempts(owner_id,issuer,subject,target,phase);
         INSERT INTO migrations VALUES (3,strftime('%Y-%m-%dT%H:%M:%fZ','now'));`);
+    });
+  }
+  private migrateDistributionFollowup(){
+    if(this.get('SELECT 1 FROM migrations WHERE version=4'))return;
+    this.transaction(()=>{
+      if(this.get('SELECT 1 FROM migrations WHERE version=4'))return;
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS distribution_plans (
+          id TEXT PRIMARY KEY,release_id TEXT NOT NULL REFERENCES releases(id),revision_id TEXT NOT NULL REFERENCES revisions(id),owner_id TEXT NOT NULL REFERENCES owners(id),target TEXT NOT NULL,connection_id TEXT NOT NULL,action TEXT NOT NULL,format TEXT NOT NULL,copy_id TEXT REFERENCES deliveries(id),
+          intent_digest TEXT NOT NULL,payload_json TEXT NOT NULL,not_before_at TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('scheduled','confirmed','cancelled')),delivery_id TEXT UNIQUE REFERENCES deliveries(id),creator TEXT NOT NULL,trace_id TEXT NOT NULL,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS distribution_plans_owner ON distribution_plans(owner_id,state,not_before_at);
+        CREATE TABLE IF NOT EXISTS delivery_notes (id TEXT PRIMARY KEY,delivery_id TEXT NOT NULL REFERENCES deliveries(id),note TEXT NOT NULL CHECK(length(note)<=2000),actor TEXT NOT NULL,trace_id TEXT NOT NULL,created_at TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS delivery_notes_delivery ON delivery_notes(delivery_id,created_at);
+        CREATE TABLE IF NOT EXISTS delivery_observations (id TEXT PRIMARY KEY,delivery_id TEXT NOT NULL REFERENCES deliveries(id),url TEXT NOT NULL,proof TEXT NOT NULL CHECK(proof='content_attribution'),source_state TEXT NOT NULL,follow_up_required INTEGER NOT NULL CHECK(follow_up_required=1),actor TEXT NOT NULL,trace_id TEXT NOT NULL,observed_at TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS delivery_observations_delivery ON delivery_observations(delivery_id,observed_at);
+        INSERT INTO migrations VALUES (4,strftime('%Y-%m-%dT%H:%M:%fZ','now'));
+      `);
     });
   }
   get(sql: string, ...params: SQLInputValue[]): Row | undefined { return this.db.prepare(sql).get(...params) as Row | undefined; }

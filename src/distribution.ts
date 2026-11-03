@@ -4,7 +4,8 @@ import { PublishingService, type OriginalAdapter } from './publishing.ts';
 import { digest } from './content.ts';
 import { AppError, requireValue, text } from './errors.ts';
 import { RemoteError, remote } from './http-client.ts';
-import { TargetRegistry, isRead, type CopyPayload, type RemoteRequest } from './targets.ts';
+import { TargetRegistry, isRead, type CopyPayload, type RemoteRequest, type Target } from './targets.ts';
+import type {Row} from './store.ts';
 import { render } from './render.ts';
 import {assistedMarkdown,provesAssistedCopy} from './assisted-proof.ts';
 import { Queue } from './queue.ts';
@@ -50,46 +51,54 @@ export class DistributionService {
   manualWorkflow(delivery: any) {
     return !this.targets.get(delivery.target,true).automatic || this.targets.disabled.has(delivery.target) || !!this.store.get("SELECT 1 FROM delivery_events WHERE delivery_id=? AND state='manual_action_needed'",delivery.id);
   }
+  private async prepareIntent(actor:Actor,owner:Row,release:Row,target:Target,connectionId:string,input:Record<string,unknown>,id:string,strictConnection=false){
+    const original=this.originals.input(release),ownerRef={kind:owner.kind,issuer:owner.issuer,subject:owner.subject};
+    requireValue(original.language==='en',409,'LANGUAGE_NOT_VERIFIED','External distribution is initially enabled for English only');
+    if(input.action!=='remove')requireValue(release.state==='published',409,'ORIGINAL_NOT_LIVE','Exact confirmed original must currently be live');
+    let copy:Row|undefined;
+    if(input.action!=='create'){
+      copy=this.store.get('SELECT d.*,r.article_id FROM deliveries d JOIN releases r ON r.id=d.release_id WHERE d.id=?',text(input.copyId,'copyId'));
+      requireValue(copy&&copy.owner_id===owner.id&&copy.connection_id===connectionId&&copy.target===target.name&&copy.remote_id&&copy.article_id===release.article_id,403,'COPY_MISMATCH','Exact existing owner copy required');
+    }
+    let connection:any,connectionLost=false;
+    try{connection=await this.connections.connection(actor,ownerRef,connectionId,target.name);}
+    catch(error){
+      requireValue(!strictConnection&&copy&&error instanceof AppError&&['CONNECTION_DISABLED','REMOTE_AUTHORIZATION'].includes(error.code),error instanceof AppError?error.status:503,error instanceof AppError?error.code:'CONNECTION_UNAVAILABLE','The selected connection is unavailable; reconnect it before sending');
+      const previous=JSON.parse(this.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',copy.id)!.payload_json);connection={accountId:previous.accountId};connectionLost=true;
+    }
+    let markdown=input.format==='excerpt'?text(input.excerpt,'excerpt',50000):original.markdown;
+    for(const reference of [...new Set(markdown.match(/asset:[a-f0-9-]{36}/g)??[])]){
+      const asset=this.store.get('SELECT a.*,p.public_path FROM assets a JOIN asset_publications p ON p.asset_id=a.id WHERE a.id=? AND a.article_id=? AND p.release_id=?',reference.slice(6),original.articleId,release.id);
+      requireValue(asset,409,'IMAGE_NOT_PUBLIC','Selected image is not part of the verified original');const filename=String(asset.public_path).split('/').at(-1);markdown=markdown.replaceAll(reference,`${original.site.url}/content/images/chrono/${filename}`);
+    }
+    const payload:CopyPayload={deliveryId:id,ownerKind:owner.kind,title:original.title,markdown,sourceUrl:release.url,sourceDigest:original.digest,creditedAuthor:original.creditedAuthor,language:original.language,action:input.action as string,format:input.format as string,remoteId:copy?.remote_id??undefined,remoteUrl:copy?.url??undefined,accountId:connection.accountId,connectionFingerprint:connectionFingerprint(connection)};
+    const contentDigest=digest(JSON.stringify({...payload,connectionId,target:target.name,accountId:connection.accountId}));
+    const state=connectionLost||this.targets.disabled.has(target.name)||!target.automatic||!target.automaticActions?.includes(String(input.action))?'manual_action_needed':owner.kind==='organization'?'approval_needed':'queued';
+    return {original,copy,connection,connectionLost,payload,contentDigest,state};
+  }
   async request(actor: Actor, releaseId: string, input: Record<string, unknown>, trace: string) {
     const release = this.store.get('SELECT * FROM releases WHERE id=?', releaseId); requireValue(release, 404, 'NOT_FOUND', 'Original not found');
     const owner = await this.originals.content.policy.publish(actor, release.owner_id);
     assertCommandRequest(actor,'POST',`/api/service/releases/${releaseId}/deliveries`);
-    const ownerRef = { kind: owner.kind, issuer: owner.issuer, subject: owner.subject };
     requireValue(input.ownerId === undefined || input.ownerId === owner.id, 403, 'FORBIDDEN', 'Owner mismatch');
     const target = this.targets.get(text(input.target, 'target'), ['update','remove'].includes(String(input.action))), connectionId = text(input.connectionId, 'connectionId'), key = text(input.idempotencyKey, 'idempotencyKey', 200);
     requireValue(['create', 'update', 'remove'].includes(String(input.action)) && ['full', 'excerpt'].includes(String(input.format)), 400, 'INVALID_INPUT', 'Specify action and full/excerpt format');
     requireValue(input.rightsConfirmed === true, 400, 'CONFIRMATION_REQUIRED', 'Confirm text and image publication rights');
-    const fingerprint = digest(JSON.stringify({ releaseId, target: target.name, connectionId, action: input.action, format: input.format, excerpt: input.excerpt, copyId: input.copyId }));
+    const planId=input.planId===undefined?undefined:text(input.planId,'planId');
+    const fingerprint = digest(JSON.stringify({ releaseId, target: target.name, connectionId, action: input.action, format: input.format, excerpt: input.excerpt, copyId: input.copyId,planId }));
     const actorKey = `${actor.issuer}|${actor.subject}`;
     const prior = this.store.get('SELECT * FROM idempotency WHERE actor=? AND operation=? AND key=?', actorKey, 'delivery', key);
     if (prior) { requireValue(prior.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key reused for different delivery');const row=this.store.get('SELECT * FROM deliveries WHERE id=?', prior.resource_id)!;this.store.transaction(()=>bindActorCommand(this.store,actor,deliveryCommand(row)));return row; }
-    const original = this.originals.input(release);
-    requireValue(original.language === 'en', 409, 'LANGUAGE_NOT_VERIFIED', 'External distribution is initially enabled for English only');
-    if (input.action !== 'remove') requireValue(release.state === 'published', 409, 'ORIGINAL_NOT_LIVE', 'Exact confirmed original must currently be live');
-    let copy;
-    if (input.action !== 'create') {
-      copy = this.store.get('SELECT d.*,r.article_id FROM deliveries d JOIN releases r ON r.id=d.release_id WHERE d.id=?', text(input.copyId, 'copyId'));
-      requireValue(copy && copy.owner_id === owner.id && copy.connection_id === connectionId && copy.target === target.name && copy.remote_id && copy.article_id === release.article_id, 403, 'COPY_MISMATCH', 'Exact existing owner copy required');
+    const id=randomUUID(),prepared=await this.prepareIntent(actor,owner,release,target,connectionId,input,id,!!planId);
+    const {copy,connectionLost,payload,contentDigest,state}=prepared,now=new Date().toISOString();
+    if(planId){
+      await this.originals.content.policy.publish(actor,owner.id);
+      const fresh=await this.connections.connection(actor,{kind:owner.kind,issuer:owner.issuer,subject:owner.subject},connectionId,target.name);
+      requireValue(connectionFingerprint(fresh)===payload.connectionFingerprint,409,'CONNECTION_CHANGED','Connection changed before plan confirmation');
+      await this.originals.content.policy.publish(actor,owner.id);
     }
-    let connection:any,connectionLost=false;
-    try { connection=await this.connections.connection(actor,ownerRef,connectionId,target.name); }
-    catch(error) {
-      requireValue(copy && error instanceof AppError && ['CONNECTION_DISABLED','REMOTE_AUTHORIZATION'].includes(error.code),error instanceof AppError?error.status:503,error instanceof AppError?error.code:'CONNECTION_UNAVAILABLE','The selected connection is unavailable; reconnect it before sending');
-      // A follow-up record retains the known copy identity; it has no outbound job
-      // and never substitutes credentials or another user's account.
-      const previous=JSON.parse(this.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',copy.id)!.payload_json);
-      connection={accountId:previous.accountId};connectionLost=true;
-    }
-    const id = randomUUID(); let markdown = input.format === 'excerpt' ? text(input.excerpt, 'excerpt', 50000) : original.markdown;
-    for (const reference of [...new Set(markdown.match(/asset:[a-f0-9-]{36}/g) ?? [])]) {
-      const asset = this.store.get('SELECT a.*,p.public_path FROM assets a JOIN asset_publications p ON p.asset_id=a.id WHERE a.id=? AND a.article_id=? AND p.release_id=?', reference.slice(6), original.articleId, releaseId);
-      requireValue(asset, 409, 'IMAGE_NOT_PUBLIC', 'Selected image is not part of the verified original');
-      const filename = String(asset.public_path).split('/').at(-1); markdown = markdown.replaceAll(reference, `${original.site.url}/content/images/chrono/${filename}`);
-    }
-    const payload: CopyPayload = { deliveryId: id, ownerKind: owner.kind, title: original.title, markdown, sourceUrl: release.url, sourceDigest: original.digest, creditedAuthor: original.creditedAuthor, language: original.language, action: input.action as string, format: input.format as string, remoteId: copy?.remote_id ?? undefined, remoteUrl: copy?.url ?? undefined, accountId: connection.accountId, connectionFingerprint: connectionFingerprint(connection) };
-    const contentDigest = digest(JSON.stringify({ ...payload, connectionId, target: target.name, accountId: connection.accountId }));
-    const state = connectionLost || this.targets.disabled.has(target.name) || !target.automatic || !target.automaticActions?.includes(String(input.action)) ? 'manual_action_needed' : owner.kind === 'organization' ? 'approval_needed' : 'queued'; const now = new Date().toISOString();
     this.store.transaction(() => {
+      if(planId)this.assertPlan(planId,release,owner,input,this.intentDigest(release,connectionId,target.name,input,prepared),prepared.copy);
       if (input.action === 'create') requireValue(!this.store.get("SELECT 1 FROM deliveries d JOIN releases r ON r.id=d.release_id WHERE r.article_id=? AND d.target=? AND d.connection_id=? AND d.action='create' AND d.state NOT IN ('failed','blocked','cancelled','removed')", release.article_id, target.name, connectionId), 409, 'DUPLICATE_TARGET', 'An existing or uncertain copy already targets this connection; update or reconcile it');
       this.store.run('INSERT INTO deliveries(id,release_id,owner_id,connection_id,target,action,format,digest,state,remote_id,url,approval_ref,trace_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', id, releaseId, owner.id, connectionId, target.name, input.action as string, input.format as string, contentDigest, state, copy?.remote_id ?? null, copy?.url ?? null, null, trace, now, now);
       const bound=bindActorCommand(this.store,actor,deliveryCommand(this.store.get('SELECT * FROM deliveries WHERE id=?',id)!));
@@ -98,8 +107,46 @@ export class DistributionService {
       if (state === 'queued') this.store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)', randomUUID(), 'delivery', id, 'queued', null, now);
       this.store.audit(actor.subject, owner.id, 'delivery.confirm', id, trace, { revision: release.revision_id, contentDigest, connectionId, target: target.name, action: input.action, rightsConfirmed: true });
       this.event(id, state, trace,connectionLost?'CONNECTION_DISABLED':null);
+      if(planId){const consumed=this.store.run("UPDATE distribution_plans SET state='confirmed',delivery_id=?,updated_at=? WHERE id=? AND state='scheduled' AND delivery_id IS NULL AND not_before_at<=?",id,now,planId,now);requireValue(Number(consumed.changes)===1,409,'PLAN_CONSUMED','Plan was already consumed or cancelled');this.store.audit(actor.subject,owner.id,'distribution-plan.confirm',planId,trace,{deliveryId:id});}
     });
     return this.store.get('SELECT * FROM deliveries WHERE id=?', id)!;
+  }
+  private intentDigest(release:Row,connectionId:string,target:string,input:Record<string,unknown>,prepared:Awaited<ReturnType<DistributionService['prepareIntent']>>){
+    const {deliveryId,...payload}=prepared.payload,copy=prepared.copy;
+    return digest(JSON.stringify({releaseId:release.id,revisionId:release.revision_id,ownerId:release.owner_id,target,connectionId,copyId:input.copyId??null,copy:this.copyIdentity(copy),payload}));
+  }
+  private copyIdentity(copy?:Row){return copy?{id:copy.id,releaseId:copy.release_id,ownerId:copy.owner_id,connectionId:copy.connection_id,target:copy.target,state:copy.state,digest:copy.digest,remoteId:copy.remote_id,url:copy.url,updatedAt:copy.updated_at}:null;}
+  private planView(row:Row){return {id:row.id,ownerId:row.owner_id,releaseId:row.release_id,revisionId:row.revision_id,target:row.target,connectionId:row.connection_id,action:row.action,format:row.format,copyId:row.copy_id??null,notBeforeAt:row.not_before_at,state:row.state==='scheduled'&&row.not_before_at<=new Date().toISOString()?'due':row.state,deliveryId:row.delivery_id??null,createdAt:row.created_at,updatedAt:row.updated_at,traceId:row.trace_id};}
+  private assertPlan(id:string,release:Row,owner:Row,input:Record<string,unknown>,intentDigest:string,expectedCopy?:Row){
+    const plan=this.store.get('SELECT * FROM distribution_plans WHERE id=?',id);requireValue(plan,404,'NOT_FOUND','Distribution plan not found');
+    requireValue(plan.owner_id===owner.id&&plan.release_id===release.id&&plan.revision_id===release.revision_id,403,'PLAN_MISMATCH','Plan belongs to another workspace or source');
+    requireValue(plan.state==='scheduled'&&!plan.delivery_id,409,'PLAN_CONSUMED','Plan was already consumed or cancelled');requireValue(plan.not_before_at<=new Date().toISOString(),409,'PLAN_NOT_DUE','This plan is not due yet');
+    const current=this.store.get('SELECT state,revision_id,url FROM releases WHERE id=?',release.id)!;
+    requireValue((input.action==='remove'||current.state==='published')&&current.revision_id===release.revision_id&&current.url===release.url,409,'ORIGINAL_NOT_LIVE','Confirmed original changed before plan confirmation');
+    requireValue(plan.intent_digest===intentDigest,409,'PLAN_MISMATCH','Frozen source, content, connection or copy changed; create a new plan');
+    if(expectedCopy)requireValue(JSON.stringify(this.copyIdentity(this.store.get('SELECT * FROM deliveries WHERE id=?',expectedCopy.id)))===JSON.stringify(this.copyIdentity(expectedCopy)),409,'COPY_MISMATCH','The selected copy changed before confirmation');
+  }
+  async createPlan(actor:Actor,releaseId:string,input:Record<string,unknown>,trace:string){
+    const release=this.store.get('SELECT * FROM releases WHERE id=?',releaseId);requireValue(release,404,'NOT_FOUND','Original not found');
+    const owner=await this.originals.content.policy.publish(actor,release.owner_id,'access');assertCommandRequest(actor,'POST',`/api/service/releases/${releaseId}/distribution-plans`);
+    requireValue(Object.keys(input).every(key=>['ownerId','target','connectionId','action','format','excerpt','copyId','rightsConfirmed','idempotencyKey','notBeforeAt'].includes(key)),400,'INVALID_INPUT','Invalid distribution plan input');
+    requireValue(input.ownerId===undefined||input.ownerId===owner.id,403,'FORBIDDEN','Owner mismatch');
+    const target=this.targets.get(text(input.target,'target'),['update','remove'].includes(String(input.action))),connectionId=text(input.connectionId,'connectionId'),key=text(input.idempotencyKey,'idempotencyKey',200);
+    requireValue(['create','update','remove'].includes(String(input.action))&&['full','excerpt'].includes(String(input.format)),400,'INVALID_INPUT','Specify action and full/excerpt format');requireValue(input.rightsConfirmed===true,400,'CONFIRMATION_REQUIRED','Confirm text and image publication rights');
+    requireValue(input.action!=='create'||input.copyId==null,400,'INVALID_INPUT','Create plans cannot select an existing copy');
+    const when=text(input.notBeforeAt,'notBeforeAt'),timestamp=Date.parse(when);requireValue(Number.isFinite(timestamp)&&/T.*(?:Z|[+-]\d{2}:\d{2})$/.test(when),400,'INVALID_INPUT','notBeforeAt must be a timestamp with timezone');const notBeforeAt=new Date(timestamp).toISOString();
+    const actorKey=`${actor.issuer}|${actor.subject}`,fingerprint=digest(JSON.stringify({releaseId,target:target.name,connectionId,action:input.action,format:input.format,excerpt:input.excerpt,copyId:input.copyId,notBeforeAt}));
+    const previous=this.store.get("SELECT * FROM idempotency WHERE actor=? AND operation='distribution-plan' AND key=?",actorKey,key);if(previous){requireValue(previous.digest===fingerprint,409,'CONFLICT','Idempotency key already used for another plan');return this.planView(this.store.get('SELECT * FROM distribution_plans WHERE id=?',previous.resource_id)!);}
+    requireValue(timestamp>Date.now(),400,'INVALID_INPUT','notBeforeAt must be in the future');
+    const id=randomUUID(),prepared=await this.prepareIntent(actor,owner,release,target,connectionId,input,id,true);await this.originals.content.policy.publish(actor,owner.id,'access');const now=new Date().toISOString();
+    this.store.transaction(()=>{
+      this.store.run('INSERT INTO distribution_plans VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',id,releaseId,release.revision_id,owner.id,target.name,connectionId,input.action as string,input.format as string,input.copyId as string??null,this.intentDigest(release,connectionId,target.name,input,prepared),JSON.stringify(prepared.payload),notBeforeAt,'scheduled',null,actor.subject,trace,now,now);
+      this.store.run('INSERT INTO idempotency VALUES (?,?,?,?,?)',actorKey,'distribution-plan',key,fingerprint,id);this.store.audit(actor.subject,owner.id,'distribution-plan.create',id,trace);
+    });return this.planView(this.store.get('SELECT * FROM distribution_plans WHERE id=?',id)!);
+  }
+  async cancelPlan(actor:Actor,id:string,trace:string){
+    const row=this.store.get('SELECT * FROM distribution_plans WHERE id=?',id);requireValue(row,404,'NOT_FOUND','Distribution plan not found');await this.originals.content.policy.publish(actor,row.owner_id,'access');assertCommandRequest(actor,'POST',`/api/service/distribution-plans/${id}/cancel`);
+    this.store.transaction(()=>{const current=this.store.get('SELECT * FROM distribution_plans WHERE id=?',id)!;requireValue(current.state!=='confirmed',409,'PLAN_CONSUMED','A confirmed plan cannot be cancelled');this.store.run("UPDATE distribution_plans SET state='cancelled',updated_at=? WHERE id=? AND state='scheduled'",new Date().toISOString(),id);this.store.audit(actor.subject,row.owner_id,'distribution-plan.cancel',id,trace);});return this.planView(this.store.get('SELECT * FROM distribution_plans WHERE id=?',id)!);
   }
   async authorize(actor: Actor, id: string, approvalRef: string, trace: string) {
     const { delivery, owner } = await this.context(actor, id);
@@ -155,7 +202,8 @@ export class DistributionService {
     const markdown = assistedMarkdown(payload);
     return { title: payload.title, markdown, html: render(markdown, new Set([...markdown.matchAll(/!\[[^\]]*\]\((https?:[^)]+)\)/g)].map(m => m[1]))), sourceUrl: payload.sourceUrl, creditedAuthor: payload.creditedAuthor, state: delivery.state, knownCopyUrl:delivery.url, instructions: payload.action==='remove'?'Request removal of this known copy using its original author account or the platform support team; reconnect the exact selected account if access was lost. Record the result only after public verification.': delivery.target === 'medium' ? 'Use Medium import with the original URL, review formatting, images and attribution, and record submission separately from publication.' : 'Submit via HackerNoon with source attribution; company-domain originals normally require a company account. Track editorial review; acceptance is controlled by HackerNoon.', accountConnectionId: delivery.connection_id };
   }
-  async report(actor: Actor, id: string, state: string, url: string | null, trace: string) {
+  async report(actor: Actor, id: string, state: string, url: string | null, trace: string,note?:unknown) {
+    requireValue(note===undefined||typeof note==='string'&&note.length<=2000,400,'INVALID_INPUT','note must be at most 2000 characters');assertCommandRequest(actor,'POST',`/api/service/deliveries/${id}/report`);
     const { delivery } = await this.context(actor, id);
     const target=this.targets.get(delivery.target,true);
     requireValue(['manual_action_needed','submitted','reviewing','rejected','published'].includes(delivery.state) && this.manualWorkflow(delivery) && ['submitted', 'reviewing', 'rejected', 'manual_action_needed', 'published','removed'].includes(state), 400, 'INVALID_INPUT', 'Invalid manual follow-up status');
@@ -184,8 +232,41 @@ export class DistributionService {
       this.store.run('UPDATE deliveries SET url=?,remote_id=?,source_verified=CASE WHEN ?=? THEN 1 ELSE source_verified END WHERE id=?',url??delivery.url,remoteId,state,'published',id);
       if(remoteId && ['published','removed'].includes(state)) this.settleCopy(delivery,remoteId,state,trace);
       this.event(id, state, trace); this.store.audit(actor.subject, delivery.owner_id, 'delivery.manual-report', id, trace, { state, url });
+      if(typeof note==='string'&&note.trim())this.appendNote(actor,id,note,trace);
     });
     return this.store.get('SELECT * FROM deliveries WHERE id=?', id);
+  }
+  private appendNote(actor:Actor,id:string,note:string,trace:string){
+    const noteId=randomUUID(),now=new Date().toISOString();this.store.run('INSERT INTO delivery_notes VALUES (?,?,?,?,?,?)',noteId,id,note,actor.subject,trace,now);return {id:noteId,note,actor:actor.subject,traceId:trace,createdAt:now};
+  }
+  async addNote(actor:Actor,id:string,input:Record<string,unknown>,trace:string){
+    requireValue(Object.keys(input).every(key=>key==='note'),400,'INVALID_INPUT','Only note may be supplied');const note=text(input.note,'note',2000);
+    const delivery=this.store.get('SELECT * FROM deliveries WHERE id=?',id);requireValue(delivery,404,'NOT_FOUND','Delivery not found');await this.originals.content.policy.publish(actor,delivery.owner_id,'access');assertCommandRequest(actor,'POST',`/api/service/deliveries/${id}/notes`);
+    return this.store.transaction(()=>{const result=this.appendNote(actor,id,note,trace);this.store.audit(actor.subject,delivery.owner_id,'delivery.note',id,trace,{noteId:result.id});return result;});
+  }
+  async verifyObservation(actor:Actor,id:string,input:Record<string,unknown>,trace:string){
+    assertCommandRequest(actor,'POST',`/api/service/deliveries/${id}/verify-observation`);
+    const delivery=this.store.get('SELECT * FROM deliveries WHERE id=?',id);requireValue(delivery,404,'NOT_FOUND','Delivery not found');
+    await this.originals.content.policy.publish(actor,delivery.owner_id,'access');const target=this.targets.get(delivery.target,true);
+    requireValue(!target.automatic&&['medium','hackernoon'].includes(delivery.target)&&delivery.action!=='remove',409,'AUTOMATIC_TARGET','Only confirmed manual content copies support observations');
+    requireValue(Object.keys(input).every(key=>key==='url'),400,'INVALID_INPUT','Only the observed URL may be supplied');const url=text(input.url,'url',2000);
+    let parsed:URL;try{parsed=new URL(url);}catch{throw new AppError(400,'INVALID_INPUT','Use a valid destination URL');}
+    const allowed=delivery.target==='medium'?parsed.hostname==='medium.com'||parsed.hostname.endsWith('.medium.com'):parsed.hostname==='hackernoon.com';
+    requireValue(parsed.protocol==='https:'&&(!parsed.port||parsed.port==='443')&&!parsed.username&&!parsed.password&&!parsed.hash&&allowed,400,'INVALID_INPUT','Use the permitted HTTPS destination without credentials, fragment or a nonstandard port');
+    requireValue(!delivery.url||delivery.url===url,409,'COPY_MISMATCH','Observation must retain the exact known copy URL');
+    const stored=this.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',id);let payload:CopyPayload;
+    try{payload=JSON.parse(stored?.payload_json);}catch{throw new AppError(503,'TASK_SNAPSHOT_UNAVAILABLE','Confirmed copy content unavailable');}
+    requireValue(payload&&typeof payload.markdown==='string'&&typeof payload.title==='string'&&typeof payload.creditedAuthor==='string'&&typeof payload.sourceUrl==='string',503,'TASK_SNAPSHOT_UNAVAILABLE','Confirmed copy content unavailable');
+    const page=(await remote(url)).text;requireValue(provesAssistedCopy(page,payload)&&await this.renderer.verify(url,page),409,'PUBLICATION_UNVERIFIED','Visible frozen content, credited author and source attribution could not be verified');
+    await this.originals.content.policy.publish(actor,delivery.owner_id,'access');const observationId=randomUUID(),now=new Date().toISOString();
+    const sourceState=this.store.transaction(()=>{
+      const current=this.store.get('SELECT * FROM deliveries WHERE id=?',id)!;requireValue(JSON.stringify(this.copyIdentity(current))===JSON.stringify(this.copyIdentity(delivery)),409,'COPY_MISMATCH','Copy state or identity changed during observation');
+      requireValue(this.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',id)?.payload_json===stored!.payload_json,409,'COPY_MISMATCH','Confirmed copy content changed during observation');
+      const source=this.store.get('SELECT state FROM releases WHERE id=?',delivery.release_id)!;
+      this.store.run('INSERT INTO delivery_observations VALUES (?,?,?,?,?,?,?,?,?)',observationId,id,url,'content_attribution',source.state,1,actor.subject,trace,now);
+      this.store.run('UPDATE deliveries SET url=?,remote_id=? WHERE id=?',delivery.url??url,delivery.remote_id??url,id);this.store.audit(actor.subject,delivery.owner_id,'delivery.observe',id,trace,{observationId,proof:'content_attribution',followUpRequired:true});return source.state as string;
+    });
+    return {id:observationId,deliveryId:id,url,status:'verified',proof:'content_attribution',sourceState,followUpRequired:true,actor:actor.subject,traceId:trace,observedAt:now};
   }
   async list(actor: Actor, articleId: string) {
     await this.originals.content.get(actor, articleId);

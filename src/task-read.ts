@@ -47,11 +47,17 @@ export class TaskReadService {
     FROM projections p JOIN articles a ON a.id=p.article_id AND a.owner_id=p.owner_id LEFT JOIN jobs j ON j.kind='projection' AND j.resource_id=p.id
       LEFT JOIN audit_times events ON events.resource_id=p.id LEFT JOIN public_releases live ON live.article_id=a.id AND live.ranking=1
       LEFT JOIN revisions v ON v.id=live.revision_id WHERE a.owner_id=:owner
+    UNION ALL
+    SELECT p.id,'plan',p.owner_id,r.article_id,a.language,a.creator,v.title,p.revision_id,p.action,
+      CASE WHEN p.state='scheduled' AND p.not_before_at<=:now THEN 'due' ELSE p.state END,p.created_at,p.updated_at,p.trace_id,NULL,NULL,NULL,p.connection_id,p.target,p.release_id,NULL,NULL,0
+    FROM distribution_plans p JOIN releases r ON r.id=p.release_id AND r.owner_id=p.owner_id JOIN articles a ON a.id=r.article_id AND a.owner_id=p.owner_id
+      JOIN revisions v ON v.id=p.revision_id AND v.article_id=a.id WHERE a.owner_id=:owner
   ), classified AS (
-    SELECT t.*,CASE WHEN t.creator=:subject OR :publisher=1 OR public.revision_id IS NOT NULL THEN 1 ELSE 0 END AS readable
+    SELECT t.*,p.not_before_at AS plan_not_before,p.copy_id AS plan_copy_id,p.delivery_id AS plan_delivery_id,p.format AS plan_format,CASE WHEN t.creator=:subject OR :publisher=1 OR public.revision_id IS NOT NULL THEN 1 ELSE 0 END AS readable
     FROM tasks t LEFT JOIN public_revisions public ON public.article_id=t.article_id AND public.revision_id=t.revision_id
+      LEFT JOIN distribution_plans p ON t.kind='plan' AND p.id=t.id
   )`;}
-  private params(actor:Actor,access:WorkspaceAccess){return {owner:access.owner.id as string,subject:actor.subject,publisher:access.publishingRole?1:0};}
+  private params(actor:Actor,access:WorkspaceAccess){return {owner:access.owner.id as string,subject:actor.subject,publisher:access.publishingRole?1:0,now:new Date().toISOString()};}
   private allowedActions(actor:Actor,access:WorkspaceAccess,row:Row){
     if(!this.workspaces.capabilities(actor,access).canPublish)return [];
     const actions:string[]=[];
@@ -65,11 +71,13 @@ export class TaskReadService {
       if(['queued','approval_needed','manual_action_needed'].includes(row.state)&&row.job_state!=='running')actions.push('cancel');
       if(row.state==='uncertain'&&row.job_state&&row.job_state!=='running')actions.push('reconcile');
       if(row.state==='approval_needed'&&access.owner.kind==='organization')actions.push('request-approval','authorize');
+    }else if(row.kind==='plan'){
+      if(['scheduled','due'].includes(row.state))actions.push('cancel');if(row.state==='due')actions.push('confirm');
     }
     return actions;
   }
   private item(actor:Actor,access:WorkspaceAccess,row:Row){
-    return {id:row.id,kind:row.kind,ownerId:row.owner_id,articleId:row.article_id,language:row.language,title:row.title,revisionId:row.revision_id??null,action:row.action,state:row.state,createdAt:row.created_at,updatedAt:row.updated_at,traceId:row.trace_id,errorCode:row.error_code??null,url:row.url??null,allowedActions:this.allowedActions(actor,access,row)};
+    return {id:row.id,kind:row.kind,ownerId:row.owner_id,articleId:row.article_id,language:row.language,title:row.title,revisionId:row.revision_id??null,action:row.action,state:row.state,createdAt:row.created_at,updatedAt:row.updated_at,traceId:row.trace_id,errorCode:row.error_code??null,url:row.url??null,allowedActions:this.allowedActions(actor,access,row),...(row.kind==='plan'?{plan:{notBeforeAt:row.plan_not_before,releaseId:row.release_id,target:row.target,connectionId:this.workspaces.capabilities(actor,access).canReadConnections?row.connection_id:null,action:row.action,format:row.plan_format,copyId:row.plan_copy_id??null,consumedDeliveryId:row.plan_delivery_id??null}}:{})};
   }
   async list(actor:Actor,ownerId:string,query:TaskQuery){
     const {kind,language}=query,limit=Number(query.limit??50),offset=Number(query.offset??0);
@@ -94,8 +102,8 @@ export class TaskReadService {
   private snapshot(row:Row):TaskSnapshot|null{
     if(row.kind==='projection')return null;
     const store=this.workspaces.policy.store;
-    if(row.kind==='delivery'){
-      const saved=store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',row.id);
+    if(row.kind==='delivery'||row.kind==='plan'){
+      const saved=row.kind==='delivery'?store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',row.id):store.get('SELECT payload_json FROM distribution_plans WHERE id=?',row.id);
       let payload:Row;try{payload=JSON.parse(saved?.payload_json);}catch{throw new AppError(503,'TASK_SNAPSHOT_UNAVAILABLE','Confirmed task content is unavailable');}
       requireValue(payload&&typeof payload.title==='string'&&typeof payload.markdown==='string'&&typeof payload.creditedAuthor==='string',503,'TASK_SNAPSHOT_UNAVAILABLE','Confirmed task content is unavailable');
       return {revisionId:row.revision_id,title:payload.title,markdown:payload.markdown,creditedAuthor:payload.creditedAuthor,digest:digest(payload.markdown)};
@@ -105,7 +113,8 @@ export class TaskReadService {
     return {revisionId:row.revision_id,title:revision.title,markdown:Buffer.from(revision.markdown).toString('utf8'),creditedAuthor:revision.credited_author,digest:revision.digest};
   }
   private payloadVisible(access:WorkspaceAccess,row:Row){
-    if(row.kind!=='delivery'||access.owner.kind==='personal'||access.publishingRole)return true;
+    if(!['delivery','plan'].includes(row.kind)||access.owner.kind==='personal'||access.publishingRole)return true;
+    if(row.kind==='plan')return false;
     // A public source does not prove an arbitrary confirmed excerpt was public.
     return row.state==='published'||!!this.workspaces.policy.store.get("SELECT 1 FROM delivery_events WHERE delivery_id=? AND state='published' AND code IS NULL LIMIT 1",row.id);
   }
@@ -113,11 +122,11 @@ export class TaskReadService {
     const store=this.workspaces.policy.store;
     if(row.kind==='delivery')return store.all('SELECT state,code,trace_id,created_at FROM delivery_events WHERE delivery_id=? ORDER BY created_at,rowid',row.id).map(event=>({state:event.state,code:event.code??null,traceId:event.trace_id,createdAt:event.created_at}));
     if(row.kind==='media')return [{state:row.state,code:row.error_code??null,traceId:row.trace_id,createdAt:row.updated_at}];
-    const prefix=row.kind==='projection'?'alternates.':'original.';
+    const prefix=row.kind==='plan'?'distribution-plan.':row.kind==='projection'?'alternates.':'original.';
     const events=store.all('SELECT action,trace_id,created_at,detail_json FROM audit WHERE owner_id=? AND resource_id=? AND action LIKE ? ORDER BY created_at,rowid',row.owner_id,row.kind==='media'?row.release_id:row.id,`${prefix}%`);
     return events.map(event=>{
       let code:null|string=null;try{const details=JSON.parse(event.detail_json);if(typeof details?.code==='string'&&details.code.length<=200)code=details.code;}catch{/* An invalid legacy detail never exposes unstructured data. */}
-      const action=event.action.slice(prefix.length),state=action.startsWith('confirm.')||action==='request'?'queued':action==='cancel'?'cancelled':action;
+      const action=event.action.slice(prefix.length),state=row.kind==='plan'?(action==='create'?'scheduled':action==='confirm'?'confirmed':action==='cancel'?'cancelled':action):action.startsWith('confirm.')||action==='request'?'queued':action==='cancel'?'cancelled':action;
       return {state,code,traceId:event.trace_id,createdAt:event.created_at};
     });
   }
@@ -126,7 +135,10 @@ export class TaskReadService {
   }
   async detail(actor:Actor,ownerId:string,kind:string,id:string){
     const {access,row}=await this.context(actor,ownerId,kind,id),capabilities=this.workspaces.capabilities(actor,access),payloadVisible=this.payloadVisible(access,row);
-    return {...this.item(actor,access,row),snapshot:payloadVisible?this.snapshot(row):null,confirmationDigest:payloadVisible?row.confirmation_digest??null:null,history:this.history(row),copy:row.kind==='delivery'?{target:row.target,connectionId:capabilities.canReadConnections?row.connection_id:null,remoteId:row.remote_id??null,url:row.url??null}:null,...(['release','media'].includes(row.kind)?{mediaHistory:this.mediaHistory(row)}:{})};
+    const privateRead=access.owner.kind==='personal'||access.publishingRole,store=this.workspaces.policy.store;
+    const notes=privateRead&&row.kind==='delivery'?store.all('SELECT id,note,actor,trace_id,created_at FROM delivery_notes WHERE delivery_id=? ORDER BY created_at,rowid',id).map(note=>({id:note.id,note:note.note,actor:note.actor,traceId:note.trace_id,createdAt:note.created_at})):[];
+    const observations=privateRead&&row.kind==='delivery'?store.all('SELECT id,url,proof,source_state,actor,trace_id,observed_at FROM delivery_observations WHERE delivery_id=? ORDER BY observed_at,rowid',id).map(observation=>({id:observation.id,url:observation.url,status:'verified',proof:observation.proof,sourceState:observation.source_state,followUpRequired:true,actor:observation.actor,traceId:observation.trace_id,observedAt:observation.observed_at})):[];
+    return {...this.item(actor,access,row),snapshot:payloadVisible?this.snapshot(row):null,confirmationDigest:payloadVisible?row.confirmation_digest??null:null,history:this.history(row),notes,observations,copy:row.kind==='delivery'?{target:row.target,connectionId:capabilities.canReadConnections?row.connection_id:null,remoteId:row.remote_id??null,url:row.url??null}:null,...(['release','media'].includes(row.kind)?{mediaHistory:this.mediaHistory(row)}:{})};
   }
   async asset(actor:Actor,ownerId:string,kind:string,id:string,assetId:string){
     const {access,row}=await this.context(actor,ownerId,kind,id);

@@ -10,6 +10,10 @@ C05/C06 采用固定 NyxID 合同 `85e23be6`，对应真实成员和 connect-lin
 
 成员读取要求当前组织 Admin 和 `roles:write`。DTO 仅含安全身份、显示名、角色、活跃状态和显式 Publisher assignment；不暴露 email/服务 scope。目录故障明确 unavailable，不能呈现为“组织暂无成员”。授权 Publisher 时需实时确认目标 active 且为 Admin/Member；Viewer、已撤销或未知身份均拒绝。目录不可用阻断 grant，revoke 仍可安全执行。
 
+The additive `publisherAssigned` field shows the stored assignment even when a Viewer/inactive member cannot exercise it; `publisher` continues to mean an effective current assignment. Admins may explicitly revoke dormant assignments. Role downgrades to Viewer/unknown deny workspace access at the Policy boundary, including legacy authority adapters; assignments are not silently deleted.
+
+`publisherAssigned` 表示数据库中仍存在的显式赋权，供 Admin 识别并撤销当前不生效的遗留赋权；`publisher` 保留“当前有效”语义。角色降为 Viewer/未知角色立即拒绝组织访问，既有 assignment 不会因此自动删除。
+
 ## Operator configuration / 运维配置
 
 Optional setup is disabled without configuration. Set `NYXID_CONNECTION_MANAGEMENT_URL` to the exact trusted Nyx management page and `NYXID_CONNECTION_TARGETS_JSON` to mappings such as `{"dev":{"enabled":true,"serviceSlug":"actual-catalog-slug","scopes":[]}}`. Optional target fields are `usePlatformKey` and `endpointUrl`; platform-key requests cannot add OAuth scopes. `NYXID_CONNECTION_ATTEMPT_TTL_SECONDS` is 60–3600 seconds, default 900. URLs require HTTPS; explicit loopback development HTTP requires `ALLOW_LOOPBACK_HTTP=true`. The hosted URL must remain on the configured management URL's origin.
@@ -42,3 +46,7 @@ Before dispatch, migration v3 durably stores `create_dispatched` with the idempo
 Relevant safe codes are `CONNECTION_SETUP_UNAVAILABLE`, `CONNECTION_CONFIGURATION_CHANGED`, `CONNECTION_BINDING_REQUIRED`, `CONNECTION_BINDING_UNAVAILABLE`, `CONNECT_RESULT_UNKNOWN`, `CONNECT_STATUS_UNAVAILABLE`, `CONNECT_CANCEL_UNPROVEN`, `CONNECTION_ATTEMPT_EXPIRED`, `CONNECTION_ATTEMPT_CANCELLED`, `CONNECTION_MISMATCH`, and `CONNECT_RETURN_INVALID`. Identity/owner/scope revocation remains HTTP 401/403 and is not converted into a successful business response. Provider error text and raw callback fields are never reflected into redirect URLs.
 
 以上错误码用于界面提示与重验。当前身份/owner/scope 撤权仍返回 401/403；第三方异常只保留安全分类和 Trace，不把原始 provider 信息放进回跳 URL。Nyx Live 接入、账号与最终授权继续作为独立验收项。
+
+Restore isolation clears all encrypted link URLs and return nonces and keeps nonterminal attempts behind an unknown-result fence (`RESTORED_CONNECTION_RECHECK_REQUIRED`). New hosted creates respect `outbound_paused`; read-only recheck and explicit cancellation remain available. Operator management attempts are local records and create no hosted link.
+
+恢复后不能重放旧 URL/nonce；未终态保留未知边界，不假称上游已经取消。暂停仅阻止新增 hosted link，不阻止只读核验或显式撤销，组织运维入口本地记录仍可创建。
