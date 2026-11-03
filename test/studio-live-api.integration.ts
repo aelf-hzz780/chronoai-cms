@@ -116,6 +116,51 @@ if(process.argv.includes('--serve')){
     await adminPage.screenshot({path:new URL('mobile.png',evidence).pathname,fullPage:true});
     assert.deepEqual(errors,[]);
   });
+  test('WP06 real API browser: current membership, grant/revoke, unavailable counters and read-only settings',async t=>{
+    const server=await acceptanceServer();t.after(()=>server.close());
+    const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
+    const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
+    const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+    const evidence=new URL('../docs/evidence/cms-b-wp06/',import.meta.url);await mkdir(evidence,{recursive:true});
+    await page.goto(`${server.url}/__acceptance/session/admin`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/studio#/members`);await page.locator('.studio-member-directory').waitFor();
+    await page.locator('[data-action="member-select"][data-identity="member"][data-enabled="true"]').click();
+    assert.equal(server.f.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?','org','member'),undefined,'selection alone does not grant authority');
+    await page.locator('[data-action="member-confirm"]').click();
+    await page.locator('[data-action="member-select"][data-identity="member"][data-enabled="false"]').waitFor();
+    assert.ok(server.f.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?','org','member'));
+    await page.screenshot({path:new URL('members.png',evidence).pathname,fullPage:true});
+    // A current directory outage must not prevent explicit revocation of a known subject.
+    server.f.policy.authority.organizationMembers=async()=>{throw new Error('Acceptance directory outage');};
+    await page.locator('[data-action="refresh"]').click();await page.locator('.studio-member-unavailable').waitFor();
+    await page.locator('#revoke-identity').fill('member');await page.locator('#manual-member-revoke button').click();
+    await page.locator('[data-action="member-confirm"]').click();
+    await page.waitForFunction(()=>!document.querySelector('.studio-member-confirm'));
+    assert.equal(server.f.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?','org','member'),undefined);
+    await page.goto(`${server.url}/studio#/analytics`);await page.locator('#analytics-filters').waitFor();
+    await page.locator('#metric-destination').selectOption('dev');await page.locator('#analytics-filters button').click();
+    await page.waitForFunction(()=>document.querySelector('.studio-metric-definition')?.textContent?.includes('capture time'));
+    const metrics=await(await context.request.get(`${server.url}/api/cms/metrics?ownerId=org&destination=dev`)).json();
+    assert.equal(metrics.externalEngagement.metrics.views.value,null);
+    assert.equal(await page.locator('[data-metric="views"] strong').innerText(),'Unavailable');
+    assert.equal(await page.locator('.studio-trend').count(),0,'external lifetime captures do not invent a daily traffic chart');
+    await page.screenshot({path:new URL('analytics.png',evidence).pathname,fullPage:true});
+    await page.goto(`${server.url}/studio#/settings`);await page.locator('#settings-locale').waitFor();
+    assert.equal(await page.locator('.studio-settings-layout input').count(),0,'unsupported workspace settings have no false editable inputs');
+    assert.match(await page.locator('.studio-settings-layout').innerText(),/https:\/\/en.example.invalid/);
+    assert.match(await page.locator('.studio-settings-layout').innerText(),/https:\/\/zh.example.invalid/);
+    await page.locator('#settings-locale').selectOption('zh');await page.locator('h1').filter({hasText:'站点与工作区'}).waitFor();
+    await page.screenshot({path:new URL('settings-zh.png',evidence).pathname,fullPage:true});
+    await page.goto(`${server.url}/studio#/guide`);await page.locator('.studio-guide-grid').waitFor();
+    assert.match(await page.locator('.studio-guide-grid').innerText(),/Ghost/);
+    // Losing Admin after page entry must block the actual API, not just hide a button.
+    server.f.memberships.set('admin:org','member');
+    assert.equal((await context.request.get(`${server.url}/api/cms/owners/org/members`)).status(),403);
+    await page.goto(`${server.url}/studio#/members`);
+    await page.waitForFunction(()=>document.querySelector('#notice')?.textContent?.includes('FORBIDDEN')||document.querySelector('.empty')?.textContent?.includes('当前工作区能力'));
+    assert.equal(await page.locator('[data-action="member-confirm"]').count(),0);
+    assert.deepEqual(errors,[]);
+  });
   test('WP03 real API browser: frozen original confirmation, task readback and safe cancellation',async t=>{
     const server=await acceptanceServer();t.after(()=>server.close());
     const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
