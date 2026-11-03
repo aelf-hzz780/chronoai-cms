@@ -42,8 +42,10 @@ test('return routes cannot leave studio or smuggle credentials through URL', () 
   assert.equal(safeReturnPath('/studio#/article/a'),'/studio#/article/a');
   assert.equal(safeReturnPath('/studio#/article/a?revision=r1'),'/studio#/article/a?revision=r1');
   assert.equal(safeReturnPath('/studio#/new/zh?source=a&revision=r1'),'/studio#/new/zh?source=a&revision=r1');
+  for(const route of ['/studio#/publish/a?revision=r1','/studio#/task/release/task-1','/studio#/tasks?articleId=a','/studio#/connections?ownerId=owner&attemptId=attempt','/studio#/connections?returnError=CONNECT_RETURN_INVALID'])assert.equal(safeReturnPath(route),route);
   for(const route of ['//evil.invalid','https://evil.invalid','/auth/login','/studio?token=secret','/studio/../../evil','/studio#//evil']) assert.equal(safeReturnPath(route),'/studio');
   for(const route of ['/studio#/article/a?token=secret','/studio#/new/zh?source=//evil&revision=r1','/studio#/article/a?revision=r1&revision=r2']) assert.equal(safeReturnPath(route),'/studio');
+  for(const route of ['/studio#/connections?ownerId=owner&attemptId=attempt&token=secret','/studio#/connections?returnError=untrusted','/studio#/connections?ownerId=owner'])assert.equal(safeReturnPath(route),'/studio');
 });
 
 test('untouched imported Markdown preserves BOM and CRLF outside normalized textarea', () => {

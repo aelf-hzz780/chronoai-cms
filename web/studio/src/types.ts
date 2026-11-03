@@ -11,3 +11,12 @@ export interface ContentPage {items:Summary[];total:number;limit:number;offset:n
 export interface Site {language:Language;configured:boolean;publicUrl:string|null;verification:{status:'unknown'|'verified';checkedAt:string|null};blockers:string[]}
 export interface History {id:string;title:string;digest:string;credited_author:string;created_at:string}
 export interface EditorDraft {article:Article|null;language:Language;title:string;author:string;markdown:string;originalMarkdown:string;markdownChanged:boolean;dirty:boolean;conflict:boolean;historyRevision:boolean;imported:boolean}
+export type TaskKind='release'|'delivery'|'media'|'projection'|'plan';
+export interface TaskItem {id:string;kind:TaskKind;ownerId:string;articleId:string;language:Language;title:string;revisionId:string|null;action:string;state:string;createdAt:string;updatedAt:string;traceId:string;errorCode:string|null;url:string|null;allowedActions:string[]}
+export interface TaskPage {items:TaskItem[];total:number;limit:number;offset:number}
+export interface TaskHistory {state:string;code:string|null;traceId:string;createdAt:string;note?:string;actor?:string}
+export interface TaskMedia {id:string;state:string;publicFiles:number;errorCode:string|null;traceId:string;createdAt:string;updatedAt:string}
+export interface TaskDetail extends TaskItem {snapshot:null|{revisionId:string;title:string;markdown:string;creditedAuthor:string;digest:string};confirmationDigest:string|null;history:TaskHistory[];copy:null|{target:string;connectionId:string|null;remoteId:string|null;url:string|null};mediaHistory?:TaskMedia[]}
+export type PublicationAction='publish'|'update'|'unpublish';
+export interface Release {id:string;article_id:string;revision_id:string;owner_id:string;action:PublicationAction;state:string;url:string|null;remote_id:string|null;created_at:string;updated_at:string;error_code:string|null;trace_id:string}
+export interface LinkStatus {id:string;state:string;error_code:string|null;trace_id:string;attempts:number|null;next_attempt_at:string|null}

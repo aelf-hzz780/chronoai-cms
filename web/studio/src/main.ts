@@ -1,11 +1,16 @@
 import {ApiError,Transport} from './transport.js';
-import {ContextGate,draftFrom,safeReturnPath} from './state.js';
+import {ContextGate,draftFrom,safeReturnPath,type Stamp} from './state.js';
 import {base64,decodeMarkdown,markdownForSave} from './bytes.js';
 import {badge,button,escape,renderPreview,sanitizePreview,shell,siteCards} from './components.js';
 import {translator} from './i18n.js';
 import {libraryView,type Filters} from './library.js';
 import {editorView} from './editor.js';
-import type {Article,ContentPage,EditorDraft,History,Identity,Language,Site,Summary,Workspace} from './types.js';
+import {publicationView,type PublicationView} from './publication.js';
+import {OperationIntent,publicationOptions} from './publication-model.js';
+import {taskDetailView,taskListView,linkStatusView,type TaskFilters} from './tasks.js';
+import {isTaskActive,isTaskKind,taskAssetBase} from './task-model.js';
+import {BoundedPoller} from './polling.js';
+import type {Article,ContentPage,EditorDraft,History,Identity,Language,Site,Summary,Workspace,Release,TaskDetail,TaskPage,PublicationAction,LinkStatus} from './types.js';
 
 const root=document.getElementById('app')!;
 const api=new Transport();const context=new ContextGate();
@@ -17,10 +22,19 @@ let pendingSource:{articleId:string;revisionId:string}|null=null;
 let previewMode:'write'|'local'|'saved'='write',previewHtml='',busy=false,suspended=false;
 let currentHash=location.hash||'#/content',lastHash=currentHash;
 let notice:{text:string;kind:'error'|'success'|'info';details?:string}|null=null;
+let publication:PublicationView|null=null,taskPage:TaskPage|null=null,currentTask:TaskDetail|null=null;
+let taskFilters:TaskFilters={kind:'',language:'',state:'',articleId:'',limit:20,offset:0};
+let publicationIntent=new OperationIntent(),mediaIntent=new OperationIntent(),mediaRights=false,linkUnknown=false;
+let linkStatuses:LinkStatus[]=[];
+let preserveNavigation=false;
+const retainedDrafts=new Map<string,EditorDraft>();
+const taskReads=new ContextGate();
+const poller=new BoundedPoller({visible:()=>!document.hidden,onExhausted:()=>{notice={text:t('pollingPaused'),kind:'info'};showNotice();},onError:error=>{void failure(error);}});
 const t=(key:Parameters<ReturnType<typeof translator>>[0])=>translator(locale)(key);
-function route(){const [path,query='']=currentHash.replace(/^#\/?/,'').split('?');const [name='content',id]=path.split('/');return {name,id,query:new URLSearchParams(query)};}
+function route(){const [path,query='']=currentHash.replace(/^#\/?/,'').split('?');const [name='content',id,taskId]=path.split('/');return {name,id,taskId,query:new URLSearchParams(query)};}
 function canEdit(){return Boolean(api.csrf&&draft&&!draft.historyRevision&&!suspended&&owner?.capabilities.canWrite&&(!draft.article||summary?.capabilities.canEdit));}
 function canSubmit(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canWrite&&summary?.capabilities.canSubmit);}
+function canReview(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canPublish&&summary?.capabilities.canPublish);}
 function showNotice(){const node=document.getElementById('notice');if(node)node.innerHTML=notice?`<div class="studio-notice ${notice.kind}" role="${notice.kind==='error'?'alert':'status'}"><p>${escape(notice.text)}</p>${notice.details?`<code>${escape(notice.details)}</code>`:''}</div>`:'';}
 function render(){
  document.documentElement.lang=locale==='en'?'en':'zh-CN';root.setAttribute('aria-busy',String(busy));
@@ -28,7 +42,10 @@ function render(){
  if(!owner){root.innerHTML=`<div class="studio-loading"><div><h2>${t('noWorkspace')}</h2>${button(t('retry'),'identity')}${button(t('logout'),'logout')}</div></div>`;return;}
  const r=route();let content='';
  if(r.name==='content'&&page)content=libraryView(page,filters,locale,owner.capabilities.canWrite&&!suspended);
- else if((r.name==='article'||r.name==='new')&&draft)content=editorView({draft,locale,canEdit:canEdit(),canSubmit:canSubmit(),busy,history,translations:summary?.translations??[],source,previewMode,previewHtml,pendingSource});
+ else if((r.name==='article'||r.name==='new')&&draft)content=editorView({draft,locale,canEdit:canEdit(),canSubmit:canSubmit(),canPublish:canReview(),busy,history,translations:summary?.translations??[],source,previewMode,previewHtml,pendingSource})+(summary?.live&&owner.capabilities.canPublish?linkStatusView(linkStatuses,locale,busy||suspended||linkUnknown):'');
+ else if(r.name==='publish'&&publication)content=publicationView({...publication,busy,allowed:publication.allowed&&!suspended},locale);
+ else if(r.name==='tasks'&&taskPage)content=taskListView(taskPage,taskFilters,locale);
+ else if(r.name==='task'&&currentTask)content=taskDetailView(currentTask,locale,busy,mediaRights,Boolean(api.csrf&&owner.capabilities.canPublish&&!suspended));
  else if(r.name==='onboarding'||r.name==='settings')content=`<section class="studio-welcome"><div class="eyebrow">${r.name==='onboarding'?'WELCOME TO YOUR STUDIO':'WORKSPACE SETTINGS'}</div><h1>${t(r.name==='onboarding'?'welcome':'siteTitle')}</h1><p>${t(r.name==='onboarding'?'welcomeCopy':'siteCopy')}</p>${siteCards(sites,locale)}<div class="heading-actions"><a href="#/content" class="btn primary">${t('continue')}</a>${button(t('refresh'),'refresh')}</div></section>`;
  else content=`<div class="studio-loading">${busy?t('loading'):''}</div>`;
  const directory=identity.organizationDirectory?.status==='unavailable'?`<div class="studio-notice studio-directory">${t('directory')}${identity.organizationDirectory.code?`<code>${escape(identity.organizationDirectory.code)}</code>`:''}</div>`:'';
@@ -41,13 +58,14 @@ function renderLogin(){
 }
 async function failure(error:unknown,stamp=context.current()){
  if(!context.accepts(stamp)||(error instanceof DOMException&&error.name==='AbortError'))return;
+ poller.stop();
  busy=false;const e=error instanceof ApiError?error:null;
  notice={text:e?.message??(error instanceof Error?error.message:t('error')),kind:'error',details:e?`${e.code}${e.traceId?' · Trace ID '+e.traceId:''}`:undefined};
  if(e?.status===401){identity=null;api.csrf=undefined;sessionStorage.setItem('chrono.studio.return',safeReturnPath('/studio'+currentHash));render();return;}
  if(e?.status===403){suspended=true;render();try{const me=await api.json<Identity>('/me',{signal:stamp.signal});if(context.accepts(stamp)){identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===owner?.id)??null;render();}}catch{/* Original classified error remains visible; no previous permission is restored. */}return;}
  render();
 }
-function unsavedAllowed(){return !draft?.dirty||window.confirm(t('discard'));}
+function unsavedAllowed(){if(!draft?.dirty)return true;const allowed=window.confirm(t('discard'));if(allowed&&draft.article)retainedDrafts.delete(`${draft.article.ownerId}/${draft.article.id}`);return allowed;}
 async function loadIdentity(){const stamp=context.advance();busy=true;render();try{
  const me=await api.json<Identity>('/me',{signal:stamp.signal});if(!context.accepts(stamp))return;
  identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===sessionStorage.getItem('chrono.studio.owner'))??me.workspaces[0]??null;
@@ -57,7 +75,8 @@ async function loadIdentity(){const stamp=context.advance();busy=true;render();t
  }catch(error){await failure(error,stamp);}}
 function historyReplace(hash:string){window.history.replaceState(null,'',location.pathname+hash);lastHash=hash;}
 async function loadRoute(){
- const stamp=context.advance();busy=true;suspended=false;notice=null;page=null;summary=null;history=[];sites=[];source=null;previewMode='write';previewHtml='';draft=null;pendingSource=null;render();
+ poller.stop();taskReads.advance();
+ const stamp=context.advance();busy=true;suspended=false;notice=null;page=null;summary=null;history=[];sites=[];source=null;previewMode='write';previewHtml='';draft=null;pendingSource=null;publication=null;taskPage=null;currentTask=null;mediaRights=false;mediaIntent=new OperationIntent();linkStatuses=[];linkUnknown=false;render();
  if(!owner){busy=false;render();return;}
  const ownerId=owner.id;const r=route();
  try{
@@ -78,8 +97,33 @@ async function loadRoute(){
    if(article.ownerId!==ownerId)throw new ApiError(409,'WORKSPACE_MISMATCH','Open this article from its owning workspace.');
    const [details,revisions]=await Promise.all([api.json<ContentPage>(`/owners/${encodeURIComponent(ownerId)}/content-summary?articleId=${encodeURIComponent(article.id)}&limit=1`,{signal:stamp.signal}),api.json<History[]>(`/articles/${encodeURIComponent(article.id)}/revisions`,{signal:stamp.signal})]);
    if(!context.accepts(stamp))return;summary=details.items.find(item=>item.id===article.id)??null;history=revisions;draft=draftFrom(article,article.language,Boolean(revision));
+   const retained=retainedDrafts.get(`${ownerId}/${article.id}`);
+   if(!revision&&retained&&summary?.capabilities.canEdit){if(retained.article?.revision.id!==article.revision.id)retained.conflict=true;draft=retained;}
+   if(summary?.live&&owner.capabilities.canPublish){const result=await api.json<LinkStatus[]>(`/articles/${encodeURIComponent(article.id)}/link-status`,{signal:stamp.signal});if(!context.accepts(stamp))return;linkStatuses=result;}
+  }else if(r.name==='publish'&&r.id){
+   const revision=r.query.get('revision');if(!revision)throw new ApiError(400,'REVISION_REQUIRED',t('publicationBlocked'));
+   const article=await api.json<Article>(`/articles/${encodeURIComponent(r.id)}?revision=${encodeURIComponent(revision)}`,{signal:stamp.signal});if(!context.accepts(stamp))return;
+   if(article.ownerId!==ownerId||article.revision.id!==revision)throw new ApiError(409,'PUBLICATION_CONTEXT',t('publicationBlocked'));
+   const [details,siteResult,releases,preview]=await Promise.all([
+    api.json<ContentPage>(`/owners/${encodeURIComponent(ownerId)}/content-summary?articleId=${encodeURIComponent(article.id)}&limit=1`,{signal:stamp.signal}),
+    api.json<{sites:Site[]}>(`/owners/${encodeURIComponent(ownerId)}/sites`,{signal:stamp.signal}),
+    api.json<Release[]>(`/articles/${encodeURIComponent(article.id)}/releases`,{signal:stamp.signal}),
+    api.json<{html:string;revisionId:string;private:boolean}>(`/articles/${encodeURIComponent(article.id)}/preview?revision=${encodeURIComponent(revision)}`,{signal:stamp.signal})
+   ]);if(!context.accepts(stamp))return;
+   const item=details.items.find(item=>item.id===article.id);if(!item||preview.revisionId!==revision||!preview.private)throw new ApiError(409,'PUBLICATION_CONTEXT',t('publicationBlocked'));
+   const proof=releases.find(release=>release.revision_id===revision&&release.owner_id===ownerId&&release.article_id===article.id&&release.action!=='unpublish');
+   const scope=proof?{ownerId,kind:'release' as const,id:proof.id}:undefined;
+   const html=scope?preview.html.replace(/\/api\/cms\/assets\/([a-f0-9-]{36})/g,(_match,id:string)=>taskAssetBase(scope)+id):preview.html;
+   const options=publicationOptions(revision,item.live,releases);publicationIntent=new OperationIntent();
+   publication={article,owner,site:siteResult.sites.find(site=>site.language===article.language)??null,summary:item,releases,previewHtml:sanitizePreview(html,scope),action:options.actions[0]??'publish',rights:false,busy:false,unknown:false,allowed:Boolean(api.csrf&&owner.capabilities.canPublish&&item.capabilities.canPublish),key:null};
+  }else if(r.name==='tasks'){
+   const articleId=r.query.get('articleId');if(articleId!==null)taskFilters={...taskFilters,articleId,offset:0};
+   await refreshTaskPage(stamp);if(!context.accepts(stamp))return;
+  }else if(r.name==='task'&&r.id&&r.taskId&&isTaskKind(r.id)){
+   await refreshTaskDetail(stamp);if(!context.accepts(stamp))return;
   }else {currentHash='#/content';historyReplace(currentHash);await loadRoute();return;}
   busy=false;render();
+  startTaskPolling();
  }catch(error){await failure(error,stamp);}
 }
 async function save(){
@@ -92,6 +136,7 @@ async function save(){
   else if(local.imported&&!local.markdownChanged){const params=new URLSearchParams({ownerId:workspace.id,language:local.language,title:local.title,creditedAuthor:local.author});result=await api.json<Article>(`/articles/import?${params}`,{method:'POST',body:new TextEncoder().encode(body),contentType:'text/markdown',signal:stamp.signal});}
   else result=await api.json<Article>('/articles',{method:'POST',data:{ownerId:workspace.id,language:local.language,title:local.title,creditedAuthor:local.author,markdown:body},signal:stamp.signal});
   if(!context.accepts(stamp)||draft!==local)return;
+  if(local.article)retainedDrafts.delete(`${local.article.ownerId}/${local.article.id}`);
   draft=draftFrom(result);currentHash=`#/article/${encodeURIComponent(result.id)}`;historyReplace(currentHash);
   if(pendingSource){await api.json<Article>(`/articles/${encodeURIComponent(result.id)}/translation`,{method:'POST',data:{sourceArticleId:pendingSource.articleId,sourceRevisionId:pendingSource.revisionId},signal:stamp.signal});if(!context.accepts(stamp))return;pendingSource=null;}
   await loadRoute();
@@ -121,6 +166,80 @@ async function loadSource(){if(!draft?.article||!canEdit()||busy)return;const id
 async function linkSource(){if(!draft?.article||!source||!canEdit()||draft.dirty||busy)return;const stamp=context.current();const article=draft.article;const inspected=source;busy=true;render();try{
  await api.json(`/articles/${encodeURIComponent(article.id)}/translation`,{method:'POST',data:{sourceArticleId:inspected.id,sourceRevisionId:inspected.revision.id},signal:stamp.signal});if(!context.accepts(stamp))return;await loadRoute();notice={text:t('linked'),kind:'success'};showNotice();
  }catch(error){await failure(error,stamp);}}
+function retainEditor(){if(draft?.article&&draft.dirty)retainedDrafts.set(`${draft.article.ownerId}/${draft.article.id}`,draft);}
+function reviewPublication(){if(!draft?.article||!canReview()||busy)return;retainEditor();preserveNavigation=true;navigate(`#/publish/${encodeURIComponent(draft.article.id)}?revision=${encodeURIComponent(draft.article.revision.id)}`);}
+async function confirmOriginal(){
+ if(!publication||busy||!publication.allowed||suspended||!publication.rights||!publication.site?.configured)return;
+ const frozen=publication,stamp=context.current();
+ if(!publicationOptions(frozen.article.revision.id,frozen.summary.live,frozen.releases).actions.includes(frozen.action))return;
+ const body={ownerId:frozen.owner.id,revisionId:frozen.article.revision.id,creditedAuthor:frozen.article.revision.creditedAuthor,action:frozen.action,rightsConfirmed:true};
+ const key=publicationIntent.keyFor({articleId:frozen.article.id,...body});frozen.key=key;busy=true;render();
+ try{
+  const result=await api.json<Release>(`/articles/${encodeURIComponent(frozen.article.id)}/releases`,{method:'POST',data:{...body,idempotencyKey:key},signal:stamp.signal});if(!context.accepts(stamp)||publication!==frozen)return;
+  if(!result.id||result.owner_id!==body.ownerId||result.article_id!==frozen.article.id||result.revision_id!==body.revisionId)throw new ApiError(502,'PUBLICATION_CONTEXT','Publication result context mismatch');
+  currentHash=`#/task/release/${encodeURIComponent(result.id)}`;historyReplace(currentHash);await loadRoute();notice={text:t(currentTask&&isTaskActive(currentTask)?'queuedNotice':'acceptedNotice'),kind:'info'};showNotice();
+ }catch(error){
+  if(context.accepts(stamp)&&publication===frozen&&(!(error instanceof ApiError)||error.status>=500))frozen.unknown=true;
+  await failure(error,stamp);
+  if(context.accepts(stamp)&&publication===frozen&&error instanceof ApiError&&error.status===409){
+   try{
+    const [releases,details]=await Promise.all([api.json<Release[]>(`/articles/${encodeURIComponent(frozen.article.id)}/releases`,{signal:stamp.signal}),api.json<ContentPage>(`/owners/${encodeURIComponent(frozen.owner.id)}/content-summary?articleId=${encodeURIComponent(frozen.article.id)}&limit=1`,{signal:stamp.signal})]);
+    if(!context.accepts(stamp)||publication!==frozen)return;const item=details.items.find(item=>item.id===frozen.article.id);
+    frozen.releases=releases;frozen.rights=false;if(item)frozen.summary=item;else frozen.allowed=false;
+    const options=publicationOptions(frozen.article.revision.id,frozen.summary.live,releases);if(!options.actions.includes(frozen.action)){frozen.action=options.actions[0]??'publish';frozen.key=null;}render();
+   }catch(readError){await failure(readError,stamp);}
+  }
+ }
+}
+async function refreshTaskPage(stamp:Stamp=context.current()):Promise<boolean>{
+ if(!owner)return false;const selected=owner.id,read=taskReads.advance();
+ const params=new URLSearchParams({limit:String(taskFilters.limit),offset:String(taskFilters.offset)});
+ for(const key of ['kind','language','state','articleId'] as const)if(taskFilters[key])params.set(key,taskFilters[key]);
+ const result=await api.json<TaskPage>(`/owners/${encodeURIComponent(selected)}/tasks?${params}`,{signal:AbortSignal.any([stamp.signal,read.signal])});
+ if(!context.accepts(stamp)||!taskReads.accepts(read))return false;
+ if(result.items.some(item=>item.ownerId!==selected))throw new ApiError(502,'TASK_CONTEXT','Task workspace mismatch');
+ taskPage=result;if(!document.querySelector('#task-filters:focus-within'))render();return result.items.some(isTaskActive);
+}
+async function refreshTaskDetail(stamp:Stamp=context.current()):Promise<boolean>{
+ const r=route();if(!owner||r.name!=='task'||!r.id||!r.taskId||!isTaskKind(r.id))return false;
+ const selected=owner.id,read=taskReads.advance();
+ const result=await api.json<TaskDetail>(`/owners/${encodeURIComponent(selected)}/tasks/${r.id}/${encodeURIComponent(r.taskId)}`,{signal:AbortSignal.any([stamp.signal,read.signal])});
+ if(!context.accepts(stamp)||!taskReads.accepts(read))return false;
+ if(result.ownerId!==selected||result.kind!==r.id||result.id!==r.taskId)throw new ApiError(502,'TASK_CONTEXT','Task snapshot context mismatch');
+ if(currentTask?.revisionId!==result.revisionId||!result.allowedActions.includes('materialize-media'))mediaRights=false;
+ currentTask=result;render();return isTaskActive(result);
+}
+function startTaskPolling(){
+ const r=route(),stamp=context.current();
+ const active=r.name==='tasks'?taskPage?.items.some(isTaskActive):r.name==='task'&&currentTask?isTaskActive(currentTask):false;
+ if(!active)return;poller.start(stamp.signal,async()=>{try{return r.name==='tasks'?await refreshTaskPage(stamp):await refreshTaskDetail(stamp);}catch(error){await failure(error,stamp);return false;}});
+}
+async function taskCommand(action:'cancel'|'reconcile'|'materialize-media'){
+ if(!currentTask||currentTask.kind!=='release'||busy||suspended||!api.csrf||!owner?.capabilities.canPublish||!currentTask.allowedActions.includes(action))return;
+ const task=currentTask,stamp=context.current();
+ if(action==='cancel'&&!window.confirm(`${t('cancelConfirm')}\n${task.id}`))return;
+ if(action==='materialize-media'&&(!mediaRights||!task.revisionId||!window.confirm(`${t('materializeConfirm')}\n${task.ownerId}\n${task.id}\n${task.revisionId}`)))return;
+ const body=action==='materialize-media'?{ownerId:task.ownerId,revisionId:task.revisionId,rightsConfirmed:true}:{};
+ const data=action==='materialize-media'?{...body,idempotencyKey:mediaIntent.keyFor({taskId:task.id,...body})}:body;
+ poller.stop();taskReads.advance();busy=true;render();
+ try{
+  const result=await api.json<{id:string;release_id?:string;revision_id?:string}>(`/releases/${encodeURIComponent(task.id)}/${action}`,{method:'POST',data,signal:stamp.signal});if(!context.accepts(stamp))return;
+  if(action==='materialize-media'){
+   if(!result.id||result.release_id!==task.id||result.revision_id!==task.revisionId)throw new ApiError(502,'MEDIA_CONTEXT','Media confirmation context mismatch');
+   currentHash=`#/task/media/${encodeURIComponent(result.id)}`;historyReplace(currentHash);await loadRoute();notice={text:t('mediaQueued'),kind:'info'};showNotice();return;
+  }
+  await refreshTaskDetail(stamp);if(!context.accepts(stamp))return;busy=false;mediaRights=false;notice={text:t('actionRequested'),kind:'info'};render();startTaskPolling();
+ }catch(error){await failure(error,stamp);if(context.accepts(stamp)&&identity&&owner&&!suspended)try{await refreshTaskDetail(stamp);}catch(readError){await failure(readError,stamp);}}
+}
+async function syncLinks(){
+ if(!draft?.article||!summary?.live||!canReview()||busy||linkUnknown||!window.confirm(t('syncLinksConfirm')))return;
+ const article=draft.article,stamp=context.current();busy=true;render();
+ try{
+  const result=await api.json<{id:string;state:string}>(`/articles/${encodeURIComponent(article.id)}/sync-links`,{method:'POST',data:{},signal:stamp.signal});if(!context.accepts(stamp))return;
+  if(!result.id)throw new ApiError(502,'PROJECTION_CONTEXT','Projection confirmation has no task identity');
+  retainEditor();currentHash=`#/task/projection/${encodeURIComponent(result.id)}`;historyReplace(currentHash);await loadRoute();
+ }catch(error){if(context.accepts(stamp)&&(!(error instanceof ApiError)||error.status>=500))linkUnknown=true;await failure(error,stamp);if(context.accepts(stamp)&&linkUnknown){notice={text:t('unknownTaskRequest'),kind:'error',details:notice?.details};showNotice();}}
+}
 function exportLocal(){if(!draft)return;const bytes=new TextEncoder().encode(markdownForSave(draft));const anchor=document.createElement('a');anchor.href='data:text/markdown;base64,'+base64(bytes);anchor.download='working-draft.md';anchor.click();}
 async function exportRaw(){if(!draft?.article||busy)return;const article=draft.article;const stamp=context.current();busy=true;render();try{
  const file=await api.json<{articleId:string;revisionId:string;encoding:string;byteLength:number;sha256:string;data:string}>(`/articles/${encodeURIComponent(article.id)}/markdown-file?revision=${encodeURIComponent(article.revision.id)}`,{signal:stamp.signal});if(!context.accepts(stamp))return;
@@ -128,7 +247,7 @@ async function exportRaw(){if(!draft?.article||busy)return;const article=draft.a
  if(file.articleId!==article.id||file.revisionId!==article.revision.id||file.encoding!=='base64'||file.byteLength!==bytes.length||file.data!==base64(bytes)||digest!==file.sha256)throw new ApiError(502,'MARKDOWN_INTEGRITY','Original Markdown integrity check failed');
  const anchor=document.createElement('a');anchor.href='data:text/markdown;base64,'+file.data;anchor.download='article.md';anchor.click();busy=false;render();
  }catch(error){await failure(error,stamp);}}
-async function logout(){if(!unsavedAllowed())return;const stamp=context.advance();try{const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'x-csrf-token':api.csrf??''}});if(!response.ok)throw new ApiError(response.status,'LOGOUT_FAILED',t('error'),response.headers.get('x-trace-id')??'');identity=null;owner=null;draft=null;api.csrf=undefined;notice=null;sessionStorage.removeItem('chrono.studio.return');render();}catch(error){await failure(error,stamp);}}
+async function logout(){if(!unsavedAllowed())return;poller.stop();taskReads.advance();const stamp=context.advance();try{const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'x-csrf-token':api.csrf??''}});if(!response.ok)throw new ApiError(response.status,'LOGOUT_FAILED',t('error'),response.headers.get('x-trace-id')??'');identity=null;owner=null;draft=null;retainedDrafts.clear();api.csrf=undefined;notice=null;sessionStorage.removeItem('chrono.studio.return');render();}catch(error){await failure(error,stamp);}}
 function navigate(hash:string){location.hash=hash;}
 async function action(name:string){
  switch(name){
@@ -139,6 +258,14 @@ async function action(name:string){
   case 'previous':filters.offset=Math.max(0,filters.offset-filters.limit);await loadRoute();break;
   case 'next':filters.offset+=filters.limit;await loadRoute();break;
   case 'save':await save();break;
+  case 'review-publication':reviewPublication();break;
+  case 'confirm-original':await confirmOriginal();break;
+  case 'task-cancel':await taskCommand('cancel');break;
+  case 'task-reconcile':await taskCommand('reconcile');break;
+  case 'task-materialize':await taskCommand('materialize-media');break;
+  case 'task-previous':taskFilters.offset=Math.max(0,taskFilters.offset-taskFilters.limit);await loadRoute();break;
+  case 'task-next':taskFilters.offset+=taskFilters.limit;await loadRoute();break;
+  case 'sync-links':await syncLinks();break;
   case 'submit':await submit();break;
   case 'current':if(draft?.article){const hash=`#/article/${encodeURIComponent(draft.article.id)}`;if(hash===currentHash){if(unsavedAllowed())await loadRoute();}else navigate(hash);}break;
   case 'write':previewMode='write';render();break;
@@ -158,7 +285,9 @@ root.addEventListener('click',event=>{
  const status=target.closest<HTMLButtonElement>('[data-status]');if(status){filters.status=status.dataset.status as Filters['status'];filters.offset=0;void loadRoute();return;}
  const control=target.closest<HTMLButtonElement>('[data-action]');if(control&&!control.disabled)void action(control.dataset.action!);
 });
-root.addEventListener('submit',event=>{if((event.target as HTMLElement).id==='search-form'){event.preventDefault();filters.q=(document.getElementById('search') as HTMLInputElement).value;filters.offset=0;void loadRoute();}});
+root.addEventListener('submit',event=>{if((event.target as HTMLElement).id==='search-form'){event.preventDefault();filters.q=(document.getElementById('search') as HTMLInputElement).value;filters.offset=0;void loadRoute();}
+ if((event.target as HTMLElement).id==='task-filters'){event.preventDefault();const value=(id:string)=>(document.getElementById(id) as HTMLInputElement|HTMLSelectElement).value;const kind=value('task-kind');taskFilters={...taskFilters,kind:isTaskKind(kind)?kind:'',language:value('task-language')==='zh'?'zh':value('task-language')==='en'?'en':'',state:value('task-state').trim(),articleId:value('task-article').trim(),offset:0};void loadRoute();}
+});
 root.addEventListener('input',event=>{if(!draft||!canEdit())return;const input=event.target as HTMLInputElement|HTMLTextAreaElement;
  if(input.id==='source-id'){source=null;const confirm=root.querySelector<HTMLButtonElement>('[data-action="link-source"]');if(confirm)confirm.disabled=true;}
  if(input.id==='article-title'){draft.title=input.value;draft.dirty=true;}
@@ -168,6 +297,9 @@ root.addEventListener('input',event=>{if(!draft||!canEdit())return;const input=e
 });
 root.addEventListener('change',event=>{const input=event.target as HTMLInputElement|HTMLSelectElement;
  if(input.id==='locale'){locale=input.value==='zh'?'zh':'en';localStorage.setItem('chrono.studio.locale',locale);render();}
+ if(input.id==='publication-rights'&&publication){publication.rights=(input as HTMLInputElement).checked;render();}
+ if(input.id==='publication-action'&&publication&&['publish','update','unpublish'].includes(input.value)){publication.action=input.value as PublicationAction;publication.rights=false;publication.unknown=false;publication.key=null;render();}
+ if(input.id==='media-rights'){mediaRights=(input as HTMLInputElement).checked;render();}
  if(input.id==='workspace'){
   if(!unsavedAllowed()){input.value=owner?.id??'';return;}owner=identity?.workspaces.find(w=>w.id===input.value)??null;sessionStorage.setItem('chrono.studio.owner',owner?.id??'');filters={...filters,offset:0,q:'',status:'all'};currentHash='#/content';historyReplace(currentHash);void loadRoute();
  }
@@ -176,6 +308,9 @@ root.addEventListener('change',event=>{const input=event.target as HTMLInputElem
  if(input.id==='markdown-file'){const file=(input as HTMLInputElement).files?.[0];if(file)void importFile(file);}
  if(input.id==='image-file'){const file=(input as HTMLInputElement).files?.[0];if(file)void imageFile(file);}
 });
-window.addEventListener('hashchange',()=>{if(!unsavedAllowed()){historyReplace(lastHash);return;}currentHash=location.hash||'#/content';lastHash=currentHash;void loadRoute();});
-window.addEventListener('beforeunload',event=>{if(draft?.dirty){event.preventDefault();event.returnValue='';}});
+window.addEventListener('hashchange',()=>{if(!preserveNavigation&&!unsavedAllowed()){historyReplace(lastHash);return;}preserveNavigation=false;currentHash=location.hash||'#/content';lastHash=currentHash;void loadRoute();});
+document.addEventListener('visibilitychange',()=>poller.visibilityChanged());
+window.addEventListener('pagehide',()=>{retainEditor();poller.stop();taskReads.advance();context.advance();});
+window.addEventListener('pageshow',event=>{if(event.persisted)void loadIdentity();});
+window.addEventListener('beforeunload',event=>{if(draft?.dirty||[...retainedDrafts.values()].some(local=>local.dirty)){event.preventDefault();event.returnValue='';}});
 void loadIdentity();

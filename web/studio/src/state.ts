@@ -7,10 +7,17 @@ export class ContextGate {
   accepts(stamp:Stamp):boolean{return stamp.version===this.version&&!stamp.signal.aborted;}
 }
 export function safeReturnPath(path:string):string {
- const match=/^\/studio(?:#\/(content|onboarding|settings|article\/[a-zA-Z0-9-]+|new(?:\/(?:en|zh))?)(?:\?([^#]*))?)?$/.exec(path);
+ const match=/^\/studio(?:#\/(content|onboarding|settings|tasks|connections|task\/(?:release|delivery|media|projection|plan)\/[a-zA-Z0-9-]+|(?:article|publish)\/[a-zA-Z0-9-]+|new(?:\/(?:en|zh))?)(?:\?([^#]*))?)?$/.exec(path);
  if(!match)return '/studio';if(!match[2])return path;
  const query=new URLSearchParams(match[2]);const keys=[...query.keys()];
- const expected=match[1].startsWith('article/')?['revision']:match[1].startsWith('new/')?['source','revision']:[];
+ if(match[1]==='connections'){
+  if(new Set(keys).size!==keys.length||keys.some(key=>!['ownerId','attemptId','returnError'].includes(key)))return '/studio';
+  const error=query.get('returnError');if(query.has('returnError')&&!['CONNECT_RETURN_INVALID','SIGN_IN_REQUIRED','FORBIDDEN'].includes(error??''))return '/studio';
+  if(!error&&(!query.has('ownerId')||!query.has('attemptId')))return '/studio';
+  for(const key of ['ownerId','attemptId'])if(query.has(key)&&!/^[a-zA-Z0-9-]+$/.test(query.get(key)??''))return '/studio';
+  return path;
+ }
+ const expected=match[1].startsWith('article/')||match[1].startsWith('publish/')?['revision']:match[1].startsWith('new/')?['source','revision']:match[1]==='tasks'?['articleId']:[];
  if(keys.length!==expected.length||!expected.every(key=>keys.includes(key)&&/^[a-zA-Z0-9-]+$/.test(query.get(key)??'')))return '/studio';
  return path;
 }
