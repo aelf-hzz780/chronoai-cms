@@ -15,6 +15,10 @@ import {defaultMetricFilters,metricQuery} from './analytics-model.js';
 import {membersView} from './members.js';
 import {canGrantPublisher,canRevokePublisher} from './members-model.js';
 import {guideView,settingsView,unavailablePage} from './workspace-views.js';
+import {ConnectionController} from './connection-controller.js';
+import {DistributionController} from './distribution-controller.js';
+import {connectionReturnOwner} from './distribution-model.js';
+import type {WorkflowHost} from './workflow-types.js';
 import type {Article,ContentPage,EditorDraft,History,Identity,Language,Site,Summary,Workspace,Release,TaskDetail,TaskPage,PublicationAction,LinkStatus,MemberDirectory,MemberIntent,MetricFilters,MetricDestination,Metrics} from './types.js';
 
 const root=document.getElementById('app')!;
@@ -38,6 +42,8 @@ const retainedDrafts=new Map<string,EditorDraft>();
 const taskReads=new ContextGate();
 const poller=new BoundedPoller({visible:()=>!document.hidden,onExhausted:()=>{notice={text:t('pollingPaused'),kind:'info'};showNotice();},onError:error=>{void failure(error);}});
 const t=(key:Parameters<ReturnType<typeof translator>>[0])=>translator(locale)(key);
+const workflowHost:WorkflowHost={api,owner:()=>owner,subject:()=>identity?.subject??'',locale:()=>locale,stamp:()=>context.current(),accepts:stamp=>context.accepts(stamp),render,fail:failure,navigate,remember:hash=>{currentHash=hash;historyReplace(hash);},notice:(text,kind='info')=>{notice={text,kind};showNotice();},pausePolling:()=>{poller.stop();taskReads.advance();},resumePolling:startTaskPolling,refreshTask:async stamp=>{await refreshTaskDetail(stamp);return currentTask;}};
+const connections=new ConnectionController(workflowHost),distribution=new DistributionController(workflowHost);
 function route(){const [path,query='']=currentHash.replace(/^#\/?/,'').split('?');const [name='content',id,taskId]=path.split('/');return {name,id,taskId,query:new URLSearchParams(query)};}
 function canEdit(){return Boolean(api.csrf&&draft&&!draft.historyRevision&&!suspended&&owner?.capabilities.canWrite&&(!draft.article||summary?.capabilities.canEdit));}
 function canSubmit(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canWrite&&summary?.capabilities.canSubmit);}
@@ -49,10 +55,12 @@ function render(){
  if(!owner){root.innerHTML=`<div class="studio-loading"><div><h2>${t('noWorkspace')}</h2>${button(t('retry'),'identity')}${button(t('logout'),'logout')}</div></div>`;return;}
  const r=route();let content='';
  if(r.name==='content'&&page)content=libraryView(page,filters,locale,owner.capabilities.canWrite&&!suspended);
- else if((r.name==='article'||r.name==='new')&&draft)content=editorView({draft,locale,canEdit:canEdit(),canSubmit:canSubmit(),canPublish:canReview(),busy,history,translations:summary?.translations??[],source,previewMode,previewHtml,pendingSource})+(summary?.live&&owner.capabilities.canPublish?linkStatusView(linkStatuses,locale,busy||suspended||linkUnknown):'');
+ else if((r.name==='article'||r.name==='new')&&draft)content=editorView({draft,locale,canEdit:canEdit(),canSubmit:canSubmit(),canPublish:canReview(),canDistribute:canReview()&&Boolean(summary?.live),busy,history,translations:summary?.translations??[],source,previewMode,previewHtml,pendingSource})+(summary?.live&&owner.capabilities.canPublish?linkStatusView(linkStatuses,locale,busy||suspended||linkUnknown):'');
  else if(r.name==='publish'&&publication)content=publicationView({...publication,busy,allowed:publication.allowed&&!suspended},locale);
  else if(r.name==='tasks'&&taskPage)content=taskListView(taskPage,taskFilters,locale);
- else if(r.name==='task'&&currentTask)content=taskDetailView(currentTask,locale,busy,mediaRights,Boolean(api.csrf&&owner.capabilities.canPublish&&!suspended));
+ else if(r.name==='task'&&currentTask)content=taskDetailView(currentTask,locale,busy,mediaRights,Boolean(api.csrf&&owner.capabilities.canPublish&&!suspended))+(suspended?'':distribution.taskView());
+ else if(r.name==='connections')content=suspended?unavailablePage(locale):connections.view();
+ else if(r.name==='distribution')content=suspended?unavailablePage(locale):distribution.view();
  else if(r.name==='analytics')content=!owner.capabilities.canReadMetrics||suspended?unavailablePage(locale):metrics?analyticsView(metrics,metricFilters,locale,busy,Boolean(api.csrf&&owner.capabilities.canPublish),metricCopy,metricCopyId):`<div class="studio-loading">${busy?t('loading'):button(t('retry'),'refresh')}</div>`;
  else if(r.name==='members')content=!owner.capabilities.canManagePublishers||suspended?unavailablePage(locale):memberDirectory?membersView(memberDirectory,owner,locale,busy,memberIntent,manualMemberIdentity,Boolean(api.csrf&&owner.capabilities.canManagePublishers)): `<div class="studio-loading">${busy?t('loading'):button(t('retry'),'refresh')}</div>`;
  else if(r.name==='settings')content=settingsView(owner,sites,locale);
@@ -72,8 +80,8 @@ async function failure(error:unknown,stamp=context.current()){
  poller.stop();
  busy=false;const e=error instanceof ApiError?error:null;
  notice={text:e?.message??(error instanceof Error?error.message:t('error')),kind:'error',details:e?`${e.code}${e.traceId?' · Trace ID '+e.traceId:''}`:undefined};
- if(e?.status===401){identity=null;api.csrf=undefined;sessionStorage.setItem('chrono.studio.return',safeReturnPath('/studio'+currentHash));render();return;}
- if(e?.status===403){suspended=true;memberDirectory=null;memberIntent=null;metrics=null;metricCopy=null;render();try{const me=await api.json<Identity>('/me',{signal:stamp.signal});if(context.accepts(stamp)){identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===owner?.id)??null;render();}}catch{/* Original classified error remains visible; no previous permission is restored. */}return;}
+ if(e?.status===401){connections.reset();distribution.reset();identity=null;api.csrf=undefined;sessionStorage.setItem('chrono.studio.return',safeReturnPath('/studio'+currentHash));render();return;}
+ if(e?.status===403){connections.reset();distribution.reset();suspended=true;memberDirectory=null;memberIntent=null;metrics=null;metricCopy=null;render();try{const me=await api.json<Identity>('/me',{signal:stamp.signal});if(context.accepts(stamp)){identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===owner?.id)??null;render();}}catch{/* Original classified error remains visible; no previous permission is restored. */}return;}
  render();
 }
 function unsavedAllowed(){if(!draft?.dirty)return true;const allowed=window.confirm(t('discard'));if(allowed&&draft.article)retainedDrafts.delete(`${draft.article.ownerId}/${draft.article.id}`);return allowed;}
@@ -86,7 +94,7 @@ async function loadIdentity(){const stamp=context.advance();busy=true;render();t
  }catch(error){await failure(error,stamp);}}
 function historyReplace(hash:string){window.history.replaceState(null,'',location.pathname+hash);lastHash=hash;}
 async function loadRoute(){
- poller.stop();taskReads.advance();
+ poller.stop();taskReads.advance();connections.reset();distribution.reset();
  const stamp=context.advance();busy=true;suspended=false;notice=null;page=null;summary=null;history=[];sites=[];source=null;previewMode='write';previewHtml='';draft=null;pendingSource=null;publication=null;taskPage=null;currentTask=null;mediaRights=false;mediaIntent=new OperationIntent();linkStatuses=[];linkUnknown=false;metrics=null;metricCopy=null;memberDirectory=null;memberIntent=null;render();
  if(!owner){busy=false;render();return;}
  const ownerId=owner.id;const r=route();
@@ -94,6 +102,13 @@ async function loadRoute(){
   if(r.name==='content'){
    const params=new URLSearchParams({language:filters.language,status:filters.status,q:filters.q,limit:String(filters.limit),offset:String(filters.offset)});
    const result=await api.json<ContentPage>(`/owners/${encodeURIComponent(ownerId)}/content-summary?${params}`,{signal:stamp.signal});if(!context.accepts(stamp))return;page=result;
+  }else if(r.name==='connections'){
+   const restoreOwner=r.query.get('ownerId');
+   if(r.query.has('attemptId')&&!restoreOwner)throw new ApiError(403,'FORBIDDEN','A verified owner context is required');
+   if(restoreOwner){const me=await api.json<Identity>('/me',{signal:stamp.signal});if(!context.accepts(stamp))return;const selected=connectionReturnOwner(me.workspaces,restoreOwner);if(!selected)throw new ApiError(403,'FORBIDDEN',t('noPagePermission'));identity=me;api.csrf=me.csrf;owner=selected;sessionStorage.setItem('chrono.studio.owner',selected.id);}
+   await connections.load(stamp,r.query);if(!context.accepts(stamp))return;
+  }else if(r.name==='distribution'&&r.id){
+   await distribution.loadArticle(r.id,stamp);if(!context.accepts(stamp))return;
   }else if(r.name==='analytics'){
    if(owner.capabilities.canReadMetrics)await readMetrics(stamp);
   }else if(r.name==='members'){
@@ -138,6 +153,7 @@ async function loadRoute(){
    await refreshTaskPage(stamp);if(!context.accepts(stamp))return;
   }else if(r.name==='task'&&r.id&&r.taskId&&isTaskKind(r.id)){
    await refreshTaskDetail(stamp);if(!context.accepts(stamp))return;
+   const loadedTask=currentTask as TaskDetail|null;if(loadedTask&&['delivery','plan'].includes(loadedTask.kind)){await distribution.loadTask(loadedTask,stamp);if(!context.accepts(stamp))return;}
   }else {currentHash='#/content';historyReplace(currentHash);await loadRoute();return;}
   busy=false;render();
   startTaskPolling();
@@ -272,7 +288,7 @@ async function refreshTaskDetail(stamp:Stamp=context.current()):Promise<boolean>
  if(!context.accepts(stamp)||!taskReads.accepts(read))return false;
  if(result.ownerId!==selected||result.kind!==r.id||result.id!==r.taskId)throw new ApiError(502,'TASK_CONTEXT','Task snapshot context mismatch');
  if(currentTask?.revisionId!==result.revisionId||!result.allowedActions.includes('materialize-media'))mediaRights=false;
- currentTask=result;render();return isTaskActive(result);
+ currentTask=result;distribution.receiveTask(result);render();return isTaskActive(result);
 }
 function startTaskPolling(){
  const r=route(),stamp=context.current();
@@ -312,9 +328,11 @@ async function exportRaw(){if(!draft?.article||busy)return;const article=draft.a
  if(file.articleId!==article.id||file.revisionId!==article.revision.id||file.encoding!=='base64'||file.byteLength!==bytes.length||file.data!==base64(bytes)||digest!==file.sha256)throw new ApiError(502,'MARKDOWN_INTEGRITY','Original Markdown integrity check failed');
  const anchor=document.createElement('a');anchor.href='data:text/markdown;base64,'+file.data;anchor.download='article.md';anchor.click();busy=false;render();
  }catch(error){await failure(error,stamp);}}
-async function logout(){if(!unsavedAllowed())return;poller.stop();taskReads.advance();const stamp=context.advance();try{const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'x-csrf-token':api.csrf??''}});if(!response.ok)throw new ApiError(response.status,'LOGOUT_FAILED',t('error'),response.headers.get('x-trace-id')??'');identity=null;owner=null;draft=null;retainedDrafts.clear();api.csrf=undefined;notice=null;sessionStorage.removeItem('chrono.studio.return');render();}catch(error){await failure(error,stamp);}}
+async function logout(){if(!unsavedAllowed())return;poller.stop();taskReads.advance();const stamp=context.advance();try{const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'x-csrf-token':api.csrf??''}});if(!response.ok)throw new ApiError(response.status,'LOGOUT_FAILED',t('error'),response.headers.get('x-trace-id')??'');connections.reset();distribution.reset();identity=null;owner=null;draft=null;retainedDrafts.clear();api.csrf=undefined;notice=null;sessionStorage.removeItem('chrono.studio.return');render();}catch(error){await failure(error,stamp);}}
 function navigate(hash:string){location.hash=hash;}
 async function action(name:string){
+ if(name.startsWith('connection-')){await connections.action(name);return;}
+ if(/^(dist-|delivery-|plan-)/.test(name)){await distribution.action(name);return;}
  switch(name){
   case 'identity':await loadIdentity();break;
   case 'logout':await logout();break;
@@ -364,6 +382,7 @@ root.addEventListener('submit',event=>{if((event.target as HTMLElement).id==='se
  }
 });
 root.addEventListener('input',event=>{const input=event.target as HTMLInputElement|HTMLTextAreaElement;
+ if(distribution.input(input))return;
  if(input.id==='metric-copy-id'){metricCopyId=input.value;metricCopy=null;const refresh=root.querySelector<HTMLButtonElement>('[data-action="refresh-counters"]');if(refresh)refresh.disabled=true;}
  if(input.id==='revoke-identity')manualMemberIdentity=input.value;
  if(!draft||!canEdit())return;
@@ -374,6 +393,7 @@ root.addEventListener('input',event=>{const input=event.target as HTMLInputEleme
  if(['article-title','credited-author','markdown'].includes(input.id)){const submitButton=root.querySelector<HTMLButtonElement>('[data-action="submit"]');if(submitButton)submitButton.disabled=true;const status=root.querySelector('.editor-state');if(status)status.innerHTML=badge(t('unsaved'),'amber');}
 });
 root.addEventListener('change',event=>{const input=event.target as HTMLInputElement|HTMLSelectElement;
+ if(connections.change(input)||distribution.change(input))return;
  if(input.id==='locale'||input.id==='settings-locale'){locale=input.value==='zh'?'zh':'en';localStorage.setItem('chrono.studio.locale',locale);render();}
  if(input.id==='publication-rights'&&publication){publication.rights=(input as HTMLInputElement).checked;render();}
  if(input.id==='publication-action'&&publication&&['publish','update','unpublish'].includes(input.value)){publication.action=input.value as PublicationAction;publication.rights=false;publication.unknown=false;publication.key=null;render();}
@@ -388,6 +408,7 @@ root.addEventListener('change',event=>{const input=event.target as HTMLInputElem
 });
 window.addEventListener('hashchange',()=>{if(!preserveNavigation&&!unsavedAllowed()){historyReplace(lastHash);return;}preserveNavigation=false;currentHash=location.hash||'#/content';lastHash=currentHash;void loadRoute();});
 document.addEventListener('visibilitychange',()=>poller.visibilityChanged());
+root.addEventListener('toggle',event=>{const details=event.target;if(details instanceof HTMLDetailsElement&&details.classList.contains('studio-plan-create'))distribution.setPlanOpen(details.open);},true);
 window.addEventListener('pagehide',()=>{retainEditor();poller.stop();taskReads.advance();context.advance();});
 window.addEventListener('pageshow',event=>{if(event.persisted)void loadIdentity();});
 window.addEventListener('beforeunload',event=>{if(draft?.dirty||[...retainedDrafts.values()].some(local=>local.dirty)){event.preventDefault();event.returnValue='';}});
