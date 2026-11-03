@@ -57,12 +57,15 @@ node themes/chronoai-b/pack.mjs \
 - `node --test test/ghost-theme.test.ts`：3/3 通过。验证原生渲染/注入 hook、单次正文、分页路由、真实 author/date helper、无私有 API 或重复统计、全部 EN/简中翻译 key，以及未配置/误标 fixture 的打包拒绝。
 - 官方 `gscan@6.7.0 --v6 --verbose` 已实际执行：**源目录**无 fatal、无 warning，仍有 **1 error：缺少 `author.email`**；**仅临时 fixture ZIP** 完整兼容 Ghost 6.x、无 error/warning。fixture 包通过证明模板/包结构，不证明生产邮箱已配置或真实安装成功。临时验证包为 `/tmp/chronoai-b-20261103.fixture.zip`，SHA-256 `fc590f96a8ec2d4630f2050de29aafbcfefe9a1ea707fd4ac7491487f36ef717`。
 - 本机实际 Ghost 验证：`test/ghost-theme-local.integration.ts` 1/1 aggregate PASS；EN 2468 / ZH 2469 均完成 fixture 上传/激活、已有文章/作者/locale/canonical/代码/表格/sitemap、390px 布局、无私有 CMS 请求，以及恢复 `source` 主题。文章 HTML SHA-256 与 URL 前后不变。证据见 `docs/evidence/ghost-b-local/result.json` 和六张截图。独立公开浏览器没有 CMS session；本轮 CMS 服务未参与这次阅读验证。
-- 尚未完成：CMS 发布至这套 Ghost 的作者映射、两语言互链、公开媒体及既有 tracker 的 allow/decline/GPC/DNT 联合端到端验收；远端生产安装与正式维护邮箱配置。既有模块测试与本地原生渲染验收不替代这些联合检查。
+- 联合验收：`test/cms-ghost-local.integration.ts` 1/1 aggregate PASS。真实 CMS API、ReleaseWorker、GhostAdapter 在双本地 Ghost 完成发布/作者映射、双向语言链接与 hreflang、既有 tracker 的 allow/decline/withdraw/GPC/DNT、CMS 停止后的独立公开阅读。使用隔离身份 fixture，不代表 Nyx Live。所有本轮合成文章恢复草稿，旧主题恢复；原文章未修改。见 `docs/evidence/cms-ghost-local/result.json`。
+- 首次联合验收缺少环境中的 `RENDER_ASSET_ORIGINS=https://cdn.jsdelivr.net`，原文正确停在 verifying。补齐项目已有配置后通过，没有修改业务核验器或跳过浏览器证明；该运行明确不覆盖私有图片的实际 Docker volume 提升路径。
+- 尚未完成：这套主机上的私有图片共享卷联合验收、远端生产安装与正式维护邮箱配置。既有素材模块/挂载验收证据保留其原版本范围。
 
 - Theme contracts: 3/3 passing tests covering rendering, metadata hooks, pagination, authors/dates, translation coverage and packaging guards.
 - Official GScan 6.7.0 reports **one missing-email error on the unconfigured source directory** and **a clean Ghost 6 compatibility pass on the temporary fixture ZIP only**. This establishes template/package structure, not production metadata configuration or installation success.
 - Local actual-Ghost acceptance passed on both languages, including upload, activation, unchanged post HTML/URLs, native author/locale/canonical, code/table rendering, mobile layout, no private CMS requests and restoration of the original theme. See the recorded evidence and screenshots.
-- Remaining: combined CMS publishing/author mapping, translation metadata, public media and consent behavior on these instances; remote deployment and release-contact configuration. Native theme acceptance alone does not establish those integration results.
+- Combined local acceptance passed using real CMS API/workers/Ghost adapter, author mappings, bidirectional translation metadata, consent allow/decline/withdraw/GPC/DNT and public reading with CMS stopped. The external identity source was isolated; no Nyx Live claim is made. Missing existing CDN configuration initially caused a correct verifying state; supplying it fixed the harness without relaxing publication verification.
+- Remaining: private image volume promotion on this host, remote deployment and release-contact configuration. Existing media/mount evidence retains its original version boundary.
 
 ## 官方依据 / Official references
 

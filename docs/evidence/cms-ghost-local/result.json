@@ -1,0 +1,30 @@
+{
+  "level": "local-real-CMS-API-and-Ghost",
+  "run": "a587647e-e1cb-4b8e-b80b-7e1b9e887e43",
+  "authority": "isolated fixture; real Nyx deferred",
+  "consent": {
+    "allow": true,
+    "decline": true,
+    "withdraw": true,
+    "gpc": true,
+    "dnt": true
+  },
+  "translations": "bidirectional verified links",
+  "cmsOfflineReading": true,
+  "privateImagePromotion": "not exercised by this run",
+  "posts": [
+    {
+      "articleId": "cc323ec6-951e-4168-ad8a-f8e4dc0f8547",
+      "releaseId": "bababb3f-4dbd-421b-b995-15c7a0365c0a",
+      "language": "en",
+      "url": "http://localhost:2468/chrono-cc323ec6-951e-4168-ad8a-f8e4dc0f8547/"
+    },
+    {
+      "articleId": "a66d2368-f81e-4190-ad17-c8f2267e06dc",
+      "releaseId": "602862db-f5e5-4fc0-8386-db36371dd318",
+      "language": "zh",
+      "url": "http://localhost:2469/chrono-a66d2368-f81e-4190-ad17-c8f2267e06dc/"
+    }
+  ],
+  "cleanup": "test posts unpublished; previous themes restored after validation"
+}

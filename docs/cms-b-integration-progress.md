@@ -17,7 +17,7 @@ Approved WP00–08, C01–C10 and 14-page B experience. Root owns architecture/a
 | 04 connections/approvals | in progress | Pinned Nyx contract confirmed; C06 attempt implementation underway |
 | 05 distribution/manual | pending | Plans, note persistence and historical-copy observations required |
 | 06 governance/metrics | in progress | C05 directory implementation underway; real metric views pending |
-| 07 Ghost theme | local rendering accepted | Theme/GScan fixture PASS; actual local EN/ZH upload, activate, desktop/mobile rendering and restore PASS; combined CMS publishing/consent checks remain; author email stays packaging configuration |
+| 07 Ghost theme | local accepted, bounded | Theme/GScan fixture PASS; actual local EN/ZH upload/render/restore PASS; real CMS publishing, authors, links, consent and offline reading PASS; private media volume promotion on this host and release-email configuration remain separate |
 | 08 integration/handoff | in progress | Baseline and acceptance matrix preparation; no Live claim |
 
 ## Current verification / 当前验证
@@ -30,6 +30,7 @@ Approved WP00–08, C01–C10 and 14-page B experience. Root owns architecture/a
 - Root real-API browser rerun passed (1 aggregate test, `/tmp/cms-b-m1-real-api.log`), including narrow-screen owner switching. M1+C03+theme-source fixed gate passed typecheck and 353/353 tests (`/tmp/cms-b-m1-c03-check.log`). Local implementation commit: `ce4203b`.
 - Existing local Ghost EN 2468 and ZH 2469 recovered when Docker Desktop started. Read-only `infra/ghost/experiment.py --verify` passed for both existing posts, language/author/code/table/sitemap and cross-site 404. No volume or credential reset.
 - User explicitly deferred real NyxID integration on the other host. It remains an external acceptance item rather than a blocker for local implementation; no remote integration claim is made.
+- `test/cms-ghost-local.integration.ts` passed actual CMS API/Worker/Ghost publication, author mapping, bidirectional hreflang, consent allow/decline/withdraw/GPC/DNT and reading after CMS stopped (53.2s). Initial harness failure was missing the already required Ghost CDN origin configuration; no business verification was weakened. Synthetic posts were restored to drafts and both themes restored. This run excludes private-image volume promotion and Nyx Live.
 - No external publication, connection creation, role mutation, deployment or push occurred in this task.
 
 所有验证需标明固定版本/本地/fixture/真实外部边界；尚无最终完成声明。
