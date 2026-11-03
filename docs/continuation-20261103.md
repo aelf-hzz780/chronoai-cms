@@ -84,6 +84,10 @@ Local port 3457 now runs `c16cde7` in the named candidate container. Root and in
 
 The user selected the existing local NyxID/CMS as the continuation target. A fresh authorized operator readback after the upgrade confirms the same catalog, all 35 registered contracts, runtime service binding and OpenAPI paths, with zero catalog mutations. The earlier portal/direct browser identity evidence retains its pinned version rather than being described as rerun here. Selecting a separate remote Nyx/CMS deployment is no longer a current local blocker.
 
+本轮修复与交付文档已正常推送到 `origin/codex/003-blogsystem-delivery`，已验证提交为 `afb3304425a1a8e13e00eb6ef9abad54435374fa`，`main` 仍为 `019222c73f406015ba00557d782103f6b61500d5`。[既有 PR #1](https://github.com/aelf-hzz780/chronoai-cms/pull/1) 的正文已通过登录 Chrome 更新；connector 的 403 保留为工具权限限制。公开 REST 读回确认 open／draft／未合并及该 head；正文仅有浏览器提交产生的 CRLF 与文件 LF 差异，归一行尾后逐字一致，不声称原始 bytes 相同。见[实际 Git／PR 回执](evidence/continuation-20261103/git-delivery-receipt.json)。回执固定引用已验证的父提交；后续仅文档的回执提交及最终远端 head 记入本机最终台账，避免自引用 SHA。
+
+The fix and delivery documentation were normally pushed to `origin/codex/003-blogsystem-delivery` at verified commit `afb3304425a1a8e13e00eb6ef9abad54435374fa`; `main` remains `019222c73f406015ba00557d782103f6b61500d5`. The existing PR body was updated through authenticated Chrome after the connector returned a permission-related 403. Public REST readback confirms the open, draft, unmerged PR and its head. Its content matches the prepared file exactly after CRLF-to-LF normalization only; raw bytes differ. The receipt pins the verified parent, while the subsequent documentation-only receipt commit and final remote head are recorded in the local completion ledger to avoid a self-referential SHA.
+
 ## 必需外部输入与后续执行
 
 [外部验收执行清单](continuation-external-handoff-20261103.md)已将六个交接工作包整理为最小输入、步骤、证据和停止／回滚条件。现有本地 Nyx／CMS 已选定；仍需证明个人／组织 Ghost 在配置的公开域名或子域名上可访问，取得真实 DEV／Hashnode 账号、资格、精确连接与内容动作批准，以及 Medium／HackerNoon 账号和人工负责人；完成真实副本生命周期／恢复、容量费用、监控隐私、付款运维与备份恢复交接及最终签收。无需另行部署远端 Nyx／CMS，也不凭空要求生产云主机或数值 RPO／RTO。

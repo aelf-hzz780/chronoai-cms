@@ -169,10 +169,10 @@ I22记录时的Git交付：2026-11-02 root已独立验收并正常push `6ea9ecd`
 
 ## 外部 BLOCKED
 
-- B1：本地 Nyx 后端与门户补丁、W1 来源撤权和 W2 恢复证据已有固定版本记录。剩余为目标 Nyx 实例接纳／部署本地补丁、目标注册与真实外部分发精确批准，不再描述为门户未实现。共同版本的补验、注册与复跑材料见当前交接。
+- B1：用户已选定现有本地 NyxID（门户 3000／API 3001）与 CMS 3457。本地补丁、R031、W1／W2、门户同身份入口及 35 操作注册已有固定版本证据，升级后 catalog 读回一致；剩余为真实外部分发的精确连接／内容动作批准及本地运维交接，不再要求另选或另行部署 Nyx／CMS。见[当前交接](continuation-20261103.md)。
 - B2：DEV 个人／组织与有更新权限的账号、Hashnode 组织 Pro／publication、精确 Nyx UserService 连接与内容动作授权，关联 D6/D7。
 - B3：Medium／HackerNoon 账号、人工提交负责人及内容／动作授权；提交与接受分开，关联 D6/D7。
-- B4：生产 HTTPS 域名／资源、付款及运维负责人、监控／隐私保留／离机备份方案、约定的数值 RPO/RTO，关联 D1/D8/D9。
-- B5（已解除）：`834fb6e` 已正常推送并读回，`main` 保持 `019222c`。本次 connector 创建实际返回 403 后，现有 Chrome 会话已创建 [Draft PR #1](https://github.com/aelf-hzz780/chronoai-cms/pull/1)，公开 REST 确认 draft/open/未合并且正文一致。见[实际 Git 回执](evidence/followup-20261102/git-delivery-receipt.json)；历史错误保留，当前不再列为外部输入阻塞。
+- B4：现有本地部署仍需证明个人／组织 Ghost 的公开域名或子域名可达，落实容量／费用／付款与运维责任、监控／隐私保留／备份恢复交接，关联 D1/D8/D9。另行约定的迁移或恢复目标按明确约定验收，不新增独立生产云主机或数值 RPO/RTO 前置条件；见[外部验收执行清单](continuation-external-handoff-20261103.md)。
+- B5（已解除）：最新修复及交付文档 `afb3304` 已正常推送到 `origin/codex/003-blogsystem-delivery` 并读回，`main` 保持 `019222c`。[既有 Draft PR #1](https://github.com/aelf-hzz780/chronoai-cms/pull/1) 正文已通过 Chrome 更新，公开 REST 确认 draft/open/未合并、head 一致，正文仅 CRLF／LF 行尾差异；见[本轮 Git／PR 回执](evidence/continuation-20261103/git-delivery-receipt.json)。此前创建回执与 connector 403 仍保留在[历史回执](evidence/followup-20261102/git-delivery-receipt.json)，不再列为外部输入阻塞。随后仅文档的回执提交记录于本机最终台账。
 
 这些必需外部验证不改为 N/A。Local PASS 不自动成为 Live 或 D1–D9 正式签收；A43/A44 无权或不可用的计数不强求数值。

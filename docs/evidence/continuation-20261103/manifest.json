@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "at": "2026-11-03T03:22:17.376381+00:00",
+  "at": "2026-11-03T03:30:04.290080+00:00",
   "status": "BOUNDED_LOCAL_FIX_DEPLOYED_NOT_FORMALLY_ACCEPTED",
   "businessSha": "c16cde700963959d3fd7fc226853b71f5551573a",
   "baselineBusinessSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
@@ -32,6 +32,10 @@
     {
       "path": "docs/evidence/continuation-20261103/diagnostic-generation-check.json",
       "sha256": "996a0c22675c3f0fc9cc6ca9b4b006c5d445d88570bb9d0826e04151e3f51609"
+    },
+    {
+      "path": "docs/evidence/continuation-20261103/git-delivery-receipt.json",
+      "sha256": "a6477108f66022a8608b6aea99c3a54e2a95a842b1ab6c92a460464700f089b9"
     },
     {
       "path": "docs/evidence/continuation-20261103/local-target-readback-attempt1.json",
