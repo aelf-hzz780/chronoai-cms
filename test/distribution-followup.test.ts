@@ -33,9 +33,10 @@ test('C07: plan freezes real content, persists scheduled/due tasks, and creates 
   const f=await followupFixture(t),before=f.store.get('SELECT count(*) n FROM jobs')!.n,response=await f.plan();assert.equal(response.statusCode,201,response.body);const plan=response.json();assert.equal(plan.state,'scheduled');assert.equal(plan.deliveryId,null);
   assert.equal(f.store.get('SELECT count(*) n FROM jobs')!.n,before);assert.equal(f.store.get('SELECT count(*) n FROM deliveries')!.n,0);assert.equal(f.outbound(),0);
   const detail=(await f.app.inject({url:`/api/cms/owners/org/tasks/plan/${plan.id}`})).json();assert.equal(detail.snapshot.markdown,'Frozen private excerpt');assert.equal(detail.confirmationDigest,null);assert.equal(detail.plan.releaseId,f.release.id);assert.equal(detail.plan.target,'dev');assert.equal(detail.plan.consumedDeliveryId,null);
+  assert.equal(detail.distribution.accountId,'account');assert.equal(detail.distribution.sourceUrl,'https://blog.example/post/');
   const task=(await f.app.inject({url:'/api/service/owners/org/tasks?kind=plan&state=scheduled'})).json();assert.equal(task.total,1);assert.equal(task.items[0].plan.notBeforeAt,plan.notBeforeAt);
   f.due(plan.id);const due=(await f.app.inject({url:'/api/cms/owners/org/tasks?kind=plan&state=due'})).json();assert.equal(due.total,1);assert.ok(due.items[0].allowedActions.includes('confirm'));
-  f.use('member');const member=(await f.app.inject({url:`/api/cms/owners/org/tasks/plan/${plan.id}`})).json();assert.equal(member.snapshot,null);assert.equal(member.plan.connectionId,null);assert.doesNotMatch(JSON.stringify(member),/Frozen private excerpt|account/);
+  f.use('member');const member=(await f.app.inject({url:`/api/cms/owners/org/tasks/plan/${plan.id}`})).json();assert.equal(member.snapshot,null);assert.equal(member.distribution,null);assert.equal(member.plan.connectionId,null);assert.doesNotMatch(JSON.stringify(member),/Frozen private excerpt|account/);
 });
 test('C07: confirmation is due-only, exact, atomically consumed once, and still requires current exact approval',async t=>{
   const f=await followupFixture(t),plan=(await f.plan()).json(),before=f.store.get('SELECT count(*) n FROM jobs')!.n;

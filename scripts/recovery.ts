@@ -11,7 +11,7 @@ import {Store} from '../src/store.ts';
 import {digest} from '../src/content.ts';
 import {snapshotPlatform,isolateRestoredPlatform,encryptArchive,decryptArchive,validateRestoreTargets} from '../src/recovery.ts';
 import {requireValue} from '../src/errors.ts';
-import {sourceFingerprint} from './source-fingerprint.ts';
+import {sourceFingerprint,studioAssetsFingerprint} from './source-fingerprint.ts';
 interface Plan {dockerContext:string;databasePath:string;platformConfig:string;extraFiles?:string[];sites:Array<{project:string;envFile:string;restoreProject?:string;enPort?:number;zhPort?:number}>;}
 const [mode,planPath,destination]=process.argv.slice(2),trace=randomUUID();
 requireValue(['capture','restore'].includes(mode) && planPath && destination,400,'USAGE','node scripts/recovery.ts capture|restore PLAN.json OUTPUT_OR_DIRECTORY');
@@ -54,7 +54,7 @@ try {
       }
     }
     const files=[];for(const name of await readdir(payload))files.push({name,sha256:digest(await readFile(join(payload,name))),bytes:(await stat(join(payload,name))).size});
-    const manifest={version:1,createdAt:new Date().toISOString(),buildRevision:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),sourceFingerprint:await sourceFingerprint(),trace,projects:plan.sites.map(s=>s.project),files,extraFileNames:(plan.extraFiles??[]).map(p=>p.split('/').at(-1))};
+    const manifest={version:1,createdAt:new Date().toISOString(),buildRevision:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),sourceFingerprint:await sourceFingerprint(),studioAssetsFingerprint:await studioAssetsFingerprint(),trace,projects:plan.sites.map(s=>s.project),files,extraFileNames:(plan.extraFiles??[]).map(p=>p.split('/').at(-1))};
     await writeFile(join(payload,'manifest.json'),JSON.stringify(manifest,null,2),{mode:0o600});
     const archive=join(working,'archive.tgz');execFileSync('tar',['-czf',archive,'-C',payload,'.']);await encryptArchive(archive,resolve(destination),key);
     process.stdout.write(JSON.stringify({event:'backup.complete',path:resolve(destination),files:files.length,outboundPaused:true,trace})+'\n');
@@ -97,7 +97,7 @@ try {
       for(const lang of ['en','zh'])await waitHealthy(project,envFile,`ghost-${lang}`);
       projects.push({project,enUrl:values.GHOST_EN_URL,zhUrl:values.GHOST_ZH_URL});
     }
-    await writeFile(join(target,'restore-report.json'),JSON.stringify({trace,restoredAt:new Date().toISOString(),backupCreatedAt:manifest.createdAt,buildRevision:manifest.buildRevision,sourceFingerprint:manifest.sourceFingerprint,checksumsVerified:true,outboundPaused:true,oldSessionsInvalidated:true,projects,remaining:'Rebind isolated URLs and secrets; reconcile uncertain effects before explicitly resuming outbound. Production RPO/RTO not established.'},null,2));
+    await writeFile(join(target,'restore-report.json'),JSON.stringify({trace,restoredAt:new Date().toISOString(),backupCreatedAt:manifest.createdAt,buildRevision:manifest.buildRevision,sourceFingerprint:manifest.sourceFingerprint,studioAssetsFingerprint:manifest.studioAssetsFingerprint??null,checksumsVerified:true,outboundPaused:true,oldSessionsInvalidated:true,projects,remaining:'Rebind isolated URLs and secrets; reconcile uncertain effects before explicitly resuming outbound. Production RPO/RTO not established.'},null,2));
     process.stdout.write(JSON.stringify({event:'restore.complete',report:join(target,'restore-report.json'),outboundPaused:true,trace})+'\n');
   }
 }catch(error){process.stderr.write(JSON.stringify({event:'recovery.failed',trace,code:error instanceof Error?error.name:'UNKNOWN'})+'\n');process.exitCode=1;}

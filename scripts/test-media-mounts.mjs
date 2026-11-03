@@ -3,7 +3,8 @@ import {execFileSync} from 'node:child_process';
 import {randomUUID} from 'node:crypto';
 import {mkdir,writeFile,rm} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
-import {sourceFingerprint} from './source-fingerprint.ts';
+import {sourceFingerprint,studioAssetsFingerprint} from './source-fingerprint.ts';
+import {integrationPackageInputs} from './integration-package.ts';
 const context='colima-blogsystem',image='blogsystem-review-runtime:node24-chromium-20261029';
 const name=`blogsystem-media-mount-${randomUUID().slice(0,8)}`,directory=resolve('.runtime',name),archive=join(directory,'code.tgz');
 await mkdir(directory,{recursive:true,mode:0o700});
@@ -12,7 +13,8 @@ const ids=['platform','personal-en','personal-zh','organization-en','organizatio
 let output='';
 try{
  await writeFile(join(directory,'source-fingerprint.json'),JSON.stringify(await sourceFingerprint(),null,2)+'\n');
- execFileSync('tar',['-czf',archive,'src','test','node_modules','package.json'],{env:{...process.env,COPYFILE_DISABLE:'1'},stdio:['ignore','ignore','pipe']});
+ await writeFile(join(directory,'studio-assets-fingerprint.json'),JSON.stringify(await studioAssetsFingerprint(),null,2)+'\n');
+ execFileSync('tar',['-czf',archive,...integrationPackageInputs],{env:{...process.env,COPYFILE_DISABLE:'1'},stdio:['ignore','ignore','pipe']});
  for(const volume of volumes)docker('volume','create','--label',`blogsystem-isolated-media-test=${name}`,volume);
  const mounts=ids.flatMap((id,index)=>['--mount',`type=volume,source=${volumes[index]},target=${id==='platform'?'/platform':`/mounted/${id}`}`]);
  docker('create','--pull','never','--network','none','--name',name,...mounts,'-e','ISOLATED_MEDIA_MOUNT_TEST=true','--entrypoint','sh',image,'-c','mkdir -p /app && tar -xzf /tmp/code.tgz -C /app && cd /app && exec node --test test/media-mount.integration.ts');

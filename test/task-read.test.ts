@@ -25,7 +25,7 @@ async function taskFixture(t:any){
   const delivery=(releaseId:string,state='queued',markdown='Frozen excerpt body')=>{
     const id=`delivery-${++serial}`,date=`2026-10-${String(serial).padStart(2,'0')}T00:00:00.000Z`;
     f.store.run('INSERT INTO deliveries VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',id,releaseId,'org','PRIVATE_CONNECTION','dev','create','excerpt','exact-confirmation-digest',state,null,null,'PRIVATE_APPROVAL',null,null,'delivery-trace',date,date);
-    f.store.run('INSERT INTO delivery_payloads VALUES (?,?,?)',id,'PRIVATE_ACTOR',JSON.stringify({title:'Frozen copy title',markdown,creditedAuthor:'Frozen author',sourceDigest:article.revision.digest,accountId:'PRIVATE_ACCOUNT',connectionFingerprint:'PRIVATE_CONNECTION_FINGERPRINT',unexpected:'DO_NOT_EXPOSE'}));
+    f.store.run('INSERT INTO delivery_payloads VALUES (?,?,?)',id,'PRIVATE_ACTOR',JSON.stringify({title:'Frozen copy title',markdown,creditedAuthor:'Frozen author',format:'excerpt',sourceUrl:'https://blog.example/post/',sourceDigest:article.revision.digest,accountId:'PRIVATE_ACCOUNT',connectionFingerprint:'PRIVATE_CONNECTION_FINGERPRINT',unexpected:'DO_NOT_EXPOSE'}));
     f.store.run('INSERT INTO delivery_events VALUES (?,?,?,?,?,?)',`event-${id}`,id,state,null,'event-trace',date);
     return id;
   };
@@ -136,6 +136,15 @@ test('C03: declared task DTOs describe exact snapshot/confirmation digests and t
   assert.ok(schema.required.includes('confirmationDigest'));assert.ok(schema.properties.snapshot.anyOf.some((part:any)=>part.type==='null'));assert.ok(!('payload_json' in schema.properties));assert.ok(!('actor_json' in schema.properties));
   assert.deepEqual(detail.parameters.find((parameter:any)=>parameter.name==='kind').schema.enum,['release','delivery','media','projection','plan']);
   assert.equal(spec.paths['/api/service/owners/{id}/tasks/{kind}/{taskId}/assets/{assetId}'].get.responses['200'].content['image/png'].schema.format,'binary');
+});
+
+test('C10: distribution detail uses the frozen provider account and gates connection metadata separately from payload visibility',async t=>{
+  const f=await taskFixture(t),source=f.release('published'),copy=f.delivery(source);
+  f.use('publisher');let detail=(await f.app.inject({url:`/api/cms/owners/org/tasks/delivery/${copy}`})).json();assert.deepEqual(detail.distribution,{releaseId:source,target:'dev',connectionId:'PRIVATE_CONNECTION',accountId:'PRIVATE_ACCOUNT',format:'excerpt',sourceUrl:'https://blog.example/post/',sourceDigest:f.article.revision.digest});
+  f.actor({...f.actors.publisher,scopes:['content:read','publish']});detail=(await f.app.inject({url:`/api/cms/owners/org/tasks/delivery/${copy}`})).json();assert.equal(detail.distribution.connectionId,null);assert.equal(detail.distribution.accountId,null);assert.equal(detail.distribution.sourceDigest,f.article.revision.digest);
+  f.use('member');detail=(await f.app.inject({url:`/api/cms/owners/org/tasks/delivery/${copy}`})).json();assert.equal(detail.distribution,null);
+  f.store.run("UPDATE deliveries SET state='published' WHERE id=?",copy);detail=(await f.app.inject({url:`/api/cms/owners/org/tasks/delivery/${copy}`})).json();assert.equal(detail.distribution.accountId,null);assert.equal(detail.distribution.connectionId,null);assert.equal(detail.distribution.format,'excerpt');
+  assert.equal((await f.app.inject({url:`/api/cms/owners/org/tasks/release/${source}`})).json().distribution,null);
 });
 
 test('C01: directory reuses one bulk inventory, fails closed on its outage, and supports legacy authorities',async t=>{

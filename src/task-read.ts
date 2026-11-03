@@ -133,12 +133,19 @@ export class TaskReadService {
   private mediaHistory(row:Row){
     return this.workspaces.policy.store.all('SELECT id,state,public_files,error_code,trace_id,created_at,updated_at FROM release_media_requests WHERE release_id=? ORDER BY created_at,rowid',row.release_id).map(media=>({id:media.id,state:media.state,publicFiles:media.public_files,errorCode:media.error_code??null,traceId:media.trace_id,createdAt:media.created_at,updatedAt:media.updated_at}));
   }
+  private distributionContext(row:Row,canReadConnections:boolean){
+    if(row.kind!=='delivery'&&row.kind!=='plan')return null;
+    const store=this.workspaces.policy.store,saved=row.kind==='delivery'?store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',row.id):store.get('SELECT payload_json FROM distribution_plans WHERE id=?',row.id);
+    let payload:Row;try{payload=JSON.parse(saved?.payload_json);}catch{throw new AppError(503,'TASK_SNAPSHOT_UNAVAILABLE','Confirmed distribution context is unavailable');}
+    requireValue(payload&&['full','excerpt'].includes(payload.format)&&(payload.sourceUrl===null||typeof payload.sourceUrl==='string')&&typeof payload.sourceDigest==='string',503,'TASK_SNAPSHOT_UNAVAILABLE','Confirmed distribution context is unavailable');
+    return {releaseId:row.release_id,target:row.target,connectionId:canReadConnections?row.connection_id:null,accountId:canReadConnections&&typeof payload.accountId==='string'?payload.accountId:null,format:payload.format,sourceUrl:payload.sourceUrl,sourceDigest:payload.sourceDigest};
+  }
   async detail(actor:Actor,ownerId:string,kind:string,id:string){
     const {access,row}=await this.context(actor,ownerId,kind,id),capabilities=this.workspaces.capabilities(actor,access),payloadVisible=this.payloadVisible(access,row);
     const privateRead=access.owner.kind==='personal'||access.publishingRole,store=this.workspaces.policy.store;
     const notes=privateRead&&row.kind==='delivery'?store.all('SELECT id,note,actor,trace_id,created_at FROM delivery_notes WHERE delivery_id=? ORDER BY created_at,rowid',id).map(note=>({id:note.id,note:note.note,actor:note.actor,traceId:note.trace_id,createdAt:note.created_at})):[];
     const observations=privateRead&&row.kind==='delivery'?store.all('SELECT id,url,proof,source_state,actor,trace_id,observed_at FROM delivery_observations WHERE delivery_id=? ORDER BY observed_at,rowid',id).map(observation=>({id:observation.id,url:observation.url,status:'verified',proof:observation.proof,sourceState:observation.source_state,followUpRequired:true,actor:observation.actor,traceId:observation.trace_id,observedAt:observation.observed_at})):[];
-    return {...this.item(actor,access,row),snapshot:payloadVisible?this.snapshot(row):null,confirmationDigest:payloadVisible?row.confirmation_digest??null:null,history:this.history(row),notes,observations,copy:row.kind==='delivery'?{target:row.target,connectionId:capabilities.canReadConnections?row.connection_id:null,remoteId:row.remote_id??null,url:row.url??null}:null,...(['release','media'].includes(row.kind)?{mediaHistory:this.mediaHistory(row)}:{})};
+    return {...this.item(actor,access,row),snapshot:payloadVisible?this.snapshot(row):null,distribution:payloadVisible?this.distributionContext(row,capabilities.canReadConnections):null,confirmationDigest:payloadVisible?row.confirmation_digest??null:null,history:this.history(row),notes,observations,copy:row.kind==='delivery'?{target:row.target,connectionId:capabilities.canReadConnections?row.connection_id:null,remoteId:row.remote_id??null,url:row.url??null}:null,...(['release','media'].includes(row.kind)?{mediaHistory:this.mediaHistory(row)}:{})};
   }
   async asset(actor:Actor,ownerId:string,kind:string,id:string,assetId:string){
     const {access,row}=await this.context(actor,ownerId,kind,id);

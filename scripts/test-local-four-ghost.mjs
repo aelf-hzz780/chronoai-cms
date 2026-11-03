@@ -4,16 +4,17 @@ import {execFileSync} from 'node:child_process';
 import {mkdir,rm,readFile,writeFile} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 import {randomUUID} from 'node:crypto';
-import {sourceFingerprint} from './source-fingerprint.ts';
+import {sourceFingerprint,studioAssetsFingerprint} from './source-fingerprint.ts';
+import {integrationPackageInputs} from './integration-package.ts';
 const context='colima-blogsystem',image='ghost@sha256:4195f6c405e40230cd10c0770425cf500c1f542a96e9f6584c11649c150e5a89';
 const runName=`blogsystem-integration-${randomUUID().slice(0,8)}`,reuse=process.env.INTEGRATION_REUSE_HELPER;
 if(reuse)assert.match(reuse,/^blogsystem-integration-runtime-[a-f0-9]{8}$/);
 const name=reuse??(process.env.INTEGRATION_KEEP_HELPER==='true'?runName.replace('blogsystem-integration-','blogsystem-integration-runtime-'):runName),directory=resolve('.runtime',runName);await mkdir(directory,{recursive:true,mode:0o700});
-const archive=join(directory,'code.tgz'),fingerprint=await sourceFingerprint();
+const archive=join(directory,'code.tgz'),fingerprint=await sourceFingerprint(),assetsFingerprint=await studioAssetsFingerprint();
 const docker=(...args)=>execFileSync('docker',['--context',context,...args],{encoding:'utf8',maxBuffer:4_000_000,stdio:['ignore','pipe','pipe']});
 const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),dirty=execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim().length>0;
 await writeFile(join(directory,'build.json'),JSON.stringify({revision,dirty}));
-execFileSync('tar',['-czf',archive,'src','web','test','node_modules','package.json','.runtime/dev-personal-state.json','.runtime/dev-organization-state.json','-C',directory,'build.json'],{env:{...process.env,COPYFILE_DISABLE:'1'},stdio:['ignore','ignore','pipe']});
+execFileSync('tar',['-czf',archive,...integrationPackageInputs,'.runtime/dev-personal-state.json','.runtime/dev-organization-state.json','-C',directory,'build.json'],{env:{...process.env,COPYFILE_DISABLE:'1'},stdio:['ignore','ignore','pipe']});
 try {
   const mounts=[];for(const owner of ['personal','organization'])for(const language of ['en','zh'])mounts.push('--mount',`type=volume,source=blogsystem-dev-${owner}_content-${language},target=/mounted/${owner}-${language}`);
   if(reuse){
@@ -29,7 +30,7 @@ try {
   if(status!=='0')throw new Error(`Integration helper exited ${status}`);
   docker('cp',`${name}:/app/.runtime/four-ghost-evidence.json`,join(directory,'evidence.json'));
   for(const file of ['four-ghost-platform.sqlite','integration-platform.env'])docker('cp',`${name}:/app/.runtime/${file}`,join(directory,file));
-  const evidence=JSON.parse(await readFile(join(directory,'evidence.json'),'utf8'));evidence.sourceFingerprint=fingerprint;evidence.harness='cached official Ghost Node 22.23.4; same platform source; native filesystem shared volumes; host application supported runtime remains Node 24.18';
+  const evidence=JSON.parse(await readFile(join(directory,'evidence.json'),'utf8'));evidence.sourceFingerprint=fingerprint;evidence.studioAssetsFingerprint=assetsFingerprint;evidence.harness='cached official Ghost Node 22.23.4; same platform source; native filesystem shared volumes; host application supported runtime remains Node 24.18';
   await writeFile(join(directory,'evidence.json'),JSON.stringify(evidence,null,2));
   process.stdout.write(JSON.stringify({status:'passed',evidence:join(directory,'evidence.json')})+'\n');
 } catch(error) {
