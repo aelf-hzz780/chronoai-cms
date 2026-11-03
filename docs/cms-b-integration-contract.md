@@ -78,6 +78,10 @@ A task-scoped media route checks the task's exact revision and its actual asset 
 
 Task snapshot digest is SHA-256 of its frozen Markdown; delivery details separately expose confirmationDigest from the stored delivery digest used by exact approval. These digests must not be conflated. A delivery excerpt grants no access to private images omitted from its frozen excerpt. Projection tasks have no frozen content revision and return a null snapshot.
 
+普通组织 Member（包括来源文章作者）不能因为原文已公开就读取其他 Publisher 的未公开分发摘要。除当前 Publisher 外，delivery 的 snapshot、confirmationDigest 与任务素材须有该 delivery 自身当前/历史成功公开证据；被 superseded/removed 后保留既有公开证据，不信任 failed/uncertain。任务元数据仍按相应已公开来源权限返回。
+
+For non-Publisher organization readers, source publication alone never authorizes an unpublished delivery excerpt. The delivery's own current or trusted historical publication evidence gates its frozen payload, confirmation digest and assets.
+
 原文 `materialize-media` 仅用于已认回 remote_id/url 的 uncertain/verifying、非unpublish任务；partial是独立补图状态。新UI不得以published+missing-media模拟真实状态。批准delivery后即入队，没有新增run/ready状态；失败新确认与unknown只读核验分开。
 
 ## 6. Connections and deferred actions / 连接与延迟待办
@@ -85,6 +89,10 @@ Task snapshot digest is SHA-256 of its frozen Markdown; delivery details separat
 Connection attempts are per subject+owner+target, expiring and single-use. Preserve one exact connection identity. A successful browser return is only a signal to requery trusted Nyx status and owner provenance; it never binds an arbitrary user-supplied account ID. An unbound completed service remains `binding_required`, with the documented operator binding path. Never substitute personal credentials for an organizational connection.
 
 拟议 attempt 路由：`POST /owners/:id/connection-attempts`、`GET /owners/:id/connection-attempts/:attemptId`、`POST .../:attemptId/cancel`、`POST .../:attemptId/recheck`。返回状态 pending/connected/binding_required/cancelled/expired/failed，当前owner撤权应拒绝。Nyx hosted connect支持的provider由配置启用；组织模式若上游不能安全创建owner连接，走明确管理入口与重验，不复用personal hosted flow伪造组织连接。回程state不授予业务权限。
+
+Pinned Nyx source `85e23be62cae48b334a961ae81c62aca0a65ecb2` confirms that hosted `POST /api/v1/connect-links` creates a user-owned link and has no organization-owner parameter. Use hosted mode only for personal owners; organization mode uses an explicitly configured operator URL. The callback is the separately registered fixed `/connections/return`, not the OIDC callback. An encrypted, expiring, one-use cookie binds the authenticated session subject, owner, attempt and nonce. Ignore callback-supplied status/IDs and requery the saved upstream ID and exact configured binding. A completed link without operator binding is `binding_required`.
+
+创建尝试携带稳定 idempotencyKey；上游 POST 前持久记录 dispatched fence，未知结果不能自动重发。相同意图重试可返回仍有效的同一加密链接；GET 不返回 token URL。未知结果后新建需显式 acknowledgeUnknownResult，保留旧链接可能有效的提示。连接管理同步操作使用 access 授权加 publish/connections:read 双能力；存在传播 command 时仍检查精确当前路径，不借发布任务的批准操作连接。成员 grant 必须实时核验 active admin/member，目录不可用则拒绝 grant；revoke 不被目录故障阻塞。
 
 Deferred plans persist exact release/revision, target, connection fingerprint, action, full/excerpt content, notBeforeAt, creator and trace. Update/remove must additionally persist copyId and original remote identity. Creation/cancellation are local state changes and produce no outbound job. Server time controls eligibility. A due plan still requires human confirmation and current authorization; the original approval is not reused.
 
@@ -103,3 +111,7 @@ Tests must demonstrate actual behavior, not mirror implementation. New authoriza
 新增表使用逐版本、幂等、事务化迁移；备份和旧数据兼容需验证。保留旧UI入口；回退静态assets不删除新增数据，不用旧DB覆盖真实外部发布，不复活旧blocked命令或旧批准。Ghost theme独立回退。外部账号/订阅/具体内容批准缺失只阻塞相关Live验收，不能冒称由fixture完成，也不阻塞其余实现。
 
 Milestones: M1 real content workspace (WP00–02); M2 original/distribution workflow (WP03–05); M3 governance, metrics, Ghost theme, parity, rollback and handoff (WP06–08). Full objective remains open until the accepted scope has authoritative evidence. Historical D1–D9 status is not silently promoted by this integration.
+
+2026-11-03 user clarification: NyxID runs on another host; real Nyx integration is explicitly deferred and must be listed separately at handoff. Local software, API and Ghost acceptance continues. Theme maintainer email stays a packaging configuration item; reserved-domain fixture metadata can validate local rendering but is not a release contact.
+
+用户已明确真实 NyxID 联调后置。本机双 Ghost 为英文 `localhost:2468` 与中文 `localhost:2469`；保留原数据和主题，可回退的本地验证不等同于远端生产验收。

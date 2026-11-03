@@ -11,13 +11,13 @@ Approved WP00–08, C01–C10 and 14-page B experience. Root owns architecture/a
 | WP | Status | Evidence / Remaining |
 | --- | --- | --- |
 | 00 contracts | in progress | Architecture contract written; isolated ce4fb1a typecheck + 307/307 baseline PASS; remaining wire schemas completed with each package |
-| 01 shell/workspaces | acceptance | C01/C04, Studio shell and state-bound OIDC return implemented; mobile owner selector correction under final root recheck |
-| 02 content/editor | acceptance | C02 and editor implemented; real API browser passed core workflow, media assertions passed before mobile failure; full M1 rerun pending |
-| 03 original/tasks | in progress | Exact task read model, task-scoped media and bulk workspace directory delegated |
-| 04 connections/approvals | pending | Pinned Nyx upstream contracts under inspection |
+| 01 shell/workspaces | local accepted | C01/C04, shell, state-bound OIDC return, responsive owner switching; real Nyx Live deferred by user |
+| 02 content/editor | local accepted | Real API browser PASS: save/refresh, exact Markdown bytes, media, permissions, conflict, translations, mobile |
+| 03 original/tasks | in progress | C03 backend accepted in 353-test gate; UI implementation in progress |
+| 04 connections/approvals | in progress | Pinned Nyx contract confirmed; C06 attempt implementation underway |
 | 05 distribution/manual | pending | Plans, note persistence and historical-copy observations required |
-| 06 governance/metrics | pending | Member directory adapter and real metric views required |
-| 07 Ghost theme | in progress | Separate theme implementation and official gscan validation; real author email requested for final package |
+| 06 governance/metrics | in progress | C05 directory implementation underway; real metric views pending |
+| 07 Ghost theme | local rendering accepted | Theme/GScan fixture PASS; actual local EN/ZH upload, activate, desktop/mobile rendering and restore PASS; combined CMS publishing/consent checks remain; author email stays packaging configuration |
 | 08 integration/handoff | in progress | Baseline and acceptance matrix preparation; no Live claim |
 
 ## Current verification / 当前验证
@@ -27,6 +27,9 @@ Approved WP00–08, C01–C10 and 14-page B experience. Root owns architecture/a
 - C01/C02 failure-first evidence: `/tmp/cms-c01-c02-red.log`. Root review must inspect implementation and passing regressions before marking accepted.
 - Root caught and requested fixes for historically published stale translation edges, reversed translation navigation and compact/mobile workspace selectors. Regression scenarios were added before fixes.
 - `test/studio-live-api.integration.ts` uses actual Fastify, SQLite, sessions and CSRF with an isolated identity provider. It is separate from frontend response fixtures and real Nyx/Ghost Live acceptance. Screenshots are under `docs/evidence/cms-b-m1`.
+- Root real-API browser rerun passed (1 aggregate test, `/tmp/cms-b-m1-real-api.log`), including narrow-screen owner switching. M1+C03+theme-source fixed gate passed typecheck and 353/353 tests (`/tmp/cms-b-m1-c03-check.log`). Local implementation commit: `ce4203b`.
+- Existing local Ghost EN 2468 and ZH 2469 recovered when Docker Desktop started. Read-only `infra/ghost/experiment.py --verify` passed for both existing posts, language/author/code/table/sitemap and cross-site 404. No volume or credential reset.
+- User explicitly deferred real NyxID integration on the other host. It remains an external acceptance item rather than a blocker for local implementation; no remote integration claim is made.
 - No external publication, connection creation, role mutation, deployment or push occurred in this task.
 
 所有验证需标明固定版本/本地/fixture/真实外部边界；尚无最终完成声明。

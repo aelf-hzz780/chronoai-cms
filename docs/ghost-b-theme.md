@@ -1,8 +1,8 @@
 # Ghost B 主题交付 / Ghost B theme delivery
 
-状态：WP07 主题源码已实现，尚未安装到真实 Ghost。目录为 `themes/chronoai-b/`，保留已确认 B 原型的宽幅期刊版式、紫色视觉、首篇大卡片和移动阅读布局。文章、作者、日期、标签与分页均由 Ghost 渲染，没有 CMS 私有 API、虚构阅读量或登录依赖。
+状态：WP07 主题源码已实现，已在本机实际双 Ghost 完成 fixture 包上传、临时激活、渲染与原主题恢复验收。目录为 `themes/chronoai-b/`，保留已确认 B 原型的宽幅期刊版式、紫色视觉、首篇大卡片和移动阅读布局。文章、作者、日期、标签与分页均由 Ghost 渲染，没有 CMS 私有 API、虚构阅读量或登录依赖。
 
-Status: WP07 theme source is implemented; installation on an actual Ghost instance has not been verified. `themes/chronoai-b/` retains the accepted B journal layout, purple accents, lead card and mobile reading design. Ghost supplies posts, authors, dates, tags and pagination. No private CMS API, invented readership metric or CMS login is required.
+Status: WP07 source and fixture-package upload, temporary activation, rendering and restoration have passed on both actual local Ghost instances. `themes/chronoai-b/` retains the accepted B journal layout, purple accents, lead card and mobile reading design. Ghost supplies posts, authors, dates, tags and pagination. No private CMS API, invented readership metric or CMS login is required.
 
 ## 运行与配置 / Runtime and configuration
 
@@ -38,9 +38,9 @@ node themes/chronoai-b/pack.mjs \
   --output /tmp/chronoai-b-theme.zip
 ```
 
-打包依赖 Node 和系统 `zip` 命令。通过 Ghost Admin 的主题上传入口安装真实配置包，再在预发布站点激活。此文档未授权写入真实站点；激活前先下载当前主题备份，回退时重新激活原主题。回退主题不会撤销已发布内容或语言互链元数据。源目录缺少 `author.email` 是明确保留的待配置项；最终安装包必须使用具名维护方的真实地址。
+打包依赖 Node 和系统 `zip` 命令。通过 Ghost Admin 的主题上传入口安装真实配置包，再在预发布站点激活。生产部署不在本轮范围；激活前先下载当前主题备份，回退时重新激活原主题。回退主题不会撤销已发布内容或语言互链元数据。源目录缺少 `author.email` 是明确保留的待配置项；这是安装包校验要求，与是否给 Ghost 提 PR 无关，用户已确认现阶段不补真实邮箱。
 
-Packaging requires Node and the system `zip` command. Upload and activate the configured archive through Ghost Admin after staging validation. No live installation has been performed. Retain the previous theme for rollback; changing the theme does not undo content or translation metadata. The source intentionally leaves `author.email` unconfigured; a final installation archive requires a real maintained contact address.
+Packaging requires Node and the system `zip` command. Production deployment remains out of scope. Retain the previous theme for rollback; changing the theme does not undo content or translation metadata. The source intentionally leaves `author.email` unconfigured. It is package-validation metadata, unrelated to submitting an upstream PR; the user deferred supplying it.
 
 只做结构验证时可使用保留域 `.invalid`，必须同时带 `--fixture` 且输出名以 `.fixture.zip` 结尾。该包禁止作为最终发布产物：
 
@@ -56,11 +56,13 @@ node themes/chronoai-b/pack.mjs \
 
 - `node --test test/ghost-theme.test.ts`：3/3 通过。验证原生渲染/注入 hook、单次正文、分页路由、真实 author/date helper、无私有 API 或重复统计、全部 EN/简中翻译 key，以及未配置/误标 fixture 的打包拒绝。
 - 官方 `gscan@6.7.0 --v6 --verbose` 已实际执行：**源目录**无 fatal、无 warning，仍有 **1 error：缺少 `author.email`**；**仅临时 fixture ZIP** 完整兼容 Ghost 6.x、无 error/warning。fixture 包通过证明模板/包结构，不证明生产邮箱已配置或真实安装成功。临时验证包为 `/tmp/chronoai-b-20261103.fixture.zip`，SHA-256 `fc590f96a8ec2d4630f2050de29aafbcfefe9a1ea707fd4ac7491487f36ef717`。
-- 尚未完成：真实 Ghost 上传/激活；真实文章、作者映射、历史 URL、两语言互链、公开媒体、既有 tracker 的 allow/decline/GPC/DNT，以及 Ghost 离线 CMS 阅读的端到端验收。静态模板与 GScan 不能替代这些检查。
+- 本机实际 Ghost 验证：`test/ghost-theme-local.integration.ts` 1/1 aggregate PASS；EN 2468 / ZH 2469 均完成 fixture 上传/激活、已有文章/作者/locale/canonical/代码/表格/sitemap、390px 布局、无私有 CMS 请求，以及恢复 `source` 主题。文章 HTML SHA-256 与 URL 前后不变。证据见 `docs/evidence/ghost-b-local/result.json` 和六张截图。独立公开浏览器没有 CMS session；本轮 CMS 服务未参与这次阅读验证。
+- 尚未完成：CMS 发布至这套 Ghost 的作者映射、两语言互链、公开媒体及既有 tracker 的 allow/decline/GPC/DNT 联合端到端验收；远端生产安装与正式维护邮箱配置。既有模块测试与本地原生渲染验收不替代这些联合检查。
 
 - Theme contracts: 3/3 passing tests covering rendering, metadata hooks, pagination, authors/dates, translation coverage and packaging guards.
 - Official GScan 6.7.0 reports **one missing-email error on the unconfigured source directory** and **a clean Ghost 6 compatibility pass on the temporary fixture ZIP only**. This establishes template/package structure, not production metadata configuration or installation success.
-- Not verified: actual upload/activation, live post/author mappings, stable URLs, translation metadata, public media, existing consent behavior and reading while CMS is offline. Static checks do not establish installation success.
+- Local actual-Ghost acceptance passed on both languages, including upload, activation, unchanged post HTML/URLs, native author/locale/canonical, code/table rendering, mobile layout, no private CMS requests and restoration of the original theme. See the recorded evidence and screenshots.
+- Remaining: combined CMS publishing/author mapping, translation metadata, public media and consent behavior on these instances; remote deployment and release-contact configuration. Native theme acceptance alone does not establish those integration results.
 
 ## 官方依据 / Official references
 

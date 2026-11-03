@@ -1,0 +1,35 @@
+{
+  "level": "local-ghost-real-template-rendering",
+  "nyxLive": false,
+  "fixtureArchiveSha256": "fc590f96a8ec2d4630f2050de29aafbcfefe9a1ea707fd4ac7491487f36ef717",
+  "originalThemesRestored": true,
+  "backups": "/var/folders/vt/jcl2ccsd7vqdgdkv0ghbtl700000gn/T/ghost-b-theme-backup-NfSd5Z",
+  "sites": [
+    {
+      "language": "en",
+      "origin": "http://localhost:2468",
+      "postUrl": "http://localhost:2468/phase0-en-4024309e1248/",
+      "previousTheme": "source",
+      "fixtureTheme": "chronoai-b-local-1793701612249-en.fixture",
+      "bodyUnchanged": true,
+      "canonical": true,
+      "locale": true,
+      "author": true,
+      "mobile": true,
+      "privateCmsRequests": 0
+    },
+    {
+      "language": "zh",
+      "origin": "http://localhost:2469",
+      "postUrl": "http://localhost:2469/phase0-zh-4024309e1248/",
+      "previousTheme": "source",
+      "fixtureTheme": "chronoai-b-local-1793701618719-zh.fixture",
+      "bodyUnchanged": true,
+      "canonical": true,
+      "locale": true,
+      "author": true,
+      "mobile": true,
+      "privateCmsRequests": 0
+    }
+  ]
+}
