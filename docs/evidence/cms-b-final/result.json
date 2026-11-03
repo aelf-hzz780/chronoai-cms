@@ -1,0 +1,64 @@
+{
+  "capturedAt": "2026-11-03T11:37:34.156115+00:00",
+  "sourceCommit": "7ee88025d296ac00a912c6e088e7d7d2f6a3fd59",
+  "productionImplementationCommit": "9dddfba506c9f83e6b90840146a3f0a0a9eb384e",
+  "baselineCommit": "ce4fb1a9bc3f5785aca141ea7e17f77bb0da006a",
+  "branch": "codex/004-cms-b-integration",
+  "sourceFingerprint": "cc4fc0822ae79c3cb7fb019d41b542e332c154ea49a3fcdda4d1d30e22c756c8",
+  "studioAssetsFingerprint": "2f6050eb34c3ca100be34de6864e009e213b83dfeea71b8acac1b542e78e01d1",
+  "validation": {
+    "node": "24.18.0",
+    "typecheck": "PASS",
+    "studioBuild": "PASS",
+    "unitAndIntegration": {
+      "pass": 419,
+      "fail": 0,
+      "skipped": 0
+    },
+    "actualCmsApiBrowser": {
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    "browserUsesActual": [
+      "Fastify",
+      "SQLite",
+      "session",
+      "CSRF",
+      "CMS services"
+    ],
+    "browserUsesFixtures": [
+      "identity",
+      "destination accounts",
+      "external approval/provider results"
+    ],
+    "outboundExternalWrites": false,
+    "uiRollback": "old entry creates; Studio writes next immutable revision; old entry reads it back; schema and records preserved; zero jobs",
+    "visualReview": [
+      "desktop distribution",
+      "390px distribution",
+      "connections",
+      "manual follow-up",
+      "analytics",
+      "members"
+    ],
+    "localPreview": {
+      "url": "http://127.0.0.1:4174/__acceptance/session/admin",
+      "observedHttpStatus": 200,
+      "fixtureNoticeVerifiedInBrowser": true
+    }
+  },
+  "earlierBoundedActualGhostEvidence": [
+    "../ghost-b-local/result.json",
+    "../cms-ghost-local/result.json"
+  ],
+  "deferred": [
+    "Real NyxID on another host, explicitly deferred by user",
+    "Real external platform accounts/content approval/public copies/metrics",
+    "Deployment-specific private-image promotion across Docker volumes",
+    "Release maintainer email and named operational sign-off"
+  ],
+  "remoteRegistrationUpdated": false,
+  "productionDeployed": false,
+  "gitPushed": false
+}

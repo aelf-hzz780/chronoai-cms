@@ -30,9 +30,9 @@ Retain existing secret management and operator-provisioned sites, authors and me
 
 The acceptance preview listens on loopback with an isolated in-memory database. Its identity and provider adapters are explicit fixtures; no external delivery worker runs. It is never imported by production. Refresh preserves the current process data; restarting resets the fixture.
 
-浏览器验收截图默认写 `.runtime/studio-acceptance`；可用 `STUDIO_EVIDENCE_DIR` 指定新目录，避免覆盖历史固定版本证据。完整验证包括真实 session/CSRF、保存冲突、双语修订、私有素材、原文确认/取消、治理、双入口读回；最终连接/分发验收与固定版本结果写入矩阵。
+浏览器验收截图默认写 `.runtime/studio-acceptance`；可用 `STUDIO_EVIDENCE_DIR` 指定新目录。固定 `7ee8802` 独立导出后通过类型检查/构建、419/419 标准测试、7/7 实际 CMS API 浏览器流程，覆盖连接/批准、人工分发/计划/备注、双语编辑、任务、治理和双入口回退；完整证据见 `evidence/cms-b-final/`，没有覆盖历史截图。
 
-Browser evidence defaults to an ignored runtime directory, or a new `STUDIO_EVIDENCE_DIR`. Preserve historical snapshots when rerunning. The matrix records the final fixed-version results and the distinction between real application behavior and isolated external adapters.
+Browser evidence defaults to an ignored runtime directory, or a new `STUDIO_EVIDENCE_DIR`. Preserve historical snapshots when rerunning. The pinned `7ee8802` export passed typechecking/build, all 419 standard tests and seven actual API browser flows. Final evidence is in `evidence/cms-b-final/`, including connection/approval, manual distribution/plans/notes, editing, tasks, governance and old/new-entry rollback.
 
 本机 Ghost 为英文 `http://localhost:2468`、中文 `http://localhost:2469`。已实际上传/临时激活 B fixture 主题，并通过 CMS 发布、作者、语言互链、consent/GPC/DNT 和 CMS 离线阅读验收。合成文章恢复草稿，原主题恢复；没有修改既有文章。正式主题包的维护邮箱仍待配置，这与是否向 Ghost 提 PR 无关。
 
@@ -56,3 +56,13 @@ Pin and retain release artifacts and registration preimages; back up and validat
 - 正式发布：维护邮箱、目标环境和具名运维签收；本轮无生产部署、远端注册写入或 Git push。
 
 Real NyxID, real destination accounts and exact content approval, deployment-specific public media mounts, release metadata and named operational sign-off remain separate gates. The user deferred NyxID live integration. This implementation does not claim production deployment, registration changes or real external publication.
+
+## Local source preservation / 本地源码保留
+
+实现 checkout 为 `/tmp/chronoai-cms-review-20261103`，分支 `codex/004-cms-b-integration`；不在原 BlogSystem 工作区混入业务变更。交付后另以完整 Git bundle 保存在原工作区的忽略目录 `/Users/huangzongzhe/workspace/vibeCoding/Chronoai/BlogSystem/.runtime/cms-b-20261103.bundle`，保留本地提交和证据，不包含未跟踪的运行时凭证。没有 push。
+
+The implementation remains in a separate checkout. A full local Git bundle preserves the branch and tracked evidence outside the temporary directory; untracked runtime credentials are excluded. No push occurred. Restore to a new path, using the bundle as the local clone source and selecting `codex/004-cms-b-integration`; then install the locked dependencies and build Studio.
+
+本地预览入口为 `http://127.0.0.1:4174/__acceptance/session/admin`（或 `/member`）；当前进程在后台运行，日志与 PID 位于实现 checkout 的 `.runtime/studio-preview.log` 和 `.runtime/studio-preview.pid`。重启电脑后需在该 checkout 使用 Node 24、先构建，再执行 `node test/studio-live-api.integration.ts --serve`。如需查看组织示例，工作区选择 `ChronoAI · acceptance workspace`。4173 仍是原型。
+
+The preview is a background local process, not an installed system service. After a restart, build Studio and run the acceptance harness with `--serve`; it resets its isolated in-memory fixture. Select the acceptance organization to see the seeded workflow. Port 4173 remains the prototype.

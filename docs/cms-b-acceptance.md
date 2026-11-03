@@ -11,10 +11,10 @@ This matrix covers the accepted fourteen-page scope, WP00–08 and C01–C10. Im
 | Content 内容库 | Authorized server pagination/counts; draft/submission/live independent; no private UUID/title leak | C02 tests; actual API browser; EN/ZH and mobile screenshots |
 | Editor 编辑器 | Distinct articles and immutable revisions; save/submit/conflict; exact Markdown bytes; scoped images; explicit translation peers | Actual API browser, BOM/CRLF download, private media denial, stale translation tests |
 | Publish 发布确认 | Exact owner/site/language/revision/byline/action/rights; stable retry intent; 202 only queues | b8d1daf actual API browser and UI failure/race fixtures PASS |
-| Distribution 分发详情 | Frozen payload and copy identity; current exact connection/approval; manual workflow; persistent plans/notes; historical-copy observation | C07–09 backend fixed gate PASS; final Studio workflow in progress |
+| Distribution 分发详情 | Frozen payload and copy identity; current exact connection/approval; manual workflow; persistent plans/notes; historical-copy observation | Fixed 7ee8802 backend and actual API browser PASS: manual excerpts/report/notes, durable scheduled plans, due fresh confirmation and historical follow-up; frozen-account guard PASS |
 | Tasks 全局任务 | Authorized paginated aggregate; exact snapshot/asset access; bounded polling; unknown result never resends a write | C03/WP03 fixed gate and actual API frozen-readback/cancel/mobile PASS; plan persistence, due state and private-read extension PASS |
 | Analytics 数据 | Availability/source/capture-time/coverage; UTC daily estimates; external lifetime snapshots; authorized refresh | 1745f44 actual API browser: unavailable counters remain null/Unavailable; filters, UTC/capture semantics and precise refresh fixture regressions PASS |
-| Connections 连接 | Subject/owner/target-bound attempt; trusted callback requery; binding_required; no implicit personal fallback | C06 fixture and actual session tests PASS at d761db7; UI pending, live provider deferred |
+| Connections 连接 | Subject/owner/target-bound attempt; trusted callback requery; binding_required; no implicit personal fallback | C06 fixture/session tests plus 7ee8802 actual API browser connection recovery and exact binding PASS; live provider deferred |
 | Settings 设置 | Actual per-language site configuration, read-only unsupported settings | C04/Studio M1; no false save form |
 | Members 成员 | Current org directory; Admin+roles:write; eligible live target for grant; revoke possible during directory outage | C05 + real API browser grant/revoke/directory-outage/current-Admin revocation PASS |
 | Guide 帮助 | Current permissions and meaningful recovery links; automatic/manual and approval/publication distinguished | WP06 permission-aware bilingual guide, real settings/sites, local browser and fixture navigation PASS |
@@ -42,6 +42,8 @@ This matrix covers the accepted fourteen-page scope, WP00–08 and C01–C10. Im
 - CMS→Ghost: `docs/evidence/cms-ghost-local/` contains both-language publishing, attribution, translation and consent evidence. Test articles are intentionally drafts after cleanup, so their public URLs now return 404.
 - 所有本机身份来源均明确为隔离 fixture；生产模块没有注入测试登录。真实 Nyx、外部分发渠道、公开域名/素材、目标注册更新、维护邮箱和具名运维签收另列，不据本机测试推定通过。
 
-The final fixed-source suite, page navigation review and rollback rehearsal will be recorded when the remaining implementation packages finish. This file does not claim full completion.
+## Final local gate / 最终本地门禁
 
-其余包完成后补固定版本全套、全站导航复核与回退演练；本文件不提前宣告全站完成。
+固定 `7ee88025d296ac00a912c6e088e7d7d2f6a3fd59` 独立导出后，类型检查/Studio 构建、419/419 标准测试、7/7 实际 CMS API 浏览器流程全部通过，无失败或跳过。新旧入口回退保留两份 immutable revisions、数据库版本且不创建出站任务；桌面、390px 分发与任务、连接和治理页面已核查。16 张截图、日志、源码及独立构建指纹见 `evidence/cms-b-final/`。本轮已完成全站本地实现与验收；后置外部与部署门禁仍未签收。
+
+An independent export of the pinned source passed typechecking/build, 419 standard tests and seven actual CMS API browser flows with no failures or skips. UI rollback preserves both immutable revisions and the schema without creating jobs. Sixteen screenshots, logs and separate source/assets fingerprints record the local gate. All scoped implementation packages are locally accepted; external and deployment-specific sign-off remains deferred.

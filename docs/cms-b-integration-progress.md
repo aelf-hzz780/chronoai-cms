@@ -10,15 +10,15 @@ Approved WP00–08, C01–C10 and 14-page B experience. Root owns architecture/a
 
 | WP | Status | Evidence / Remaining |
 | --- | --- | --- |
-| 00 contracts | in progress | Architecture contract written; isolated ce4fb1a typecheck + 307/307 baseline PASS; remaining wire schemas completed with each package |
+| 00 contracts | local accepted | C01–C10 complete; 49 current operations, all 35 baseline operations retained; fixed schemas/operation manifest, no remote registration claim |
 | 01 shell/workspaces | local accepted | C01/C04, shell, state-bound OIDC return, responsive owner switching; real Nyx Live deferred by user |
 | 02 content/editor | local accepted | Real API browser PASS: save/refresh, exact Markdown bytes, media, permissions, conflict, translations, mobile |
 | 03 original/tasks | local accepted | 379-test combined gate; fixed b8d1daf actual API browser confirms frozen revision, authoritative queued/cancelled state, task list and mobile |
-| 04 connections/approvals | in progress | C06 backend accepted (d761db7); connection/approval UI remains; live Nyx deferred |
-| 05 distribution/manual | backend locally accepted, UI in progress | C07–09 persisted plans, atomic consumption, private notes and historical-copy observations at 0d83b78; final Studio workflow remains |
+| 04 connections/approvals | local accepted | Connection recovery/exact binding and exact approval-to-queue actual API browser PASS; no token URL persistence; real Nyx deferred |
+| 05 distribution/manual | local accepted | C07–09 plus Studio manual workflow, private notes, frozen plans, fresh due confirmation and historical observations; account-rebinding guard; actual API browser PASS |
 | 06 governance/metrics | local accepted | 1745f44 Studio; actual CMS session browser proves grant/revoke during directory outage, unavailable external metrics, independent UI locale and current Admin revocation |
 | 07 Ghost theme | local accepted, bounded | Theme/GScan fixture PASS; actual local EN/ZH upload/render/restore PASS; real CMS publishing, authors, links, consent and offline reading PASS; private media volume promotion on this host and release-email configuration remain separate |
-| 08 integration/handoff | in progress | Baseline and acceptance matrix preparation; no Live claim |
+| 08 integration/handoff | local accepted, external gates deferred | Fixed 7ee8802: typecheck/build, 419/419 standard tests, 7/7 actual API browser flows; old/new entry rollback, source/assets fingerprints and handoff complete |
 
 ## Current verification / 当前验证
 
@@ -33,12 +33,14 @@ Approved WP00–08, C01–C10 and 14-page B experience. Root owns architecture/a
 - `test/cms-ghost-local.integration.ts` passed actual CMS API/Worker/Ghost publication, author mapping, bidirectional hreflang, consent allow/decline/withdraw/GPC/DNT and reading after CMS stopped (53.2s). Initial harness failure was missing the already required Ghost CDN origin configuration; no business verification was weakened. Synthetic posts were restored to drafts and both themes restored. This run excludes private-image volume promotion and Nyx Live.
 - Fixed combined WP03+C05/C06 gate: typecheck + 379/379 tests, 0 failures (`/tmp/cms-b-wp03-c05-c06-check.log`). Backend `d761db7`, frontend `b8d1daf`. C05 covers current member eligibility; C06 covers exact upstream fixtures, actual session/CSRF, return replay/forgery, mid-flight revocation and migration reopen.
 - Exported `b8d1daf` independently to `/tmp/cms-b-wp03-acceptance`, built its Studio and ran root real-API acceptance: M1 and WP03, 2/2 passed. WP03 proves actual frozen confirmation, subsequent submitted revision isolation, authoritative cancellation and queue state, plus fresh 390px task navigation. Screenshots: `docs/evidence/cms-b-wp03/`. No live provider/Worker execution is claimed for this UI run.
-- Fixed `0a7c931` exported to `/tmp/cms-b-wp05-wp06-fixed`: typecheck + 402/402 tests PASS (`/tmp/cms-b-wp05-wp06-check.log`). This covers the C07–09 migration and safety extensions plus governance UI. Later C10/UI work needs its own final gate.
+- Fixed `0a7c931` exported to `/tmp/cms-b-wp05-wp06-fixed`: typecheck + 402/402 tests PASS (`/tmp/cms-b-wp05-wp06-check.log`). This covers the C07–09 migration and safety extensions plus governance UI. The later C10/UI work is covered by the final gate below.
 - WP06 actual API browser PASS after correcting a test-only translated title expectation; no product workaround. Screenshots: `docs/evidence/cms-b-wp06/`.
 - WP08 actual API browser parity PASS: old UI creates a draft, Studio writes the next immutable revision, old UI reads it back; both revisions and all schema versions survive and no outbound job is created.
-- No external publication, real Nyx connection creation or real role mutation, deployment or push occurred in this task.
+- No real external-platform publication, real Nyx connection creation or real role mutation, production deployment or push occurred in this task; local Ghost test publication was cleaned up.
 
-所有验证需标明固定版本/本地/fixture/真实外部边界；尚无最终完成声明。
+- Final fixed `7ee8802` independently exported: typecheck/build + 419/419 standard tests and 7/7 actual CMS API browser flows PASS. Evidence is under `docs/evidence/cms-b-final/`; historical directories are unchanged. The final preview notice fix affects the harness only.
+- 本轮 WP00–08 本地实现与验收完成；真实 Nyx、实际平台分发、部署媒体拓扑和正式发布签收仍后置。没有把本地完成等同于全部生产验收。
+- WP00–08 local implementation and acceptance are complete. Real Nyx, actual destination delivery, deployment media topology and release sign-off remain separate; local completion is not production sign-off.
 
 ## Studio build and deployment / Studio 构建与部署
 
