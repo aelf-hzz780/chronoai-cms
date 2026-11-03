@@ -51,21 +51,28 @@ export class DistributionService {
   manualWorkflow(delivery: any) {
     return !this.targets.get(delivery.target,true).automatic || this.targets.disabled.has(delivery.target) || !!this.store.get("SELECT 1 FROM delivery_events WHERE delivery_id=? AND state='manual_action_needed'",delivery.id);
   }
+  private frozenCopyAccount(id:string){
+    const saved=this.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',id);requireValue(saved,409,'COPY_MISMATCH','Historical copy account is unavailable');
+    let account:unknown;try{account=JSON.parse(saved.payload_json)?.accountId;}catch{throw new AppError(409,'COPY_MISMATCH','Historical copy account is unavailable');}
+    requireValue(typeof account==='string'&&account.trim().length>0,409,'COPY_MISMATCH','Historical copy account is unavailable');return account;
+  }
   private async prepareIntent(actor:Actor,owner:Row,release:Row,target:Target,connectionId:string,input:Record<string,unknown>,id:string,strictConnection=false){
     const original=this.originals.input(release),ownerRef={kind:owner.kind,issuer:owner.issuer,subject:owner.subject};
     requireValue(original.language==='en',409,'LANGUAGE_NOT_VERIFIED','External distribution is initially enabled for English only');
     if(input.action!=='remove')requireValue(release.state==='published',409,'ORIGINAL_NOT_LIVE','Exact confirmed original must currently be live');
-    let copy:Row|undefined;
+    let copy:Row|undefined,copyAccount:string|undefined;
     if(input.action!=='create'){
       copy=this.store.get('SELECT d.*,r.article_id FROM deliveries d JOIN releases r ON r.id=d.release_id WHERE d.id=?',text(input.copyId,'copyId'));
       requireValue(copy&&copy.owner_id===owner.id&&copy.connection_id===connectionId&&copy.target===target.name&&copy.remote_id&&copy.article_id===release.article_id,403,'COPY_MISMATCH','Exact existing owner copy required');
+      copyAccount=this.frozenCopyAccount(copy.id);
     }
     let connection:any,connectionLost=false;
     try{connection=await this.connections.connection(actor,ownerRef,connectionId,target.name);}
     catch(error){
       requireValue(!strictConnection&&copy&&error instanceof AppError&&['CONNECTION_DISABLED','REMOTE_AUTHORIZATION'].includes(error.code),error instanceof AppError?error.status:503,error instanceof AppError?error.code:'CONNECTION_UNAVAILABLE','The selected connection is unavailable; reconnect it before sending');
-      const previous=JSON.parse(this.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',copy.id)!.payload_json);connection={accountId:previous.accountId};connectionLost=true;
+      connection={accountId:copyAccount};connectionLost=true;
     }
+    requireValue(!copy||connection?.accountId===copyAccount,409,'CONNECTION_CHANGED','The selected connection now belongs to a different account than this copy');
     let markdown=input.format==='excerpt'?text(input.excerpt,'excerpt',50000):original.markdown;
     for(const reference of [...new Set(markdown.match(/asset:[a-f0-9-]{36}/g)??[])]){
       const asset=this.store.get('SELECT a.*,p.public_path FROM assets a JOIN asset_publications p ON p.asset_id=a.id WHERE a.id=? AND a.article_id=? AND p.release_id=?',reference.slice(6),original.articleId,release.id);

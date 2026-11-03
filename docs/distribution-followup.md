@@ -10,6 +10,10 @@ Migration v4 adds `distribution_plans`, `delivery_observations` and `delivery_no
 
 计划冻结完整意图，复用现有 delivery 的内容/图片准备逻辑。创建、取消均不产生 provider 写入或后台 job；失联连接不能通过新计划悄悄回退其他账号。已有副本必须显式给出 copyId，不按“最新同渠道文章”替换。
 
+Update/remove also require the current connection account to match the copy's valid frozen account: rebinding the same connection ID to another account is rejected, while same-account reauthentication may be newly confirmed; genuine disconnected manual follow-up retains the old account.
+
+更新/移除拒绝同连接 ID 换绑其他账号，缺失历史冻结账号则拒绝；同账号重新认证可新确认，真正失联的人工跟进仍保留原账号。
+
 The create/cancel response is `{id,ownerId,releaseId,revisionId,target,connectionId,action,format,copyId,notBeforeAt,state,deliveryId,createdAt,updatedAt,traceId}`. State is `scheduled`, `due`, `confirmed`, or `cancelled`; `due` is derived from server time rather than an automatic scheduler. `POST /distribution-plans/:id/cancel` cancels only an unconsumed plan.
 
 `GET /owners/:id/tasks?kind=plan` and task detail expose `plan:{notBeforeAt,releaseId,target,connectionId,action,format,copyId,consumedDeliveryId}`. Private full/excerpt snapshots are limited to the current organization Admin/Publisher or personal owner; a public original does not expose a Publisher's private summary to Members. Connection metadata still follows the existing capability boundary.

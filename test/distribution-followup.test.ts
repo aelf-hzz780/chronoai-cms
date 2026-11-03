@@ -4,7 +4,7 @@ import {fixture} from './helpers.ts';
 import {Vault} from '../src/vault.ts';
 import {PublishingService,ReleaseWorker} from '../src/publishing.ts';
 import {DistributionService} from '../src/distribution.ts';
-import {TargetRegistry,DevAdapter,AssistedAdapter} from '../src/targets.ts';
+import {TargetRegistry,DevAdapter,AssistedAdapter,HashnodeAdapter} from '../src/targets.ts';
 import {createApp} from '../src/app.ts';
 import {AppError} from '../src/errors.ts';
 import {commandRequest} from '../src/command-authority.ts';
@@ -70,6 +70,38 @@ test('C07: connection drift during the final authority await is detected before 
   const f=await followupFixture(t),plan=(await f.plan()).json();f.due(plan.id);let read=false;
   const connection=f.service.connections.connection.bind(f.service.connections);f.service.connections.connection=async(...args)=>{const result=await connection(...args);read=true;return result;};f.policy.authority.validate=async()=>{if(read)f.drift();};
   const response=await f.confirm(plan.id);assert.equal(response.statusCode,409,response.body);assert.equal(f.store.get('SELECT delivery_id FROM distribution_plans WHERE id=?',plan.id)!.delivery_id,null);assert.equal(f.store.get('SELECT count(*) n FROM deliveries')!.n,0);
+});
+
+test('copy account fence: rebinding the same connection ID from A to B blocks update/remove deliveries and plans before persistence',async t=>{
+  const f=await followupFixture(t);f.service.targets.targets.set('hashnode',new HashnodeAdapter('https://gql.hashnode.example'));
+  const resolve=f.service.connections.connection.bind(f.service.connections);let account='frozen-account-A';f.service.connections.connection=async(...args)=>({...await resolve(...args),accountId:account});
+  const copy=await f.service.request(f.actor,f.release.id,{...f.intent('hashnode'),idempotencyKey:'copy-A'},'copy');f.store.run("UPDATE deliveries SET state='published',remote_id='known-copy-A',url='https://writer.hashnode.dev/known-copy' WHERE id=?",copy.id);
+  assert.equal(JSON.parse(f.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',copy.id)!.payload_json).accountId,'frozen-account-A');account='current-account-B';
+  const before={deliveries:f.store.get('SELECT count(*) n FROM deliveries')!.n,jobs:f.store.get('SELECT count(*) n FROM jobs')!.n,plans:f.store.get('SELECT count(*) n FROM distribution_plans')!.n};
+  for(const action of ['update','remove']){
+    const input={...f.intent('hashnode',{action,copyId:copy.id}),idempotencyKey:`${action}-B`};
+    await assert.rejects(f.service.request(f.actor,f.release.id,input,'rebound'),{status:409,code:'CONNECTION_CHANGED'});
+    const plan=await f.plan({...input,idempotencyKey:`${action}-plan-B`});assert.equal(plan.statusCode,409,plan.body);assert.equal(plan.json().code,'CONNECTION_CHANGED');
+  }
+  assert.deepEqual({deliveries:f.store.get('SELECT count(*) n FROM deliveries')!.n,jobs:f.store.get('SELECT count(*) n FROM jobs')!.n,plans:f.store.get('SELECT count(*) n FROM distribution_plans')!.n},before);
+});
+test('copy account fence: missing or invalid historical frozen accounts fail closed, including disconnected manual fallback',async t=>{
+  const f=await followupFixture(t),copy=await f.service.request(f.actor,f.release.id,{...f.intent('medium'),idempotencyKey:'copy'},'copy');f.store.run("UPDATE deliveries SET state='published',remote_id='known',url='https://medium.com/@writer/known' WHERE id=?",copy.id);
+  const saved=f.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',copy.id)!.payload_json,payload=JSON.parse(saved);
+  for(const accountId of [undefined,null,'', '   ',12]){
+    f.store.run('UPDATE delivery_payloads SET payload_json=? WHERE delivery_id=?',JSON.stringify({...payload,accountId}),copy.id);
+    await assert.rejects(f.service.request(f.actor,f.release.id,{...f.intent('medium',{action:'remove',copyId:copy.id}),idempotencyKey:`invalid-${String(accountId)}`},'invalid'),{status:409,code:'COPY_MISMATCH'});
+  }
+  f.store.run('UPDATE delivery_payloads SET payload_json=? WHERE delivery_id=?','not-json',copy.id);await assert.rejects(f.service.request(f.actor,f.release.id,{...f.intent('medium',{action:'update',copyId:copy.id}),idempotencyKey:'invalid-payload'},'invalid'),{status:409,code:'COPY_MISMATCH'});
+  f.store.run('DELETE FROM delivery_payloads WHERE delivery_id=?',copy.id);await assert.rejects(f.service.request(f.actor,f.release.id,{...f.intent('medium',{action:'remove',copyId:copy.id}),idempotencyKey:'missing-payload'},'invalid'),{status:409,code:'COPY_MISMATCH'});
+  f.store.run('INSERT INTO delivery_payloads VALUES (?,?,?)',copy.id,'sealed',JSON.stringify({...payload,accountId:null}));f.lose();await assert.rejects(f.service.request(f.actor,f.release.id,{...f.intent('medium',{action:'remove',copyId:copy.id}),idempotencyKey:'lost-invalid'},'invalid'),{status:409,code:'COPY_MISMATCH'});
+  assert.equal(f.store.get('SELECT count(*) n FROM deliveries')!.n,1);
+});
+test('copy account fence: same-account reauthentication permits new confirmations, genuine loss retains A, and create has no old-copy constraint',async t=>{
+  const f=await followupFixture(t),copy=await f.service.request(f.actor,f.release.id,{...f.intent('medium'),idempotencyKey:'copy'},'copy');f.store.run("UPDATE deliveries SET state='published',remote_id='known',url='https://medium.com/@writer/known' WHERE id=?",copy.id);f.drift();
+  const update=await f.service.request(f.actor,f.release.id,{...f.intent('medium',{action:'update',copyId:copy.id}),idempotencyKey:'same-account-new-generation'},'same');assert.equal(update.remote_id,'known');
+  const connection=f.service.connections.connection.bind(f.service.connections);f.service.connections.connection=async(...args)=>({...await connection(...args),accountId:'new-account-B'});const fresh=await f.service.request(f.actor,f.release.id,{...f.intent('dev'),idempotencyKey:'fresh-B'},'new');assert.equal(JSON.parse(f.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',fresh.id)!.payload_json).accountId,'new-account-B');
+  f.lose();const removal=await f.service.request(f.actor,f.release.id,{...f.intent('medium',{action:'remove',copyId:copy.id}),idempotencyKey:'lost-A'},'lost');assert.equal(removal.state,'manual_action_needed');assert.equal(JSON.parse(f.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',removal.id)!.payload_json).accountId,'account');assert.equal(removal.remote_id,'known');
 });
 
 test('C08: old-source manual observation verifies frozen content only, fixes the known copy once, and never restores publication or writes a job',async t=>{
