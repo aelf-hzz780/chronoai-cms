@@ -20,3 +20,11 @@ export interface TaskDetail extends TaskItem {snapshot:null|{revisionId:string;t
 export type PublicationAction='publish'|'update'|'unpublish';
 export interface Release {id:string;article_id:string;revision_id:string;owner_id:string;action:PublicationAction;state:string;url:string|null;remote_id:string|null;created_at:string;updated_at:string;error_code:string|null;trace_id:string}
 export interface LinkStatus {id:string;state:string;error_code:string|null;trace_id:string;attempts:number|null;next_attempt_at:string|null}
+export type MetricDestination='ghost'|'dev'|'hashnode'|'medium'|'hackernoon';
+export interface MetricFilters {from:string;to:string;article:string;language:Language|'';destination:MetricDestination}
+export interface Metric {value:number|null;availability:'Available'|'Unavailable';source:string;updated_at:string|null;coverage:Record<string,string|number|null|undefined>;reason:string|null;definition?:string}
+export interface MetricTrend {date:string;pageViews:number;estimatedDailyVisitors:number}
+export interface Metrics {ownerId:string;filters:Record<string,string|undefined>;readership:{pageViews:Metric;estimatedDailyVisitors:Metric};topArticles:Array<{article_id:string;pageViews:number;estimatedDailyVisitors:number}>;trends:MetricTrend[];referrals:Array<{referral:string;campaign:string|null;pageViews:number}>;distribution:{value:Array<{state:string;count:number}>;source:string;dateBasis:string;updated_at:string};externalEngagement:{views:number|null;reactions:number|null;comments:number|null;availability:'Available'|'Unavailable';source:string;updated_at:string|null;metrics:{views:Metric;reactions:Metric;comments:Metric};reason:string|null}}
+export interface Member {identity:string;displayName:string;role:'admin'|'member'|'viewer';active:boolean;publisherAssigned:boolean;publisher:boolean}
+export interface MemberDirectory {ownerId:string;status:'available'|'unavailable';members:Member[];code?:string}
+export interface MemberIntent {identity:string;displayName:string;enabled:boolean}

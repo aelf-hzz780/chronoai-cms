@@ -10,7 +10,12 @@ import {OperationIntent,publicationOptions} from './publication-model.js';
 import {taskDetailView,taskListView,linkStatusView,type TaskFilters} from './tasks.js';
 import {isTaskActive,isTaskKind,taskAssetBase} from './task-model.js';
 import {BoundedPoller} from './polling.js';
-import type {Article,ContentPage,EditorDraft,History,Identity,Language,Site,Summary,Workspace,Release,TaskDetail,TaskPage,PublicationAction,LinkStatus} from './types.js';
+import {analyticsView} from './analytics.js';
+import {defaultMetricFilters,metricQuery} from './analytics-model.js';
+import {membersView} from './members.js';
+import {canGrantPublisher,canRevokePublisher} from './members-model.js';
+import {guideView,settingsView,unavailablePage} from './workspace-views.js';
+import type {Article,ContentPage,EditorDraft,History,Identity,Language,Site,Summary,Workspace,Release,TaskDetail,TaskPage,PublicationAction,LinkStatus,MemberDirectory,MemberIntent,MetricFilters,MetricDestination,Metrics} from './types.js';
 
 const root=document.getElementById('app')!;
 const api=new Transport();const context=new ContextGate();
@@ -26,6 +31,8 @@ let publication:PublicationView|null=null,taskPage:TaskPage|null=null,currentTas
 let taskFilters:TaskFilters={kind:'',language:'',state:'',articleId:'',limit:20,offset:0};
 let publicationIntent=new OperationIntent(),mediaIntent=new OperationIntent(),mediaRights=false,linkUnknown=false;
 let linkStatuses:LinkStatus[]=[];
+let metrics:Metrics|null=null,metricFilters:MetricFilters=defaultMetricFilters(),metricCopy:TaskDetail|null=null,metricCopyId='';
+let memberDirectory:MemberDirectory|null=null,memberIntent:MemberIntent|null=null,manualMemberIdentity='';
 let preserveNavigation=false;
 const retainedDrafts=new Map<string,EditorDraft>();
 const taskReads=new ContextGate();
@@ -46,8 +53,12 @@ function render(){
  else if(r.name==='publish'&&publication)content=publicationView({...publication,busy,allowed:publication.allowed&&!suspended},locale);
  else if(r.name==='tasks'&&taskPage)content=taskListView(taskPage,taskFilters,locale);
  else if(r.name==='task'&&currentTask)content=taskDetailView(currentTask,locale,busy,mediaRights,Boolean(api.csrf&&owner.capabilities.canPublish&&!suspended));
- else if(r.name==='onboarding'||r.name==='settings')content=`<section class="studio-welcome"><div class="eyebrow">${r.name==='onboarding'?'WELCOME TO YOUR STUDIO':'WORKSPACE SETTINGS'}</div><h1>${t(r.name==='onboarding'?'welcome':'siteTitle')}</h1><p>${t(r.name==='onboarding'?'welcomeCopy':'siteCopy')}</p>${siteCards(sites,locale)}<div class="heading-actions"><a href="#/content" class="btn primary">${t('continue')}</a>${button(t('refresh'),'refresh')}</div></section>`;
- else content=`<div class="studio-loading">${busy?t('loading'):''}</div>`;
+ else if(r.name==='analytics')content=!owner.capabilities.canReadMetrics||suspended?unavailablePage(locale):metrics?analyticsView(metrics,metricFilters,locale,busy,Boolean(api.csrf&&owner.capabilities.canPublish),metricCopy,metricCopyId):`<div class="studio-loading">${busy?t('loading'):button(t('retry'),'refresh')}</div>`;
+ else if(r.name==='members')content=!owner.capabilities.canManagePublishers||suspended?unavailablePage(locale):memberDirectory?membersView(memberDirectory,owner,locale,busy,memberIntent,manualMemberIdentity,Boolean(api.csrf&&owner.capabilities.canManagePublishers)): `<div class="studio-loading">${busy?t('loading'):button(t('retry'),'refresh')}</div>`;
+ else if(r.name==='settings')content=settingsView(owner,sites,locale);
+ else if(r.name==='guide')content=guideView(owner,locale);
+ else if(r.name==='onboarding')content=`<section class="studio-welcome"><div class="eyebrow">WELCOME TO YOUR STUDIO</div><h1>${t('welcome')}</h1><p>${t('welcomeCopy')}</p>${siteCards(sites,locale)}<div class="heading-actions"><a href="#/content" class="btn primary">${t('continue')}</a>${button(t('refresh'),'refresh')}</div></section>`;
+ else content=`<div class="studio-loading">${busy?t('loading'):button(t('retry'),'refresh')}</div>`;
  const directory=identity.organizationDirectory?.status==='unavailable'?`<div class="studio-notice studio-directory">${t('directory')}${identity.organizationDirectory.code?`<code>${escape(identity.organizationDirectory.code)}</code>`:''}</div>`:'';
  const csrf=!api.csrf?`<div class="studio-notice error">${t('csrfMissing')}</div>`:'';
  root.innerHTML=shell(directory+csrf+content,identity.workspaces,owner,identity.subject,locale,r.name);showNotice();
@@ -62,7 +73,7 @@ async function failure(error:unknown,stamp=context.current()){
  busy=false;const e=error instanceof ApiError?error:null;
  notice={text:e?.message??(error instanceof Error?error.message:t('error')),kind:'error',details:e?`${e.code}${e.traceId?' · Trace ID '+e.traceId:''}`:undefined};
  if(e?.status===401){identity=null;api.csrf=undefined;sessionStorage.setItem('chrono.studio.return',safeReturnPath('/studio'+currentHash));render();return;}
- if(e?.status===403){suspended=true;render();try{const me=await api.json<Identity>('/me',{signal:stamp.signal});if(context.accepts(stamp)){identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===owner?.id)??null;render();}}catch{/* Original classified error remains visible; no previous permission is restored. */}return;}
+ if(e?.status===403){suspended=true;memberDirectory=null;memberIntent=null;metrics=null;metricCopy=null;render();try{const me=await api.json<Identity>('/me',{signal:stamp.signal});if(context.accepts(stamp)){identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===owner?.id)??null;render();}}catch{/* Original classified error remains visible; no previous permission is restored. */}return;}
  render();
 }
 function unsavedAllowed(){if(!draft?.dirty)return true;const allowed=window.confirm(t('discard'));if(allowed&&draft.article)retainedDrafts.delete(`${draft.article.ownerId}/${draft.article.id}`);return allowed;}
@@ -76,13 +87,19 @@ async function loadIdentity(){const stamp=context.advance();busy=true;render();t
 function historyReplace(hash:string){window.history.replaceState(null,'',location.pathname+hash);lastHash=hash;}
 async function loadRoute(){
  poller.stop();taskReads.advance();
- const stamp=context.advance();busy=true;suspended=false;notice=null;page=null;summary=null;history=[];sites=[];source=null;previewMode='write';previewHtml='';draft=null;pendingSource=null;publication=null;taskPage=null;currentTask=null;mediaRights=false;mediaIntent=new OperationIntent();linkStatuses=[];linkUnknown=false;render();
+ const stamp=context.advance();busy=true;suspended=false;notice=null;page=null;summary=null;history=[];sites=[];source=null;previewMode='write';previewHtml='';draft=null;pendingSource=null;publication=null;taskPage=null;currentTask=null;mediaRights=false;mediaIntent=new OperationIntent();linkStatuses=[];linkUnknown=false;metrics=null;metricCopy=null;memberDirectory=null;memberIntent=null;render();
  if(!owner){busy=false;render();return;}
  const ownerId=owner.id;const r=route();
  try{
   if(r.name==='content'){
    const params=new URLSearchParams({language:filters.language,status:filters.status,q:filters.q,limit:String(filters.limit),offset:String(filters.offset)});
    const result=await api.json<ContentPage>(`/owners/${encodeURIComponent(ownerId)}/content-summary?${params}`,{signal:stamp.signal});if(!context.accepts(stamp))return;page=result;
+  }else if(r.name==='analytics'){
+   if(owner.capabilities.canReadMetrics)await readMetrics(stamp);
+  }else if(r.name==='members'){
+   if(owner.capabilities.canManagePublishers)await readMembers(stamp);
+  }else if(r.name==='guide'){
+   // Static guidance uses the current server capabilities and real Studio routes.
   }else if(r.name==='settings'||r.name==='onboarding'){
    const result=await api.json<{sites:Site[]}>(`/owners/${encodeURIComponent(ownerId)}/sites`,{signal:stamp.signal});if(!context.accepts(stamp))return;sites=result.sites;
   }else if(r.name==='new'){
@@ -167,6 +184,54 @@ async function linkSource(){if(!draft?.article||!source||!canEdit()||draft.dirty
  await api.json(`/articles/${encodeURIComponent(article.id)}/translation`,{method:'POST',data:{sourceArticleId:inspected.id,sourceRevisionId:inspected.revision.id},signal:stamp.signal});if(!context.accepts(stamp))return;await loadRoute();notice={text:t('linked'),kind:'success'};showNotice();
  }catch(error){await failure(error,stamp);}}
 function retainEditor(){if(draft?.article&&draft.dirty)retainedDrafts.set(`${draft.article.ownerId}/${draft.article.id}`,draft);}
+async function readMetrics(stamp:Stamp=context.current()){
+ if(!owner?.capabilities.canReadMetrics)return;const selected=owner.id,filters={...metricFilters};
+ const result=await api.json<Metrics>(`/metrics?${metricQuery(selected,filters)}`,{signal:stamp.signal});if(!context.accepts(stamp))return;
+ if(result.ownerId!==selected||result.filters.destination!==filters.destination)throw new ApiError(502,'METRICS_CONTEXT','Metrics workspace or source mismatch');metrics=result;
+}
+async function readMembers(stamp:Stamp=context.current()){
+ if(!owner?.capabilities.canManagePublishers)return;const selected=owner.id;
+ const result=await api.json<MemberDirectory>(`/owners/${encodeURIComponent(selected)}/members`,{signal:stamp.signal});if(!context.accepts(stamp))return;
+ if(result.ownerId!==selected)throw new ApiError(502,'MEMBER_CONTEXT','Member workspace mismatch');memberDirectory=result;
+}
+function beginMemberChange(identity:string,enabled:boolean){
+ if(busy||suspended||!api.csrf||!owner?.capabilities.canManagePublishers||!memberDirectory)return;
+ const member=memberDirectory.members.find(member=>member.identity===identity);
+ if(!member||(enabled?!canGrantPublisher(member,true):!canRevokePublisher(member,true)))return;
+ memberIntent={identity:member.identity,displayName:member.displayName,enabled};render();document.querySelector('.studio-member-confirm')?.scrollIntoView({block:'nearest'});
+}
+function beginManualRevoke(){
+ if(busy||suspended||!api.csrf||!owner?.capabilities.canManagePublishers)return;
+ const identity=(document.getElementById('revoke-identity') as HTMLInputElement).value.trim();manualMemberIdentity=identity;
+ if(!identity||identity.length>500){notice={text:t('identityRequired'),kind:'error'};showNotice();return;}
+ memberIntent={identity,displayName:identity,enabled:false};render();document.querySelector('.studio-member-confirm')?.scrollIntoView({block:'nearest'});
+}
+async function confirmMemberChange(){
+ if(!memberIntent||busy||suspended||!api.csrf||!owner?.capabilities.canManagePublishers)return;
+ const intent=memberIntent,selected=owner.id,stamp=context.current();
+ if(intent.enabled&&!memberDirectory?.members.some(member=>member.identity===intent.identity&&canGrantPublisher(member,true)))return;
+ busy=true;render();try{
+  await api.json(`/owners/${encodeURIComponent(selected)}/publishers/${encodeURIComponent(intent.identity)}`,{method:'PUT',data:{enabled:intent.enabled},signal:stamp.signal});if(!context.accepts(stamp))return;
+  memberIntent=null;await readMembers(stamp);if(!context.accepts(stamp))return;busy=false;notice={text:t(memberDirectory?.status==='unavailable'?'memberChangeDirectoryUnavailable':'memberChangeReadBack'),kind:'info'};render();
+ }catch(error){if(!context.accepts(stamp))return;memberIntent=null;await failure(error,stamp);if(context.accepts(stamp)&&!suspended&&owner?.capabilities.canManagePublishers)try{await readMembers(stamp);if(context.accepts(stamp))render();}catch(readError){await failure(readError,stamp);}}
+}
+async function inspectMetricCopy(){
+ if(!owner?.capabilities.canReadMetrics||!owner.capabilities.canPublish||suspended||busy||metricFilters.destination==='ghost')return;
+ metricCopyId=(document.getElementById('metric-copy-id') as HTMLInputElement).value.trim();metricCopy=null;
+ if(!metricCopyId||metricCopyId.length>500){notice={text:t('identityRequired'),kind:'error'};showNotice();return;}
+ const selected=owner.id,id=metricCopyId,destination=metricFilters.destination,stamp=context.current();busy=true;render();try{
+  const result=await api.json<TaskDetail>(`/owners/${encodeURIComponent(selected)}/tasks/delivery/${encodeURIComponent(id)}`,{signal:stamp.signal});if(!context.accepts(stamp))return;
+  if(result.ownerId!==selected||result.id!==id||result.kind!=='delivery'||result.state!=='published'||result.copy?.target!==destination)throw new ApiError(409,'METRIC_COPY_CONTEXT',t('copyNotEligible'));
+  metricCopy=result;busy=false;render();
+ }catch(error){await failure(error,stamp);}
+}
+async function refreshCounters(){
+ if(!metricCopy||busy||suspended||!api.csrf||!owner?.capabilities.canReadMetrics||!owner.capabilities.canPublish||metricCopy.ownerId!==owner.id||metricCopy.copy?.target!==metricFilters.destination||metricCopy.state!=='published')return;
+ const copy=metricCopy,stamp=context.current();busy=true;render();try{
+  const result=await api.json<{availability:'Available'|'Unavailable';code?:string}>(`/deliveries/${encodeURIComponent(copy.id)}/metrics/refresh`,{method:'POST',data:{},signal:stamp.signal});if(!context.accepts(stamp))return;
+  await readMetrics(stamp);if(!context.accepts(stamp))return;busy=false;notice={text:t(result.availability==='Available'?'countersRead':'counterUnavailable'),kind:result.availability==='Available'?'info':'error',details:result.code};render();
+ }catch(error){await failure(error,stamp);}
+}
 function reviewPublication(){if(!draft?.article||!canReview()||busy)return;retainEditor();preserveNavigation=true;navigate(`#/publish/${encodeURIComponent(draft.article.id)}?revision=${encodeURIComponent(draft.article.revision.id)}`);}
 async function confirmOriginal(){
  if(!publication||busy||!publication.allowed||suspended||!publication.rights||!publication.site?.configured)return;
@@ -258,6 +323,9 @@ async function action(name:string){
   case 'previous':filters.offset=Math.max(0,filters.offset-filters.limit);await loadRoute();break;
   case 'next':filters.offset+=filters.limit;await loadRoute();break;
   case 'save':await save();break;
+  case 'member-confirm':await confirmMemberChange();break;
+  case 'member-cancel':memberIntent=null;render();break;
+  case 'refresh-counters':await refreshCounters();break;
   case 'review-publication':reviewPublication();break;
   case 'confirm-original':await confirmOriginal();break;
   case 'task-cancel':await taskCommand('cancel');break;
@@ -283,12 +351,22 @@ async function action(name:string){
 root.addEventListener('click',event=>{
  const target=event.target as HTMLElement;const signin=target.closest('#signin');if(signin)sessionStorage.setItem('chrono.studio.return',safeReturnPath('/studio'+currentHash));
  const status=target.closest<HTMLButtonElement>('[data-status]');if(status){filters.status=status.dataset.status as Filters['status'];filters.offset=0;void loadRoute();return;}
- const control=target.closest<HTMLButtonElement>('[data-action]');if(control&&!control.disabled)void action(control.dataset.action!);
+ const control=target.closest<HTMLButtonElement>('[data-action]');if(control&&!control.disabled){if(control.dataset.action==='member-select'){beginMemberChange(control.dataset.identity??'',control.dataset.enabled==='true');return;}void action(control.dataset.action!);}
 });
 root.addEventListener('submit',event=>{if((event.target as HTMLElement).id==='search-form'){event.preventDefault();filters.q=(document.getElementById('search') as HTMLInputElement).value;filters.offset=0;void loadRoute();}
  if((event.target as HTMLElement).id==='task-filters'){event.preventDefault();const value=(id:string)=>(document.getElementById(id) as HTMLInputElement|HTMLSelectElement).value;const kind=value('task-kind');taskFilters={...taskFilters,kind:isTaskKind(kind)?kind:'',language:value('task-language')==='zh'?'zh':value('task-language')==='en'?'en':'',state:value('task-state').trim(),articleId:value('task-article').trim(),offset:0};void loadRoute();}
+ if((event.target as HTMLElement).id==='manual-member-revoke'){event.preventDefault();beginManualRevoke();}
+ if((event.target as HTMLElement).id==='inspect-metric-copy'){event.preventDefault();void inspectMetricCopy();}
+ if((event.target as HTMLElement).id==='analytics-filters'){
+  event.preventDefault();const value=(id:string)=>(document.getElementById(id) as HTMLInputElement|HTMLSelectElement).value;
+  const filters:MetricFilters={from:value('metric-from'),to:value('metric-to'),article:value('metric-article').trim(),language:value('metric-language')==='en'?'en':value('metric-language')==='zh'?'zh':'',destination:value('metric-destination') as MetricDestination};
+  try{metricQuery(owner?.id??'',filters);metricFilters=filters;metricCopyId='';void loadRoute();}catch(error){notice={text:error instanceof Error?error.message:t('error'),kind:'error'};showNotice();}
+ }
 });
-root.addEventListener('input',event=>{if(!draft||!canEdit())return;const input=event.target as HTMLInputElement|HTMLTextAreaElement;
+root.addEventListener('input',event=>{const input=event.target as HTMLInputElement|HTMLTextAreaElement;
+ if(input.id==='metric-copy-id'){metricCopyId=input.value;metricCopy=null;const refresh=root.querySelector<HTMLButtonElement>('[data-action="refresh-counters"]');if(refresh)refresh.disabled=true;}
+ if(input.id==='revoke-identity')manualMemberIdentity=input.value;
+ if(!draft||!canEdit())return;
  if(input.id==='source-id'){source=null;const confirm=root.querySelector<HTMLButtonElement>('[data-action="link-source"]');if(confirm)confirm.disabled=true;}
  if(input.id==='article-title'){draft.title=input.value;draft.dirty=true;}
  if(input.id==='credited-author'){draft.author=input.value;draft.dirty=true;}
@@ -296,12 +374,12 @@ root.addEventListener('input',event=>{if(!draft||!canEdit())return;const input=e
  if(['article-title','credited-author','markdown'].includes(input.id)){const submitButton=root.querySelector<HTMLButtonElement>('[data-action="submit"]');if(submitButton)submitButton.disabled=true;const status=root.querySelector('.editor-state');if(status)status.innerHTML=badge(t('unsaved'),'amber');}
 });
 root.addEventListener('change',event=>{const input=event.target as HTMLInputElement|HTMLSelectElement;
- if(input.id==='locale'){locale=input.value==='zh'?'zh':'en';localStorage.setItem('chrono.studio.locale',locale);render();}
+ if(input.id==='locale'||input.id==='settings-locale'){locale=input.value==='zh'?'zh':'en';localStorage.setItem('chrono.studio.locale',locale);render();}
  if(input.id==='publication-rights'&&publication){publication.rights=(input as HTMLInputElement).checked;render();}
  if(input.id==='publication-action'&&publication&&['publish','update','unpublish'].includes(input.value)){publication.action=input.value as PublicationAction;publication.rights=false;publication.unknown=false;publication.key=null;render();}
  if(input.id==='media-rights'){mediaRights=(input as HTMLInputElement).checked;render();}
  if(input.id==='workspace'){
-  if(!unsavedAllowed()){input.value=owner?.id??'';return;}owner=identity?.workspaces.find(w=>w.id===input.value)??null;sessionStorage.setItem('chrono.studio.owner',owner?.id??'');filters={...filters,offset:0,q:'',status:'all'};currentHash='#/content';historyReplace(currentHash);void loadRoute();
+  if(!unsavedAllowed()){input.value=owner?.id??'';return;}owner=identity?.workspaces.find(w=>w.id===input.value)??null;sessionStorage.setItem('chrono.studio.owner',owner?.id??'');filters={...filters,offset:0,q:'',status:'all'};metricFilters={...metricFilters,article:''};metricCopyId='';manualMemberIdentity='';currentHash='#/content';historyReplace(currentHash);void loadRoute();
  }
  if(input.id==='article-language'){filters.language=input.value==='zh'?'zh':'en';filters.offset=0;void loadRoute();}
  if(input.id==='translation-peer'&&input.value)navigate(`#/article/${encodeURIComponent(input.value)}`);

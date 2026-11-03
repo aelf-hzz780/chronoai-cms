@@ -7,7 +7,7 @@ export class ContextGate {
   accepts(stamp:Stamp):boolean{return stamp.version===this.version&&!stamp.signal.aborted;}
 }
 export function safeReturnPath(path:string):string {
- const match=/^\/studio(?:#\/(content|onboarding|settings|tasks|connections|task\/(?:release|delivery|media|projection|plan)\/[a-zA-Z0-9-]+|(?:article|publish)\/[a-zA-Z0-9-]+|new(?:\/(?:en|zh))?)(?:\?([^#]*))?)?$/.exec(path);
+ const match=/^\/studio(?:#\/(content|onboarding|settings|analytics|members|guide|tasks|connections|task\/(?:release|delivery|media|projection|plan)\/[a-zA-Z0-9-]+|(?:article|publish)\/[a-zA-Z0-9-]+|new(?:\/(?:en|zh))?)(?:\?([^#]*))?)?$/.exec(path);
  if(!match)return '/studio';if(!match[2])return path;
  const query=new URLSearchParams(match[2]);const keys=[...query.keys()];
  if(match[1]==='connections'){
