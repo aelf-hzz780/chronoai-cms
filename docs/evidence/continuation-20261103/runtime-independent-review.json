@@ -1,0 +1,585 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-03T03:06:14.607552+00:00",
+  "reviewer": "renderer_diagnosis",
+  "status": "PASS_BOUNDED_LOCAL_RUNTIME_FINAL_REVIEW",
+  "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "container": "blogsystem-command-candidate-c16cde700963-r2",
+  "containerId": "0c15fe50e841145b92080546b6758596be78cb9d8d542d094b46a05613ca110d",
+  "source": {
+    "revision": "c16cde700963959d3fd7fc226853b71f5551573a",
+    "envRevision": "c16cde700963959d3fd7fc226853b71f5551573a",
+    "sourceFiles": 231,
+    "mismatches": [],
+    "worker": {
+      "pid": 82,
+      "args": [
+        "node",
+        "--env-file=/review/private/app.env",
+        "/review/local-candidate-worker.mjs"
+      ]
+    },
+    "api": {
+      "pid": 1,
+      "args": [
+        "node",
+        "--env-file=/review/private/app.env",
+        "/review/runtime.mjs"
+      ]
+    },
+    "nodeProcesses": [
+      {
+        "pid": 1,
+        "localWorker": false,
+        "genericWorker": false,
+        "api": true
+      },
+      {
+        "pid": 166,
+        "localWorker": false,
+        "genericWorker": false,
+        "api": false
+      },
+      {
+        "pid": 82,
+        "localWorker": true,
+        "genericWorker": false,
+        "api": false
+      }
+    ],
+    "queue": {
+      "pause": "false",
+      "pending": [],
+      "pendingMedia": 0,
+      "deliveryRows": 0
+    },
+    "snapshotReadOnlySource": true,
+    "sourceLockExactlyMatchesFixedGitArchive": true
+  },
+  "runtimeTemplates": [
+    {
+      "file": "runtime.mjs",
+      "sha256": "a5ca31d3f32b0c4369e7c9e14d66c04f3eb6e1b4b1be162163368f23084bbc1a",
+      "matchesReviewedTemplate": true
+    },
+    {
+      "file": "local-candidate-worker.mjs",
+      "sha256": "cf05d4572a2fd18cadb52cfdf5ee723bf3e52a018c8561d7cbe247584a1d05be",
+      "matchesReviewedTemplate": true
+    }
+  ],
+  "schemaUnchanged": true,
+  "schemaObjects": 48,
+  "sqliteTables": 36,
+  "sqliteIntegrity": "ok",
+  "foreignKeyViolations": 0,
+  "databaseComparison": [
+    {
+      "table": "articles",
+      "beforeRows": 32,
+      "afterRows": 32,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "asset_publications",
+      "beforeRows": 25,
+      "afterRows": 25,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "assets",
+      "beforeRows": 23,
+      "afterRows": 23,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "audit",
+      "beforeRows": 339,
+      "afterRows": 340,
+      "missingPriorRows": 0,
+      "additionalRows": 1,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "author_mappings",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "collection_attempts",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "collection_gaps",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "command_authorities",
+      "beforeRows": 9,
+      "afterRows": 9,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "command_derivations",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "deliveries",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "delivery_events",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "delivery_payloads",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "external_metrics",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "idempotency",
+      "beforeRows": 37,
+      "afterRows": 37,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "job_leases",
+      "beforeRows": 51,
+      "afterRows": 51,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "jobs",
+      "beforeRows": 62,
+      "afterRows": 62,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "migrations",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "nyx_approvals",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "observations",
+      "beforeRows": 7,
+      "afterRows": 7,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "oidc_states",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "owner_profiles",
+      "beforeRows": 3,
+      "afterRows": 3,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "owners",
+      "beforeRows": 8,
+      "afterRows": 8,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "projection_retries",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "projections",
+      "beforeRows": 25,
+      "afterRows": 25,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "publishers",
+      "beforeRows": 1,
+      "afterRows": 1,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "recovery_actors",
+      "beforeRows": 3,
+      "afterRows": 3,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "release_links",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "release_media_requests",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "releases",
+      "beforeRows": 37,
+      "afterRows": 37,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "revisions",
+      "beforeRows": 57,
+      "afterRows": 57,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "sessions",
+      "beforeRows": 18,
+      "afterRows": 18,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "settings",
+      "beforeRows": 0,
+      "afterRows": 0,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": true
+    },
+    {
+      "table": "site_admin_routes",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "sites",
+      "beforeRows": 4,
+      "afterRows": 4,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "submissions",
+      "beforeRows": 5,
+      "afterRows": 5,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    },
+    {
+      "table": "translations",
+      "beforeRows": 2,
+      "afterRows": 2,
+      "missingPriorRows": 0,
+      "additionalRows": 0,
+      "pauseRowExcluded": false
+    }
+  ],
+  "snapshot": {
+    "sourceReadOnly": true,
+    "independentSnapshotRelativePath": "review/private/runtime-final-20261103T030614354765.sqlite",
+    "independentSnapshotSha256": "413b40e5b2b0702f418ee1352eddd22c471c5e3622ee4fa72ec9cbfdb37d63ed",
+    "baselineSnapshotSha256": "ee06910eb2add4bdbd4898c7905b1fbfe9fb88010b9086a9508d268c570991c6",
+    "publishedDatabaseContents": false
+  },
+  "preservedContainers": [
+    {
+      "name": "blogsystem-command-candidate-0b0e9d11dacd",
+      "id": "921e41205d5252ef2f5813243f827fad12c1b43c8e085c7e2723ca4de2e5dd4c",
+      "identityImageMountsPreserved": true,
+      "running": false
+    },
+    {
+      "name": "nyxid-native-http-relay-20261102",
+      "id": "c9b1c4c7e4676c1241757efd8c743fa45b868c67022a5a0a8f9390017078fc28",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-native-mongo-relay-20261102",
+      "id": "df58cc841ca5805c087f7e3f3d7f9448d76f8919a4914a53ce3cd07c7a54dd50",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-command-test-mongo-20261102",
+      "id": "1cad805f5f4d66839d50f874a83a2c033267f2eede8b6ffc0432119a849fdeed",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-frontend-1",
+      "id": "aadcefc557ad4fa3ba4ba8e4eb2defbe4f8174ebd68fa99d3f43e1e1dc37ebcb",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-mongodb-1",
+      "id": "8b9ad4e5bf0865807cef0c913ce8baa2ffa9448a03794425209b0df2d95d140c",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-en-1",
+      "id": "e4352883f33d565bea3986f45c45b8f281be150a221efdb8e9e309803945c802",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-zh-1",
+      "id": "88c720bf221840a3354ce469e22f3b37461058b4d9ecdd61270dc3e4232221cf",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-en-1",
+      "id": "54c72a39aa2f275b2bcd47ee5668688a68faca7193d6cf8e2ccf30ae16d3ecd4",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-zh-1",
+      "id": "76f30619c2699dd20edf40827a701ae0846d851fb75cec00661f646fff21e396",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-en-1",
+      "id": "1a603bcfadc1815f55d35d82c8ec553904d7b5af8ab3714d6ea4de6744e3d540",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-zh-1",
+      "id": "dc0ac4e2a7030044a25701b37668b7abe5ecd5816dad01078ee56018fa0bea88",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-en-1",
+      "id": "5826f64ed1b194cf7e982dc210966e652c618475bc8caf4cab9e675a8f2f8506",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-zh-1",
+      "id": "d63bd4d5d56dc2e3ac91505ad6b8e033b5c0c9b116452b57a353702f7ce01e2e",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-en-1",
+      "id": "35696bce4301569f3a0202b7d152ab030dbb1da344516c5b11265b374d58b329",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-zh-1",
+      "id": "c05ff732086508187e37d6955270ae447d03f176dbf10450dadd68b7381b91d3",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-db-en-1",
+      "id": "88d0f5d64c7fc899c174fabc90071af7f1771df814868214abbcddba1275d5c8",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-db-zh-1",
+      "id": "7f0cb13ddf366338acefbb7d687a82aa5fd52d13e378a7ed07bc4131a6856991",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-command-candidate-386b9652dc43-r2",
+      "id": "8ef0cae3a34e355e6a3322b9831057c000c79c7fb56f5318e149c8de1524a328",
+      "identityImageMountsPreserved": true,
+      "running": false
+    }
+  ],
+  "candidateMountsExactlyMatchPreviousRuntime": true,
+  "healthyEndpoints": [
+    {
+      "port": 3457,
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "port": 3000,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3001,
+      "path": "/.well-known/openid-configuration",
+      "status": 200
+    },
+    {
+      "port": 3468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3469,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3478,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3479,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2469,
+      "path": "/",
+      "status": 200
+    }
+  ],
+  "openapiOperationCount": 35,
+  "externalDeliveryWorker": false,
+  "nativeGateReportsReadBack": true,
+  "isolatedExperimentContainersRetired": [
+    {
+      "name": "blogsystem-continuation-native-20261103-api",
+      "id": "b5fcd67678a849423aa750e3a7cdb0d796b407393803d268c103c6c3cc305f2a",
+      "stopped": true,
+      "retained": true
+    },
+    {
+      "name": "blogsystem-continuation-native-20261103-api-c16",
+      "id": "9aaba1a3ad66c4a46b883d1cfbca5d06ca977c29067065371f6362a4021d1deb",
+      "stopped": true,
+      "retained": true
+    },
+    {
+      "name": "blogsystem-continuation-native-20261103-ghost-1",
+      "id": "8e8bc635371c027381b0a05f23408f8d81a6ae453a982630ac66bbf6f2d61e47",
+      "stopped": true,
+      "retained": true
+    },
+    {
+      "name": "blogsystem-continuation-native-20261103-db-1",
+      "id": "8bb2f864512f4610159d2afe3f442423d080e05e1e03fce9e073091bb18aea3a",
+      "stopped": true,
+      "retained": true
+    }
+  ],
+  "heavyLockAbsent": true,
+  "findings": [],
+  "scope": "Independent actual runtime readback, source binding, process/queue checks, consistent read-only SQLite snapshot comparison and health verification. No publication, migration, switch or rollback was performed by this reviewer.",
+  "limitations": [
+    "Database comparison proves prior row multiplicities and BLOB values retained with identical schema; it does not claim byte-identical database files. Outbound pause row is compared separately through current/prior pause state.",
+    "No complete D1-D9 acceptance or real external provider lifecycle is implied. Historical renderer failure root cause remains undetermined.",
+    "Native candidate scope and historical evidence stay separated as recorded by native-cutover-gate.json."
+  ],
+  "formalAcceptance": "NOT_ACCEPTED",
+  "schemaObjectsIncludingInternal": 86,
+  "internalSchemaObjects": 38,
+  "schemaObjectCountNote": "schemaObjects excludes sqlite_% internal objects; full SQL schema comparison uses the same filter on both immutable snapshots.",
+  "fullSchemaIncludingInternalUnchanged": true,
+  "reviewScriptSha256": "eed664671c9749b7cce44cdd864cff43601b3f8b8a50b33970955e5b17fda543",
+  "provenance": {
+    "privateSourcePath": "review/runtime-final-review.json",
+    "originalSha256": "522524de7eeb7c654e13d0ddab235fdb17103ee31c8083a206ea3a9b7e8480ea",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

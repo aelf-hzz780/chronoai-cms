@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "boundary": "Field-selected synthetic local evidence only. No database, configuration, credentials, sessions, keys, receipt tokens, or backup secrets included.",
+  "files": [
+    {
+      "path": "baseline-source-lock.json",
+      "sha256": "e46ac5e766d3998e9dd372ce6ab8c8edbc87ab5d3669d18ee4246daab7111481"
+    },
+    {
+      "path": "candidate-source-lock.json",
+      "sha256": "c800fe1ffc8c658a873f16642c7430e7df6e7a0fa1e54459fa62549743f06d9d"
+    },
+    {
+      "path": "cleanup.json",
+      "sha256": "d8a2b17b045a9fceb75ec3a00e1033785b0d4eb096c978f64f76bf8eb14e4798"
+    },
+    {
+      "path": "native-859896892942.json",
+      "sha256": "3f9085d89109ec9d64a6ff5b74c4b60d56af505c540fbca488f819b3734eef04"
+    },
+    {
+      "path": "native-aa23abb98c50.json",
+      "sha256": "e5427d8eae62fc59cd88fd5faaa7e6f99613d46e7adfa582b1e23d00d91090cb"
+    },
+    {
+      "path": "native-c46b0ca1cc76.json",
+      "sha256": "70b224a6996f64ea9c92411dacc7851ed3fcc692d9b48a33711d17fc4654b2cd"
+    },
+    {
+      "path": "native-d14310edcdfc.json",
+      "sha256": "8b2c9dabbe4ef91fb2fc5c9da235f8936046ef3079d291f302d13102f921f37e"
+    },
+    {
+      "path": "network-recovery.json",
+      "sha256": "b75eb347aeaaaec9e99444796c94290f9067a661545c527874e91d0da87cddb7"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "5b0955b7ecd0fbb87505d8edca8088a1e326a6311435b17799eecacab1c719ea"
+    },
+    {
+      "path": "theme-control-attempt1.json",
+      "sha256": "ce6cb1dab42735d37b06efabfd59f11197acc52508aec6ca9981f6fe4db698a6"
+    }
+  ]
+}

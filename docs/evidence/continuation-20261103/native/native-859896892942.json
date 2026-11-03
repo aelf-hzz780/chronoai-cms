@@ -1,0 +1,1230 @@
+{
+  "runId": "native-859896892942",
+  "status": "PASS_BOUNDED_NATIVE_OBSERVATION",
+  "fullDriverPass": true,
+  "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+  "diagnosticOnly": true,
+  "theme": "standard",
+  "sourceFilesVerified": [
+    133
+  ],
+  "privateSourcePath": "private/native-859896892942/report.json",
+  "privateSourceSha256": "445fa00a3bbae1dfad37c56e75187e1ad2401d53c42209696793d87b43bce0dc",
+  "privateSourceBoundary": "Relative to restricted native runtime directory, provenance only; raw reports are not included in this public package.",
+  "scope": "Bounded single generated PNG on fresh dedicated Ghost/MySQL/API and new real Nyx049 objects",
+  "firstMaterialization": {
+    "release": {
+      "id": "28b5761e-2e48-4059-92ff-8e570c9b866c",
+      "state": "published",
+      "error_code": null,
+      "remote_id": "6ae94badaad28c0001b6e1fe",
+      "url": "http://localhost:3588/chrono-f7d74746-1ed6-4dfc-92f3-41432e66cb07/"
+    },
+    "media": {
+      "id": "ac7bdaf7-372b-44f6-a694-61f5ad14034d",
+      "state": "complete",
+      "actorSha256": "c59eb0998611ec280f4fd6dddb9cffc5fda982abfcb917507870ee307c6e43e8",
+      "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+      "publicFiles": 1,
+      "error": null
+    },
+    "materialized": 1,
+    "ghostWrites": 0,
+    "proofEvents": [
+      {
+        "kind": "original-start",
+        "number": 1
+      },
+      {
+        "kind": "renderer-start",
+        "number": 1,
+        "htmlSha256": "09bb4fc39313518a27aa5ba76ad57caa1dabdc7e6d9e4c8ff429e3c611847957"
+      },
+      {
+        "kind": "renderer-end",
+        "number": 1,
+        "value": true,
+        "elapsedMs": 3475.5114840000006
+      },
+      {
+        "kind": "original-end",
+        "number": 1,
+        "value": true,
+        "elapsedMs": 3620.9007220000003
+      },
+      {
+        "kind": "publicImage-end",
+        "value": false,
+        "elapsedMs": 0.20243399999981193
+      },
+      {
+        "kind": "publicImage-end",
+        "value": true,
+        "elapsedMs": 7.369724000000133
+      },
+      {
+        "kind": "original-start",
+        "number": 2
+      },
+      {
+        "kind": "renderer-start",
+        "number": 2,
+        "htmlSha256": "09bb4fc39313518a27aa5ba76ad57caa1dabdc7e6d9e4c8ff429e3c611847957"
+      },
+      {
+        "kind": "renderer-end",
+        "number": 2,
+        "value": true,
+        "elapsedMs": 3315.334631999999
+      },
+      {
+        "kind": "original-end",
+        "number": 2,
+        "value": true,
+        "elapsedMs": 3425.6133690000006
+      },
+      {
+        "kind": "publicImage-end",
+        "value": true,
+        "elapsedMs": 6.284766000000673
+      },
+      {
+        "kind": "verify-end",
+        "value": true,
+        "elapsedMs": 3432.1664769999998
+      },
+      {
+        "kind": "publicImage-end",
+        "value": true,
+        "elapsedMs": 4.294354000001476
+      },
+      {
+        "kind": "publicImage-end",
+        "value": true,
+        "elapsedMs": 3.6878020000003744
+      }
+    ]
+  },
+  "readOnlyRecognition": {
+    "executed": false,
+    "reason": "Already published terminal release; no reconciliation required or allowed"
+  },
+  "themeFixture": null,
+  "failure": null,
+  "sampleUnpublished": true,
+  "approvals": {
+    "freshPerRequestApprovedCount": 14,
+    "allRequesterStatusVerified": true,
+    "revokedTestSourceKeys": 2
+  },
+  "cleanup": [
+    {
+      "articleUnpublished": true,
+      "articleUrl": "http://localhost:3588/chrono-f7d74746-1ed6-4dfc-92f3-41432e66cb07/",
+      "imagesRetained": true
+    },
+    {
+      "actor": "admin",
+      "keyId": "263e8842-905b-48a3-9b71-09ed7758dcd5",
+      "revoked": true
+    },
+    {
+      "actor": "publisher",
+      "keyId": "72438c6a-d252-4d27-b949-247c2ce03959",
+      "revoked": true
+    }
+  ],
+  "checks": [
+    {
+      "case": "single-image-missing",
+      "operation": "publish-missing",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [],
+      "afterHistory": [],
+      "release": {
+        "id": "28b5761e-2e48-4059-92ff-8e570c9b866c",
+        "state": "verifying",
+        "error_code": "ORIGINAL_NOT_VERIFIED",
+        "remote_id": "6ae94badaad28c0001b6e1fe",
+        "url": "http://localhost:3588/chrono-f7d74746-1ed6-4dfc-92f3-41432e66cb07/"
+      },
+      "pendingMedia": 0,
+      "actor": {
+        "subject": "f2014b2b-1062-4045-9363-f06173b34a9d",
+        "fromCurrentRecovery": false
+      },
+      "assets": [
+        {
+          "id": "1ad12f7c-91f7-4527-a994-e2f9ee9a0d09",
+          "sha256": "f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52",
+          "url": "http://localhost:3588/content/images/chrono/f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52.png",
+          "publicMatches": false
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 1,
+      "projectionsAfter": 1,
+      "ghostWrites": 1,
+      "ghostReads": 1,
+      "materializeCalls": 1,
+      "materialized": 0,
+      "boundaryCalls": 0,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "publicImage-end",
+          "value": false,
+          "elapsedMs": 0.18867699999987053
+        }
+      ],
+      "diagnosticEvents": [],
+      "diagnosticOnly": true,
+      "workerCompleted": true,
+      "driverOutcome": "PASS_BOUNDED_NATIVE_OBSERVATION"
+    },
+    {
+      "case": "active-old-readonly",
+      "operation": "readonly",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [
+        {
+          "id": "05103e9d-af85-41b7-8b92-57e5a9b01e75",
+          "state": "blocked",
+          "actorSha256": "403261552050e1a940f5e737206120f4a17d1896101791ba69f2c2c7cf96f268",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        }
+      ],
+      "afterHistory": [
+        {
+          "id": "05103e9d-af85-41b7-8b92-57e5a9b01e75",
+          "state": "blocked",
+          "actorSha256": "403261552050e1a940f5e737206120f4a17d1896101791ba69f2c2c7cf96f268",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        }
+      ],
+      "release": {
+        "id": "28b5761e-2e48-4059-92ff-8e570c9b866c",
+        "state": "uncertain",
+        "error_code": "REMOTE_RESULT_UNPROVEN",
+        "remote_id": "6ae94badaad28c0001b6e1fe",
+        "url": "http://localhost:3588/chrono-f7d74746-1ed6-4dfc-92f3-41432e66cb07/"
+      },
+      "pendingMedia": 0,
+      "oldSource": {
+        "requestId": "05103e9d-af85-41b7-8b92-57e5a9b01e75",
+        "active": true
+      },
+      "actor": {
+        "subject": "42f9a6a3-1b28-4eda-98ff-b0bbc4e7f9c1",
+        "fromCurrentRecovery": true
+      },
+      "assets": [
+        {
+          "id": "1ad12f7c-91f7-4527-a994-e2f9ee9a0d09",
+          "sha256": "f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52",
+          "url": "http://localhost:3588/content/images/chrono/f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52.png",
+          "publicMatches": false
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 1,
+      "projectionsAfter": 1,
+      "ghostWrites": 0,
+      "ghostReads": 3,
+      "materializeCalls": 0,
+      "materialized": 0,
+      "boundaryCalls": 0,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "original-start",
+          "number": 1
+        },
+        {
+          "kind": "renderer-start",
+          "number": 1,
+          "htmlSha256": "09bb4fc39313518a27aa5ba76ad57caa1dabdc7e6d9e4c8ff429e3c611847957"
+        },
+        {
+          "kind": "renderer-end",
+          "number": 1,
+          "value": false,
+          "elapsedMs": 10916.908565
+        },
+        {
+          "kind": "original-end",
+          "number": 1,
+          "value": false,
+          "elapsedMs": 11083.115961
+        },
+        {
+          "kind": "verify-end",
+          "value": false,
+          "elapsedMs": 11083.166401999999
+        },
+        {
+          "kind": "publicImage-end",
+          "value": false,
+          "elapsedMs": 0.1856759999991482
+        }
+      ],
+      "diagnosticEvents": [
+        {
+          "sequence": 1,
+          "elapsedMs": 789.49555,
+          "stage": "ghost.proveOriginal.begin"
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 789.530526,
+          "stage": "ghost.admin.read.begin"
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 921.187113,
+          "stage": "ghost.public.read.passed"
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 921.431402,
+          "stage": "ghost.identity.static.passed"
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 921.606198,
+          "stage": "ghost.publisher.static.passed"
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 955.506556,
+          "stage": "ghost.body.static.passed"
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 955.973915,
+          "stage": "render.verify.begin"
+        },
+        {
+          "sequence": 8,
+          "elapsedMs": 11816.759599,
+          "stage": "render.L37",
+          "outcome": false
+        },
+        {
+          "sequence": 9,
+          "elapsedMs": 11872.447679,
+          "stage": "render.verify.end",
+          "details": {
+            "durationMs": 10916.470095
+          }
+        },
+        {
+          "sequence": 10,
+          "elapsedMs": 11872.479611,
+          "stage": "ghost.L93",
+          "outcome": false
+        },
+        {
+          "sequence": 11,
+          "elapsedMs": 11872.484864,
+          "stage": "ghost.proveOriginal.end",
+          "details": {
+            "durationMs": 11083.007698
+          }
+        }
+      ],
+      "diagnosticOnly": true,
+      "workerCompleted": true,
+      "driverOutcome": "PASS_BOUNDED_NATIVE_OBSERVATION"
+    },
+    {
+      "case": "revoked-old-readonly",
+      "operation": "readonly",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [
+        {
+          "id": "05103e9d-af85-41b7-8b92-57e5a9b01e75",
+          "state": "blocked",
+          "actorSha256": "403261552050e1a940f5e737206120f4a17d1896101791ba69f2c2c7cf96f268",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "e1467a56-f94a-432b-915e-d97f83cb815a",
+          "state": "blocked",
+          "actorSha256": "e67c4c8ff50e8fc1cbd814a88e18b636126a698bc40c971011ed4721ba58e032",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        }
+      ],
+      "afterHistory": [
+        {
+          "id": "05103e9d-af85-41b7-8b92-57e5a9b01e75",
+          "state": "blocked",
+          "actorSha256": "403261552050e1a940f5e737206120f4a17d1896101791ba69f2c2c7cf96f268",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "e1467a56-f94a-432b-915e-d97f83cb815a",
+          "state": "blocked",
+          "actorSha256": "e67c4c8ff50e8fc1cbd814a88e18b636126a698bc40c971011ed4721ba58e032",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        }
+      ],
+      "release": {
+        "id": "28b5761e-2e48-4059-92ff-8e570c9b866c",
+        "state": "uncertain",
+        "error_code": "REMOTE_RESULT_UNPROVEN",
+        "remote_id": "6ae94badaad28c0001b6e1fe",
+        "url": "http://localhost:3588/chrono-f7d74746-1ed6-4dfc-92f3-41432e66cb07/"
+      },
+      "pendingMedia": 0,
+      "oldSource": {
+        "requestId": "e1467a56-f94a-432b-915e-d97f83cb815a",
+        "active": false,
+        "code": "REVOKED"
+      },
+      "actor": {
+        "subject": "42f9a6a3-1b28-4eda-98ff-b0bbc4e7f9c1",
+        "fromCurrentRecovery": true
+      },
+      "assets": [
+        {
+          "id": "1ad12f7c-91f7-4527-a994-e2f9ee9a0d09",
+          "sha256": "f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52",
+          "url": "http://localhost:3588/content/images/chrono/f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52.png",
+          "publicMatches": false
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 1,
+      "projectionsAfter": 1,
+      "ghostWrites": 0,
+      "ghostReads": 3,
+      "materializeCalls": 0,
+      "materialized": 0,
+      "boundaryCalls": 0,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "original-start",
+          "number": 1
+        },
+        {
+          "kind": "renderer-start",
+          "number": 1,
+          "htmlSha256": "09bb4fc39313518a27aa5ba76ad57caa1dabdc7e6d9e4c8ff429e3c611847957"
+        },
+        {
+          "kind": "renderer-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 3201.6842519999996
+        },
+        {
+          "kind": "original-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 3344.0426039999998
+        },
+        {
+          "kind": "publicImage-end",
+          "value": false,
+          "elapsedMs": 0.1832589999994525
+        },
+        {
+          "kind": "verify-end",
+          "value": false,
+          "elapsedMs": 3344.4403870000006
+        },
+        {
+          "kind": "publicImage-end",
+          "value": false,
+          "elapsedMs": 0.14990799999941373
+        }
+      ],
+      "diagnosticEvents": [
+        {
+          "sequence": 1,
+          "elapsedMs": 697.389479,
+          "stage": "ghost.proveOriginal.begin"
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 697.421745,
+          "stage": "ghost.admin.read.begin"
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 813.964946,
+          "stage": "ghost.public.read.passed"
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 814.163754,
+          "stage": "ghost.identity.static.passed"
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 814.335506,
+          "stage": "ghost.publisher.static.passed"
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 839.461896,
+          "stage": "ghost.body.static.passed"
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 839.75004,
+          "stage": "render.verify.begin"
+        },
+        {
+          "sequence": 8,
+          "elapsedMs": 3461.498678,
+          "stage": "render.navigation.assets.passed",
+          "outcome": true
+        },
+        {
+          "sequence": 9,
+          "elapsedMs": 3477.967658,
+          "stage": "render.integrity.initial.passed",
+          "outcome": true
+        },
+        {
+          "sequence": 10,
+          "elapsedMs": 3483.117315,
+          "stage": "render.visible",
+          "outcome": true
+        },
+        {
+          "sequence": 11,
+          "elapsedMs": 3484.231413,
+          "stage": "render.integrity.before-paint",
+          "outcome": true
+        },
+        {
+          "sequence": 12,
+          "elapsedMs": 3484.451273,
+          "stage": "paint.proveTextPaint.begin"
+        },
+        {
+          "sequence": 13,
+          "elapsedMs": 3509.97136,
+          "stage": "paint.capture.begin",
+          "details": {
+            "captures": 1,
+            "groups": 1
+          }
+        },
+        {
+          "sequence": 14,
+          "elapsedMs": 3711.89152,
+          "stage": "paint.wrapped-identical",
+          "outcome": true
+        },
+        {
+          "sequence": 15,
+          "elapsedMs": 3839.619227,
+          "stage": "paint.integrity.restored",
+          "outcome": true
+        },
+        {
+          "sequence": 16,
+          "elapsedMs": 3909.111081,
+          "stage": "paint.restored-identical",
+          "outcome": true
+        },
+        {
+          "sequence": 17,
+          "elapsedMs": 3959.651046,
+          "stage": "paint.hidden-glyphs",
+          "outcome": true
+        },
+        {
+          "sequence": 18,
+          "elapsedMs": 3975.974996,
+          "stage": "paint.deadline",
+          "outcome": true
+        },
+        {
+          "sequence": 19,
+          "elapsedMs": 3980.423135,
+          "stage": "paint.has-text",
+          "outcome": true
+        },
+        {
+          "sequence": 20,
+          "elapsedMs": 3981.448106,
+          "stage": "paint.integrity.final",
+          "outcome": true
+        },
+        {
+          "sequence": 21,
+          "elapsedMs": 3981.775353,
+          "stage": "paint.proveTextPaint.end",
+          "details": {
+            "durationMs": 497.31816
+          }
+        },
+        {
+          "sequence": 22,
+          "elapsedMs": 3981.781606,
+          "stage": "render.paint",
+          "outcome": true
+        },
+        {
+          "sequence": 23,
+          "elapsedMs": 3981.782523,
+          "stage": "render.assets.final",
+          "outcome": true
+        },
+        {
+          "sequence": 24,
+          "elapsedMs": 3982.441477,
+          "stage": "render.integrity.final",
+          "outcome": true
+        },
+        {
+          "sequence": 25,
+          "elapsedMs": 4041.170786,
+          "stage": "render.verify.end",
+          "details": {
+            "durationMs": 3201.378432
+          }
+        },
+        {
+          "sequence": 26,
+          "elapsedMs": 4041.191588,
+          "stage": "ghost.renderer.passed"
+        },
+        {
+          "sequence": 27,
+          "elapsedMs": 4041.306687,
+          "stage": "ghost.proveOriginal.success",
+          "outcome": true
+        },
+        {
+          "sequence": 28,
+          "elapsedMs": 4041.310356,
+          "stage": "ghost.proveOriginal.end",
+          "details": {
+            "durationMs": 3343.944013
+          }
+        }
+      ],
+      "diagnosticOnly": true,
+      "workerCompleted": true,
+      "driverOutcome": "PASS_BOUNDED_NATIVE_OBSERVATION"
+    },
+    {
+      "case": "fresh-single-image",
+      "operation": "media",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [
+        {
+          "id": "05103e9d-af85-41b7-8b92-57e5a9b01e75",
+          "state": "blocked",
+          "actorSha256": "403261552050e1a940f5e737206120f4a17d1896101791ba69f2c2c7cf96f268",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "e1467a56-f94a-432b-915e-d97f83cb815a",
+          "state": "blocked",
+          "actorSha256": "e67c4c8ff50e8fc1cbd814a88e18b636126a698bc40c971011ed4721ba58e032",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "ac7bdaf7-372b-44f6-a694-61f5ad14034d",
+          "state": "queued",
+          "actorSha256": "c59eb0998611ec280f4fd6dddb9cffc5fda982abfcb917507870ee307c6e43e8",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": null
+        }
+      ],
+      "afterHistory": [
+        {
+          "id": "05103e9d-af85-41b7-8b92-57e5a9b01e75",
+          "state": "blocked",
+          "actorSha256": "403261552050e1a940f5e737206120f4a17d1896101791ba69f2c2c7cf96f268",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "e1467a56-f94a-432b-915e-d97f83cb815a",
+          "state": "blocked",
+          "actorSha256": "e67c4c8ff50e8fc1cbd814a88e18b636126a698bc40c971011ed4721ba58e032",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 0,
+          "error": "READ_ONLY_RECONCILIATION_REQUESTED"
+        },
+        {
+          "id": "ac7bdaf7-372b-44f6-a694-61f5ad14034d",
+          "state": "complete",
+          "actorSha256": "c59eb0998611ec280f4fd6dddb9cffc5fda982abfcb917507870ee307c6e43e8",
+          "confirmationDigest": "f462152b6dd0c79131bde399c28442cdd3e3cd2ec6e0194c434be0857a0f754f",
+          "publicFiles": 1,
+          "error": null
+        }
+      ],
+      "release": {
+        "id": "28b5761e-2e48-4059-92ff-8e570c9b866c",
+        "state": "published",
+        "error_code": null,
+        "remote_id": "6ae94badaad28c0001b6e1fe",
+        "url": "http://localhost:3588/chrono-f7d74746-1ed6-4dfc-92f3-41432e66cb07/"
+      },
+      "pendingMedia": 0,
+      "actor": {
+        "subject": "42f9a6a3-1b28-4eda-98ff-b0bbc4e7f9c1",
+        "fromCurrentRecovery": false
+      },
+      "assets": [
+        {
+          "id": "1ad12f7c-91f7-4527-a994-e2f9ee9a0d09",
+          "sha256": "f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52",
+          "url": "http://localhost:3588/content/images/chrono/f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52.png",
+          "publicMatches": true
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 1,
+      "projectionsAfter": 1,
+      "ghostWrites": 0,
+      "ghostReads": 9,
+      "materializeCalls": 1,
+      "materialized": 1,
+      "boundaryCalls": 2,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "original-start",
+          "number": 1
+        },
+        {
+          "kind": "renderer-start",
+          "number": 1,
+          "htmlSha256": "09bb4fc39313518a27aa5ba76ad57caa1dabdc7e6d9e4c8ff429e3c611847957"
+        },
+        {
+          "kind": "renderer-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 3475.5114840000006
+        },
+        {
+          "kind": "original-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 3620.9007220000003
+        },
+        {
+          "kind": "publicImage-end",
+          "value": false,
+          "elapsedMs": 0.20243399999981193
+        },
+        {
+          "kind": "publicImage-end",
+          "value": true,
+          "elapsedMs": 7.369724000000133
+        },
+        {
+          "kind": "original-start",
+          "number": 2
+        },
+        {
+          "kind": "renderer-start",
+          "number": 2,
+          "htmlSha256": "09bb4fc39313518a27aa5ba76ad57caa1dabdc7e6d9e4c8ff429e3c611847957"
+        },
+        {
+          "kind": "renderer-end",
+          "number": 2,
+          "value": true,
+          "elapsedMs": 3315.334631999999
+        },
+        {
+          "kind": "original-end",
+          "number": 2,
+          "value": true,
+          "elapsedMs": 3425.6133690000006
+        },
+        {
+          "kind": "publicImage-end",
+          "value": true,
+          "elapsedMs": 6.284766000000673
+        },
+        {
+          "kind": "verify-end",
+          "value": true,
+          "elapsedMs": 3432.1664769999998
+        },
+        {
+          "kind": "publicImage-end",
+          "value": true,
+          "elapsedMs": 4.294354000001476
+        },
+        {
+          "kind": "publicImage-end",
+          "value": true,
+          "elapsedMs": 3.6878020000003744
+        }
+      ],
+      "diagnosticEvents": [
+        {
+          "sequence": 1,
+          "elapsedMs": 598.977626,
+          "stage": "ghost.proveOriginal.begin"
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 599.009899,
+          "stage": "ghost.admin.read.begin"
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 716.572838,
+          "stage": "ghost.public.read.passed"
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 716.777287,
+          "stage": "ghost.identity.static.passed"
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 716.955002,
+          "stage": "ghost.publisher.static.passed"
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 744.046359,
+          "stage": "ghost.body.static.passed"
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 744.385393,
+          "stage": "render.verify.begin"
+        },
+        {
+          "sequence": 8,
+          "elapsedMs": 3709.787301,
+          "stage": "render.navigation.assets.passed",
+          "outcome": true
+        },
+        {
+          "sequence": 9,
+          "elapsedMs": 3722.96397,
+          "stage": "render.integrity.initial.passed",
+          "outcome": true
+        },
+        {
+          "sequence": 10,
+          "elapsedMs": 3726.900812,
+          "stage": "render.visible",
+          "outcome": true
+        },
+        {
+          "sequence": 11,
+          "elapsedMs": 3727.791799,
+          "stage": "render.integrity.before-paint",
+          "outcome": true
+        },
+        {
+          "sequence": 12,
+          "elapsedMs": 3728.005072,
+          "stage": "paint.proveTextPaint.begin"
+        },
+        {
+          "sequence": 13,
+          "elapsedMs": 3756.884963,
+          "stage": "paint.capture.begin",
+          "details": {
+            "captures": 1,
+            "groups": 1
+          }
+        },
+        {
+          "sequence": 14,
+          "elapsedMs": 3918.127753,
+          "stage": "paint.wrapped-identical",
+          "outcome": true
+        },
+        {
+          "sequence": 15,
+          "elapsedMs": 4020.61939,
+          "stage": "paint.integrity.restored",
+          "outcome": true
+        },
+        {
+          "sequence": 16,
+          "elapsedMs": 4083.472634,
+          "stage": "paint.restored-identical",
+          "outcome": true
+        },
+        {
+          "sequence": 17,
+          "elapsedMs": 4134.112983,
+          "stage": "paint.hidden-glyphs",
+          "outcome": true
+        },
+        {
+          "sequence": 18,
+          "elapsedMs": 4155.545486,
+          "stage": "paint.deadline",
+          "outcome": true
+        },
+        {
+          "sequence": 19,
+          "elapsedMs": 4157.055491,
+          "stage": "paint.has-text",
+          "outcome": true
+        },
+        {
+          "sequence": 20,
+          "elapsedMs": 4157.935764,
+          "stage": "paint.integrity.final",
+          "outcome": true
+        },
+        {
+          "sequence": 21,
+          "elapsedMs": 4158.4075,
+          "stage": "paint.proveTextPaint.end",
+          "details": {
+            "durationMs": 430.397091
+          }
+        },
+        {
+          "sequence": 22,
+          "elapsedMs": 4158.413878,
+          "stage": "render.paint",
+          "outcome": true
+        },
+        {
+          "sequence": 23,
+          "elapsedMs": 4158.414795,
+          "stage": "render.assets.final",
+          "outcome": true
+        },
+        {
+          "sequence": 24,
+          "elapsedMs": 4159.550404,
+          "stage": "render.integrity.final",
+          "outcome": true
+        },
+        {
+          "sequence": 25,
+          "elapsedMs": 4219.578403,
+          "stage": "render.verify.end",
+          "details": {
+            "durationMs": 3475.19174
+          }
+        },
+        {
+          "sequence": 26,
+          "elapsedMs": 4219.606,
+          "stage": "ghost.renderer.passed"
+        },
+        {
+          "sequence": 27,
+          "elapsedMs": 4219.721475,
+          "stage": "ghost.proveOriginal.success",
+          "outcome": true
+        },
+        {
+          "sequence": 28,
+          "elapsedMs": 4219.725018,
+          "stage": "ghost.proveOriginal.end",
+          "details": {
+            "durationMs": 3620.773902
+          }
+        },
+        {
+          "sequence": 29,
+          "elapsedMs": 4896.873173,
+          "stage": "ghost.proveOriginal.begin"
+        },
+        {
+          "sequence": 30,
+          "elapsedMs": 4896.892808,
+          "stage": "ghost.admin.read.begin"
+        },
+        {
+          "sequence": 31,
+          "elapsedMs": 4994.498587,
+          "stage": "ghost.public.read.passed"
+        },
+        {
+          "sequence": 32,
+          "elapsedMs": 4994.648703,
+          "stage": "ghost.identity.static.passed"
+        },
+        {
+          "sequence": 33,
+          "elapsedMs": 4994.779269,
+          "stage": "ghost.publisher.static.passed"
+        },
+        {
+          "sequence": 34,
+          "elapsedMs": 5007.001793,
+          "stage": "ghost.body.static.passed"
+        },
+        {
+          "sequence": 35,
+          "elapsedMs": 5007.067952,
+          "stage": "render.verify.begin"
+        },
+        {
+          "sequence": 36,
+          "elapsedMs": 7655.256093,
+          "stage": "render.navigation.assets.passed",
+          "outcome": true
+        },
+        {
+          "sequence": 37,
+          "elapsedMs": 7666.479536,
+          "stage": "render.integrity.initial.passed",
+          "outcome": true
+        },
+        {
+          "sequence": 38,
+          "elapsedMs": 7670.511217,
+          "stage": "render.visible",
+          "outcome": true
+        },
+        {
+          "sequence": 39,
+          "elapsedMs": 7671.369605,
+          "stage": "render.integrity.before-paint",
+          "outcome": true
+        },
+        {
+          "sequence": 40,
+          "elapsedMs": 7671.375191,
+          "stage": "paint.proveTextPaint.begin"
+        },
+        {
+          "sequence": 41,
+          "elapsedMs": 7696.705891,
+          "stage": "paint.capture.begin",
+          "details": {
+            "captures": 1,
+            "groups": 1
+          }
+        },
+        {
+          "sequence": 42,
+          "elapsedMs": 7917.685409,
+          "stage": "paint.wrapped-identical",
+          "outcome": true
+        },
+        {
+          "sequence": 43,
+          "elapsedMs": 8070.44917,
+          "stage": "paint.integrity.restored",
+          "outcome": true
+        },
+        {
+          "sequence": 44,
+          "elapsedMs": 8193.694387,
+          "stage": "paint.restored-identical",
+          "outcome": true
+        },
+        {
+          "sequence": 45,
+          "elapsedMs": 8250.079982,
+          "stage": "paint.hidden-glyphs",
+          "outcome": true
+        },
+        {
+          "sequence": 46,
+          "elapsedMs": 8262.52862,
+          "stage": "paint.deadline",
+          "outcome": true
+        },
+        {
+          "sequence": 47,
+          "elapsedMs": 8263.626252,
+          "stage": "paint.has-text",
+          "outcome": true
+        },
+        {
+          "sequence": 48,
+          "elapsedMs": 8264.379878,
+          "stage": "paint.integrity.final",
+          "outcome": true
+        },
+        {
+          "sequence": 49,
+          "elapsedMs": 8264.63609,
+          "stage": "paint.proveTextPaint.end",
+          "details": {
+            "durationMs": 593.25944
+          }
+        },
+        {
+          "sequence": 50,
+          "elapsedMs": 8264.637674,
+          "stage": "render.paint",
+          "outcome": true
+        },
+        {
+          "sequence": 51,
+          "elapsedMs": 8264.638591,
+          "stage": "render.assets.final",
+          "outcome": true
+        },
+        {
+          "sequence": 52,
+          "elapsedMs": 8265.238891,
+          "stage": "render.integrity.final",
+          "outcome": true
+        },
+        {
+          "sequence": 53,
+          "elapsedMs": 8322.341303,
+          "stage": "render.verify.end",
+          "details": {
+            "durationMs": 3315.268558
+          }
+        },
+        {
+          "sequence": 54,
+          "elapsedMs": 8322.353643,
+          "stage": "ghost.renderer.passed"
+        },
+        {
+          "sequence": 55,
+          "elapsedMs": 8322.471702,
+          "stage": "ghost.proveOriginal.success",
+          "outcome": true
+        },
+        {
+          "sequence": 56,
+          "elapsedMs": 8322.47537,
+          "stage": "ghost.proveOriginal.end",
+          "details": {
+            "durationMs": 3425.603155
+          }
+        }
+      ],
+      "diagnosticOnly": true,
+      "workerCompleted": true,
+      "driverOutcome": "PASS_BOUNDED_NATIVE_OBSERVATION"
+    },
+    {
+      "case": "single-image-unpublish",
+      "operation": "unpublish",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "sourceFilesVerified": 133,
+      "nyxidSha": "049ee1c2ca811a002590dc8330ce646078bb1158",
+      "beforeHistory": [],
+      "afterHistory": [],
+      "release": {
+        "id": "169592b7-60ec-46cb-9a66-b2b970ee06cf",
+        "state": "unpublished",
+        "error_code": null,
+        "remote_id": "6ae94badaad28c0001b6e1fe",
+        "url": "http://localhost:3588/chrono-f7d74746-1ed6-4dfc-92f3-41432e66cb07/"
+      },
+      "pendingMedia": 0,
+      "actor": {
+        "subject": "42f9a6a3-1b28-4eda-98ff-b0bbc4e7f9c1",
+        "fromCurrentRecovery": false
+      },
+      "assets": [
+        {
+          "id": "1ad12f7c-91f7-4527-a994-e2f9ee9a0d09",
+          "sha256": "f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52",
+          "url": "http://localhost:3588/content/images/chrono/f3a31ac4324861c4590d95ff18c1d2f45237e76eecd18370cd000f02ce43df52.png",
+          "publicMatches": true
+        }
+      ],
+      "originalReleaseEvidencePreserved": true,
+      "projectionsBefore": 1,
+      "projectionsAfter": 2,
+      "ghostWrites": 1,
+      "ghostReads": 4,
+      "materializeCalls": 0,
+      "materialized": 0,
+      "boundaryCalls": 0,
+      "revoked": false,
+      "proofEvents": [
+        {
+          "kind": "original-start",
+          "number": 1
+        },
+        {
+          "kind": "original-end",
+          "number": 1,
+          "value": true,
+          "elapsedMs": 60.510491
+        },
+        {
+          "kind": "verify-end",
+          "value": true,
+          "elapsedMs": 60.67928299999994
+        },
+        {
+          "kind": "publicImage-end",
+          "value": true,
+          "elapsedMs": 4.204600999999911
+        }
+      ],
+      "diagnosticEvents": [
+        {
+          "sequence": 1,
+          "elapsedMs": 989.612142,
+          "stage": "ghost.proveOriginal.begin"
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 989.653746,
+          "stage": "ghost.admin.read.begin"
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 1049.930161,
+          "stage": "ghost.unpublish.status",
+          "outcome": true
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 1049.970473,
+          "stage": "ghost.proveOriginal.end",
+          "details": {
+            "durationMs": 60.376507
+          }
+        }
+      ],
+      "diagnosticOnly": true,
+      "workerCompleted": true,
+      "driverOutcome": "PASS_BOUNDED_NATIVE_OBSERVATION"
+    }
+  ]
+}

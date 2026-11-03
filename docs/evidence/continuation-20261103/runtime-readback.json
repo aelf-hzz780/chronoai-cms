@@ -1,0 +1,487 @@
+{
+  "at": "2026-11-03T03:02:11.659727+00:00",
+  "status": "DEPLOYED_LOCAL_3457_FIXED_SOURCE_VERIFIED",
+  "businessCommit": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "container": "blogsystem-command-candidate-c16cde700963-r2",
+  "sourceFingerprint": {
+    "revision": "c16cde700963959d3fd7fc226853b71f5551573a",
+    "envRevision": "c16cde700963959d3fd7fc226853b71f5551573a",
+    "sourceFiles": 231,
+    "mismatches": [],
+    "worker": {
+      "pid": 82,
+      "live": true,
+      "localOnly": true
+    },
+    "queue": {
+      "pause": "false",
+      "pending": [],
+      "pendingMedia": 0,
+      "deliveryRows": 0
+    }
+  },
+  "runtimeTemplates": [
+    {
+      "file": "runtime.mjs",
+      "sha256": "a5ca31d3f32b0c4369e7c9e14d66c04f3eb6e1b4b1be162163368f23084bbc1a",
+      "matchesReviewedTemplate": true
+    },
+    {
+      "file": "local-candidate-worker.mjs",
+      "sha256": "cf05d4572a2fd18cadb52cfdf5ee723bf3e52a018c8561d7cbe247584a1d05be",
+      "matchesReviewedTemplate": true
+    }
+  ],
+  "candidateImageMountsAndPortVerified": true,
+  "snapshotReader": "immutable read of complete standalone SQLite backup; backup hash checked",
+  "schemaUnchanged": true,
+  "sqliteIntegrity": "ok",
+  "sqliteForeignKeyViolations": 0,
+  "priorRowsRetained": [
+    {
+      "table": "articles",
+      "preCutoverRows": 32,
+      "postCutoverRows": 32,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "asset_publications",
+      "preCutoverRows": 25,
+      "postCutoverRows": 25,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "assets",
+      "preCutoverRows": 23,
+      "postCutoverRows": 23,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "audit",
+      "preCutoverRows": 339,
+      "postCutoverRows": 340,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "author_mappings",
+      "preCutoverRows": 4,
+      "postCutoverRows": 4,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "collection_attempts",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "collection_gaps",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "command_authorities",
+      "preCutoverRows": 9,
+      "postCutoverRows": 9,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "command_derivations",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "deliveries",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "delivery_events",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "delivery_payloads",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "external_metrics",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "idempotency",
+      "preCutoverRows": 37,
+      "postCutoverRows": 37,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "job_leases",
+      "preCutoverRows": 51,
+      "postCutoverRows": 51,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "jobs",
+      "preCutoverRows": 62,
+      "postCutoverRows": 62,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "migrations",
+      "preCutoverRows": 1,
+      "postCutoverRows": 1,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "nyx_approvals",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "observations",
+      "preCutoverRows": 7,
+      "postCutoverRows": 7,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "oidc_states",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "owner_profiles",
+      "preCutoverRows": 3,
+      "postCutoverRows": 3,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "owners",
+      "preCutoverRows": 8,
+      "postCutoverRows": 8,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "projection_retries",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "projections",
+      "preCutoverRows": 25,
+      "postCutoverRows": 25,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "publishers",
+      "preCutoverRows": 1,
+      "postCutoverRows": 1,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "recovery_actors",
+      "preCutoverRows": 3,
+      "postCutoverRows": 3,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "release_links",
+      "preCutoverRows": 4,
+      "postCutoverRows": 4,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "release_media_requests",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "releases",
+      "preCutoverRows": 37,
+      "postCutoverRows": 37,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "revisions",
+      "preCutoverRows": 57,
+      "postCutoverRows": 57,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "sessions",
+      "preCutoverRows": 18,
+      "postCutoverRows": 18,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "settings",
+      "preCutoverRows": 0,
+      "postCutoverRows": 0,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": true
+    },
+    {
+      "table": "site_admin_routes",
+      "preCutoverRows": 4,
+      "postCutoverRows": 4,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "sites",
+      "preCutoverRows": 4,
+      "postCutoverRows": 4,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "submissions",
+      "preCutoverRows": 5,
+      "postCutoverRows": 5,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    },
+    {
+      "table": "translations",
+      "preCutoverRows": 2,
+      "postCutoverRows": 2,
+      "missingPriorRows": 0,
+      "outboundPauseRowExcluded": false
+    }
+  ],
+  "openapiOperationCount": 35,
+  "openapiOperations": [
+    "attachExactApproval",
+    "cancelDistribution",
+    "cancelOriginal",
+    "confirmDistribution",
+    "confirmOriginal",
+    "createArticle",
+    "downloadMarkdown",
+    "editArticle",
+    "getArticle",
+    "getAssistedPackage",
+    "getPrivateImage",
+    "getPublishedAlternatesStatus",
+    "getWorkspaces",
+    "importMarkdownFile",
+    "linkTranslation",
+    "listArticles",
+    "listDestinations",
+    "listDistribution",
+    "listOriginals",
+    "listOwnerConnections",
+    "listRevisions",
+    "materializeOriginalMedia",
+    "previewArticle",
+    "queryMetrics",
+    "readAudit",
+    "reconcileDistribution",
+    "reconcileOriginal",
+    "refreshExternalMetrics",
+    "replaceMarkdownFile",
+    "reportAssistedSubmission",
+    "requestExactApproval",
+    "setPublishingPermission",
+    "submitDraft",
+    "syncPublishedAlternates",
+    "uploadPrivateImage"
+  ],
+  "preservedServices": [
+    {
+      "name": "blogsystem-command-candidate-0b0e9d11dacd",
+      "identityImageMountsPreserved": true,
+      "running": false
+    },
+    {
+      "name": "nyxid-native-http-relay-20261102",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-native-mongo-relay-20261102",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-command-test-mongo-20261102",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-frontend-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "nyxid-blogsystem-local-mongodb-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-en-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-zh-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-en-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-zh-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-en-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-zh-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-en-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-zh-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-en-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-zh-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-db-en-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-current-machine-db-zh-1",
+      "identityImageMountsPreserved": true,
+      "running": true
+    },
+    {
+      "name": "blogsystem-command-candidate-386b9652dc43-r2",
+      "identityImageMountsPreserved": true,
+      "running": false
+    }
+  ],
+  "endpoints": [
+    {
+      "port": 3457,
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "port": 3000,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3001,
+      "path": "/.well-known/openid-configuration",
+      "status": 200
+    },
+    {
+      "port": 3468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3469,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3478,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3479,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2469,
+      "path": "/",
+      "status": 200
+    }
+  ],
+  "oldContainerRetainedStopped": true,
+  "databaseAutoRestore": false,
+  "externalDeliveryWorker": false,
+  "heartbeat": "PAUSED_UNCHANGED",
+  "runtimeSwitchPerformed": true,
+  "rollback": "Use the reviewed followup cutover controller against the retained exact old container; pause first, preserve data, do not restore over new writes.",
+  "provenance": {
+    "privateSourcePath": "runtime-readback.json",
+    "originalSha256": "96b9e2f5d5182604377cace77d2901d205b2cc140addd01efde3213fd5e19bd4",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

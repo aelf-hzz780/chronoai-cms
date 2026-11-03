@@ -1,0 +1,8 @@
+{
+  "status": "FAILED_BEFORE_SETTING_WRITE",
+  "action": "new Ghost owner session request before synthetic CSS setup",
+  "httpStatus": 500,
+  "settingsWrites": 0,
+  "fallback": "per-post codeinjection_head on exact new synthetic post with existing dedicated integration",
+  "authenticationPolicyChanged": false
+}

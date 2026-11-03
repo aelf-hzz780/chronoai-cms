@@ -1,10 +1,12 @@
 # 交付状态（开发台账，不是正式签收）
 
-当前入口为 [2026-11-02 W1/W2 整合交接](handoff-20261102.md)与[仓库内证据 manifest](evidence/followup-20261102/manifest.json)。固定整合源码 `386b9652dc431bb83e4864d5b046b378110ee88d`；W2 业务修复为 `83b4b8e`。当前实现、本地实测、本地部署、远端 push、PR 五种状态独立记录，正式 D1–D9 仍为 **NOT_ACCEPTED**。
+当前入口为 [2026-11-03 可靠性跟进](continuation-20261103.md)、[本轮证据 manifest](evidence/continuation-20261103/manifest.json)与[外部验收执行清单](continuation-external-handoff-20261103.md)。固定修复源码 `c16cde700963959d3fd7fc226853b71f5551573a`；smooth-scroll 的定位时序缺陷已有失败先行、54 项目标回归和独立复验，历史单图首次核验失败原因仍未定。当前实现、本地实测、本地部署、远端 push、PR 五种状态独立记录，正式 D1–D9 仍为 **NOT_ACCEPTED**。
+
+[2026-11-02 W1/W2 整合交接](handoff-20261102.md)及[历史证据 manifest](evidence/followup-20261102/manifest.json)继续绑定 `386b9652dc431bb83e4864d5b046b378110ee88d`，W2 修复为 `83b4b8e`。其 303 项测试与各自历史矩阵不冒称在新 SHA 全量重跑。
 
 W1 在 `0b0e9d1`＋本地 NyxID `049ee1c` 的选定 service 路径有界关闭 R031，详见 [W1](acceptance-w1-20261102.md)。W2 在 `83b4b8e` 完成当前实现的四站加密恢复、旧 media 命令终结／只读恢复修复及相关回归，详见 [W2](review-w2-recovery-20261102.md)。两项不同 SHA 的成功不能直接合成共同版本通过；整合补验与独立 reviewer 的结论单列在当前交接。
 
-普通门户 Launch 已在本地 `c65dc4be` 实现、部署，并有个人／组织 Admin 的门户与直接 CMS 一致性证据。后端 `049ee1c` 与门户均为本地补丁，原官方 `38bae2f` checkout 保留。目标部署、真实外部账号／内容动作、精确连接／批准、运维与恢复目标仍需输入；不把所有 NyxID credential／transport 扩展设为新产品门禁。
+普通门户 Launch 已在本地 `c65dc4be` 实现、部署，并有个人／组织 Admin 的门户与直接 CMS 一致性证据。后端 `049ee1c` 与门户均为本地补丁，原官方 `38bae2f` checkout 保留。用户本轮明确沿用本地 NyxID／CMS，升级后 35 项已注册契约与原注册记录一致。公开 Ghost 域名可达性、真实外部账号／内容动作、精确连接／批准与运维交接仍需补齐；不新增远端 Nyx／CMS 部署、所有 credential／transport 支持或数值恢复目标门禁。
 
 历史 2026-10-30 的 `0418652` 收尾曾为 Document 48 PASS／4 BLOCKED、Local 49 PASS／2 FAIL／1 BLOCKED、Live 52 BLOCKED。该统计和下方历史 A 表不重新计数，也不描述当前 R031 的有界结果；正式场景仍按原文逐项验收。R029／R030／R032／R033／R034 及其他已闭合问题保留原固定版本边界，旧未知原因和失败现场不删除。
 
@@ -96,15 +98,15 @@ I22记录时的Git交付：2026-11-02 root已独立验收并正常push `6ea9ecd`
 
 | 交付 | 开发状态 | 证据层级 | 剩余正式门禁 |
 |---|---|---|---|
-| D1 | implemented | 历史独立Local＋部署模板；0418652实际NyxID双入口／默认浏览器认证与退出有界通过 | 本地补丁已实现门户Launch；目标HTTPS部署／容量／付款运维责任及正式交接 |
-| D2 | implemented | 历史独立Local API；0418652实际service代理／CMS授权／MCP文件交付独立有界通过 | 所选本地来源路径有界验证；目标service注册／正式交接与真实外部连接用例验收 |
-| D3 | implemented | 独立Local角色／owner／入口／时序闭合 | 目标NyxID角色／委托／撤权契约及共享部署门禁 |
-| D4 | implemented | 独立Local源文／素材／冲突／译文／CMS闭合 | 共享目标身份与部署门禁 |
-| D5 | implemented | 独立Local四Ghost／更新／取消／核验闭合 | 目标身份与部署门禁 |
+| D1 | implemented | 历史独立Local＋部署模板；实际双入口／默认认证／退出／门户同身份有界通过；本地CMS已升级c16cde7 | 本地Nyx／CMS已选定；公开Ghost域名、容量成本、付款运维责任与正式交接 |
+| D2 | implemented | 历史独立Local API与实际service／CMS／MCP文件证据；当前35操作注册契约再次读回一致 | 所选本地来源与注册有界完成；正式交接及真实外部连接用例 |
+| D3 | implemented | 独立Local角色／owner／入口／时序；W1所选真实本地来源撤权边界通过 | 真实外部组织写入的精确批准与共享交接 |
+| D4 | implemented | 独立Local源文／素材／冲突／译文／CMS闭合 | 共享公开博客与正式交接；不新增远端身份部署要求 |
+| D5 | implemented | 独立Local四Ghost／更新／取消／核验；c16cde7真实单站受影响路径通过 | 公开Ghost域名可达性与正式交接；历史首次核验观察仍未定因 |
 | D6 | implemented | 独立Local Native契约与14功能差量闭合 | 真实连接／账号／订阅／精确批准及内容动作写入授权 |
 | D7 | implemented | 独立Local生命周期／恢复／UI闭合，R025/R028已关闭 | 真实平台副本生命周期与人工流程 |
 | D8 | implemented | 独立Local collector／看板／API／consent闭合 | 目标隐私／部署／真实授权数据源；无权计数不强求数值 |
-| D9 | implemented | Document＋独立Local四站及非空delivery隔离恢复 | 具名运维／监控／隐私备份策略、目标RPO/RTO与正式交接 |
+| D9 | implemented | Document＋独立Local四站及非空delivery隔离恢复 | 真实外部副本恢复、具名运维／监控／隐私备份及正式交接；数值恢复目标若另行约定则据其验证 |
 
 ## A01–A52
 

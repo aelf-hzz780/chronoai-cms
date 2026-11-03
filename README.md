@@ -4,7 +4,9 @@
 
 已实现 CMS 与共享 NyxID service API、Markdown／私有素材／修订、个人与组织 EN/ZH 四个独立官方 Ghost、外部分发与生命周期、指标及加密备份恢复。**完整 D1–D9 尚未正式签收**；Document、Local 与真实目标 Live 分别记录，缺少外部输入的必需项保持 BLOCKED。
 
-2026-11-02 的当前交接见 [W1/W2 整合交接](docs/handoff-20261102.md)和[可携带证据 manifest](docs/evidence/followup-20261102/manifest.json)。整合测试源码为 `386b9652dc431bb83e4864d5b046b378110ee88d`，包括 W2 修复 `83b4b8e`；后续文档提交不会被当作不同业务实现。
+当前交接见 [2026-11-03 可靠性跟进](docs/continuation-20261103.md)与[外部验收执行清单](docs/continuation-external-handoff-20261103.md)。修复源码 `c16cde700963959d3fd7fc226853b71f5551573a` 消除 smooth-scroll 主题下定位未完成导致的核验误拒绝；历史首次单图核验失败的原因仍未确定。TypeScript、54 项目标回归及独立复验见本轮证据，运行／Git／PR 状态分别读回记录。
+
+历史 [W1/W2 整合交接](docs/handoff-20261102.md)和[可携带证据 manifest](docs/evidence/followup-20261102/manifest.json)绑定 `386b9652dc431bb83e4864d5b046b378110ee88d`，包括 W2 修复 `83b4b8e`。该版本的 303 项测试及历史矩阵不冒称在新修复 SHA 全量重跑。
 
 - [W1](docs/acceptance-w1-20261102.md)：`0b0e9d1`＋本地 NyxID 补丁 `049ee1c` 在选定真实 service 路径有界关闭 R031，覆盖组织撤权、最终发送检查、双入口内容／状态／指标与真实四 Ghost 生命周期。DeliveryWorker 的目的地为 `local_test`。
 - [W2](docs/review-w2-recovery-20261102.md)：`83b4b8e` 完成真实四 Ghost 加密隔离恢复及 36 SQLite／404 MySQL 表审计；修复旧媒体命令抢占只读恢复 Actor 和 crash 后永久 running。该轮身份与分发远端为受控实现，整合后的真实 Nyx 联合补验另见当前交接。
@@ -21,6 +23,8 @@ NyxID 后端 `049ee1c2ca811a002590dc8330ce646078bb1158` 与门户 `c65dc4bedb7da
 - [NyxID 注册与连接交接](docs/nyxid-registration.md)：目标实例注册、scope、精确连接及尚缺的 Live 验证。
 - [部署、维护与恢复](docs/operations.md)：配置／密钥、Ghost 素材挂载、监控／隐私、备份恢复、升级回滚与责任缺口。
 - [W1/W2 整合交接与复跑](docs/handoff-20261102.md)：固定版本、脱敏证据、当前运行／push／PR 与未完成外部输入。
+- [当前可靠性跟进与复跑](docs/continuation-20261103.md)：滚动核验修复、历史未定原因、隔离真实实验与版本交付。
+- [真实外部与目标部署执行清单](docs/continuation-external-handoff-20261103.md)：六项必需工作包、最小输入、验证与回滚条件。
 - [当前实现与验证状态](docs/delivery-status.md)：固定 commit 的 Local 证据、缺陷修复和外部 BLOCKED 项。
 - [74978bc 独立 Local 恢复记录](docs/review-local-recovery-749.md)：完整加密捕获、新卷四站恢复、丢响应对账及撤权任务阻断；不代表生产 RPO/RTO。
 
@@ -46,8 +50,8 @@ NyxID 后端 `049ee1c2ca811a002590dc8330ce646078bb1158` 与门户 `c65dc4bedb7da
 
 ## 工程状态
 
-交付仓库为公开的 [aelf-hzz780/chronoai-cms](https://github.com/aelf-hzz780/chronoai-cms)，远端 `git@github.com:aelf-hzz780/chronoai-cms.git`，功能分支 `codex/003-blogsystem-delivery`。commit、已推送 HEAD、PR 创建结果及本地 3457 实际运行版本分别记录在[当前交接](docs/handoff-20261102.md)，不能由 Git 整合推断已部署。`main` 保留原始 baseline `019222c`，未 force 或自行 merge。新提交使用 `hzz780 <richard.huang@aelf.io>`，保留历史。
+交付仓库为公开的 [aelf-hzz780/chronoai-cms](https://github.com/aelf-hzz780/chronoai-cms)，远端 `git@github.com:aelf-hzz780/chronoai-cms.git`，功能分支 `codex/003-blogsystem-delivery`。commit、已推送 HEAD、现有 Draft PR #1 及本地 3457 实际运行版本分别记录在[当前交接](docs/continuation-20261103.md)，不能由 Git 整合推断已部署。`main` 保留原始 baseline `019222c`，未 force 或自行 merge。新提交使用 `hzz780 <richard.huang@aelf.io>`，保留历史。
 
 尚未初始化 Spec Kitty 项目。系统安装了 Spec Kitty CLI 不代表项目已采用该工作流；后续若采用，按项目规约初始化并遵循其流程。新增公开交付报告 I20/I21、[候选系统设计](docs/design.md)与[实施设计与迭代](docs/implementation.md)采用中英对照；开发、API 与运维指南保留既有中文，不纳入本次 SDD 双语整理。英文来源文件保持原文。
 
-生产配置、账号凭证与本地运行数据不进入版本控制。生产上线、真实外部平台账号联调及九项交付验收均尚未完成。
+账号凭证与本地运行数据不进入版本控制。本轮已明确沿用本地 NyxID／CMS；公开 Ghost 域名可达性、真实外部平台联调、运维交接及九项正式验收仍需补齐。

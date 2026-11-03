@@ -1,0 +1,75 @@
+{
+  "at": "2026-11-03T02:46:52.272066+00:00",
+  "baselineSource": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "redTestCommit": "7365344c7ddbda4dec311840d68b636b4fd009a4",
+  "candidate": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "node": "v24.18.0",
+  "typecheck": "PASS",
+  "counts": {
+    "scroll-regression-red.tap": {
+      "tests": 3,
+      "pass": 0,
+      "fail": 3
+    },
+    "scroll-regression-green.tap": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0
+    },
+    "targeted-regression.tap": {
+      "tests": 54,
+      "pass": 54,
+      "fail": 0
+    }
+  },
+  "probe": {
+    "source": "386b9652dc431bb83e4864d5b046b378110ee88d",
+    "events": [
+      {
+        "mode": "auto",
+        "result": true,
+        "elapsedMs": 7928
+      },
+      {
+        "mode": "smooth",
+        "result": false,
+        "elapsedMs": 1007
+      }
+    ]
+  },
+  "historyBoundary": "Smooth-scroll defect reproduced independently; the original Ghost single-image incident is not attributed to this defect.",
+  "covered": [
+    "viewport text",
+    "nested scroller text",
+    "image-only viewport",
+    "glyph paint and long text",
+    "hidden/transparent/clipped/occluded content rejection",
+    "scroll-time content mutation rejection",
+    "post-materialization false retains partial and original evidence",
+    "current actor read-only recognition with zero repeat materialization/writes",
+    "final authority boundary"
+  ],
+  "sourceLogs": [
+    {
+      "privatePath": "synthetic/scroll-probe-result.json",
+      "sha256": "36026edaea54680aae5993c33290913fbae08ccdaac98396d9b0d0e21f2f8942"
+    },
+    {
+      "privatePath": "synthetic/scroll-regression-red.tap",
+      "sha256": "c2318382efd126d71e52a3a78e468801b4a68592a063a5c74b10e411fe651090"
+    },
+    {
+      "privatePath": "synthetic/scroll-regression-green.tap",
+      "sha256": "0fdd329d199065b195f5d6381d878ccf18de6a62f053f823ae0d685cab15f9bc"
+    },
+    {
+      "privatePath": "synthetic/targeted-regression.tap",
+      "sha256": "0b3896fabe98e35cac9abcdd795832e1b5d702957089481d88cba37a8bb4729c"
+    }
+  ],
+  "provenance": {
+    "privateSourcePath": "synthetic-summary.json",
+    "originalSha256": "407bfb223ee0fe6d6d9db30b8841b50fee074878ae28c996fee0559dcf4b4197",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

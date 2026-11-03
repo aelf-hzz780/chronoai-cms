@@ -1,0 +1,39 @@
+{
+  "baseCommit": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "generatorSha256": "f6b786c35640c390e49e5dfd3f6df55f0796c2294b40a5bd7520e1f7448089f2",
+  "runtimeSource": "/app/src",
+  "diagnosticOnly": true,
+  "productionSourceModified": false,
+  "addedWaitOrRetry": false,
+  "checkRelaxation": false,
+  "eventsContainContentOrCredentials": false,
+  "files": [
+    {
+      "path": "ghost.ts",
+      "originalGitPath": "src/ghost.ts",
+      "originalSha256": "19f4deec11617d80ebc2de2cb3643fd0da1d754ed28e17355f3301ce183c4ac6",
+      "diagnosticSha256": "465713ec2e9247ec4852ccebf86b1f02c2453bce2317962acf1dc4766f0a14ec"
+    },
+    {
+      "path": "render-proof.ts",
+      "originalGitPath": "src/render-proof.ts",
+      "originalSha256": "855082a6ab961488912e6a2d59bbd075620d6ef50bcbfb8be1b323553b3d908e",
+      "diagnosticSha256": "9de94256b5f86195efedb3a4577372c5a6ba928777fbddea8065fac46cd41cd8"
+    },
+    {
+      "path": "paint-proof.ts",
+      "originalGitPath": "src/paint-proof.ts",
+      "originalSha256": "1514aaa2f31f4e7d56efb729a8bb95e5523798f1e6c70dce9d0aa9170e2d3412",
+      "diagnosticSha256": "f394de19c39dd6088bd4ce267ee1d06a182a4cb20390aef62bd68e1d1afea50a"
+    },
+    {
+      "path": "diagnostic-events.ts",
+      "diagnosticSha256": "f6bc58b2a2c250ce41c42b89ef09505b10cbc61f230b13bf784bf800ad288850"
+    }
+  ],
+  "provenance": {
+    "privateSourcePath": "diagnostic/generated/manifest.json",
+    "originalSha256": "75dc86763a9e58750e2e57b677b2696b1f17ac86eccaa634bfcda973fc8f98b7",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. No raw database, environment, credential or backup is included."
+  }
+}

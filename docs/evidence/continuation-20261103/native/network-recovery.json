@@ -1,0 +1,6 @@
+{
+  "initialAttempt": "default Docker IPAM exhausted, no source service touched",
+  "newExplicitSubnet": "10.252.120.0/24",
+  "overlapChecked": true,
+  "priorNetworksDeleted": false
+}

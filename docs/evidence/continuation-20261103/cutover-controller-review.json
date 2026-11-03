@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-03T03:01:39.755230+00:00",
+  "reviewer": "renderer_diagnosis",
+  "status": "PASS_CONDITIONAL_CONTROLLER_READER_REVIEW",
+  "candidateCommit": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "baselineCommit": "386b9652dc431bb83e4864d5b046b378110ee88d",
+  "scope": "Read-only review of prepared local cutover controller, readback reader and runtime templates; no switch or rollback executed by reviewer.",
+  "reviewedFiles": [
+    {
+      "path": "cutover/consumer-upgrade.py",
+      "sha256": "6011134b3e9301e1c6cccbbe12ac6acc72965bfc4550d7b782d79e2bd526bd39"
+    },
+    {
+      "path": "runtime-verify.py",
+      "sha256": "4a086aff05383e821b8f7d4c2d332690f5f8df70515cbfed99ca94d4cd0ed577"
+    },
+    {
+      "path": "cutover/candidate-runtime.mjs",
+      "sha256": "a5ca31d3f32b0c4369e7c9e14d66c04f3eb6e1b4b1be162163368f23084bbc1a"
+    },
+    {
+      "path": "cutover/candidate-local-worker.mjs",
+      "sha256": "cf05d4572a2fd18cadb52cfdf5ee723bf3e52a018c8561d7cbe247584a1d05be"
+    },
+    {
+      "path": "cutover/prepare-media-staging.mjs",
+      "sha256": "e089316ada8b18fc4e4c02c7b0ea24fbdcce30e54922583a9966ffdb4a496917"
+    },
+    {
+      "path": "shared-environment-before.json",
+      "sha256": "45f422c19298af0e9f21ed9b4883af1f77527b980cd919290f1ce7bb61fa1643"
+    },
+    {
+      "path": "cutover/prepared-manifest.json",
+      "sha256": "b3fc811bc466bd8c8d886fd4186f1770b2da7e2765962d63269d524ec41e729d"
+    },
+    {
+      "path": "cutover/staged-c16cde700963.json",
+      "sha256": "e486250d2359be28f46a93c9efb427d1a2ababc8ed6b9209ab1cbf5ee9859a71"
+    }
+  ],
+  "actualPreimage": {
+    "container": "blogsystem-command-candidate-386b9652dc43-r2",
+    "id": "8ef0cae3a34e355e6a3322b9831057c000c79c7fb56f5318e149c8de1524a328",
+    "running": true,
+    "sourceFiles": 133,
+    "sourceHashMismatches": [],
+    "runtimeTemplatesMatchActualContainer": true,
+    "sharedEnvironmentSnapshotContainers": 19,
+    "retainedSameDatabaseVolumeContainers": [
+      {
+        "name": "blogsystem-command-candidate-0b0e9d11dacd",
+        "running": false
+      },
+      {
+        "name": "blogsystem-command-candidate-386b9652dc43",
+        "running": false
+      },
+      {
+        "name": "blogsystem-native-041-restored-r1",
+        "running": false
+      }
+    ],
+    "onlyRunningContainerOnPlatformVolume": "blogsystem-command-candidate-386b9652dc43-r2"
+  },
+  "stagedSource": {
+    "revision": "c16cde700963959d3fd7fc226853b71f5551573a",
+    "files": 231,
+    "hashMismatches": [],
+    "queueStorePublishingAndProvisionUnchangedFromBaseline": true
+  },
+  "checks": [
+    {
+      "result": "PASS",
+      "location": "cutover/consumer-upgrade.py:285",
+      "check": "Exact resolved commit and root-approval record precede switch; empty queued/running jobs, pending media and external delivery rows required; pause then recheck pending work."
+    },
+    {
+      "result": "PASS",
+      "location": "cutover/consumer-upgrade.py:174",
+      "check": "Stop old API and all its exec workers before copying SQLite/WAL/SHM; create private consistent backup and check integrity; no snapshot is copied back into the live database."
+    },
+    {
+      "result": "PASS",
+      "location": "cutover/consumer-upgrade.py:313",
+      "check": "Candidate uses exact old image, existing volume mounts, loopback3457 and old networks; source comes from fixed Git archive and dependency manifests must match; original containers and volumes are retained."
+    },
+    {
+      "result": "PASS",
+      "location": "cutover/candidate-runtime.mjs:4",
+      "check": "API verifies CANDIDATE_SOURCE_SHA against source-lock and every archived file before importing /app/src/main.ts; Worker independently checks the same source-lock and environment SHA."
+    },
+    {
+      "result": "PASS",
+      "location": "cutover/candidate-local-worker.mjs:8",
+      "check": "Local Worker allows four exact Ghost routes and local Nyx/CMS origins only; loads release/projection workers, excludes DeliveryWorker and refuses pending delivery jobs."
+    },
+    {
+      "result": "PASS",
+      "location": "cutover/consumer-upgrade.py:256",
+      "check": "Rollback pauses/stops unhealthy candidate, verifies old container ID, restarts old API with current database; restarts Worker/restores outbound only if queues remain empty and prior pause was false. Pending work is preserved and remains paused."
+    },
+    {
+      "result": "PASS",
+      "location": "runtime-verify.py:14",
+      "check": "Reader checks actual source hashes, environment SHA, live Worker PID/script, reviewed template hashes, empty queues and restored pause value."
+    },
+    {
+      "result": "PASS",
+      "location": "runtime-verify.py:23",
+      "check": "Reader creates a separate consistent SQLite backup from a read-only database handle; uses immutable read-only connections, checks baseline backup hash, exact schema, all prior row multiplicities/BLOBs, integrity and FK constraints. Only outbound pause row excluded from prior-row comparison."
+    },
+    {
+      "result": "PASS",
+      "location": "runtime-verify.py:38",
+      "check": "Reader preserves prior ID/image and every existing name/destination/rw mount field with identical array multiplicity, comparing mount arrays sorted by destination; preserves running flags for all 19 snapshot containers, expects only old386-r2 to stop, retains old0b stopped, and verifies candidate image/mounts/user/cmd/network/port and healthy endpoints."
+    }
+  ],
+  "conditionsBeforeSwitch": [
+    "Root runner must require independent code-review PASS and original-business-renderer native PASS explicitly bound to candidate c16cde700963959d3fd7fc226853b71f5551573a; a diagnostic-copy pass or baseline386 pass is not a substitute.",
+    "Root approval must include exact candidate SHA and concrete reviewed evidence; controller only checks nonempty reviewEvidence, so runner must inspect evidence status and source binding.",
+    "Runner must hold runtime-heavy.lock using exclusive creation and release only its own lock identity; do not replace an existing lock.",
+    "Runner must verify the hashes listed in this review and the current old-container/configuration preimage immediately before switch; drift requires re-review.",
+    "Use allowedSchemaAdditions=[] for this renderer-only source change.",
+    "Run runtime-verify.py after controller returns and treat any readback failure as cutover failure; runner must invoke rollback because the standalone reader is outside controller.switch try/except.",
+    "Retain both old386-r2 and old0b containers, all data volumes and private backups; rollback must preserve current database rather than restore a stale snapshot."
+  ],
+  "limitations": [
+    "Runner had not yet been provided or reviewed; this is conditional approval of the fixed controller/reader only.",
+    "No live switch, rollback rehearsal, native acceptance or global D1-D9 acceptance is claimed by this review.",
+    "Prior-row retention admits additional audit rows and does not claim byte-identical database files."
+  ],
+  "findings": [],
+  "executionPerformed": false,
+  "formalAcceptance": "NOT_ACCEPTED",
+  "reviewRevision": 2,
+  "priorReview": {
+    "path": "review/cutover-controller-review.v1.json",
+    "sha256": "2e8288d71e575e52a03668480f4141fe9f09fa1b52ae36ad3406e616a16e5d4b"
+  },
+  "amendment": {
+    "reason": "Actual isolated cleanup observed Docker Mounts array order variation with identical mount contents.",
+    "readerChange": "Sort selected mount records by destination before equality comparison; each existing compared field and array multiplicity remain required.",
+    "readerPriorSha256": "3048219b2cf24c3cf8946424dc5e4d2eb46b7d1c27c0af35fbb96ab78e88770a",
+    "readerCurrentSha256": "4a086aff05383e821b8f7d4c2d332690f5f8df70515cbfed99ca94d4cd0ed577",
+    "reversePatchMatchesExactPriorReviewedFile": true,
+    "controllerChanged": false,
+    "servicesTouched": false,
+    "switchExecuted": false
+  },
+  "provenance": {
+    "privateSourcePath": "review/cutover-controller-review.json",
+    "originalSha256": "5fbf572c0756171d114034f41c001ab6836a544d65b71c0aad82fd6cc874848f",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}

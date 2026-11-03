@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-03T03:00:00.249377+00:00",
+  "reviewer": "independent handoff_checklist agent",
+  "status": "PASS_BOUNDED_NATIVE_CANDIDATE_EVIDENCE",
+  "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+  "formalAcceptance": "NOT_ACCEPTED",
+  "reviewMethod": "Read-only artifact/harness review and independent Git archive comparison; no browser, service call, database mutation or rerun by this reviewer. This report does not change the root cutover gate.",
+  "sourceBinding": {
+    "independentlyComparedSourceLockToGit": true,
+    "trackedFiles": 231,
+    "runnerUsesExactCandidateContainer": true,
+    "workerVerifiesEverySourceHashBeforeImport": true,
+    "apiStartAlsoVerifiesSourceLock": true,
+    "runtimeReadbackReviewedFromActorReports": true,
+    "newRuntimeReadbackExecutedByReviewer": false
+  },
+  "harnessReview": {
+    "candidateImports": "/app/src/ghost.ts and unmodified /app/src renderer modules",
+    "realAuthority": "NyxAuthority with online introspection and current organization checks; no identity mock",
+    "fetchWrapper": "counts and restricts origins, then calls captured native fetch; no fabricated Ghost responses",
+    "rendererWrapper": "records hash/timing/result while returning the real method result; no transformed HTML or forced success",
+    "controlledFault": "publish-missing makes materialize return false only, after real Ghost publish; explicitly a missing-media precondition, not a real rendering failure",
+    "readOnlyGuard": "asserts beforeWrite rejects RECOVERY_READ_ONLY; materialize invocation would fail; suite checks current Admin and unchanged historical actor/digest/count",
+    "freshMaterialization": "calls real originalMaterialize, original guards and original onMaterialized; image validation checks local digest plus public MIME and response byte digest",
+    "themeFixture": "one PUT of codeinjection_head for the exact newly generated post; checks slug and unchanged post.html; failed global-setting attempt was before settings write and is preserved",
+    "approvalScope": "formal per-request Nyx service approvals for these local synthetic operations; not external organization publication exact approval acceptance"
+  },
+  "runs": [
+    {
+      "runId": "native-c46b0ca1cc76",
+      "theme": "standard",
+      "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+      "caseCount": 5,
+      "sourceFilesVerifiedPerCase": 231,
+      "diagnosticOnly": false,
+      "realGhostPublishWrites": 1,
+      "missingImageInjection": "real original publish followed by materialize=false only",
+      "activeOldCurrentActorReadOnly": {
+        "ghostWrites": 0,
+        "materializeCalls": 0,
+        "state": "uncertain while image absent",
+        "historyPreserved": true
+      },
+      "revokedOldCurrentActorReadOnly": {
+        "sourceActive": false,
+        "sourceCode": "REVOKED",
+        "ghostWrites": 0,
+        "materializeCalls": 0,
+        "state": "uncertain while image absent",
+        "historyPreserved": true
+      },
+      "freshMedia": {
+        "ghostWrites": 0,
+        "materializedImages": 1,
+        "actualImageBytesAndMimeVerified": true,
+        "releaseState": "published",
+        "mediaState": "complete",
+        "sameRemoteIdUrlAndImageHash": true,
+        "newProjectionCount": 0
+      },
+      "postMaterializationReadOnlyRecognitionExecuted": false,
+      "formalUnpublish": {
+        "ghostWrites": 1,
+        "state": "unpublished",
+        "publicPage404": true
+      },
+      "smoothPostFixture": null,
+      "approvalEvidence": {
+        "admin": {
+          "approvedRequests": 6,
+          "allBindingChecksAndHTTPDecisionsMatched": true,
+          "sourceFilesVerified": 231,
+          "childReportStatus": "RUNNING"
+        },
+        "publisher": {
+          "approvedRequests": 8,
+          "allBindingChecksAndHTTPDecisionsMatched": true,
+          "sourceFilesVerified": 231,
+          "childReportStatus": "RUNNING"
+        }
+      }
+    },
+    {
+      "runId": "native-aa23abb98c50",
+      "theme": "smooth",
+      "candidateSha": "c16cde700963959d3fd7fc226853b71f5551573a",
+      "caseCount": 5,
+      "sourceFilesVerifiedPerCase": 231,
+      "diagnosticOnly": false,
+      "realGhostPublishWrites": 1,
+      "missingImageInjection": "real original publish followed by materialize=false only",
+      "activeOldCurrentActorReadOnly": {
+        "ghostWrites": 0,
+        "materializeCalls": 0,
+        "state": "uncertain while image absent",
+        "historyPreserved": true
+      },
+      "revokedOldCurrentActorReadOnly": {
+        "sourceActive": false,
+        "sourceCode": "REVOKED",
+        "ghostWrites": 0,
+        "materializeCalls": 0,
+        "state": "uncertain while image absent",
+        "historyPreserved": true
+      },
+      "freshMedia": {
+        "ghostWrites": 0,
+        "materializedImages": 1,
+        "actualImageBytesAndMimeVerified": true,
+        "releaseState": "published",
+        "mediaState": "complete",
+        "sameRemoteIdUrlAndImageHash": true,
+        "newProjectionCount": 0
+      },
+      "postMaterializationReadOnlyRecognitionExecuted": false,
+      "formalUnpublish": {
+        "ghostWrites": 1,
+        "state": "unpublished",
+        "publicPage404": true
+      },
+      "smoothPostFixture": {
+        "scope": "exact newly generated synthetic post only",
+        "remoteId": "6ae94d15aad28c0001b6e211",
+        "operatorGhostWrites": 1,
+        "bodyHtmlUnchanged": true,
+        "headReadbackMatches": true,
+        "css": "<!--continuation-smooth-begin--><style>html{scroll-behavior:smooth!important}[data-chrono-revision]{margin-top:1400px!important}</style><!--continuation-smooth-end-->",
+        "htmlSha256": "6a56c173087c17b017618f9ce86ac4fc01a2fb70dade25203e89bbdc439296a5"
+      },
+      "approvalEvidence": {
+        "admin": {
+          "approvedRequests": 6,
+          "allBindingChecksAndHTTPDecisionsMatched": true,
+          "sourceFilesVerified": 231,
+          "childReportStatus": "RUNNING"
+        },
+        "publisher": {
+          "approvedRequests": 8,
+          "allBindingChecksAndHTTPDecisionsMatched": true,
+          "sourceFilesVerified": 231,
+          "childReportStatus": "RUNNING"
+        }
+      }
+    }
+  ],
+  "excludedHistoricalRuns": [
+    {
+      "runId": "native-d14310edcdfc",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "status": "FAILED_OR_INCOMPLETE",
+      "diagnosticOnly": false,
+      "failure": {
+        "type": "Stop",
+        "code": "HTTP_409_POST_/api/v1/proxy/s/blog-continuation-native-20261103/api/service/releases/f8c4ddd4-a62e-41f2-bff6-2812443e43b6/reconcile"
+      },
+      "includedInCandidatePass": false
+    },
+    {
+      "runId": "native-859896892942",
+      "consumerSha": "386b9652dc431bb83e4864d5b046b378110ee88d",
+      "status": "PASS_BOUNDED_NATIVE_OBSERVATION",
+      "diagnosticOnly": true,
+      "failure": null,
+      "includedInCandidatePass": false
+    }
+  ],
+  "findings": [],
+  "reportingCaveats": [
+    "The generic caseDefinition mentions post-materialization current Admin recognition, but both candidate runs reached terminal published immediately. Their readOnlyRecognition.executed=false is authoritative; do not claim that optional step ran. Active/revoked pre-materialization current Admin checks did run with zero writes.",
+    "Actor helper reports retain status RUNNING as a reporting lifecycle field; completed approvals and cleanup are verified per event and parent suite status. This is not evidence that actor processes remain running.",
+    "The smooth fixture adds one operator Ghost write outside the worker write counter; this extra write is explicitly recorded in themeFixture.operatorGhostWrites.",
+    "Native results do not establish the cause of the historical 2026-11-02 verify=false incident."
+  ],
+  "limits": [
+    "Two five-case single-image local runs only, not a repeat of all 13 historical combined cases or all four Ghost installations.",
+    "No full backup restore or real DEV/Hashnode/Medium/HackerNoon copy lifecycle in this review.",
+    "No target production deployment or overall D1-D9 acceptance.",
+    "Final isolated-resource cleanup and preserved-live-service checks belong to the separate cleanup review; they are not asserted complete here."
+  ],
+  "artifacts": [
+    {
+      "path": "native/private/native-c46b0ca1cc76/report.json",
+      "sha256": "46cdba23e607809a679d5005a2dbd880632b10930001f0d189e61f797d30498e"
+    },
+    {
+      "path": "native/private/native-c46b0ca1cc76/single-image-missing-result.json",
+      "sha256": "2184e5ef2d41c3dbb2057a4f79371e72f55507cd9e210cd8468c9bb9f493bd1b"
+    },
+    {
+      "path": "native/private/native-c46b0ca1cc76/active-old-readonly-result.json",
+      "sha256": "2448a50e84fe1bc8a43e1c533b94bd2bbc24078ae55de5b1f3cb82b37f74116d"
+    },
+    {
+      "path": "native/private/native-c46b0ca1cc76/revoked-old-readonly-result.json",
+      "sha256": "92086d388ffbca7f6dee213e28b024c78951f34fc1c871717e7e1e593584cc7f"
+    },
+    {
+      "path": "native/private/native-c46b0ca1cc76/fresh-single-image-result.json",
+      "sha256": "671f0101fa0c23f851d20cab8a5e3a98932e0046d08e15dcf944a8a4785c970a"
+    },
+    {
+      "path": "native/private/native-c46b0ca1cc76/single-image-unpublish-result.json",
+      "sha256": "9b9fc987542f76956650dc8ffed92f111c462c88f13f96e9a14dd21f52aac193"
+    },
+    {
+      "path": "native/private/native-c46b0ca1cc76/actor-admin-report.json",
+      "sha256": "8ddcfbf522fb600ae49fa461cadb30ca26bf43461d59c00dc861c5a16f3ed841"
+    },
+    {
+      "path": "native/private/native-c46b0ca1cc76/actor-publisher-report.json",
+      "sha256": "806fc1331322d0fe668851e18bb44efd39f624fad4237ef3c2eda72ba546d4d0"
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/report.json",
+      "sha256": "a74bb5de5c729658ac521576e8fae9b5c0cc0716f7edf70978408e2f06fd9688"
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/single-image-missing-result.json",
+      "sha256": "5434e4dfe6d43e566d6ee19796d039ad88ba8f94fad219762f3ff34dcb028e8c"
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/active-old-readonly-result.json",
+      "sha256": "799c931a14eb5ba1ca1e589235cc079d14b2635bab058fb1ff4b84757bb62b39"
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/revoked-old-readonly-result.json",
+      "sha256": "9b81db47383b7d6d8c0e3522eb78affd396aa7317eb328cb23aafeebeb0abc21"
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/fresh-single-image-result.json",
+      "sha256": "1184281d7a4df7d8020e33bbed278a4ba618001a72fd4756d7ae1d6aeeaf4034"
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/single-image-unpublish-result.json",
+      "sha256": "478d46a2025897da8ef7f687c7a94d07b36adc56d7067a53e73fb8182603565e"
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/actor-admin-report.json",
+      "sha256": "c0550c8bdf48b6ef73a59773b31b77bf0f5caed59e259a673f6d0d60f64947d4"
+    },
+    {
+      "path": "native/private/native-aa23abb98c50/actor-publisher-report.json",
+      "sha256": "bb9d23372156aafea0a573cd40ddea94ad39e30100fba5cc25ed12931df359d9"
+    },
+    {
+      "path": "native/run-native.py",
+      "sha256": "3e3abb91f644c0fc16845620c4c39945c4610e6eb976d6c6831f97798d8e3d8a"
+    },
+    {
+      "path": "native/suite.py",
+      "sha256": "180a1b1f1c55fb35a0966e99511ff130ee7abe03b3494ce075f8d9116b53a9fc"
+    },
+    {
+      "path": "native/worker-candidate.mjs",
+      "sha256": "e5323d5c53da84a518d1d37aeee36448bbd18624894272518f7ed53537e7f816"
+    },
+    {
+      "path": "native/actors.py",
+      "sha256": "21d38e6eeb7ad3016f776fdaed0e7bd0cc9d0fec1b5961ca756c7582a247c12f"
+    },
+    {
+      "path": "native/helper.py",
+      "sha256": "c0c597e7c74371e06e9b43eee0c572701136b3d2ba3151a5969d8215fbbce45c"
+    },
+    {
+      "path": "native/prepared.json",
+      "sha256": "3d1e5ae34fa443cf9b023f509d07ab0f06d86f3ef31b676e9c6721cef14ebda4"
+    },
+    {
+      "path": "native/private-candidate/review/source-lock.json",
+      "sha256": "c800fe1ffc8c658a873f16642c7430e7df6e7a0fa1e54459fa62549743f06d9d"
+    },
+    {
+      "path": "native/theme-control-attempt1.json",
+      "sha256": "ce6cb1dab42735d37b06efabfd59f11197acc52508aec6ca9981f6fe4db698a6"
+    },
+    {
+      "path": "native/private/native-d14310edcdfc/report.json",
+      "sha256": "5c1d126d3c0d805a12969bbd7bc67a6a9967c7da3a138e0be4b904bc054eae49"
+    },
+    {
+      "path": "native/private/native-859896892942/report.json",
+      "sha256": "445fa00a3bbae1dfad37c56e75187e1ad2401d53c42209696793d87b43bce0dc"
+    }
+  ],
+  "provenance": {
+    "privateSourcePath": "review/native-candidate-review.json",
+    "originalSha256": "c992b867aed12bb37bd108fcf2a88db6960df1515793be93083744d0ddc9f2af",
+    "boundary": "Relative source/log/script paths refer to retained private continuation evidence unless included in this public manifest. Raw databases, environments, credentials and backups are not included."
+  }
+}
