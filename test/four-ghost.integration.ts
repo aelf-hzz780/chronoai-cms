@@ -21,7 +21,7 @@ const runtime = resolve('.runtime'); await mkdir(runtime,{recursive:true,mode:0o
 const directory = await mkdtemp(join(runtime,'four-ghost-'));
 const store = new Store(join(directory,'platform.sqlite'));
 const roles = new Map([['member','member'],['publisher','member'],['admin','admin']]);
-const authority: Authority = { async validate() {}, async membership(actor,org) { return org === 'test-org' ? roles.get(actor.subject) ?? null : null; } };
+const authority: Authority = { async validate() {}, async membership(actor,org) { return org === 'test-org' ? roles.get(actor.subject) ?? null : null; },async organizationMembers(_actor,org){return org==='test-org'?[...roles].map(([identity,role])=>({identity,displayName:identity,role:role as 'admin'|'member',active:true})):[];} };
 const scopes = ['content:read','content:write','publish','metrics:read','roles:write'];
 const actors = Object.fromEntries(['solo','member','publisher','admin','outsider'].map(subject=>[subject,{issuer:'https://local-synthetic-issuer.invalid',subject,scopes,credential:'local-integration-only'}])) as Record<string,Actor>;
 store.createOwner('personal','personal',actors.solo.issuer,'solo'); store.createOwner('organization','organization',actors.solo.issuer,'test-org');

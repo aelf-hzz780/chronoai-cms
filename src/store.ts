@@ -62,6 +62,7 @@ export class Store {
       INSERT OR IGNORE INTO migrations VALUES (1,strftime('%Y-%m-%dT%H:%M:%fZ','now'));
     `);
     this.migrateSubmissionLifecycle();
+    this.migrateConnectionAttempts();
   }
   private migrateSubmissionLifecycle(){
     if(this.get('SELECT 1 FROM migrations WHERE version=2'))return;
@@ -79,6 +80,19 @@ export class Store {
           ORDER BY r.created_at,r.rowid;
         INSERT INTO migrations VALUES (2,strftime('%Y-%m-%dT%H:%M:%fZ','now'));
       `);
+    });
+  }
+  private migrateConnectionAttempts(){
+    if(this.get('SELECT 1 FROM migrations WHERE version=3'))return;
+    this.transaction(()=>{
+      if(this.get('SELECT 1 FROM migrations WHERE version=3'))return;
+      this.db.exec(`CREATE TABLE IF NOT EXISTS connection_attempts (
+        id TEXT PRIMARY KEY,owner_id TEXT NOT NULL REFERENCES owners(id),issuer TEXT NOT NULL,subject TEXT NOT NULL,target TEXT NOT NULL,
+        flow TEXT NOT NULL CHECK(flow IN ('hosted','operator')),status TEXT NOT NULL CHECK(status IN ('pending','connected','binding_required','cancelled','expired','failed')),
+        phase TEXT NOT NULL CHECK(phase IN ('create_dispatched','known','unknown')),config_digest TEXT NOT NULL,upstream_id TEXT,connection_id TEXT,requested_connection_id TEXT,
+        connect_url_cipher TEXT,nonce_hash TEXT,return_consumed_at TEXT,expires_at TEXT NOT NULL,code TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL,trace_id TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS connection_attempt_owner_actor ON connection_attempts(owner_id,issuer,subject,target,phase);
+        INSERT INTO migrations VALUES (3,strftime('%Y-%m-%dT%H:%M:%fZ','now'));`);
     });
   }
   get(sql: string, ...params: SQLInputValue[]): Row | undefined { return this.db.prepare(sql).get(...params) as Row | undefined; }

@@ -5,10 +5,12 @@ import type {CommandEnvelope} from './command-authority.ts';
 export type CallerBinding = { kind:'cms'|'direct-service'; clientId:string; audience:string } | { kind:'propagated'; serviceId:string; serviceSlug:string; identityAudience:string; delegationAudience:string };
 export interface Actor { issuer: string; subject: string; scopes: string[]; credential: string; sourceScopes?: string[]; entry?:'cms'|'service'; binding?:CallerBinding; commandAuthority?:CommandEnvelope; }
 export type AuthorizationPurpose = 'access'|'queued-write';
+export interface OrganizationMember {identity:string;displayName:string;role:'admin'|'member'|'viewer';active:boolean;}
 export interface Authority {
   validate(actor: Actor, purpose?: AuthorizationPurpose): Promise<void>;
   membership(actor: Actor, organization: string): Promise<'admin' | 'member' | null | string>;
   organizationRoles?(actor:Actor):Promise<Map<string,'admin'|'member'>>;
+  organizationMembers?(actor:Actor,organization:string):Promise<OrganizationMember[]>;
 }
 export class Policy {
   store: Store; authority: Authority;
@@ -44,10 +46,20 @@ export class Policy {
     text(subject, 'subject'); requireValue(typeof enabled === 'boolean', 400, 'INVALID_INPUT', 'enabled must be boolean');
     const owner = await this.owner(actor, ownerId, 'roles:write');
     requireValue(owner.kind === 'organization' && await this.membership(actor, owner) === 'admin', 403, 'FORBIDDEN', 'Current organization Admin required');
+    if(enabled){
+      const members=await this.members(actor,owner);
+      requireValue(members.some(member=>member.identity===subject&&member.active&&(member.role==='admin'||member.role==='member')),403,'PUBLISHER_INELIGIBLE','Publisher must be an active organization Admin or Member');
+      await this.scope(actor,'roles:write');requireValue(await this.membership(actor,owner)==='admin',403,'FORBIDDEN','Current organization Admin required');
+    }
     this.store.transaction(() => {
       if (enabled) this.store.run('INSERT OR IGNORE INTO publishers VALUES (?,?)', ownerId, subject);
       else this.store.run('DELETE FROM publishers WHERE owner_id=? AND subject=?', ownerId, subject);
       this.store.audit(actor.subject, ownerId, enabled ? 'publisher.grant' : 'publisher.revoke', subject, trace);
     });
+  }
+  async members(actor:Actor,owner:Row){
+    requireValue(this.authority.organizationMembers,503,'DIRECTORY_UNAVAILABLE','Current member directory unavailable');
+    try{return await this.authority.organizationMembers(actor,owner.subject);}
+    catch{throw new AppError(503,'DIRECTORY_UNAVAILABLE','Current member directory unavailable');}
   }
 }

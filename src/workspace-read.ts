@@ -51,4 +51,12 @@ export class WorkspaceReadService {
     const configured=new Map(this.policy.store.all('SELECT language,url FROM sites WHERE owner_id=?',ownerId).map(site=>[site.language,site.url as string]));
     return {ownerId,sites:(['en','zh'] as const).map(language=>({language,configured:configured.has(language),publicUrl:configured.get(language)??null,verification:{status:'unknown' as const,checkedAt:null},blockers:configured.has(language)?[]:['SITE_REQUIRED']}))};
   }
+  async members(actor:Actor,ownerId:string){
+    const access=await this.authorize(actor,ownerId);
+    requireValue(this.capabilities(actor,access).canManagePublishers,403,'FORBIDDEN','Current organization Admin and roles:write required');
+    try{
+      const members=await this.policy.members(actor,access.owner),publishers=new Set(this.policy.store.all('SELECT subject FROM publishers WHERE owner_id=?',ownerId).map(row=>row.subject));
+      return {ownerId,status:'available' as const,members:members.map(member=>({...member,publisher:member.active&&member.role!=='viewer'&&publishers.has(member.identity)}))};
+    }catch(error){if(error instanceof AppError&&error.code==='DIRECTORY_UNAVAILABLE')return {ownerId,status:'unavailable' as const,members:[],code:'DIRECTORY_UNAVAILABLE'};throw error;}
+  }
 }

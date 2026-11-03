@@ -9,6 +9,7 @@ export function fixture() {
   const authority: Authority = {
     async validate(actor) { if (revoked.has(actor.subject)) throw new Error('revoked'); },
     async membership(actor, organization) { return memberships.get(`${actor.subject}:${organization}`) ?? null; },
+    async organizationMembers(_actor,organization){return [...memberships].filter(([key])=>key.endsWith(`:${organization}`)).map(([key,role])=>({identity:key.slice(0,-organization.length-1),displayName:key.slice(0,-organization.length-1),role:role as 'admin'|'member'|'viewer',active:true}));},
   };
   const actors = Object.fromEntries(['solo', 'member', 'admin', 'publisher', 'outsider'].map(subject => [subject, {
     issuer: 'https://identity.example', subject, scopes: ['content:read', 'content:write', 'publish', 'metrics:read', 'roles:write', 'connections:read'], credential: 'test-only',

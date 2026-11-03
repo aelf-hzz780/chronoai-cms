@@ -19,6 +19,7 @@ import {WorkspaceReadService} from './workspace-read.ts';
 import {ContentReadService} from './content-read.ts';
 import {installStudioAssets} from './studio-assets.ts';
 import {TaskReadService} from './task-read.ts';
+import type {ConnectionAttemptService} from './connection-attempts.ts';
 
 declare module 'fastify' { interface FastifyRequest { actor: Actor; rawBody:Buffer|null; } }
 export interface AppDependencies {
@@ -26,6 +27,7 @@ export interface AppDependencies {
   authenticate(request: FastifyRequest): Promise<Actor | null>; auth?: AuthManager;
   metrics?: MetricsService;
   distribution?: DistributionService;
+  connectionAttempts?:ConnectionAttemptService;
   trustedProxyCidrs?: string[];
 }
 export async function createApp(deps: AppDependencies) {
@@ -69,6 +71,20 @@ export async function createApp(deps: AppDependencies) {
   const workspaces = new WorkspaceReadService(deps.policy),contentRead = new ContentReadService(workspaces);
   const tasks = new TaskReadService(workspaces,media);
   const distribution = () => { requireValue(deps.distribution, 503, 'DISTRIBUTION_UNAVAILABLE', 'Distribution is not configured'); return deps.distribution; };
+  const connectionAttempts=()=>{requireValue(deps.connectionAttempts,503,'CONNECTION_SETUP_UNAVAILABLE','Connection setup is not configured');return deps.connectionAttempts;};
+  const connectionCookie={httpOnly:true,secure:deps.publicUrl.startsWith('https:'),sameSite:'lax' as const,path:'/connections/return'};
+  app.get('/connections/return',async(request,reply)=>{
+    try{
+      const actor=await deps.authenticate(request);requireValue(actor,401,'UNAUTHENTICATED','Current CMS sign-in required');
+      const result=await connectionAttempts().returned(actor,request.cookies.chrono_connection_return,request.id);
+      return reply.redirect(`/studio#/connections?ownerId=${encodeURIComponent(result.ownerId)}&attemptId=${encodeURIComponent(result.id)}`);
+    }catch(error){
+      const code=error instanceof AppError?error.code:null;
+      const safeError=error instanceof AppError&&error.status===401?'SIGN_IN_REQUIRED':error instanceof AppError&&error.status===403?'FORBIDDEN':code==='CONNECT_RETURN_INVALID'?'CONNECT_RETURN_INVALID':null;
+      if(safeError)return reply.redirect(`/studio#/connections?returnError=${safeError}`);throw error;
+    }
+    finally{reply.clearCookie('chrono_connection_return',connectionCookie);}
+  });
   for (const entry of ['cms', 'service']) {
     await app.register(async api => {
       api.addHook('preHandler', async request => {
@@ -80,6 +96,11 @@ export async function createApp(deps: AppDependencies) {
         return { ...directory, csrf: entry === 'cms' ? session?.csrf : undefined };
       });
       api.get('/owners/:id/sites',async request=>workspaces.sites(request.actor,(request.params as {id:string}).id));
+      api.get('/owners/:id/members',async request=>workspaces.members(request.actor,(request.params as {id:string}).id));
+      api.post('/owners/:id/connection-attempts',async(request,reply)=>{const result=await connectionAttempts().create(request.actor,(request.params as {id:string}).id,object(request.body),request.id);if(entry==='cms'&&result.returnCookie)reply.setCookie('chrono_connection_return',result.returnCookie,{...connectionCookie,maxAge:Math.max(1,Math.ceil((Date.parse(result.attempt.expiresAt)-Date.now())/1000))});return reply.code(201).send(result.attempt);});
+      api.get('/owners/:id/connection-attempts/:attemptId',async request=>{const p=request.params as {id:string;attemptId:string};return connectionAttempts().get(request.actor,p.id,p.attemptId);});
+      api.post('/owners/:id/connection-attempts/:attemptId/cancel',async request=>{const p=request.params as {id:string;attemptId:string};return connectionAttempts().cancel(request.actor,p.id,p.attemptId,request.id);});
+      api.post('/owners/:id/connection-attempts/:attemptId/recheck',async request=>{const p=request.params as {id:string;attemptId:string};return connectionAttempts().recheck(request.actor,p.id,p.attemptId,object(request.body),request.id);});
       api.get('/owners/:id/content-summary',async request=>contentRead.summary(request.actor,(request.params as {id:string}).id,request.query as Record<string,string>));
       api.get('/owners/:id/tasks',async request=>tasks.list(request.actor,(request.params as {id:string}).id,request.query as Record<string,string>));
       api.get('/owners/:id/tasks/:kind/:taskId',async request=>{const p=request.params as {id:string;kind:string;taskId:string};return tasks.detail(request.actor,p.id,p.kind,p.taskId);});

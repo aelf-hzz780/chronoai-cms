@@ -1,6 +1,8 @@
 import { resolve } from 'node:path';
 import { requireValue } from './errors.ts';
 
+export interface ConnectionTargetSetup {enabled:boolean;serviceSlug:string;scopes:string[];usePlatformKey?:boolean;endpointUrl?:string;}
+export interface ConnectionSetupConfig {managementUrl:string;ttlSeconds:number;targets:Record<string,ConnectionTargetSetup>;}
 export interface Config {
   database: string; host: string; port: number; publicUrl: string; issuer: string;
   clientId: string; clientSecret?: string; serviceAudience: string; cmsAudience: string;
@@ -10,6 +12,7 @@ export interface Config {
   encryptionKey: string; publicMediaDirectory: string; trackingSecret: string;
   allowLoopback: boolean; analyticsEnabled: boolean; requireConsent: boolean;
   trustedProxyCidrs?: string[];
+  connectionSetup?:ConnectionSetupConfig;
 }
 export function safeUrl(value: string, allowLoopback = false): URL {
   const url = new URL(value);
@@ -41,6 +44,19 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   requireValue(/^[a-f0-9]{64}$/.test(encryptionKey), 500, 'CONFIGURATION', 'ENCRYPTION_KEY must be 32 random bytes in hex');
   const port = Number(env.PORT ?? '3100');
   requireValue(Number.isInteger(port) && port > 1023 && port < 65536, 500, 'CONFIGURATION', 'Invalid PORT');
+  let connectionSetup:ConnectionSetupConfig|undefined;
+  if(env.NYXID_CONNECTION_TARGETS_JSON||env.NYXID_CONNECTION_MANAGEMENT_URL){
+    const managementUrl=safeUrl(required('NYXID_CONNECTION_MANAGEMENT_URL'),allowLoopback).href;
+    let targets:unknown;try{targets=JSON.parse(required('NYXID_CONNECTION_TARGETS_JSON'));}catch{requireValue(false,500,'CONFIGURATION','Invalid connection target configuration');}
+    requireValue(targets&&typeof targets==='object'&&!Array.isArray(targets),500,'CONFIGURATION','Invalid connection target configuration');
+    for(const [name,value] of Object.entries(targets)){
+      const target=value as ConnectionTargetSetup;
+      requireValue(/^[a-z0-9][a-z0-9_-]{0,49}$/.test(name)&&target&&typeof target==='object'&&typeof target.enabled==='boolean'&&typeof target.serviceSlug==='string'&&/^[a-zA-Z0-9_-]{1,200}$/.test(target.serviceSlug)&&Array.isArray(target.scopes)&&target.scopes.length<=100&&target.scopes.every(scope=>typeof scope==='string'&&scope.length>0&&scope.length<=500&&!/\s/.test(scope))&&(target.usePlatformKey===undefined||typeof target.usePlatformKey==='boolean')&&!(target.usePlatformKey&&target.scopes.length),500,'CONFIGURATION','Invalid connection target configuration');
+      if(target.endpointUrl!==undefined)safeUrl(target.endpointUrl,allowLoopback);
+    }
+    const ttlSeconds=Number(env.NYXID_CONNECTION_ATTEMPT_TTL_SECONDS??900);requireValue(Number.isInteger(ttlSeconds)&&ttlSeconds>=60&&ttlSeconds<=3600,500,'CONFIGURATION','Connection attempt TTL must be 60–3600 seconds');
+    connectionSetup={managementUrl,ttlSeconds,targets:targets as Record<string,ConnectionTargetSetup>};
+  }
   return { database: resolve(env.DATABASE_PATH ?? '.runtime/platform.sqlite'), host: env.HOST ?? '127.0.0.1', port, publicUrl, issuer,
     clientId: required('NYXID_CLIENT_ID'), clientSecret: env.NYXID_CLIENT_SECRET, serviceAudience: required('NYXID_SERVICE_AUDIENCE'), cmsAudience: required('NYXID_CMS_AUDIENCE'),
     introspectionUrl, authorityUrl, discoveryUrl, nyxAudience: env.NYXID_TOKEN_AUDIENCE, serviceId: env.NYXID_SERVICE_ID, serviceSlug: env.NYXID_SERVICE_SLUG,
@@ -49,5 +65,5 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     serviceClientIds:env.NYXID_SERVICE_CLIENT_IDS?.split(',').map(s=>s.trim()).filter(Boolean),connectionsFile: env.NYXID_CONNECTIONS_FILE, encryptionKey,
     publicMediaDirectory: resolve(env.PUBLIC_MEDIA_DIRECTORY ?? '.runtime/public-media'), trackingSecret: required('TRACKING_SECRET'),
     trustedProxyCidrs: env.TRUST_PROXY_CIDRS?.split(',').map(value=>value.trim()).filter(Boolean),
-    allowLoopback, analyticsEnabled: env.ANALYTICS_ENABLED === 'true', requireConsent: env.ANALYTICS_REQUIRE_CONSENT !== 'false' };
+    allowLoopback, connectionSetup, analyticsEnabled: env.ANALYTICS_ENABLED === 'true', requireConsent: env.ANALYTICS_REQUIRE_CONSENT !== 'false' };
 }

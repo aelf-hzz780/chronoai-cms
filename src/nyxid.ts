@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import type { Actor, Authority, AuthorizationPurpose } from './policy.ts';
+import type { Actor, Authority, AuthorizationPurpose, OrganizationMember } from './policy.ts';
 import type { Config } from './config.ts';
 import type { Store } from './store.ts';
 import type { RemoteRequest } from './targets.ts';
@@ -90,6 +90,19 @@ export class NyxAuthority implements Authority {
   }
   async membership(actor:Actor,organization:string) {
     return (await this.organizationRoles(actor)).get(organization)??null;
+  }
+  async organizationMembers(actor:Actor,organization:string):Promise<OrganizationMember[]>{
+    const result=await this.call(actor,`/api/v1/orgs/${encodeURIComponent(organization)}/members`);
+    requireValue(result&&Array.isArray(result.members),502,'NYXID_CONTRACT','Invalid member directory');
+    const identities=new Set<string>(),membershipIds=new Set<string>();
+    const identifier=(value:unknown)=>typeof value==='string'&&value.trim().length>0&&value.length<=500;
+    const timestamp=(value:unknown)=>typeof value==='string'&&Number.isFinite(Date.parse(value));
+    const serviceIds=(value:unknown)=>value===null||Array.isArray(value)&&value.every(identifier);
+    return result.members.map((member:any)=>{
+      requireValue(member&&identifier(member.membership_id)&&identifier(member.user_id)&&!identities.has(member.user_id)&&!membershipIds.has(member.membership_id)&&['admin','member','viewer'].includes(member.role)&&['inherit','override'].includes(member.scope_source)&&serviceIds(member.allowed_service_ids)&&serviceIds(member.effective_allowed_service_ids)&&timestamp(member.created_at)&&(member.revoked_at===null||timestamp(member.revoked_at))&&(member.display_name==null||typeof member.display_name==='string'&&member.display_name.length<=1000),502,'NYXID_CONTRACT','Invalid or ambiguous member directory');
+      identities.add(member.user_id);membershipIds.add(member.membership_id);
+      return {identity:member.user_id,displayName:member.display_name?.trim()?member.display_name:member.user_id,role:member.role,active:member.revoked_at===null};
+    });
   }
   async bindings():Promise<ConnectionBinding[]> {
     requireValue(this.config.connectionsFile,409,'CONNECTION_CONFIGURATION_REQUIRED','Operator must bind exact NyxID connections to owners and destinations');
