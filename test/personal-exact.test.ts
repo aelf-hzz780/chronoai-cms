@@ -21,7 +21,7 @@ async function setup(t:any,mode:string|undefined='exact',kind='personal') {
   const binding:any={id:'selected-connection',target:'dev',owner,slug:'selected-provider',remoteBaseUrl:'https://dev.to/api',accountId:'author',canPublish:true,...(mode===undefined?{}:{executionApproval:mode})};
   const file=join(directory,'connections.json');await writeFile(file,JSON.stringify([binding]));
   const authority=new NyxAuthority({authorityUrl:'https://nyx.example',connectionsFile:file} as Config,f.store),calls:any[]=[];
-  const state={actor,approval:'pending',fence:{} as any,statusPatch:{} as any,receipt:undefined as any,generic:true,post:undefined as any,operationGeneration:undefined as number|undefined,resultGeneration:1,redeemState:'redeemed'};
+  const state={actor,approval:'pending',fence:{} as any,statusPatch:{} as any,receipt:undefined as any,generic:true,post:undefined as any,operationGeneration:undefined as number|null|undefined,resultGeneration:1,redeemState:'redeemed'};
   authority.call=async(caller,path,method='GET',body?:any)=>{
     calls.push({subject:caller.subject,credential:caller.credential,path,method,body});
     if(path==='/api/v1/user-services')return {services:[{id:binding.id,slug:binding.slug,is_active:true,state_version:1,credential_source:kind==='personal'?{type:'personal'}:{type:'org',org_id:ownerId,allowed:true}}]};
@@ -160,6 +160,16 @@ test('exact creation rejects a changed declared operation generation and preserv
   f.state.operationGeneration=0;f.state.resultGeneration=0;
   assert.equal((await f.authority.prepareApproval(f.actor,f.owner,f.binding.id,'dev',request,'delivery','content','create')).reference,'exact-request');
   assert.equal(f.state.fence.operation_generation,0);
+});
+
+test('delegated declared catalogs may omit their generation with null and retain the authoritative create generation',async t=>{
+  const f=await setup(t);f.state.generic=false;f.state.operationGeneration=null;f.state.resultGeneration=0;
+  const delegated={...f.actor,credential:`header.${Buffer.from(JSON.stringify({delegated:true})).toString('base64url')}.signature`};
+  const request={method:'POST',url:'https://dev.to/api/articles',body:{article:{title:'Confirmed'}}};
+  assert.equal((await f.authority.prepareApproval(delegated,f.owner,f.binding.id,'dev',request,'delivery','content','create')).reference,'exact-request');
+  const sent=f.calls.find(call=>call.path==='/api/v1/approvals/exact-service/requests').body;
+  assert.equal(Object.hasOwn(sent,'operation_generation'),false);assert.equal(sent.exact_view_digest,'sha256:view');
+  assert.equal(JSON.parse(f.store.get('SELECT fence_json FROM nyx_approvals WHERE reference=?','exact-request')!.fence_json).operation_generation,0);
 });
 
 test('personal exact failed or in-progress redemption stays uncertain without a fallback write',async t=>{
