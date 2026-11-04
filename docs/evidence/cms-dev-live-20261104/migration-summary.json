@@ -1,0 +1,235 @@
+{
+  "at": "2026-11-04T04:27:16.298740+00:00",
+  "snapshotSha256": "572eb8dc6c32fa51edf570b9bb9042dd22577da57d1c987284baf9850a78e590",
+  "priorRowsPreserved": [
+    {
+      "table": "articles",
+      "before": 32,
+      "after": 32,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "asset_publications",
+      "before": 25,
+      "after": 25,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "assets",
+      "before": 23,
+      "after": 23,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "audit",
+      "before": 342,
+      "after": 342,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "author_mappings",
+      "before": 4,
+      "after": 4,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "collection_attempts",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "collection_gaps",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "command_authorities",
+      "before": 9,
+      "after": 9,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "command_derivations",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "deliveries",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "delivery_events",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "delivery_payloads",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "external_metrics",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "idempotency",
+      "before": 37,
+      "after": 37,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "job_leases",
+      "before": 51,
+      "after": 51,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "jobs",
+      "before": 62,
+      "after": 62,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "migrations",
+      "before": 1,
+      "after": 4,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "nyx_approvals",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "observations",
+      "before": 7,
+      "after": 7,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "oidc_states",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "owner_profiles",
+      "before": 3,
+      "after": 3,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "owners",
+      "before": 8,
+      "after": 8,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "projection_retries",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "projections",
+      "before": 25,
+      "after": 25,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "publishers",
+      "before": 1,
+      "after": 1,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "recovery_actors",
+      "before": 3,
+      "after": 3,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "release_links",
+      "before": 4,
+      "after": 4,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "release_media_requests",
+      "before": 0,
+      "after": 0,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "releases",
+      "before": 37,
+      "after": 37,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "revisions",
+      "before": 57,
+      "after": 57,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "sessions",
+      "before": 18,
+      "after": 18,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "settings",
+      "before": 1,
+      "after": 1,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "site_admin_routes",
+      "before": 4,
+      "after": 4,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "sites",
+      "before": 4,
+      "after": 4,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "submissions",
+      "before": 5,
+      "after": 5,
+      "missingPriorRows": 0
+    },
+    {
+      "table": "translations",
+      "before": 2,
+      "after": 2,
+      "missingPriorRows": 0
+    }
+  ],
+  "schemaBefore": [
+    1
+  ],
+  "schemaAfter": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "integrity": "ok",
+  "foreignKeyViolations": 0,
+  "newDatabaseOnly": true,
+  "newDatabaseOutboundPaused": true
+}

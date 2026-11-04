@@ -1,0 +1,112 @@
+{
+  "at": "2026-11-04T04:40:37.599386+00:00",
+  "status": "PASS_FIXED_SOURCE_AND_PRESERVED_SERVICES",
+  "runtime": {
+    "revision": "ea8bb6592a9c100f5b95a1d391b308dedb1c9af2",
+    "workingTreeChanged": false,
+    "sourceFiles": 455,
+    "mismatches": [],
+    "migrations": [
+      {
+        "version": 1
+      },
+      {
+        "version": 2
+      },
+      {
+        "version": 3
+      },
+      {
+        "version": 4
+      }
+    ],
+    "pause": "true",
+    "pending": [
+      {
+        "kind": "delivery",
+        "resource_id": "f582b12e-406f-43d2-ab0e-9c997048457a",
+        "state": "queued",
+        "lease_until": null
+      }
+    ],
+    "delivery": [
+      {
+        "id": "f582b12e-406f-43d2-ab0e-9c997048457a",
+        "state": "queued",
+        "remote_id": null,
+        "error_code": null,
+        "trace_id": "3b2ff086-c758-41f3-8051-6d18470b8cb0"
+      }
+    ],
+    "integrity": {
+      "integrity_check": "ok"
+    },
+    "foreignKeys": []
+  },
+  "health": [
+    {
+      "port": 3458,
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "port": 3458,
+      "path": "/studio",
+      "status": 200
+    },
+    {
+      "port": 3458,
+      "path": "/openapi.json",
+      "status": 200
+    },
+    {
+      "port": 3457,
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "port": 3001,
+      "path": "/health",
+      "status": 200
+    },
+    {
+      "port": 3000,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3469,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3478,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 3479,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2468,
+      "path": "/",
+      "status": 200
+    },
+    {
+      "port": 2469,
+      "path": "/",
+      "status": 200
+    }
+  ],
+  "oldContainerIdentityImageMountsPreserved": true,
+  "backgroundWorkerRunning": false,
+  "heartbeat": "PAUSED_UNCHANGED",
+  "overallAcceptance": "NOT_ACCEPTED"
+}

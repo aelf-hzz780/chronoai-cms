@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-04T04:41:49.969345+00:00",
+  "businessCommit": "ea8bb6592a9c100f5b95a1d391b308dedb1c9af2",
+  "upstreamUiCommit": "ed77c70aca6bfc169b53956b0229fa2e7d171ced",
+  "integratedGraphqlFix": "2284973d468515c6a6c0c68d80cf0965d2b3f0e3",
+  "automated": {
+    "command": "npm run check",
+    "tests": 431,
+    "pass": 431,
+    "fail": 0,
+    "skip": 0,
+    "classification": "Local automated tests, including fixtures; not external provider acceptance",
+    "logSha256": "cbdc84d9ed9f8d263dcaeaad6a0b2a52b447b6f2f1f419a65b861dcc9c193419"
+  },
+  "independentReview": {
+    "verdict": "PASS_NO_ACTIONABLE_FINDINGS",
+    "targetedTests": 27,
+    "extraProbe": "Isolated single-task CLI execute failure receipt, no real provider writes"
+  },
+  "realAuthInitialAssertions": 33,
+  "realAuthFixedCommitAssertions": 29,
+  "providerWritesThisRun": 0,
+  "externalCmsPublicPublish": "PENDING_SPECIFIC_USER_AUTHORIZATION",
+  "originalInternetReachability": "NOT_VERIFIED_LOCALHOST_ONLY",
+  "overallAcceptance": "NOT_ACCEPTED",
+  "heartbeat": "PAUSED_UNCHANGED"
+}

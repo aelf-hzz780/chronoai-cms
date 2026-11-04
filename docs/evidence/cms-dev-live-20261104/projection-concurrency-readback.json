@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-04T04:37:15.600Z",
+  "paused": "true",
+  "projection": {
+    "id": "c88d3294-313b-4875-91ff-26a3f4da51fa",
+    "state": "complete",
+    "error_code": null
+  },
+  "localPending": [],
+  "delivery": {
+    "id": "f582b12e-406f-43d2-ab0e-9c997048457a",
+    "state": "queued",
+    "error_code": null,
+    "remote_id": null,
+    "url": null
+  },
+  "job": {
+    "id": "dede186f-cbfe-4982-ab2e-995774c45aa3",
+    "state": "queued",
+    "lease_until": null
+  },
+  "leases": [],
+  "history": [
+    {
+      "state": "queued",
+      "code": null,
+      "trace_id": "3b2ff086-c758-41f3-8051-6d18470b8cb0"
+    }
+  ],
+  "explanation": "Projection completed. Original end-of-script pending=0 assertion observed the concurrently created parent delivery; no rerun performed."
+}

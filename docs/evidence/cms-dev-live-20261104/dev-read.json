@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-04T04:26:06.784915+00:00",
+  "providerWrites": 0,
+  "http": [
+    {
+      "path": "/api/v1/auth/login",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/user-services",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/proxy/s/devto-blogsystem/users/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/proxy/s/devto-blogsystem/articles/me/unpublished",
+      "status": 200
+    }
+  ],
+  "overallAcceptance": "NOT_ACCEPTED",
+  "status": "PASS_REAL_NYX_DEV_READ_ONLY",
+  "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+  "account": {
+    "id": 4223973,
+    "username": "aelfhzz780"
+  },
+  "draft": {
+    "id": 4969744,
+    "title": "Validating a NyxID-managed DEV connection",
+    "published": false,
+    "bodySha256": "ec2107df7d1bc25f42f027024998ca1b12a65553963f94c025ca11ca2763c48e"
+  },
+  "providerCredentialRetrieved": false
+}

@@ -1,0 +1,136 @@
+{
+  "at": "2026-11-04T04:32:56.153Z",
+  "traceId": "a35d3302-a0bb-4a9a-b5aa-e3280053fcd7",
+  "mode": "execute",
+  "release": {
+    "id": "1bca49fa-8caa-4e7f-90b2-012e1fde3edc",
+    "article_id": "5c71a85d-1e45-40ae-85c5-4ecd2dd14824",
+    "revision_id": "e338f045-c499-403e-9111-ec9f30de62b9",
+    "owner_id": "personal-f043eb15cd25b163f90fa41ff84e4f5e",
+    "action": "publish",
+    "state": "published",
+    "remote_id": "6aeab5654c669c00017db295",
+    "url": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/",
+    "error_code": null,
+    "trace_id": "96e293d6-7f0f-4636-a5b7-34fa22a69b07",
+    "created_at": "2026-11-04T04:32:34.876Z",
+    "updated_at": "2026-11-04T04:32:50.622Z",
+    "media_history": []
+  },
+  "sourceDigest": "ffae4899cc19853b7b769ae15a3df411dc348c5c7bcf002952a38e56e7c89224",
+  "markdownSha256": "ffae4899cc19853b7b769ae15a3df411dc348c5c7bcf002952a38e56e7c89224",
+  "existingPostsUnchanged": true,
+  "newPosts": [
+    {
+      "id": "6aeab5654c669c00017db295",
+      "status": "published",
+      "slug": "chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824",
+      "updated_at": "2026-11-04T04:32:37.000Z",
+      "url": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/"
+    }
+  ],
+  "verified": true,
+  "paused": true,
+  "pending": [
+    {
+      "id": "1f30ef95-f0ad-4c55-902a-7f46a7bad977",
+      "kind": "projection",
+      "resource_id": "c88d3294-313b-4875-91ff-26a3f4da51fa",
+      "state": "queued",
+      "lease_until": null
+    }
+  ],
+  "network": [
+    {
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/openid-configuration",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3001",
+      "path": "/.well-known/jwks.json",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/ghost/api/admin/posts/",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3001",
+      "path": "/oauth/introspect",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/ghost/api/admin/posts/",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "origin": "http://localhost:3468",
+      "path": "/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "scope": "Actual local NyxID/CMS/Ghost only; no external provider writes; localhost original not Internet-reachability proof"
+}

@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-04T04:36:06.235Z",
+  "status": "READY_FOR_SPECIFIC_EXTERNAL_AUTHORIZATION",
+  "classification": "REAL_CMS_UI_LOCAL_QUEUE_ONLY",
+  "providerWrites": 0,
+  "deliveryWorkerExecuted": false,
+  "overallAcceptance": "NOT_ACCEPTED",
+  "before": {
+    "pause": "true",
+    "rows": [],
+    "jobs": [
+      {
+        "kind": "projection",
+        "resource_id": "c88d3294-313b-4875-91ff-26a3f4da51fa",
+        "state": "queued"
+      }
+    ]
+  },
+  "deliveryId": "f582b12e-406f-43d2-ab0e-9c997048457a",
+  "releaseId": "1bca49fa-8caa-4e7f-90b2-012e1fde3edc",
+  "articleId": "5c71a85d-1e45-40ae-85c5-4ecd2dd14824",
+  "traceId": "3b2ff086-c758-41f3-8051-6d18470b8cb0",
+  "after": {
+    "pause": "true",
+    "rows": [
+      {
+        "id": "f582b12e-406f-43d2-ab0e-9c997048457a",
+        "state": "queued",
+        "target": "dev",
+        "remote_id": null
+      }
+    ],
+    "jobs": [
+      {
+        "kind": "delivery",
+        "resource_id": "f582b12e-406f-43d2-ab0e-9c997048457a",
+        "state": "queued"
+      }
+    ]
+  },
+  "proposal": "dev-proposal.json"
+}

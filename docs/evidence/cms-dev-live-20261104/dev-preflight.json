@@ -1,0 +1,22 @@
+{
+  "mode": "preflight",
+  "traceId": "9db2b156-10e9-45e8-9706-5164d6b0bcd0",
+  "outboundPaused": true,
+  "eligible": false,
+  "requiresReadOnlyReconciliation": false,
+  "delivery": {
+    "id": "f582b12e-406f-43d2-ab0e-9c997048457a",
+    "ownerId": "personal-f043eb15cd25b163f90fa41ff84e4f5e",
+    "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+    "target": "dev",
+    "action": "create",
+    "digest": "22527378619947079853e70507bd433902727a42c8996c56aa933949b53dea52",
+    "state": "queued",
+    "remoteId": null,
+    "url": null,
+    "sourceVerified": false,
+    "errorCode": null,
+    "traceId": "3b2ff086-c758-41f3-8051-6d18470b8cb0",
+    "jobState": "queued"
+  }
+}

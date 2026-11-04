@@ -4,6 +4,8 @@
 
 已实现 CMS 与共享 NyxID service API、Markdown／私有素材／修订、个人与组织 EN/ZH 四个独立官方 Ghost、外部分发与生命周期、指标及加密备份恢复。**完整 D1–D9 尚未正式签收**；Document、Local 与真实目标 Live 分别记录，缺少外部输入的必需项保持 BLOCKED。
 
+最新本机交付见 [2026-11-04 新版 Studio 与受控 DEV 联调](docs/local-cms-dev-20261104.md)：独立入口 `http://localhost:3458/studio`，固定业务 commit `ea8bb65`，431项测试、真实 NyxID 四角色及本地 Ghost 原文通过；DEV 精确任务已在暂停队列准备，公开动作等待具体授权。旧3457与原数据保留，localhost原文不冒充公网可达。
+
 当前交接见 [2026-11-03 可靠性跟进](docs/continuation-20261103.md)与[外部验收执行清单](docs/continuation-external-handoff-20261103.md)。修复源码 `c16cde700963959d3fd7fc226853b71f5551573a` 消除 smooth-scroll 主题下定位未完成导致的核验误拒绝；历史首次单图核验失败的原因仍未确定。TypeScript、54 项目标回归及独立复验见本轮证据，运行／Git／PR 状态分别读回记录。
 
 历史 [W1/W2 整合交接](docs/handoff-20261102.md)和[可携带证据 manifest](docs/evidence/followup-20261102/manifest.json)绑定 `386b9652dc431bb83e4864d5b046b378110ee88d`，包括 W2 修复 `83b4b8e`。该版本的 303 项测试及历史矩阵不冒称在新修复 SHA 全量重跑。

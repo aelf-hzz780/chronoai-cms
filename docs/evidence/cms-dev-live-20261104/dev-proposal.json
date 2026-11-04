@@ -1,0 +1,28 @@
+{
+  "account": {
+    "username": "aelfhzz780",
+    "id": "4223973"
+  },
+  "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+  "action": "one public DEV article create followed by read-only reconciliation",
+  "method": "POST",
+  "providerEndpoint": "https://dev.to/api/articles",
+  "article": {
+    "title": "Verifying a NyxID-managed publishing workflow",
+    "body_markdown": "# Verifying a NyxID-managed publishing workflow\n\nThis article is a local integration test of an English publishing workflow. It connects a content management system, a self-hosted Ghost original, and a publishing account managed through NyxID.\n\n## Identity and ownership\n\nThe author signs in through a real local NyxID service. The CMS keeps personal ownership separate from organization publishing roles. The destination must use the explicitly selected connection and account, with no silent account fallback.\n\n## Confirmed content\n\nPublishing starts from a specific saved revision. The title, Markdown, credited author, owner, language, destination, and content rights are confirmed before the corresponding action. Later draft edits must not silently replace the confirmed version.\n\n## Original and receipt\n\nThe original is hosted on a local Ghost installation. Its visible page and saved revision are checked before any external copy is requested. A destination result must retain its remote article identifier and URL, and a readback must match the confirmed content and source link.\n\nThis local original is accessible on the test machine. Its localhost address is not evidence of public Internet reachability.\n\n## Safe execution\n\nThe integration run handles one explicitly selected task at a time. NyxID execution approvals remain applicable. If an operation times out or its result cannot be proved, it must be reconciled before another write is considered.\n\nThis test does not claim production readiness, organization-wide acceptance, or completion of all external publishing requirements. It contains no credentials, private keys, or user secrets.\n\n\nAuthor: BlogSystem Local Operator\n\nOriginal: [http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/](http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/)\n\n<!-- chrono-delivery:f582b12e-406f-43d2-ab0e-9c997048457a -->",
+    "published": true,
+    "canonical_url": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/"
+  },
+  "bodySha256": "f9c6baa837da2c2e6165e3226fe335de6959977e4f9a93871c5fa082008c0d9c",
+  "deliveryId": "f582b12e-406f-43d2-ab0e-9c997048457a",
+  "releaseId": "1bca49fa-8caa-4e7f-90b2-012e1fde3edc",
+  "contentDigest": "22527378619947079853e70507bd433902727a42c8996c56aa933949b53dea52",
+  "externalAuthorization": "PENDING_EXPLICIT_USER_APPROVAL",
+  "originalInternetReachability": "NOT_PUBLIC_LOCALHOST_ONLY",
+  "rollback": "DEV adapter has no enabled removal route. Unpublishing/removal requires an explicitly authorized action through the author account; cancellation is only safe before dispatch.",
+  "notIncluded": [
+    "updating existing unpublished draft 4969744",
+    "updating or deleting any DEV article",
+    "organization publication"
+  ]
+}
