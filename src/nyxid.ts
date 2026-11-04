@@ -189,7 +189,8 @@ export class NyxAuthority implements Authority {
     }
     const query=new URLSearchParams(path.split('?')[1]??'');
     requireValue(!query.has('_nyxid_via'),403,'DESTINATION_ROUTE','Connection selector is server-owned');query.set('_nyxid_via',connection.id);
-    const route=`/api/v1/proxy/s/${encodeURIComponent(connection.slug)}/${path.split('?')[0].replace(/^\//,'')}?${query}`;
+    const suffix=path.split('?')[0].replace(/^\//,'');
+    const route=`/api/v1/proxy/s/${encodeURIComponent(connection.slug)}${suffix?`/${suffix}`:''}?${query}`;
     await beforeDispatch();
     const body=await this.call(actor,route,request.method,request.body);
     return {accountId:connection.accountId,status:200,body};

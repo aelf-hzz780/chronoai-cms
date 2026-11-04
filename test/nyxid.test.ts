@@ -6,6 +6,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {NyxAuthority,operationDigest,exactArguments} from '../src/nyxid.ts';
 import {digest} from '../src/content.ts';
+import {connectionFingerprint} from '../src/connection-proof.ts';
 import {fixture} from './helpers.ts';
 import type {Config} from '../src/config.ts';
 
@@ -74,4 +75,42 @@ test('R007: native execute rejects a resolved binding different from the frozen 
   await assert.rejects(authority.execute(f.actors.solo,{owner,connectionId:base.id,target:'dev',request:{method:'POST',url:'https://dev.to/api/articles'},connectionFingerprint:connectionFingerprint(base),beforeDispatch:()=>{},readOnly:false}),{code:'CONNECTION_CHANGED'});assert.equal(writes,0);
   authority.connection=async()=>({...base,active:true});
   await assert.rejects(authority.execute(f.actors.solo,{owner,connectionId:base.id,target:'dev',request:{method:'POST',url:'https://dev.to/api/articles'},connectionFingerprint:connectionFingerprint(base),beforeWrite:async()=>{await Promise.resolve();throw new Error('Source revoked before proxy dispatch');},beforeDispatch:()=>{},readOnly:false}),/Source revoked before proxy dispatch/);assert.equal(writes,0);
+});
+
+test('NyxID proxy uses the exact slug root route and preserves nested paths and queries',async t=>{
+  const f=fixture();t.after(()=>f.store.close());
+  const owner={kind:'organization',issuer:f.actors.admin.issuer,subject:'org'};
+  const authority=new NyxAuthority({authorityUrl:'https://nyx.example'} as Config,f.store);
+  const cases=[
+    {target:'hashnode',base:'https://gql-beta.hashnode.com',url:'https://gql-beta.hashnode.com/',suffix:''},
+    {target:'hashnode',base:'https://gql-beta.hashnode.com',url:'https://gql-beta.hashnode.com/?locale=en&cursor=next%2Fpage',suffix:'',query:'locale=en&cursor=next%2Fpage&'},
+    {target:'dev',base:'https://dev.to/api',url:'https://dev.to/api',suffix:''},
+    {target:'dev',base:'https://dev.to/api',url:'https://dev.to/api/articles/123?locale=en&cursor=next%2Fpage',suffix:'/articles/123',query:'locale=en&cursor=next%2Fpage&'},
+    {target:'dev',base:'https://dev.to/api',url:'https://dev.to/api/articles/',suffix:'/articles/'},
+  ];
+  for(const scenario of cases){
+    const binding={id:'exact-org-connection',target:scenario.target,slug:'provider-org',owner,remoteBaseUrl:scenario.base,accountId:'author',generation:'1',active:true};
+    const request={method:'POST',url:scenario.url,body:{query:'query Account { me { id } }',variables:{}}};
+    let dispatched=false,calls=0;
+    authority.connection=async()=>binding;
+    authority.call=async(_actor,path,method,body)=>{
+      calls++;assert.equal(dispatched,true);
+      assert.equal(path,`/api/v1/proxy/s/provider-org${scenario.suffix}?${scenario.query??''}_nyxid_via=exact-org-connection`);
+      assert.equal(method,request.method);assert.deepEqual(body,request.body);
+      return {data:{me:{id:'author'}}};
+    };
+    const result=await authority.execute(f.actors.admin,{owner,connectionId:binding.id,target:binding.target,request,connectionFingerprint:connectionFingerprint(binding),readOnly:true,beforeDispatch:()=>{dispatched=true;}});
+    assert.equal(result.accountId,'author');assert.equal(result.body.data.me.id,'author');assert.equal(calls,1);
+  }
+});
+
+test('NyxID proxy rejects supplied connection selectors before any dispatch',async t=>{
+  const f=fixture();t.after(()=>f.store.close());
+  const owner={kind:'organization',issuer:f.actors.admin.issuer,subject:'org'};
+  const authority=new NyxAuthority({authorityUrl:'https://nyx.example'} as Config,f.store);
+  const binding={id:'exact-org-connection',target:'hashnode',slug:'provider-org',owner,remoteBaseUrl:'https://gql-beta.hashnode.com',accountId:'author',generation:'1',active:true};
+  authority.connection=async()=>binding;authority.call=async()=>assert.fail('Selector override must not reach NyxID');
+  for(const selector of ['_nyxid_via','%5Fnyxid_via']){
+    await assert.rejects(authority.execute(f.actors.admin,{owner,connectionId:binding.id,target:binding.target,request:{method:'POST',url:`https://gql-beta.hashnode.com/?${selector}=other`},connectionFingerprint:connectionFingerprint(binding),readOnly:true,beforeDispatch:()=>assert.fail('Selector override must fail before dispatch')}),{code:'DESTINATION_ROUTE'});
+  }
 });
