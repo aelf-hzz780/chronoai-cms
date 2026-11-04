@@ -296,11 +296,11 @@ export class DistributionService {
 export class DeliveryWorker {
   service: DistributionService; original: OriginalAdapter; queue: Queue;
   constructor(service: DistributionService, original: OriginalAdapter) { this.service = service; this.original = original; this.queue = new Queue(service.store); }
-  async once() {
+  async once(resourceId?:string) {
     const { store } = this.service;
     const lease = this.queue.claim('delivery', id => {
       this.service.event(id, 'uncertain', 'recovery', 'WORKER_INTERRUPTED');
-    });
+    },resourceId);
     if (!lease) return false;
     const snapshot = store.get('SELECT actor_json FROM delivery_payloads WHERE delivery_id=?', lease.resourceId)!;
     const recovering = store.get('SELECT state FROM deliveries WHERE id=?',lease.resourceId)?.state === 'uncertain';

@@ -23,6 +23,20 @@ node --env-file=/etc/chronoai/platform.env scripts/provision.ts pause --confirme
 
 Ghost、MySQL和Docker由独立运维身份管理。开通 owner/site/admin-site/author/owner-name 见 development.md。Ghost Admin Integration key 使用对应 env keyRef；普通用户只使用 CMS/NyxID，不分配 Ghost staff 或后台密码。运维首次安装与定期私有读取要记录工单、actor、owner、时间、Trace ID。
 
+## 单次指定外部分发
+
+联调时使用 `scripts/run-delivery-once.ts --delivery delivery-uuid`。默认仅以 SQLite read-only 打开现有数据库，输出指定 delivery 的队列状态、冻结摘要、连接 ID 和 Trace ID；不迁移数据库、不解密 Actor、不联网。`eligible` 仅表示队列当前可领取，不代表身份、原文或外部账号已验证。
+
+```bash
+node --env-file=/etc/chronoai/platform.env scripts/run-delivery-once.ts --delivery delivery-uuid
+# 已核验独立数据库、停用全量 Worker，并取得该篇文章具体外部动作授权后：
+node --env-file=/etc/chronoai/platform.env scripts/run-delivery-once.ts --delivery delivery-uuid --execute
+```
+
+执行入口只领取指定 ID，过期 lease 回收也只作用于该 ID；不启动 release/projection、不自动 resume、不重排队。原有权限、连接 fingerprint、精确审批、原文与 lease 守卫仍执行。输出不包含 Actor、正文或凭证，URL 移除 query/fragment；保留调用 Trace ID 和原始确认 Trace ID。退出码 0 表示预检完成或任务已处理，最终结果必须检查 receipt 的 `delivery.state`，不能把 `processed=true` 当作 `published`；1 表示校验/运行错误，2 表示竞争或状态变化后未领取任务。
+
+个人 NyxID proxy 的每次请求审批仍在 NyxID 完成。当前远端请求超时为 12 秒；若审批等待或远端响应中断使任务成为 `uncertain`，先检查 NyxID 审批与远端结果，再由有权用户通过 CMS 的 Reconcile 请求只读对账。单次命令不能替代具体公开发布授权，也不能将仅本机可访问的 Ghost 原文作为公网可达证据。
+
 ## 图片私有 staging 配置
 
 含图片的发布必须配置 `GHOST_MEDIA_STAGING_JSON`：exact site ID 到 **Worker 视角绝对私有目录** 的 JSON map。没有默认目录；缺配置／未预置目录／权限不符在真实 Ghost publish 前报 `MEDIA_STAGING_CONFIGURATION` 或 `MEDIA_STAGING_PERMISSIONS`，只读复核不依赖该写入配置。所有公开目标也需预创建。每个 staging 根由 Worker Unix UID 所有、权限0700；不要把 Worker 的私有根交给 Web 静态服务。

@@ -1,23 +1,25 @@
 import { randomUUID } from 'node:crypto';
 import { Store } from './store.ts';
-import { AppError } from './errors.ts';
+import { AppError, text } from './errors.ts';
 
 export interface Lease { jobId: string; resourceId: string; token: string; generation: number; }
 export class Queue {
   store: Store;
   constructor(store: Store) { this.store = store; }
-  claim(kind: 'release' | 'delivery' | 'projection', expire: (resourceId: string) => void): Lease | null {
+  claim(kind: 'release' | 'delivery' | 'projection', expire: (resourceId: string) => void, resourceId?: string): Lease | null {
+    if(resourceId!==undefined)text(resourceId,'resourceId');
+    const selection=resourceId===undefined?'':'AND resource_id=?',selected=resourceId===undefined?[]:[resourceId];
     return this.store.transaction(() => {
       const paused=this.store.get("SELECT value FROM settings WHERE key='outbound_paused'")?.value !== 'false';
       const now = new Date().toISOString();
-      for (const job of this.store.all("SELECT * FROM jobs WHERE kind=? AND state='running' AND lease_until<=?", kind, now)) {
+      for (const job of this.store.all(`SELECT * FROM jobs WHERE kind=? AND state='running' AND lease_until<=? ${selection}`, kind, now,...selected)) {
         expire(job.resource_id);
         this.store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE id=?", job.id);
       }
       const recoveryOnly=kind==='release'?"AND EXISTS (SELECT 1 FROM releases r WHERE r.id=jobs.resource_id AND r.state IN ('uncertain','verifying'))":kind==='delivery'?"AND EXISTS (SELECT 1 FROM deliveries d WHERE d.id=jobs.resource_id AND d.state='uncertain')":"AND 0";
       const admission=paused?`${recoveryOnly} AND EXISTS (SELECT 1 FROM recovery_actors a WHERE a.kind=jobs.kind AND a.resource_id=jobs.resource_id)`:'';
       const due=kind==='projection'?"AND NOT EXISTS (SELECT 1 FROM projection_retries p WHERE p.projection_id=jobs.resource_id AND (p.next_attempt_at IS NULL OR p.next_attempt_at>?))":'';
-      const job = this.store.get(`SELECT * FROM jobs WHERE kind=? AND state='queued' ${admission} ${due} ORDER BY created_at,rowid LIMIT 1`,kind,...(kind==='projection'?[now]:[]));
+      const job = this.store.get(`SELECT * FROM jobs WHERE kind=? AND state='queued' ${selection} ${admission} ${due} ORDER BY created_at,rowid LIMIT 1`,kind,...selected,...(kind==='projection'?[now]:[]));
       if (!job) return null;
       const token = randomUUID(), generation = (this.store.get('SELECT generation FROM job_leases WHERE job_id=?', job.id)?.generation ?? 0) + 1;
       this.store.run('INSERT INTO job_leases VALUES (?,?,?) ON CONFLICT(job_id) DO UPDATE SET token=excluded.token,generation=excluded.generation', job.id, token, generation);
