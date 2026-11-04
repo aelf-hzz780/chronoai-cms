@@ -1,3 +1,5 @@
+import {linkButton,notice as renderNotice} from './ui.js';
+import {StudioDialog,captureFocus} from './dialogs.js';
 import {ApiError,Transport} from './transport.js';
 import {ContextGate,draftFrom,safeReturnPath,type Stamp} from './state.js';
 import {base64,decodeMarkdown,markdownForSave} from './bytes.js';
@@ -24,6 +26,8 @@ import type {Article,ContentPage,EditorDraft,History,Identity,Language,Site,Summ
 
 const root=document.getElementById('app')!;
 const pickers=new StudioPickers(root);
+const dialogs=new StudioDialog();
+let navigationVersion=0;
 const api=new Transport();const context=new ContextGate();
 let locale:Language=localStorage.getItem('chrono.studio.locale')==='zh'?'zh':'en';
 let identity:Identity|null=null,owner:Workspace|null=null;
@@ -44,13 +48,13 @@ const retainedDrafts=new Map<string,EditorDraft>();
 const taskReads=new ContextGate();
 const poller=new BoundedPoller({visible:()=>!document.hidden,onExhausted:()=>{notice={text:t('pollingPaused'),kind:'info'};showNotice();},onError:error=>{void failure(error);}});
 const t=(key:Parameters<ReturnType<typeof translator>>[0])=>translator(locale)(key);
-const workflowHost:WorkflowHost={api,owner:()=>owner,subject:()=>identity?.subject??'',locale:()=>locale,stamp:()=>context.current(),accepts:stamp=>context.accepts(stamp),render,fail:failure,navigate,remember:hash=>{currentHash=hash;historyReplace(hash);},notice:(text,kind='info')=>{notice={text,kind};showNotice();},pausePolling:()=>{poller.stop();taskReads.advance();},resumePolling:startTaskPolling,refreshTask:async stamp=>{await refreshTaskDetail(stamp);return currentTask;}};
+const workflowHost:WorkflowHost={confirm:confirmInContext,api,owner:()=>owner,subject:()=>identity?.subject??'',locale:()=>locale,stamp:()=>context.current(),accepts:stamp=>context.accepts(stamp),render,fail:failure,navigate,remember:hash=>{currentHash=hash;historyReplace(hash);},notice:(text,kind='info')=>{notice={text,kind};showNotice();},pausePolling:()=>{poller.stop();taskReads.advance();},resumePolling:startTaskPolling,refreshTask:async stamp=>{await refreshTaskDetail(stamp);return currentTask;}};
 const connections=new ConnectionController(workflowHost),distribution=new DistributionController(workflowHost);
 function route(){const [path,query='']=currentHash.replace(/^#\/?/,'').split('?');const [name='content',id,taskId]=path.split('/');return {name,id,taskId,query:new URLSearchParams(query)};}
 function canEdit(){return Boolean(api.csrf&&draft&&!draft.historyRevision&&!suspended&&owner?.capabilities.canWrite&&(!draft.article||summary?.capabilities.canEdit));}
 function canSubmit(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canWrite&&summary?.capabilities.canSubmit);}
 function canReview(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canPublish&&summary?.capabilities.canPublish);}
-function showNotice(){const node=document.getElementById('notice');if(node)node.innerHTML=notice?`<div class="studio-notice ${notice.kind}" role="${notice.kind==='error'?'alert':'status'}"><p>${escape(notice.text)}</p>${notice.details?`<code>${escape(notice.details)}</code>`:''}</div>`:'';}
+function showNotice(){const node=document.getElementById('notice');if(node)node.innerHTML=notice?`${renderNotice(`<p>${escape(notice.text)}</p>${notice.details?`<code>${escape(notice.details)}</code>`:''}`,{tone:notice.kind,className:'studio-notice '+notice.kind,live:true})}`:'';}
 function render(){
  const pickerFocus=pickers.beforeRender();
  try{
@@ -69,27 +73,32 @@ function render(){
  else if(r.name==='members')content=!owner.capabilities.canManagePublishers||suspended?unavailablePage(locale):memberDirectory?membersView(memberDirectory,owner,locale,busy,memberIntent,manualMemberIdentity,Boolean(api.csrf&&owner.capabilities.canManagePublishers)): `<div class="studio-loading">${busy?t('loading'):button(t('retry'),'refresh')}</div>`;
  else if(r.name==='settings')content=settingsView(owner,sites,locale);
  else if(r.name==='guide')content=guideView(owner,locale);
- else if(r.name==='onboarding')content=`<section class="studio-welcome"><div class="eyebrow">WELCOME TO YOUR STUDIO</div><h1>${t('welcome')}</h1><p>${t('welcomeCopy')}</p>${siteCards(sites,locale)}<div class="heading-actions"><a href="#/content" class="btn primary">${t('continue')}</a>${button(t('refresh'),'refresh')}</div></section>`;
+ else if(r.name==='onboarding')content=`<section class="studio-welcome"><div class="eyebrow">WELCOME TO YOUR STUDIO</div><h1>${t('welcome')}</h1><p>${t('welcomeCopy')}</p>${siteCards(sites,locale)}<div class="heading-actions">${linkButton(`${t('continue')}`,{"href":"#/content","class":"btn primary"})}${button(t('refresh'),'refresh')}</div></section>`;
  else content=`<div class="studio-loading">${busy?t('loading'):button(t('retry'),'refresh')}</div>`;
- const directory=identity.organizationDirectory?.status==='unavailable'?`<div class="studio-notice studio-directory">${t('directory')}${identity.organizationDirectory.code?`<code>${escape(identity.organizationDirectory.code)}</code>`:''}</div>`:'';
- const csrf=!api.csrf?`<div class="studio-notice error">${t('csrfMissing')}</div>`:'';
+ const directory=identity.organizationDirectory?.status==='unavailable'?`${renderNotice(`${t('directory')}${identity.organizationDirectory.code?`<code>${escape(identity.organizationDirectory.code)}</code>`:''}`,{tone:'info',className:`studio-notice studio-directory`})}`:'';
+ const csrf=!api.csrf?`${renderNotice(`${t('csrfMissing')}`,{tone:'error',className:`studio-notice error`})}`:'';
  root.innerHTML=shell(directory+csrf+content,identity.workspaces,owner,identity.subject,locale,r.name);showNotice();
  }finally{pickers.afterRender(pickerFocus);}
 }
 function renderLogin(){
  const authError=new URLSearchParams(location.search).has('authError');
- root.innerHTML=`<div class="studio-auth"><section class="studio-auth-art"><a href="/studio" class="wordmark"><span class="brand-symbol">◈</span><span>ChronoAI<small>PUBLISHING STUDIO</small></span></a><div><div class="eyebrow">IDEAS DESERVE A PLACE</div><h1>${t('loginTitle')}</h1><p>${t('loginCopy')}</p></div><small class="eyebrow">WRITE WITH INTENTION. SHARE WITH CONFIDENCE.</small></section><section class="studio-auth-side"><div class="studio-auth-card"><h2>${t('studio')}</h2><p>${t('session')}</p>${authError?`<div class="studio-notice error" role="alert">${t('loginError')}</div>`:''}${notice?.kind==='error'?`<div class="studio-notice error" role="alert">${escape(notice.text)}<code>${escape(notice.details??'')}</code></div>`:''}<a class="btn primary full large" href="/auth/login?returnTo=%2Fstudio" id="signin">${t('signin')} →</a><div class="studio-auth-tools"><select id="locale" data-studio-picker="locale" aria-label="${t('interface')}"><option value="en" ${locale==='en'?'selected':''}>EN</option><option value="zh" ${locale==='zh'?'selected':''}>简中</option></select><a href="/">${t('legacy')}</a></div></div></section></div>`;
+ root.innerHTML=`<div class="studio-auth"><section class="studio-auth-art"><a href="/studio" class="wordmark"><span class="brand-symbol">◈</span><span>ChronoAI<small>PUBLISHING STUDIO</small></span></a><div><div class="eyebrow">IDEAS DESERVE A PLACE</div><h1>${t('loginTitle')}</h1><p>${t('loginCopy')}</p></div><small class="eyebrow">WRITE WITH INTENTION. SHARE WITH CONFIDENCE.</small></section><section class="studio-auth-side"><div class="studio-auth-card"><h2>${t('studio')}</h2><p>${t('session')}</p>${authError?`${renderNotice(`${t('loginError')}`,{tone:'error',className:`studio-notice error`,live:true})}`:''}${notice?.kind==='error'?`${renderNotice(`${escape(notice.text)}<code>${escape(notice.details??'')}</code>`,{tone:'error',className:`studio-notice error`,live:true})}`:''}${linkButton(`${t('signin')} →`,{"class":"btn primary full large","href":"/auth/login?returnTo=%2Fstudio","id":"signin"})}<div class="studio-auth-tools"><select id="locale" data-studio-picker="locale" aria-label="${t('interface')}"><option value="en" ${locale==='en'?'selected':''}>EN</option><option value="zh" ${locale==='zh'?'selected':''}>简中</option></select><a href="/">${t('legacy')}</a></div></div></section></div>`;
 }
 async function failure(error:unknown,stamp=context.current()){
  if(!context.accepts(stamp)||(error instanceof DOMException&&error.name==='AbortError'))return;
  poller.stop();
  busy=false;const e=error instanceof ApiError?error:null;
  notice={text:e?.message??(error instanceof Error?error.message:t('error')),kind:'error',details:e?`${e.code}${e.traceId?' · Trace ID '+e.traceId:''}`:undefined};
- if(e?.status===401){connections.reset();distribution.reset();identity=null;api.csrf=undefined;sessionStorage.setItem('chrono.studio.return',safeReturnPath('/studio'+currentHash));render();return;}
- if(e?.status===403){connections.reset();distribution.reset();suspended=true;memberDirectory=null;memberIntent=null;metrics=null;metricCopy=null;render();try{const me=await api.json<Identity>('/me',{signal:stamp.signal});if(context.accepts(stamp)){identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===owner?.id)??null;render();}}catch{/* Original classified error remains visible; no previous permission is restored. */}return;}
+ if(e?.status===401){dialogs.cancel();connections.reset();distribution.reset();identity=null;api.csrf=undefined;sessionStorage.setItem('chrono.studio.return',safeReturnPath('/studio'+currentHash));render();return;}
+ if(e?.status===403){dialogs.cancel();connections.reset();distribution.reset();suspended=true;memberDirectory=null;memberIntent=null;metrics=null;metricCopy=null;render();try{const me=await api.json<Identity>('/me',{signal:stamp.signal});if(context.accepts(stamp)){identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===owner?.id)??null;render();}}catch{/* Original classified error remains visible; no previous permission is restored. */}return;}
  render();
 }
-function unsavedAllowed(){if(!draft?.dirty)return true;const allowed=window.confirm(t('discard'));if(allowed&&draft.article)retainedDrafts.delete(`${draft.article.ownerId}/${draft.article.id}`);return allowed;}
+async function confirmInContext(message:string,stamp:Stamp):Promise<boolean>{
+ const selectedOwner=owner,session=identity,csrf=api.csrf;
+ const accepted=await dialogs.confirm(message,locale,stamp.signal);
+ return accepted&&context.accepts(stamp)&&!suspended&&owner===selectedOwner&&identity===session&&Boolean(identity)&&api.csrf===csrf;
+}
+async function unsavedAllowed(){if(!draft?.dirty)return true;const local=draft,stamp=context.current(),version=navigationVersion;const allowed=await confirmInContext(t('discard'),stamp);if(!allowed||draft!==local||version!==navigationVersion)return false;if(local.article)retainedDrafts.delete(`${local.article.ownerId}/${local.article.id}`);return true;}
 async function loadIdentity(){const stamp=context.advance();busy=true;render();try{
  const me=await api.json<Identity>('/me',{signal:stamp.signal});if(!context.accepts(stamp))return;
  identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===sessionStorage.getItem('chrono.studio.owner'))??me.workspaces[0]??null;
@@ -303,8 +312,13 @@ function startTaskPolling(){
 async function taskCommand(action:'cancel'|'reconcile'|'materialize-media'){
  if(!currentTask||currentTask.kind!=='release'||busy||suspended||!api.csrf||!owner?.capabilities.canPublish||!currentTask.allowedActions.includes(action))return;
  const task=currentTask,stamp=context.current();
- if(action==='cancel'&&!window.confirm(`${t('cancelConfirm')}\n${task.id}`))return;
- if(action==='materialize-media'&&(!mediaRights||!task.revisionId||!window.confirm(`${t('materializeConfirm')}\n${task.ownerId}\n${task.id}\n${task.revisionId}`)))return;
+ if(action==='materialize-media'&&(!mediaRights||!task.revisionId))return;
+ poller.stop();taskReads.advance();
+ if(action!=='reconcile'){
+  const message=action==='cancel'?`${t('cancelConfirm')}\n${task.id}`:`${t('materializeConfirm')}\n${task.ownerId}\n${task.id}\n${task.revisionId}`;
+  if(!await confirmInContext(message,stamp)){if(context.accepts(stamp)&&identity&&owner&&!suspended)startTaskPolling();return;}
+  if(!context.accepts(stamp)||busy||!api.csrf||!owner?.capabilities.canPublish||currentTask!==task||!task.allowedActions.includes(action)||action==='materialize-media'&&!mediaRights)return;
+ }
  const body=action==='materialize-media'?{ownerId:task.ownerId,revisionId:task.revisionId,rightsConfirmed:true}:{};
  const data=action==='materialize-media'?{...body,idempotencyKey:mediaIntent.keyFor({taskId:task.id,...body})}:body;
  poller.stop();taskReads.advance();busy=true;render();
@@ -318,8 +332,10 @@ async function taskCommand(action:'cancel'|'reconcile'|'materialize-media'){
  }catch(error){await failure(error,stamp);if(context.accepts(stamp)&&identity&&owner&&!suspended)try{await refreshTaskDetail(stamp);}catch(readError){await failure(readError,stamp);}}
 }
 async function syncLinks(){
- if(!draft?.article||!summary?.live||!canReview()||busy||linkUnknown||!window.confirm(t('syncLinksConfirm')))return;
- const article=draft.article,stamp=context.current();busy=true;render();
+ if(!draft?.article||!summary?.live||!canReview()||busy||linkUnknown)return;
+ const article=draft.article,live=summary.live,stamp=context.current();
+ if(!await confirmInContext(t('syncLinksConfirm'),stamp)||draft?.article!==article||summary?.live!==live||!canReview()||busy||linkUnknown)return;
+ busy=true;render();
  try{
   const result=await api.json<{id:string;state:string}>(`/articles/${encodeURIComponent(article.id)}/sync-links`,{method:'POST',data:{},signal:stamp.signal});if(!context.accepts(stamp))return;
   if(!result.id)throw new ApiError(502,'PROJECTION_CONTEXT','Projection confirmation has no task identity');
@@ -333,15 +349,18 @@ async function exportRaw(){if(!draft?.article||busy)return;const article=draft.a
  if(file.articleId!==article.id||file.revisionId!==article.revision.id||file.encoding!=='base64'||file.byteLength!==bytes.length||file.data!==base64(bytes)||digest!==file.sha256)throw new ApiError(502,'MARKDOWN_INTEGRITY','Original Markdown integrity check failed');
  const anchor=document.createElement('a');anchor.href='data:text/markdown;base64,'+file.data;anchor.download='article.md';anchor.click();busy=false;render();
  }catch(error){await failure(error,stamp);}}
-async function logout(){if(!unsavedAllowed())return;poller.stop();taskReads.advance();const stamp=context.advance();try{const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'x-csrf-token':api.csrf??''}});if(!response.ok)throw new ApiError(response.status,'LOGOUT_FAILED',t('error'),response.headers.get('x-trace-id')??'');connections.reset();distribution.reset();identity=null;owner=null;draft=null;retainedDrafts.clear();api.csrf=undefined;notice=null;sessionStorage.removeItem('chrono.studio.return');render();}catch(error){await failure(error,stamp);}}
+async function logout(){if(!await unsavedAllowed())return;poller.stop();taskReads.advance();const stamp=context.advance();try{const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'x-csrf-token':api.csrf??''}});if(!response.ok)throw new ApiError(response.status,'LOGOUT_FAILED',t('error'),response.headers.get('x-trace-id')??'');connections.reset();distribution.reset();identity=null;owner=null;draft=null;retainedDrafts.clear();api.csrf=undefined;notice=null;sessionStorage.removeItem('chrono.studio.return');render();}catch(error){await failure(error,stamp);}}
 function navigate(hash:string){location.hash=hash;}
 async function action(name:string){
- if(name.startsWith('connection-')){await connections.action(name);return;}
- if(/^(dist-|delivery-|plan-)/.test(name)){await distribution.action(name);return;}
+ if(/^(connection-|dist-|delivery-|plan-)/.test(name)){
+  const stamp=context.current(),restoreFocus=captureFocus();
+  try{if(name.startsWith('connection-'))await connections.action(name);else await distribution.action(name);}
+  finally{if(context.accepts(stamp)&&identity&&!suspended&&document.activeElement===document.body)restoreFocus();}return;
+ }
  switch(name){
   case 'identity':await loadIdentity();break;
   case 'logout':await logout();break;
-  case 'refresh':if(unsavedAllowed())await loadRoute();break;
+  case 'refresh':if(await unsavedAllowed())await loadRoute();break;
   case 'new':navigate(`#/new/${filters.language}`);break;
   case 'previous':filters.offset=Math.max(0,filters.offset-filters.limit);await loadRoute();break;
   case 'next':filters.offset+=filters.limit;await loadRoute();break;
@@ -358,7 +377,7 @@ async function action(name:string){
   case 'task-next':taskFilters.offset+=taskFilters.limit;await loadRoute();break;
   case 'sync-links':await syncLinks();break;
   case 'submit':await submit();break;
-  case 'current':if(draft?.article){const hash=`#/article/${encodeURIComponent(draft.article.id)}`;if(hash===currentHash){if(unsavedAllowed())await loadRoute();}else navigate(hash);}break;
+  case 'current':if(draft?.article){const hash=`#/article/${encodeURIComponent(draft.article.id)}`;if(hash===currentHash){if(await unsavedAllowed())await loadRoute();}else navigate(hash);}break;
   case 'write':previewMode='write';render();break;
   case 'preview-local':if(draft){previewMode='local';previewHtml=renderPreview(markdownForSave(draft));render();}break;
   case 'preview-saved':await previewSaved();break;
@@ -397,24 +416,24 @@ root.addEventListener('input',event=>{const input=event.target as HTMLInputEleme
  if(input.id==='markdown'){draft.markdown=input.value;draft.markdownChanged=true;draft.dirty=true;}
  if(['article-title','credited-author','markdown'].includes(input.id)){const submitButton=root.querySelector<HTMLButtonElement>('[data-action="submit"]');if(submitButton)submitButton.disabled=true;const status=root.querySelector('.editor-state');if(status)status.innerHTML=badge(t('unsaved'),'amber');}
 });
-root.addEventListener('change',event=>{const input=event.target as HTMLInputElement|HTMLSelectElement;
+root.addEventListener('change',async event=>{const input=event.target as HTMLInputElement|HTMLSelectElement;
  if(connections.change(input)||distribution.change(input))return;
  if(input.id==='locale'||input.id==='settings-locale'){locale=input.value==='zh'?'zh':'en';localStorage.setItem('chrono.studio.locale',locale);render();}
  if(input.id==='publication-rights'&&publication){publication.rights=(input as HTMLInputElement).checked;render();}
  if(input.id==='publication-action'&&publication&&['publish','update','unpublish'].includes(input.value)){publication.action=input.value as PublicationAction;publication.rights=false;publication.unknown=false;publication.key=null;render();}
  if(input.id==='media-rights'){mediaRights=(input as HTMLInputElement).checked;render();}
  if(input.id==='workspace'){
-  if(!unsavedAllowed()){input.value=owner?.id??'';return;}owner=identity?.workspaces.find(w=>w.id===input.value)??null;sessionStorage.setItem('chrono.studio.owner',owner?.id??'');filters={...filters,offset:0,q:'',status:'all'};metricFilters={...metricFilters,article:''};metricCopyId='';manualMemberIdentity='';currentHash='#/content';historyReplace(currentHash);void loadRoute();
+  const selected=input.value;if(draft?.dirty){input.value=owner?.id??'';const version=++navigationVersion;if(!await unsavedAllowed()||version!==navigationVersion)return;}owner=identity?.workspaces.find(w=>w.id===selected)??null;sessionStorage.setItem('chrono.studio.owner',owner?.id??'');filters={...filters,offset:0,q:'',status:'all'};metricFilters={...metricFilters,article:''};metricCopyId='';manualMemberIdentity='';currentHash='#/content';historyReplace(currentHash);void loadRoute();
  }
  if(input.id==='article-language'){filters.language=input.value==='zh'?'zh':'en';filters.offset=0;void loadRoute();}
  if(input.id==='translation-peer'&&input.value)navigate(`#/article/${encodeURIComponent(input.value)}`);
  if(input.id==='markdown-file'){const file=(input as HTMLInputElement).files?.[0];if(file)void importFile(file);}
  if(input.id==='image-file'){const file=(input as HTMLInputElement).files?.[0];if(file)void imageFile(file);}
 });
-window.addEventListener('hashchange',()=>{if(!preserveNavigation&&!unsavedAllowed()){historyReplace(lastHash);return;}preserveNavigation=false;currentHash=location.hash||'#/content';lastHash=currentHash;void loadRoute();});
+window.addEventListener('hashchange',async()=>{const target=location.hash||'#/content',version=++navigationVersion,skip=preserveNavigation;preserveNavigation=false;if(!skip&&draft?.dirty){historyReplace(currentHash);if(!await unsavedAllowed()||version!==navigationVersion)return;historyReplace(target);}currentHash=target;lastHash=currentHash;void loadRoute();});
 document.addEventListener('visibilitychange',()=>poller.visibilityChanged());
 root.addEventListener('toggle',event=>{const details=event.target;if(details instanceof HTMLDetailsElement&&details.classList.contains('studio-plan-create'))distribution.setPlanOpen(details.open);},true);
-window.addEventListener('pagehide',event=>{pickers.close();if(!event.persisted)pickers.dispose();retainEditor();poller.stop();taskReads.advance();context.advance();});
+window.addEventListener('pagehide',event=>{dialogs.cancel();pickers.close();if(!event.persisted)pickers.dispose();retainEditor();poller.stop();taskReads.advance();context.advance();});
 window.addEventListener('pageshow',event=>{if(event.persisted)void loadIdentity();});
 window.addEventListener('beforeunload',event=>{if(draft?.dirty||[...retainedDrafts.values()].some(local=>local.dirty)){event.preventDefault();event.returnValue='';}});
 void loadIdentity();

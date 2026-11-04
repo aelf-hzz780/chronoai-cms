@@ -1,3 +1,4 @@
+import {chooseStudioDialog} from './studio-dialog-helper.ts';
 import {selectStudioOption} from './studio-picker-helper.ts';
 // Acceptance harness only: real Fastify/SQLite/session/CSRF, isolated identity provider.
 // This file is never imported by the production application.
@@ -194,7 +195,6 @@ if(process.argv.includes('--serve')){
     const server=await acceptanceServer();t.after(()=>server.close());const release=await server.publish(server.english);
     const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
     const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
-    page.on('dialog',dialog=>dialog.accept());
     await page.goto(`${server.url}/__acceptance/session/publisher`);await selectStudioOption(page,'workspace','org');
     await page.goto(`${server.url}/studio#/distribution/${server.english.id}`);
     for(const target of ['medium','hackernoon'])assert.equal(await page.locator(`#distribution-target option[value="${target}"]`).evaluate(option=>(option as HTMLOptionElement).disabled),true);
@@ -205,7 +205,7 @@ if(process.argv.includes('--serve')){
     const manualId=manual.id;await page.goto(`${server.url}/studio#/task/delivery/${manualId}`);await page.locator('#delivery-report-state-trigger').waitFor();
     assert.equal(server.f.store.get('SELECT state FROM deliveries WHERE id=?',manualId)!.state,'manual_action_needed');
     await selectStudioOption(page,'delivery-report-state','submitted');await page.locator('#delivery-report-note').fill('Submitted via the editorial workflow.');
-    await page.locator('[data-action="delivery-report"]').click();await page.waitForFunction(()=>document.querySelector('.page-heading .badge')?.textContent==='Submitted');
+    await page.locator('[data-action="delivery-report"]').click();await chooseStudioDialog(page);await page.waitForFunction(()=>document.querySelector('.page-heading .badge')?.textContent==='Submitted');
     assert.equal(server.f.store.get('SELECT state FROM deliveries WHERE id=?',manualId)!.state,'submitted');
     assert.equal(server.f.store.get('SELECT note FROM delivery_notes WHERE delivery_id=?',manualId)!.note,'Submitted via the editorial workflow.');
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('manual-followup.png',evidence).pathname,fullPage:true});
@@ -220,13 +220,13 @@ if(process.argv.includes('--serve')){
     await selectStudioOption(page,'distribution-format','full');
     await page.locator('.studio-plan-create summary').click();
     await page.locator('#distribution-not-before').fill(new Date(Date.now()+3*86_400_000).toISOString().slice(0,16));await page.locator('#distribution-rights').check();
-    await page.locator('[data-action="dist-plan"]').click();await page.waitForURL(url=>url.hash.startsWith('#/task/plan/'));
+    await page.locator('[data-action="dist-plan"]').click();await chooseStudioDialog(page);await page.waitForURL(url=>url.hash.startsWith('#/task/plan/'));
     const planId=new URL(page.url()).hash.split('/').at(-1)!;await page.locator('.page-heading').waitFor();
     assert.equal(server.f.store.get('SELECT state FROM distribution_plans WHERE id=?',planId)!.state,'scheduled');
     assert.equal(server.f.store.get('SELECT count(*) n FROM jobs')!.n,jobsBefore);
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('scheduled-plan.png',evidence).pathname,fullPage:true});
     server.f.store.run('UPDATE distribution_plans SET not_before_at=? WHERE id=?',new Date(Date.now()-1000).toISOString(),planId);
-    await page.reload();await page.locator('#plan-rights').check();await page.locator('[data-action="plan-confirm"]').click();
+    await page.reload();await page.locator('#plan-rights').check();await page.locator('[data-action="plan-confirm"]').click();await chooseStudioDialog(page);
     await page.waitForURL(url=>url.hash.startsWith('#/task/delivery/'));await page.locator('#approval-reference').waitFor();
     const plan=server.f.store.get('SELECT * FROM distribution_plans WHERE id=?',planId)!;
     assert.equal(plan.state,'confirmed');assert.equal(new URL(page.url()).hash.split('/').at(-1),plan.delivery_id);
@@ -245,16 +245,15 @@ if(process.argv.includes('--serve')){
     const server=await acceptanceServer();t.after(()=>server.close());await server.publish(server.english);
     const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
     const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
-    page.on('dialog',dialog=>dialog.accept());
     await page.goto(`${server.url}/__acceptance/session/admin`);await selectStudioOption(page,'workspace','org');
     await page.goto(`${server.url}/studio#/distribution/${server.english.id}`);await selectStudioOption(page,'distribution-target','dev');
     await selectStudioOption(page,'distribution-connection','org-dev');await page.locator('#distribution-rights').check();
-    await page.locator('[data-action="dist-confirm"]').click();await page.waitForURL(url=>url.hash.startsWith('#/task/delivery/'));
+    await page.locator('[data-action="dist-confirm"]').click();await chooseStudioDialog(page);await page.waitForURL(url=>url.hash.startsWith('#/task/delivery/'));
     const id=new URL(page.url()).hash.split('/').at(-1)!;await page.locator('[data-action="delivery-request-approval"]').click();
     await page.waitForFunction(()=>Boolean(document.querySelector<HTMLInputElement>('#approval-reference')?.value));
     const reference=await page.locator('#approval-reference').inputValue();assert.equal(server.f.store.get('SELECT approval_ref FROM deliveries WHERE id=?',id)!.approval_ref,reference);
     assert.equal(server.f.store.get("SELECT count(*) n FROM jobs WHERE kind='delivery' AND resource_id=?",id)!.n,0);
-    server.acceptApproval(reference);await page.locator('#approval-rights').check();await page.locator('[data-action="delivery-authorize"]').click();
+    server.acceptApproval(reference);await page.locator('#approval-rights').check();await page.locator('[data-action="delivery-authorize"]').click();await chooseStudioDialog(page);
     await page.waitForFunction(()=>document.querySelector('.page-heading .badge')?.textContent==='Queued');
     assert.equal(server.f.store.get('SELECT state FROM deliveries WHERE id=?',id)!.state,'queued');
     assert.equal(server.f.store.get("SELECT count(*) n FROM jobs WHERE kind='delivery' AND resource_id=? AND state='queued'",id)!.n,1);
@@ -354,7 +353,7 @@ if(process.argv.includes('--serve')){
     assert.match(await page.locator('.studio-task-preview').innerText(),/One workspace. Two independent originals./);
     assert.doesNotMatch(await page.locator('.studio-task-preview').innerText(),/New submission after confirmation/);
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('queued-task.png',evidence).pathname,fullPage:true});
-    page.once('dialog',dialog=>dialog.accept());await page.locator('[data-action="task-cancel"]').click();
+    await page.locator('[data-action="task-cancel"]').click();await chooseStudioDialog(page,'confirm');
     await page.waitForFunction(()=>document.querySelector('.page-heading .badge')?.textContent==='Cancelled');
     assert.equal(server.f.store.get('SELECT state FROM releases WHERE id=?',id)!.state,'cancelled');
     assert.equal(server.f.store.get("SELECT state FROM jobs WHERE kind='release' AND resource_id=?",id)!.state,'cancelled');

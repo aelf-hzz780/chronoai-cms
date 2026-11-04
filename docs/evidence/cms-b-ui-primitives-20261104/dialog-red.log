@@ -1,0 +1,21 @@
+✖ Shared confirmation keeps unsaved workspace and route unchanged until an explicit choice, supports Escape and restores focus (4246.398042ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4726.680042
+
+✖ failing tests:
+
+test at test/studio-browser.test.ts:111:1
+✖ Shared confirmation keeps unsaved workspace and route unchanged until an explicit choice, supports Escape and restores focus (4246.398042ms)
+  locator.waitFor: Timeout 3000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('alertdialog') to be visible[22m
+  
+      at TestContext.<anonymous> (/private/tmp/chronoai-cms-review-20261103/test/studio-browser.test.ts:115:111) {
+    name: 'TimeoutError'
+  }

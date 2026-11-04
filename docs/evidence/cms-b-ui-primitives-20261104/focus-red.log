@@ -1,0 +1,48 @@
+✖ Connection create resumes a lost response with the same key after reload, retains attempt for binding and never persists token URLs (1749.978416ms)
+✖ Deferred excerpt stays frozen, scheduled never runs, due requires rights, and manual notes/report failures/old-source observations remain independent (1119.25475ms)
+✔ Exact approval is recovered after an unknown request, attaches directly into queue, and removal preserves historical copy/connection with stable retries (1339.135459ms)
+✔ Shared pickers disable new manual channels with bilingual reasons while historical plans remain readable and cancellable (1212.568792ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5662.283166
+
+✖ failing tests:
+
+test at test/studio-workflows-browser.test.ts:20:1
+✖ Connection create resumes a lost response with the same key after reload, retains attempt for binding and never persists token URLs (1749.978416ms)
+  AssertionError [ERR_ASSERTION]: connection cancellation restores its trigger after redraw
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///private/tmp/chronoai-cms-review-20261103/test/studio-workflows-browser.test.ts:34:313)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/studio-workflows-browser.test.ts:38:1
+✖ Deferred excerpt stays frozen, scheduled never runs, due requires rights, and manual notes/report failures/old-source observations remain independent (1119.25475ms)
+  AssertionError [ERR_ASSERTION]: cancel restores focus after busy redraws
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///private/tmp/chronoai-cms-review-20261103/test/studio-workflows-browser.test.ts:59:1233)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

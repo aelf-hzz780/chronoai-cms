@@ -47,8 +47,8 @@ export class ConnectionController {
     this.state.attempt=result;this.state.unknownOutcome=false;this.state.connectUrl=result.flow==='hosted'&&result.status==='pending'?result.connectUrl:null;this.state.managementUrl=result.flow==='operator'?result.managementUrl:null;
     this.host.remember(`#/connections?${new URLSearchParams({ownerId:this.ownerId,attemptId:result.id})}`);sessionStorage.removeItem(this.storageKey);this.saved=null;await this.read(result.id,stamp);
    }else if(attempt){
-    if(action==='connection-cancel'&&!window.confirm(w('cancelConfirm')))return true;
     const path=`/owners/${encodeURIComponent(this.ownerId)}/connection-attempts/${encodeURIComponent(attempt.id)}`;
+    if(action==='connection-cancel'&&(!await this.host.confirm(w('cancelConfirm'),stamp)||!this.host.accepts(stamp)||!this.allowed()||!this.host.api.csrf))return true;
     if(action==='connection-recheck')await this.host.api.json(path+'/recheck',{method:'POST',data:this.state.connectionId?{connectionId:this.state.connectionId}:{},signal:stamp.signal});
     else if(action==='connection-cancel')await this.host.api.json(path+'/cancel',{method:'POST',data:{},signal:stamp.signal});
     if(!this.host.accepts(stamp))return true;await this.read(attempt.id,stamp);

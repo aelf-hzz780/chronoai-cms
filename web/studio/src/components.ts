@@ -1,8 +1,8 @@
+import {button,escape} from './ui.js';
 import type {Language,Workspace,TaskKind} from './types.js';
 import {taskAssetBase} from './task-model.js';
 import {translator} from './i18n.js';
-export function escape(value:unknown):string{return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));}
-export function button(label:string,action:string,classes='',disabled=false):string{return `<button type="button" class="btn ${classes}" data-action="${escape(action)}" ${disabled?'disabled':''}>${escape(label)}</button>`;}
+export {escape,button,controlButton,input,textarea,notice,confirmationPanel} from './ui.js';
 export function badge(label:string,color='neutral'):string{return `<span class="badge ${color}">${escape(label)}</span>`;}
 export function short(value:string):string{return value.slice(0,8);}
 export function date(value:string,locale:Language):string {const parsed=new Date(value);return Number.isNaN(parsed.valueOf())?'—':new Intl.DateTimeFormat(locale==='en'?'en-GB':'zh-CN',{dateStyle:'medium',timeStyle:'short'}).format(parsed);}

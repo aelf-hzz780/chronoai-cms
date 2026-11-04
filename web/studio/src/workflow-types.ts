@@ -2,7 +2,7 @@ import type {Language,TaskDetail} from './types.js';
 import type {Transport} from './transport.js';
 import type {Stamp} from './state.js';
 import type {Workspace} from './types.js';
-export interface WorkflowHost {api:Transport;owner:()=>Workspace|null;subject:()=>string;locale:()=>Language;stamp:()=>Stamp;accepts:(stamp:Stamp)=>boolean;render:()=>void;fail:(error:unknown,stamp:Stamp)=>Promise<void>;navigate:(hash:string)=>void;remember:(hash:string)=>void;notice:(text:string,kind?:'info'|'error')=>void;pausePolling:()=>void;resumePolling:()=>void;refreshTask:(stamp:Stamp)=>Promise<TaskDetail|null>}
+export interface WorkflowHost {confirm:(message:string,stamp:Stamp)=>Promise<boolean>;api:Transport;owner:()=>Workspace|null;subject:()=>string;locale:()=>Language;stamp:()=>Stamp;accepts:(stamp:Stamp)=>boolean;render:()=>void;fail:(error:unknown,stamp:Stamp)=>Promise<void>;navigate:(hash:string)=>void;remember:(hash:string)=>void;notice:(text:string,kind?:'info'|'error')=>void;pausePolling:()=>void;resumePolling:()=>void;refreshTask:(stamp:Stamp)=>Promise<TaskDetail|null>}
 export interface Destination {name:string;automatic:boolean;automaticActions:string[]}
 export interface OwnerConnection {id:string;target:string;label:string;accountId:string;active:boolean;reason?:string}
 export interface ConnectionAttempt {id:string;ownerId:string;target:string;flow:'hosted'|'operator';status:'pending'|'connected'|'binding_required'|'cancelled'|'expired'|'failed';connectionId:string|null;code:string|null;createdAt:string;updatedAt:string;expiresAt:string}

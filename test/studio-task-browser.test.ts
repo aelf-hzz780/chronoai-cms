@@ -1,3 +1,4 @@
+import {chooseStudioDialog} from './studio-dialog-helper.ts';
 // Isolated frontend workflow fixtures. Real Fastify/session acceptance is a separate root check.
 import {test,type TestContext} from 'node:test';
 import assert from 'node:assert/strict';
@@ -49,8 +50,8 @@ test('Studio release commands re-read state, keep reconciliation read-only and r
   if(path.includes('/tasks/')&&path.endsWith('/assets/'+asset))return image(route);throw Error('Unexpected fixture '+path);
  });
  await page.goto('https://studio.invalid/studio#/task/release/release-1');await page.locator('[data-action="task-reconcile"]').click();await page.getByText('Result uncertain',{exact:true}).first().waitFor();assert.equal(writes.length,1);assert.deepEqual(writes[0]!.body,{});assert.equal(await page.locator('.page-heading .badge').innerText(),'Result uncertain','stale POST state never overwrites the fresh GET');
- assert.equal(await page.locator('[data-action="task-materialize"]').isDisabled(),true);await page.locator('#media-rights').check();page.once('dialog',d=>d.dismiss());await page.locator('[data-action="task-materialize"]').click();assert.equal(writes.length,1);
- page.once('dialog',async d=>{assert.match(d.message(),/owner.*\nrelease-1.*\nrevision-1/);await d.accept();});await page.locator('[data-action="task-materialize"]').click();await page.waitForURL(url=>url.hash==='#/task/media/media-1');await page.getByText('1 public files',{exact:true}).waitFor();assert.equal(writes.length,2);assert.equal(writes[1]!.body.ownerId,'owner');assert.equal(writes[1]!.body.revisionId,'revision-1');assert.equal(writes[1]!.body.rightsConfirmed,true);assert.match(writes[1]!.body.idempotencyKey,/^[a-f0-9-]{36}$/);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ assert.equal(await page.locator('[data-action="task-materialize"]').isDisabled(),true);await page.locator('#media-rights').check();await page.locator('[data-action="task-materialize"]').click();await chooseStudioDialog(page,'cancel');assert.equal(writes.length,1);
+ await page.locator('[data-action="task-materialize"]').click();assert.match(await page.getByRole('alertdialog').innerText(),/owner.*\nrelease-1.*\nrevision-1/);await chooseStudioDialog(page);await page.waitForURL(url=>url.hash==='#/task/media/media-1');await page.getByText('1 public files',{exact:true}).waitFor();assert.equal(writes.length,2);assert.equal(writes[1]!.body.ownerId,'owner');assert.equal(writes[1]!.body.revisionId,'revision-1');assert.equal(writes[1]!.body.rightsConfirmed,true);assert.match(writes[1]!.body.idempotencyKey,/^[a-f0-9-]{36}$/);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
 });
 
 test('Studio respects hidden delivery snapshots, projection absence and strict preview image scope',async t=>{
@@ -62,4 +63,17 @@ test('Studio respects hidden delivery snapshots, projection absence and strict p
  await page.goto('https://studio.invalid/studio#/task/delivery/delivery-1');await page.getByText('This task has no visible frozen content.',{exact:false}).waitFor();assert.equal(await page.locator('.saved-preview').count(),0);assert.equal(await page.locator('[data-action="task-reconcile"],[data-action="task-materialize"]').count(),0);assert.equal(requested.some(path=>path.includes('/articles/')),false);
  const accepted=await page.evaluate(async id=>{const modulePath='/studio/assets/dist/components.js';const {sanitizePreview}=await import(modulePath);const base='/api/cms/owners/owner/tasks/release/release-1/assets/';const html=sanitizePreview(`<img src="${base}${id}"><img src="/api/cms/assets/${id}"><img src="/api/cms/owners/other/tasks/release/release-1/assets/${id}"><img src="https://evil.invalid/${id}">`,{ownerId:'owner',kind:'release',id:'release-1'});const template=document.createElement('template');template.innerHTML=html;return [...template.content.querySelectorAll('img')].map(image=>image.getAttribute('src'));},asset);assert.deepEqual(accepted,[`/api/cms/owners/owner/tasks/release/release-1/assets/${asset}`]);
  await page.evaluate(()=>{location.hash='#/task/projection/projection-1';});await page.getByText('Translation-link tasks project current verified public relationships.',{exact:false}).waitFor();assert.equal(await page.locator('.saved-preview').count(),0);
+});
+
+test('Leaving a pending task confirmation aborts the dialog without a stale write',async t=>{
+ const browser=await launch(t),page=await browser.newPage();const writes:string[]=[];
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;const req=route.request(),path=new URL(req.url()).pathname;
+  if(path==='/api/cms/me')return route.fulfill({json:me});
+  if(path==='/api/cms/owners/owner/tasks/release/release-1')return route.fulfill({json:{...task('release','queued'),allowedActions:['cancel']}});
+  if(path==='/api/cms/owners/owner/tasks')return route.fulfill({json:{items:[],total:0,limit:20,offset:0}});
+  if(path.endsWith('/assets/'+asset))return image(route);
+  if(req.method()==='POST'){writes.push(path);return route.fulfill({json:{id:'release-1'}});}throw Error('Unexpected abort request '+path);
+ });
+ await page.goto('https://studio.invalid/studio#/task/release/release-1');await page.locator('[data-action="task-cancel"]').click();await page.getByRole('alertdialog').waitFor();assert.deepEqual(writes,[]);
+ await page.evaluate(()=>{location.hash='#/tasks';});await page.locator('#task-filters').waitFor();assert.equal(await page.locator('dialog').count(),0);assert.deepEqual(writes,[]);
 });

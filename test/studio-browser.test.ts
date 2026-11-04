@@ -1,3 +1,4 @@
+import {chooseStudioDialog} from './studio-dialog-helper.ts';
 import {selectStudioOption} from './studio-picker-helper.ts';
 // Isolated browser contracts: fixture responses only, no external content writes.
 import {test,type TestContext} from 'node:test';
@@ -43,7 +44,7 @@ test('a rejected workspace switch retains the displayed owner and unsaved editor
  const browser=await newBrowser(t),page=await browser.newPage();let otherReads=0;
  await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;if(path==='/api/cms/me')return route.fulfill({json:identity});if(path==='/api/cms/owners/owner-b/content-summary'){otherReads++;return route.fulfill({json:content(article('owner-b'))});}throw Error('Unexpected request '+path);});
  await page.goto('https://studio.invalid/studio#/new/en');await page.locator('#article-title').fill('Keep my unsaved title');
- assert.equal(await page.locator('#workspace-trigger').count(),1);page.once('dialog',dialog=>dialog.dismiss());await page.locator('#workspace-trigger').click();await page.locator('#workspace-listbox [data-value="owner-b"]').click();
+ assert.equal(await page.locator('#workspace-trigger').count(),1);await page.locator('#workspace-trigger').click();await page.locator('#workspace-listbox [data-value="owner-b"]').click();await chooseStudioDialog(page,'cancel');
  assert.equal(await page.locator('#workspace').inputValue(),'owner-a');assert.match(await page.locator('#workspace-trigger').innerText(),/Personal desk/);assert.equal(await page.locator('#article-title').inputValue(),'Keep my unsaved title');assert.equal(otherReads,0);assert.equal(await page.locator(':focus').getAttribute('id'),'workspace-trigger');
 });
 
@@ -106,4 +107,17 @@ test('Editor peer picker escapes clipped panels, fits narrow viewports and relea
  await page.locator('#translation-peer-trigger').press('End');await page.locator('#translation-peer-trigger').press('Escape');assert.equal(await page.locator('#translation-peer').inputValue(),'');
  await page.locator('.sidebar a[href="#/content"]').click();await page.locator('#article-language-trigger').waitFor();assert.equal(await page.locator('#translation-peer-listbox').count(),0);
  assert.equal(await page.locator('.studio-picker-menu').count(),await page.locator('#app select').count(),'one menu per current control; no abandoned portal menus');
+});
+
+test('Shared confirmation keeps unsaved workspace and route unchanged until an explicit choice, supports Escape and restores focus',async t=>{
+ const browser=await newBrowser(t),page=await browser.newPage({viewport:{width:390,height:844}});let ownerReads=0;
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;if(path==='/api/cms/me')return route.fulfill({json:identity});if(path==='/api/cms/owners/owner-b/content-summary'){ownerReads++;return route.fulfill({json:content(article('owner-b'))});}throw Error('Unexpected unsaved navigation '+path);});
+ await page.goto('https://studio.invalid/studio#/new/en');await page.locator('#article-title').fill('Keep this draft');
+ await selectStudioOption(page,'workspace','owner-b');const dialog=page.getByRole('alertdialog');await dialog.waitFor({timeout:3000});
+ assert.equal(await page.locator('#workspace').inputValue(),'owner-a');assert.equal(ownerReads,0);assert.equal(await page.locator(':focus').getAttribute('data-dialog-choice'),'cancel');
+ await page.keyboard.press('Tab');assert.equal(await page.locator(':focus').getAttribute('data-dialog-choice'),'confirm');await page.keyboard.press('Tab');assert.equal(await page.locator(':focus').getAttribute('data-dialog-choice'),'cancel');
+ await page.keyboard.press('Escape');await dialog.waitFor({state:'detached'});assert.equal(await page.locator('#article-title').inputValue(),'Keep this draft');assert.equal(await page.locator(':focus').getAttribute('id'),'workspace-trigger');
+ await page.locator('.sidebar a[href="#/content"]').click();await dialog.waitFor();assert.equal(new URL(page.url()).hash,'#/new/en');await dialog.locator('[data-dialog-choice=cancel]').click();assert.equal(new URL(page.url()).hash,'#/new/en');assert.equal(await page.locator('#article-title').inputValue(),'Keep this draft');
+ await selectStudioOption(page,'workspace','owner-b');await dialog.waitFor();await page.evaluate(()=>{location.hash='#/content';});await page.waitForURL(url=>url.hash==='#/new/en');await chooseStudioDialog(page);assert.equal(ownerReads,0,'an older confirmation cannot overwrite a newer navigation attempt');assert.equal(await page.locator('#article-title').inputValue(),'Keep this draft');
+ await selectStudioOption(page,'workspace','owner-b');await dialog.waitFor();const box=await dialog.boundingBox();assert.ok(box&&box.x>=0&&box.x+box.width<=390&&box.y>=0&&box.y+box.height<=844);await dialog.locator('[data-dialog-choice=confirm]').click();await page.getByRole('link',{name:'Team title',exact:true}).waitFor();assert.equal(ownerReads,1);assert.equal(await page.locator('#workspace').inputValue(),'owner-b');assert.equal(await page.locator('dialog').count(),0);
 });
