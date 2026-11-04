@@ -25,3 +25,9 @@ See [follow-up evidence](evidence/cms-b-dropdown-20261104/) for logs, source/bui
 这次仅修复前端控件；若需回滚，可撤销本次 UI 修改并重新构建 Studio，不涉及数据迁移。真实 NyxID 联调继续后置，PR 创建按用户要求暂缓，不合并、不部署。
 
 This is a frontend-control fix. Roll back by reverting its UI changes and rebuilding Studio; no data migration is involved. Real NyxID integration and PR creation remain deferred at the user's request; no merge or deployment is performed.
+
+## 提交身份 / Commit identity
+
+本轮 17 个历史提交的 Author 与 Committer 已统一为 `hzz780 <richard.huang@aelf.io>`。改写逐项校验了 tree、提交信息与时间完全一致；下拉修复提交也因父节点变化而更新 SHA。旧证据中的 SHA 保留其历史含义，可用 [新旧 SHA 对照](evidence/cms-b-dropdown-20261104/commit-identity-map.json) 找到等价提交。基础分支未改写，改写前完整 Git bundle 已在本地交付目录备份。
+
+Author and Committer for this round's seventeen historical commits are now `hzz780 <richard.huang@aelf.io>`. Trees, messages and timestamps were individually verified unchanged. The picker-fix commit also received a new SHA because its parent changed. Earlier evidence keeps its historical SHA references; use the [SHA map](evidence/cms-b-dropdown-20261104/commit-identity-map.json) to locate equivalent commits. The base branch was not rewritten, and a complete pre-rewrite Git bundle was backed up in the local delivery directory.

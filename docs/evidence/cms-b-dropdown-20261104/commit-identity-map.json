@@ -1,0 +1,146 @@
+{
+  "repository": "aelf-hzz780/chronoai-cms",
+  "branch": "codex/004-cms-b-integration",
+  "baseUnchanged": "ce4fb1a9bc3f5785aca141ea7e17f77bb0da006a",
+  "oldRemoteHead": "e07d25ecc52a359402317cbad9b0f3c1ed3fef05",
+  "oldLocalHead": "a021bdad3cbc69a964c1c21b6f696d1c33797f38",
+  "newHead": "492d79326df29d543832581e5b28d93696f6341d",
+  "authorAndCommitter": "hzz780 <richard.huang@aelf.io>",
+  "historicalIdentityChanges": 17,
+  "mappedCommits": 18,
+  "verifiedUnchanged": [
+    "tree",
+    "message",
+    "author date/timezone",
+    "committer date/timezone"
+  ],
+  "commits": [
+    {
+      "old": "5e038a0df96d578d8a5f4852340dcf55c4c08975",
+      "new": "378a3078deba3ca18802317ed8ef0bafaa9225ec",
+      "tree": "6fe5ce65cb6e1db132bb37346ad66246ef8ea8b6",
+      "subject": "docs: 📝 define CMS B integration contracts and acceptance scope",
+      "identityChanged": true
+    },
+    {
+      "old": "ce4203b75a5241184ca0fae07e6761738a266feb",
+      "new": "c6ba1105dfdd3901c334f90d1c9c1d460b567032",
+      "tree": "78c820a2b7b1b82c9d934d47026258e13da8bc1d",
+      "subject": "feat: ✨ implement CMS Studio foundation and task read contracts",
+      "identityChanged": true
+    },
+    {
+      "old": "2940be2da45eced9fda7010e4661a6fafe1c1de2",
+      "new": "8e6aff2f8c04579a7b5fc48297f99494e80ed5aa",
+      "tree": "5927a0274091c4cb56bb83c44b9972bd024d716c",
+      "subject": "test: ✅ verify bilingual Ghost theme rendering and rollback",
+      "identityChanged": true
+    },
+    {
+      "old": "b65c235c71071c938b119f829ce1002c7ff1a16c",
+      "new": "a01f59fbec328aa34c698d9cce75a93bf1341f97",
+      "tree": "34ef9e3f01d6835cfdc1f53a7f2ed71dbb23f591",
+      "subject": "test: ✅ validate CMS publishing and privacy on local Ghost",
+      "identityChanged": true
+    },
+    {
+      "old": "d761db7a028bb823ebb08348f117aa27d2824c7c",
+      "new": "73c991228ebdefe094751ab6edf928f045299f9e",
+      "tree": "4a9cbb0b28ba525e7b596836890be5311045db90",
+      "subject": "feat: 🔐 add verified member directory and connection setup",
+      "identityChanged": true
+    },
+    {
+      "old": "b8d1dafdcc43969244f5b3b836a9560e3d93bfc1",
+      "new": "33e4ddd630f42d773ee6a5cbb61505e4850146ee",
+      "tree": "f9bdcf1e3463e45ea2c7847abf2b890ac2b999a4",
+      "subject": "feat: ✨ connect Studio publication review and task center",
+      "identityChanged": true
+    },
+    {
+      "old": "109f1fd03c4ad1099be304eeb0ab596897f34543",
+      "new": "8939ddcf0670ae533183eeb031e16ec280e122e2",
+      "tree": "71060e085f276654b3363894426a60447c696ef3",
+      "subject": "test: ✅ verify frozen publication workflows through real CMS APIs",
+      "identityChanged": true
+    },
+    {
+      "old": "1745f44e34dc374c3d96d63410b2e7da97e91643",
+      "new": "7d778f403b4d727a4acda06959b0561917fefb96",
+      "tree": "31e407dbbc60584db172cafd9411ea521afda0a6",
+      "subject": "feat(studio): ✨ connect analytics and workspace governance",
+      "identityChanged": true
+    },
+    {
+      "old": "0d83b7881e0af65da3bdb052ef50a784c09bdb6e",
+      "new": "020d77fa37ef0e2800703e86d1ae49879afe54e2",
+      "tree": "b1d8963a6de49c1f4a68cd648c2eea1338f8ee77",
+      "subject": "feat(distribution): ✨ persist deferred plans and historical follow-up",
+      "identityChanged": true
+    },
+    {
+      "old": "0a7c931efa42aab70823f2165ae74398ceb23e18",
+      "new": "f4ac4c6a36e4f5bcdbebdb757fab8fb3eea80563",
+      "tree": "be6c0a33f71914f2c97e7cb23a631809ab082b95",
+      "subject": "test(studio): ✅ verify governance against real CMS sessions",
+      "identityChanged": true
+    },
+    {
+      "old": "879cc9b5a259a7b95a77c3b9465544d9d664bdee",
+      "new": "c8a678343bba05c2aad66c654439ad258c76dc64",
+      "tree": "5656a3d9aeb382e08a5a9d8e3f4348fad1f52a05",
+      "subject": "test(integration): ✅ prove legacy parity and prepare isolated workflow acceptance",
+      "identityChanged": true
+    },
+    {
+      "old": "6ee1a71a5d571921b275a11d47e543167647c6d2",
+      "new": "ad6eaeaa8132b52a279a9cd2f7195f50bfd35cd9",
+      "tree": "a6d7b94beadbdb47a8a26ba5ad2913499b301e4e",
+      "subject": "feat(api): ✨ complete CMS contracts and reproducible delivery manifests",
+      "identityChanged": true
+    },
+    {
+      "old": "258bf470f764832f42d7dc665242c2331c7c4c7b",
+      "new": "df164b1f71c339df89f6f6c64a5bdcf8a9cbbba0",
+      "tree": "b648523198b3492dbcd0cf73388e03ff244d2da9",
+      "subject": "feat(studio): ✨ connect exact accounts and distribution workflows",
+      "identityChanged": true
+    },
+    {
+      "old": "fecbbc1948909f68b6f4e8a098762f10432d8541",
+      "new": "c7c40ff51d905a99af64b56b49597fc760387b13",
+      "tree": "7c7021d6ece36df6131ad7eb7ae280da8a5a36b3",
+      "subject": "fix(distribution): 🐛 reject rebound accounts for historical copies",
+      "identityChanged": true
+    },
+    {
+      "old": "9dddfba506c9f83e6b90840146a3f0a0a9eb384e",
+      "new": "26af41a46a974b564719d0579e2ce6c089f8d8b5",
+      "tree": "3530594bf5ce858ad8b8bd16a91bc635b37ba913",
+      "subject": "test(integration): ✅ freeze full Studio acceptance and contract handoff",
+      "identityChanged": true
+    },
+    {
+      "old": "7ee88025d296ac00a912c6e088e7d7d2f6a3fd59",
+      "new": "6e02ac54d4ad8f1b7aee48218dc064f2466f982b",
+      "tree": "9db746e4ff7f4eecef5fa80b877d08a634e1aba3",
+      "subject": "fix(test): 🐛 label the buffered local Studio preview",
+      "identityChanged": true
+    },
+    {
+      "old": "e07d25ecc52a359402317cbad9b0f3c1ed3fef05",
+      "new": "207d1b5b33c90d67e7bdd679493e1ae7b3ce488b",
+      "tree": "ce6342aa618d74fa6713ae2f6ffca0bbb4e36bb9",
+      "subject": "docs(cms): 📝 record full local acceptance and deferred live gates",
+      "identityChanged": true
+    },
+    {
+      "old": "a021bdad3cbc69a964c1c21b6f696d1c33797f38",
+      "new": "492d79326df29d543832581e5b28d93696f6341d",
+      "tree": "6108e4673c1922123b5df19e469d6c191cfe1b38",
+      "subject": "fix(studio): 🐛 align workspace and language pickers with B design",
+      "identityChanged": false
+    }
+  ],
+  "note": "Seventeen historical identities corrected; the eighteenth commit already had the intended identity and changed only because its parent was remapped. Earlier evidence retains its original SHA references. Trees, messages and timestamps were verified unchanged."
+}
