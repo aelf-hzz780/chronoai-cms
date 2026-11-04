@@ -77,6 +77,30 @@ test('Exact approval is recovered after an unknown request, attaches directly in
  await page.evaluate(()=>{location.hash='#/distribution/article';});await selectStudioOption(page,'distribution-action','remove');await selectStudioOption(page,'distribution-copy','old');await page.locator('.studio-distribution-preview').getByText('Old exact body',{exact:true}).waitFor();assert.equal(await page.locator('#distribution-copy-trigger').evaluate(e=>document.activeElement===e),true,'focus returns after a temporarily disabled async redraw');assert.equal(await page.locator('#distribution-connection').inputValue(),'c-old');assert.equal(await page.locator('#distribution-connection').isDisabled(),true);await page.locator('#distribution-rights').check();await page.locator('[data-action="dist-confirm"]').click();await chooseStudioDialog(page,'confirm');await page.getByText('The result is unknown.',{exact:false}).waitFor();await page.locator('[data-action="dist-confirm"]').click();await chooseStudioDialog(page,'confirm');await page.waitForURL(url=>url.hash==='#/task/delivery/remove');assert.equal(removals,1);assert.equal(writes.filter(write=>write.path==='/api/cms/releases/r0/deliveries').length,2);
 });
 
+for(const kind of ['personal','organization'] as const)test(`Exact ${kind} approval identifies the NyxID approver in both languages and never auto-authorizes`,async t=>{
+ const browser=await launch(t),page=await browser.newPage();const workspace={...owner,id:kind,kind,role:kind==='personal'?'owner':'publisher'};let reference:string|null=null;const writes:string[]=[];
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;const request=route.request(),path=new URL(request.url()).pathname;
+  if(path==='/api/cms/me')return route.fulfill({json:{...me,workspaces:[workspace]}});
+  if(path==='/api/cms/targets')return route.fulfill({json:targets});
+  if(path===`/api/cms/owners/${kind}/connections`)return route.fulfill({json:connections});
+  if(path==='/api/cms/articles/article/deliveries')return route.fulfill({json:[{...row('exact','dev','r1','approval_needed'),owner_id:kind,approval_ref:reference}]});
+  if(path===`/api/cms/owners/${kind}/tasks/delivery/exact`)return route.fulfill({json:{...task('delivery','exact','approval_needed','r1','dev'),ownerId:kind,action:'create',allowedActions:['request-approval','authorize','cancel']}});
+  if(path===`/api/cms/owners/${kind}/tasks/release/r1`)return route.fulfill({json:{...task('release','r1','published'),ownerId:kind}});
+  if(request.method()==='POST'){writes.push(path);assert.equal(path,'/api/cms/deliveries/exact/request-approval');reference='exact-reference';return route.fulfill({status:201,json:{reference,state:'pending'}});}
+  throw Error('Unexpected exact approval request '+path);
+ });
+ await page.goto('https://studio.invalid/studio#/task/delivery/exact');await page.locator('[data-action="delivery-request-approval"]').waitFor();
+ const english=kind==='personal'?'Exact personal owner approval in NyxID':'Exact organization Admin approval in NyxID';
+ const chinese=kind==='personal'?'NyxID 个人 owner 精确执行批准':'NyxID 组织 Admin 精确执行批准';
+ assert.ok((await page.locator('h2').allTextContents()).includes(english));
+ assert.equal(await page.locator('[data-action="delivery-authorize"]').isDisabled(),true);
+ await selectStudioOption(page,'locale','zh');assert.ok((await page.locator('h2').allTextContents()).includes(chinese));
+ await page.locator('[data-action="delivery-request-approval"]').click();await page.waitForFunction(()=>document.querySelector<HTMLInputElement>('#approval-reference')?.value==='exact-reference');
+ assert.equal(await page.locator('#approval-reference').inputValue(),'exact-reference');assert.equal(await page.locator('[data-action="delivery-request-approval"]').isDisabled(),true);
+ assert.equal(await page.locator('[data-action="delivery-authorize"]').isDisabled(),true);assert.deepEqual(writes,['/api/cms/deliveries/exact/request-approval']);
+ await page.locator('#approval-rights').check();assert.equal(await page.locator('[data-action="delivery-authorize"]').isDisabled(),false);assert.equal(writes.length,1,'checking rights never approves, attaches or executes the provider request');
+});
+
 test('Shared pickers disable new manual channels with bilingual reasons while historical plans remain readable and cancellable',async t=>{
  const browser=await launch(t),page=await browser.newPage({viewport:{width:390,height:844}});const writes:string[]=[];
  const allTargets=[...targets,{name:'hashnode',automatic:true,automaticActions:['create']},{name:'hackernoon',automatic:false,automaticActions:[]}];

@@ -81,12 +81,20 @@ service签名仍核对issuer、audience、相同sub、nyx_service_id、delegated
 
 Hashnode 填写 `target:hashnode`、官方 `https://gql-beta.hashnode.com`、publicationId、accountId、pro=true 和真实可发布权限；仅启用组织 publication。Medium/HackerNoon 保留辅助流程，不伪造自动发文能力。服务下线用 feature flag，已知副本保留人工跟进。
 
-## 组织外部写入批准
+## 外部写入精确批准
+
+个人连接默认沿用 legacy proxy。需要 NyxID 可关联的精确执行批准时，仅在服务端对应 connection binding 增加 `"executionApproval":"exact"`；客户端不能指定或覆盖此字段，未知值会拒绝加载。该模式进入 connection fingerprint 和不可变 delivery payload；启用或关闭模式后，旧确认不能切换执行路径，需取消未发送任务并重新确认。组织外部写入始终要求精确 Admin 批准，不受此可选字段影响。
+
+Personal connections retain the legacy proxy path by default. An operator can opt a specific connection into NyxID exact execution approval with `"executionApproval":"exact"` in its server-owned binding. Clients cannot set it, and unknown values are rejected. The mode is frozen in the connection fingerprint and immutable delivery payload; changing it requires cancellation and fresh confirmation of unsent work. Organization writes continue to require exact Admin approval.
 
 1. 确认精确 release、全文／摘要、图片、目标 connection、create/update/remove，冻结 delivery payload。
 2. 请求 `/deliveries/:id/request-approval`。人类 token 从 `/api/v1/mcp/config` discovery 读取契约；delegated token 从 `/api/v1/delegation/operation-catalog` 读取。建立 native `/api/v1/approvals/exact-service/requests`。
-3. NyxID 当前 Admin 在 NyxID 核对实际 request、operation digest、catalog/generation、幂等 key 后批准。通用 grant 不替代 PerRequest exact approval；不满足实例策略会明确失败。
+3. 个人任务由当前 owner、组织任务由当前 Admin，在 NyxID 核对实际 request、operation digest、catalog/generation、幂等 key 后批准。这是执行批准，不是内容编辑二审。通用 grant 不替代 PerRequest exact approval；不满足实例策略会明确失败。
 4. 关联引用 `/deliveries/:id/authorize`。Worker 重验当前角色、原文公开状态、connection fingerprint、批准和请求 digest。
 5. native redeem **本身执行写入**，读取并验证 receipt response_digest；不再追加普通 proxy 写入。中断或未知结果进入 uncertain，后续只读对账。
+
+非 delegated 的个人 opt-in 连接可使用 catalog 中的 `nyx_generic_proxy_v1`：arguments 为 `{method,path,body}`，raw query 原样保留在 path，正文不展开到顶层；operation digest 覆盖此封装。组织或 delegated 调用仍必须使用声明的 operation，不能通过 generic 回退。create/status/redeem 必须保持同一 OAuth client 和 owner；generation 取 NyxID create 响应。过期或撤权的已保存 actor 不会被新登录静默替换；未发送任务应取消后用新登录重新确认。
+
+A non-delegated personal opt-in connection can use the catalog's `nyx_generic_proxy_v1` endpoint with `{method,path,body}` arguments; a raw query remains in `path`, and the operation digest covers the complete envelope. Organization and delegated callers still require a declared operation. Keep the OAuth client and owner consistent across create, status and redeem, and retain the generation returned by create. A fresh login never silently replaces an expired or revoked saved actor; cancel unsent work and confirm it again.
 
 Live 必须保存注册导出（脱敏）、Trace ID、调用角色、scope、精确批准与 receipt 关联、四 Ghost/外部页面证据。不能保存 token、cookie、provider secret 或完整授权头。缺少目标实例、账号、订阅或明确发文授权时，保持 BLOCKED。

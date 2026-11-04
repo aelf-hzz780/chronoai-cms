@@ -19,7 +19,7 @@ export interface Connections {
   prepareApproval?(actor:Actor,owner:any,connectionId:string,target:string,request:RemoteRequest,deliveryId:string,digest:string,action:string):Promise<{reference:string;state:string;expiresAt:string}>;
   listConnections?(actor:Actor,owner:any):Promise<any[]>;
 }
-import {connectionFingerprint} from './connection-proof.ts';
+import {connectionFingerprint,requiresExactApproval} from './connection-proof.ts';
 export {connectionFingerprint} from './connection-proof.ts';
 export class DistributionService {
   originals: PublishingService; connections: Connections; targets: TargetRegistry;
@@ -78,12 +78,13 @@ export class DistributionService {
       const asset=this.store.get('SELECT a.*,p.public_path FROM assets a JOIN asset_publications p ON p.asset_id=a.id WHERE a.id=? AND a.article_id=? AND p.release_id=?',reference.slice(6),original.articleId,release.id);
       requireValue(asset,409,'IMAGE_NOT_PUBLIC','Selected image is not part of the verified original');const filename=String(asset.public_path).split('/').at(-1);markdown=markdown.replaceAll(reference,`${original.site.url}/content/images/chrono/${filename}`);
     }
-    const payload:CopyPayload={deliveryId:id,ownerKind:owner.kind,title:original.title,markdown,sourceUrl:release.url,sourceDigest:original.digest,creditedAuthor:original.creditedAuthor,language:original.language,action:input.action as string,format:input.format as string,remoteId:copy?.remote_id??undefined,remoteUrl:copy?.url??undefined,accountId:connection.accountId,connectionFingerprint:connectionFingerprint(connection)};
+    const payload:CopyPayload={deliveryId:id,ownerKind:owner.kind,title:original.title,markdown,sourceUrl:release.url,sourceDigest:original.digest,creditedAuthor:original.creditedAuthor,language:original.language,action:input.action as string,format:input.format as string,remoteId:copy?.remote_id??undefined,remoteUrl:copy?.url??undefined,accountId:connection.accountId,connectionFingerprint:connectionFingerprint(connection),executionApproval:connection.executionApproval};
     const contentDigest=digest(JSON.stringify({...payload,connectionId,target:target.name,accountId:connection.accountId}));
-    const state=connectionLost||this.targets.disabled.has(target.name)||!target.automatic||!target.automaticActions?.includes(String(input.action))?'manual_action_needed':owner.kind==='organization'?'approval_needed':'queued';
+    const state=connectionLost||this.targets.disabled.has(target.name)||!target.automatic||!target.automaticActions?.includes(String(input.action))?'manual_action_needed':requiresExactApproval(owner.kind,payload)?'approval_needed':'queued';
     return {original,copy,connection,connectionLost,payload,contentDigest,state};
   }
   async request(actor: Actor, releaseId: string, input: Record<string, unknown>, trace: string) {
+    requireValue(!('executionApproval' in input),400,'INVALID_INPUT','Execution approval mode is operator-owned connection configuration');
     const release = this.store.get('SELECT * FROM releases WHERE id=?', releaseId); requireValue(release, 404, 'NOT_FOUND', 'Original not found');
     const owner = await this.originals.content.policy.publish(actor, release.owner_id);
     assertCommandRequest(actor,'POST',`/api/service/releases/${releaseId}/deliveries`);
@@ -156,9 +157,11 @@ export class DistributionService {
     this.store.transaction(()=>{const current=this.store.get('SELECT * FROM distribution_plans WHERE id=?',id)!;requireValue(current.state!=='confirmed',409,'PLAN_CONSUMED','A confirmed plan cannot be cancelled');this.store.run("UPDATE distribution_plans SET state='cancelled',updated_at=? WHERE id=? AND state='scheduled'",new Date().toISOString(),id);this.store.audit(actor.subject,row.owner_id,'distribution-plan.cancel',id,trace);});return this.planView(this.store.get('SELECT * FROM distribution_plans WHERE id=?',id)!);
   }
   async authorize(actor: Actor, id: string, approvalRef: string, trace: string) {
-    const { delivery, owner } = await this.context(actor, id);
+    const { delivery, owner, payload } = await this.context(actor, id);
     assertCommandRequest(actor,'POST',`/api/service/deliveries/${id}/authorize`);
-    requireValue(delivery.state === 'approval_needed', 409, 'DELIVERY_STATE', 'Delivery is not awaiting exact authorization');
+    requireValue(delivery.state === 'approval_needed'&&requiresExactApproval(owner.kind,payload), 409, 'DELIVERY_STATE', 'Delivery is not awaiting exact authorization');
+    const connection=await this.connections.connection(actor,owner,delivery.connection_id,delivery.target);
+    requireValue(connectionFingerprint(connection)===payload.connectionFingerprint,409,'CONNECTION_CHANGED','Connection changed; confirm a new delivery');
     await this.connections.approval(actor, owner, text(approvalRef, 'approvalRef'), delivery.digest, delivery.connection_id, delivery.action);
     await this.originals.content.policy.publish(actor,delivery.owner_id);
     this.store.transaction(() => {
@@ -172,7 +175,7 @@ export class DistributionService {
   }
   async requestApproval(actor:Actor,id:string,trace:string) {
     const {delivery,owner,payload}=await this.context(actor,id);
-    requireValue(delivery.state==='approval_needed' && owner.kind==='organization',409,'DELIVERY_STATE','Exact organization approval is not pending');
+    requireValue(delivery.state==='approval_needed' && requiresExactApproval(owner.kind,payload),409,'DELIVERY_STATE','Exact execution approval is not pending');
     if(delivery.approval_ref) return {reference:delivery.approval_ref,state:'approval_needed',expiresAt:null};
     const target=this.targets.get(delivery.target),connection=await this.connections.connection(actor,owner,delivery.connection_id,delivery.target);
     requireValue(target.request && this.connections.prepareApproval,503,'APPROVAL_CONFIGURATION','Native exact authorization is not configured');
@@ -332,8 +335,8 @@ export class DeliveryWorker {
             if (originalInput) originalInput.guard = () => this.queue.guard(lease);
             requireValue(release && originalInput && await this.original.verify(originalInput, { remoteId: release.remote_id, url: release.url }), 409, 'ORIGINAL_NOT_LIVE', 'Original changed or is not publicly verified');
           }
-          if (owner.kind === 'organization') {
-            requireValue(delivery.approval_ref, 409, 'APPROVAL_NEEDED', 'Exact organization Admin authorization required');
+          if (requiresExactApproval(owner.kind,payload)) {
+            requireValue(delivery.approval_ref, 409, 'APPROVAL_NEEDED', 'Exact NyxID execution authorization required');
             await this.service.connections.approval(actor, owner, delivery.approval_ref, delivery.digest, delivery.connection_id, delivery.action);
           }
           const freshConnection = await this.service.connections.connection(actor,owner,delivery.connection_id,delivery.target);

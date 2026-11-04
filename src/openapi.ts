@@ -106,7 +106,7 @@ export function openApi(publicUrl:string) {
   route('post','/distribution-plans/{id}/cancel','cancelDistributionPlan','Cancel an unconsumed local plan without provider writes or cancellation of an already confirmed delivery.',object({}),{},{schema:distributionPlan});
   route('get','/articles/{id}/deliveries','listDistribution','Read per-target status, URLs, source verification and history',undefined,{},{schema:resultArray});
   route('get','/deliveries/{id}/package','getAssistedPackage','Retrieve content/images/source attribution and submission instructions');
-  route('post','/deliveries/{id}/request-approval','requestExactApproval','Create native NyxID exact request for Admin authorization',object({}));
+  route('post','/deliveries/{id}/request-approval','requestExactApproval','Create native NyxID exact execution request for the personal owner on an opted-in connection, or the organization Admin',object({}));
   route('post','/deliveries/{id}/authorize','attachExactApproval','Check and queue exact approved content/action/connection',object({approvalRef:id}));
   for(const action of ['cancel','reconcile'])route('post',`/deliveries/{id}/${action}`,`${action}Distribution`,`${action} a delivery; uncertain recovery never re-sends`,object({}));
   route('post','/deliveries/{id}/report','reportAssistedSubmission','Record manual follow-up; published requires public verification, removed requires a confirmed removal action and the exact known copy URL returning 404/410. Optional note is private commentary and never publication proof.',object({state:{type:'string',enum:['submitted','reviewing','rejected','manual_action_needed','published','removed']},url:{type:['string','null']},note:{type:'string',maxLength:2000}},['state']));

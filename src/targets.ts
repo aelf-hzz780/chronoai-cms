@@ -7,7 +7,7 @@ export type Send = (request: RemoteRequest) => Promise<any>;
 export interface CopyPayload {
   deliveryId: string; ownerKind: string; title: string; markdown: string; sourceUrl: string; sourceDigest: string;
   creditedAuthor: string; language: string; format: string; action: string; remoteId?: string; remoteUrl?: string;
-  accountId: string; connectionFingerprint: string;
+  accountId: string; connectionFingerprint: string; executionApproval?:'exact';
 }
 export interface CopyResult { state: 'published' | 'removed' | 'submitted'; remoteId: string; url: string; sourceVerified: boolean; }
 export interface Engagement {views:number|null;reactions:number|null;comments:number|null;source:string;}

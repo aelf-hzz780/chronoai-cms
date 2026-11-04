@@ -53,9 +53,10 @@ export class TaskReadService {
     FROM distribution_plans p JOIN releases r ON r.id=p.release_id AND r.owner_id=p.owner_id JOIN articles a ON a.id=r.article_id AND a.owner_id=p.owner_id
       JOIN revisions v ON v.id=p.revision_id AND v.article_id=a.id WHERE a.owner_id=:owner
   ), classified AS (
-    SELECT t.*,p.not_before_at AS plan_not_before,p.copy_id AS plan_copy_id,p.delivery_id AS plan_delivery_id,p.format AS plan_format,CASE WHEN t.creator=:subject OR :publisher=1 OR public.revision_id IS NOT NULL THEN 1 ELSE 0 END AS readable
+    SELECT t.*,p.not_before_at AS plan_not_before,p.copy_id AS plan_copy_id,p.delivery_id AS plan_delivery_id,p.format AS plan_format,CASE WHEN json_valid(delivery_payload.payload_json) THEN json_extract(delivery_payload.payload_json,'$.executionApproval') END AS execution_approval,CASE WHEN t.creator=:subject OR :publisher=1 OR public.revision_id IS NOT NULL THEN 1 ELSE 0 END AS readable
     FROM tasks t LEFT JOIN public_revisions public ON public.article_id=t.article_id AND public.revision_id=t.revision_id
       LEFT JOIN distribution_plans p ON t.kind='plan' AND p.id=t.id
+      LEFT JOIN delivery_payloads delivery_payload ON t.kind='delivery' AND delivery_payload.delivery_id=t.id
   )`;}
   private params(actor:Actor,access:WorkspaceAccess){return {owner:access.owner.id as string,subject:actor.subject,publisher:access.publishingRole?1:0,now:new Date().toISOString()};}
   private allowedActions(actor:Actor,access:WorkspaceAccess,row:Row){
@@ -70,7 +71,7 @@ export class TaskReadService {
     }else if(row.kind==='delivery'){
       if(['queued','approval_needed','manual_action_needed'].includes(row.state)&&row.job_state!=='running')actions.push('cancel');
       if(row.state==='uncertain'&&row.job_state&&row.job_state!=='running')actions.push('reconcile');
-      if(row.state==='approval_needed'&&access.owner.kind==='organization')actions.push('request-approval','authorize');
+      if(row.state==='approval_needed'&&(access.owner.kind==='organization'||row.execution_approval==='exact'))actions.push('request-approval','authorize');
     }else if(row.kind==='plan'){
       if(['scheduled','due'].includes(row.state))actions.push('cancel');if(row.state==='due')actions.push('confirm');
     }

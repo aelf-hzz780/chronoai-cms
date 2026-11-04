@@ -6,7 +6,7 @@ import type { RemoteRequest } from './targets.ts';
 import { remoteJson, RemoteError } from './http-client.ts';
 import { requireValue } from './errors.ts';
 import { digest } from './content.ts';
-import {connectionFingerprint} from './connection-proof.ts';
+import {connectionFingerprint,requiresExactApproval} from './connection-proof.ts';
 import {CallerAuthorization} from './caller-authorization.ts';
 import {validateCommandAuthority} from './command-authority.ts';
 
@@ -15,6 +15,7 @@ export interface ConnectionBinding {
   id:string; target:string; owner:Owner; slug:string; remoteBaseUrl:string;
   accountId:string; organizationId?:string; publicationId?:string;
   label?:string;
+  executionApproval?:'exact';
   pro?:boolean; canPublish?:boolean; canUpdate?:boolean; canRemove?:boolean;
 }
 export function canonicalJson(value:any):string {
@@ -107,7 +108,7 @@ export class NyxAuthority implements Authority {
   async bindings():Promise<ConnectionBinding[]> {
     requireValue(this.config.connectionsFile,409,'CONNECTION_CONFIGURATION_REQUIRED','Operator must bind exact NyxID connections to owners and destinations');
     const result=JSON.parse(await readFile(this.config.connectionsFile,'utf8'));
-    requireValue(Array.isArray(result) && result.every(b=>b && typeof b.id==='string' && b.owner && ['personal','organization'].includes(b.owner.kind) && typeof b.accountId==='string' && typeof b.slug==='string' && /^[a-zA-Z0-9_-]+$/.test(b.slug) && typeof b.remoteBaseUrl==='string') && new Set(result.map(b=>b.id)).size===result.length,500,'CONNECTION_CONFIGURATION','Invalid or ambiguous operator connection bindings');
+    requireValue(Array.isArray(result) && result.every(b=>b && typeof b.id==='string' && b.owner && ['personal','organization'].includes(b.owner.kind) && typeof b.accountId==='string' && typeof b.slug==='string' && /^[a-zA-Z0-9_-]+$/.test(b.slug) && typeof b.remoteBaseUrl==='string' && (b.executionApproval===undefined||b.executionApproval==='exact')) && new Set(result.map(b=>b.id)).size===result.length,500,'CONNECTION_CONFIGURATION','Invalid or ambiguous operator connection bindings');
     return result;
   }
   async connection(actor:Actor,owner:Owner,connectionId:string,target:string) {
@@ -134,29 +135,37 @@ export class NyxAuthority implements Authority {
     requireValue(base.protocol==='https:' && url.origin===base.origin && !url.username && !url.password && !url.hash,403,'DESTINATION_ROUTE','Request must stay on the configured destination');
     const prefix=base.pathname.replace(/\/$/,'');
     requireValue(url.pathname===prefix || url.pathname.startsWith(`${prefix}/`),403,'DESTINATION_ROUTE','Request is outside the connection base path');
+    requireValue(!url.searchParams.has('_nyxid_via'),403,'DESTINATION_ROUTE','Connection selector is server-owned');
     return `${url.pathname.slice(prefix.length)||'/'}${url.search}`;
   }
   async prepareApproval(actor:Actor,owner:Owner,id:string,target:string,request:RemoteRequest,deliveryId:string,contentDigest:string,action:string) {
-    requireValue(this.store && owner.kind==='organization',409,'APPROVAL_CONFIGURATION','Persistent exact approval storage required');
+    requireValue(this.store,409,'APPROVAL_CONFIGURATION','Persistent exact approval storage required');
     const connection=await this.connection(actor,owner,id,target),path=this.path(connection,request);
+    requireValue(requiresExactApproval(owner.kind,connection),409,'APPROVAL_CONFIGURATION','This personal connection has not enabled exact execution approval');
     const delegated=tokenClaims(actor).delegated===true;
     const catalog=await this.call(actor,delegated?'/api/v1/delegation/operation-catalog':'/api/v1/mcp/config');
     const service=catalog.services?.find((s:any)=>(delegated?s.user_service_id:s.service_id)===id && (delegated||s.is_user_service===true));
-    requireValue(service && !service.is_generic_proxy,409,'EXACT_OPERATION_REQUIRED','NyxID must publish a declared destination operation');
-    const matches=(delegated?service.operations:service.endpoints).map((operation:any)=>({operation,args:exactArguments(operation,path,request)})).filter((o:any)=>o.args!==null);
+    const personalGeneric=owner.kind==='personal'&&connection.executionApproval==='exact'&&!delegated&&service?.is_generic_proxy===true;
+    requireValue(service && (!service.is_generic_proxy||personalGeneric),409,'EXACT_OPERATION_REQUIRED','Organization and delegated callers require a declared NyxID destination operation');
+    const operations=delegated?service.operations:service.endpoints;
+    requireValue(Array.isArray(operations),502,'NYXID_CONTRACT','Invalid destination operation catalog');
+    const matches=operations.map((operation:any)=>({operation,args:personalGeneric
+      ? operation.endpoint_id==='nyx_generic_proxy_v1'?{method:request.method,path,...(request.body===undefined?{}:{body:request.body})}:null
+      : exactArguments(operation,path,request)})).filter((o:any)=>o.args!==null);
     requireValue(matches.length===1,409,'EXACT_OPERATION_REQUIRED','Destination operation is absent or ambiguous in the current NyxID catalog');
     const {operation,args}=matches[0],contract=operation.endpoint_contract_digest??endpointDigest(operation);
-    const input={user_service_id:id,endpoint_id:operation.endpoint_id,catalog_digest:catalog.catalog_digest,...(delegated?{exact_view_digest:catalog.exact_view_digest}:{}),endpoint_contract_digest:contract,operation_digest:operationDigest(id,operation.endpoint_id,contract,args),operation_id:operation.endpoint_id,...(operation.operation_generation?{operation_generation:operation.operation_generation}:{}),idempotency_key:deliveryId,arguments:args};
+    const input={user_service_id:id,endpoint_id:operation.endpoint_id,catalog_digest:catalog.catalog_digest,...(delegated?{exact_view_digest:catalog.exact_view_digest}:{}),endpoint_contract_digest:contract,operation_digest:operationDigest(id,operation.endpoint_id,contract,args),operation_id:operation.endpoint_id,...(operation.operation_generation!==undefined?{operation_generation:operation.operation_generation}:{}),idempotency_key:deliveryId,arguments:args};
     const result=await this.call(actor,'/api/v1/approvals/exact-service/requests','POST',input);
-    requireValue(result.user_service_id===id && result.operation_digest===input.operation_digest && result.idempotency_key===deliveryId && result.state==='pending' && typeof result.request_id==='string',502,'NYXID_CONTRACT','Exact approval creation response does not match the confirmed request');
+    requireValue(['user_service_id','endpoint_id','catalog_digest','endpoint_contract_digest','operation_digest','operation_id','idempotency_key'].every(key=>result[key]===input[key as keyof typeof input]) && (!delegated||result.exact_view_digest===input.exact_view_digest) && Number.isSafeInteger(result.operation_generation) && result.operation_generation>=0 && (input.operation_generation===undefined||result.operation_generation===input.operation_generation) && result.state==='pending' && typeof result.request_id==='string' && result.request_id.length>0 && Number.isFinite(Date.parse(result.expires_at)),502,'NYXID_CONTRACT','Exact approval creation response does not match the confirmed request');
     this.store.run('INSERT INTO nyx_approvals VALUES (?,?,?,?,?,?,?) ON CONFLICT(reference) DO NOTHING',result.request_id,id,contentDigest,action,canonicalJson(owner),JSON.stringify(result),digest(canonicalJson(request)));
     return {reference:result.request_id,state:result.state,expiresAt:result.expires_at};
   }
   async approval(actor:Actor,owner:Owner,reference:string,contentDigest:string,connectionId:string,action:string) {
+    requireValue(actor.issuer===owner.issuer && (owner.kind!=='personal'||actor.subject===owner.subject),403,'CONNECTION_MISMATCH','Exact owner approval required');
     const binding=this.store?.get('SELECT * FROM nyx_approvals WHERE reference=?',reference);
     requireValue(binding && binding.connection_id===connectionId && binding.content_digest===contentDigest && binding.action===action && binding.owner_json===canonicalJson(owner),409,'APPROVAL_NEEDED','A NyxID exact request bound to this content, destination and action is required');
     const fence=JSON.parse(binding.fence_json),result=await this.call(actor,`/api/v1/approvals/exact-service/requests/${encodeURIComponent(reference)}/status`);
-    requireValue(result.user_service_id===connectionId && ['endpoint_id','operation_digest','operation_id','operation_generation','idempotency_key','catalog_digest','endpoint_contract_digest','exact_view_digest'].every(key=>result[key]===fence[key]) && ['approved','redeemed'].includes(result.state) && (result.state==='redeemed'||Date.parse(result.expires_at)>Date.now()),409,'APPROVAL_NEEDED','NyxID exact Admin authorization is pending, expired, revoked or drifted');
+    requireValue(result.request_id===reference && result.user_service_id===connectionId && ['endpoint_id','operation_digest','operation_id','operation_generation','idempotency_key','catalog_digest','endpoint_contract_digest','exact_view_digest'].every(key=>result[key]===fence[key]) && ['approved','redeemed'].includes(result.state) && (result.state==='redeemed'||Date.parse(result.expires_at)>Date.now()),409,'APPROVAL_NEEDED','NyxID exact execution authorization is pending, expired, revoked or drifted');
     return result;
   }
   async execute(actor:Actor,input:Record<string,any>) {
@@ -170,7 +179,7 @@ export class NyxAuthority implements Authority {
       }
       guard();
     };
-    if(input.owner.kind==='organization' && !input.readOnly) {
+    if(requiresExactApproval(input.owner.kind,connection) && !input.readOnly) {
       const status=await this.approval(actor,input.owner,input.approvalRef,input.digest,input.connectionId,input.action);
       const binding=this.store!.get('SELECT * FROM nyx_approvals WHERE reference=?',input.approvalRef)!;
       requireValue(binding.request_digest===digest(canonicalJson(request)),409,'APPROVAL_NEEDED','Exact approved request differs from the outgoing content');
@@ -188,7 +197,7 @@ export class NyxAuthority implements Authority {
       return {accountId:connection.accountId,status:receipt.http_status,body};
     }
     const query=new URLSearchParams(path.split('?')[1]??'');
-    requireValue(!query.has('_nyxid_via'),403,'DESTINATION_ROUTE','Connection selector is server-owned');query.set('_nyxid_via',connection.id);
+    query.set('_nyxid_via',connection.id);
     const suffix=path.split('?')[0].replace(/^\//,'');
     const route=`/api/v1/proxy/s/${encodeURIComponent(connection.slug)}${suffix?`/${suffix}`:''}?${query}`;
     await beforeDispatch();
