@@ -37,6 +37,8 @@ node --env-file=/etc/chronoai/platform.env scripts/run-delivery-once.ts --delive
 
 个人 NyxID proxy 的每次请求审批仍在 NyxID 完成。当前远端请求超时为 12 秒；若审批等待或远端响应中断使任务成为 `uncertain`，先检查 NyxID 审批与远端结果，再由有权用户通过 CMS 的 Reconcile 请求只读对账。单次命令不能替代具体公开发布授权，也不能将仅本机可访问的 Ghost 原文作为公网可达证据。
 
+本地 Nyx legacy proxy 的待批准列表没有正文摘要或发送端可预先绑定的 request ID；不要仅凭同账号、slug、method/path 和时间窗自动批准新出现的请求，这不能排除同账号并发写入。账号持有人处理实际 Nyx 批准，或先完成受支持的精确请求关联，再执行受控外发。不能把组织 exact-service receipt 的保证套用于个人 legacy proxy。
+
 ## 图片私有 staging 配置
 
 含图片的发布必须配置 `GHOST_MEDIA_STAGING_JSON`：exact site ID 到 **Worker 视角绝对私有目录** 的 JSON map。没有默认目录；缺配置／未预置目录／权限不符在真实 Ghost publish 前报 `MEDIA_STAGING_CONFIGURATION` 或 `MEDIA_STAGING_PERMISSIONS`，只读复核不依赖该写入配置。所有公开目标也需预创建。每个 staging 根由 Worker Unix UID 所有、权限0700；不要把 Worker 的私有根交给 Web 静态服务。
