@@ -4,6 +4,22 @@
 
 This run verifies personal original publication and DEV distribution to a local, observable result. A public Ghost deployment, a real DEV publication, and formal D1–D9 acceptance are not prerequisites for this local test.
 
+## 已完成结果 / Verified result
+
+2026-11-04，在固定 commit `9cdd164ccdf537345d46909006b072a741132ff3` 上，`npm run check` 为 **442/442 通过**，`npm run test:local-publishing` 为 **4/4 通过**，均无失败或跳过。主流程真实 CLI 回执 `published`、`sourceVerified=true`；本地 DEV 仅一次写入、一次 exact redeem，重复 CLI 返回 `DELIVERY_NOT_RUNNABLE`。未批准／过期、提交后丢响应只读恢复和指定任务隔离均通过。全部模拟服务与浏览器已关闭，临时数据已清理。
+
+On 2026-11-04, fixed commit `9cdd164ccdf537345d46909006b072a741132ff3` passed **442/442** checks and **4/4** local integration tests with no failures or skips. The actual CLI returned `published` and `sourceVerified=true`, with exactly one local DEV write and exact redemption. Repeating the CLI returned `DELIVERY_NOT_RUNNABLE`. Pending/expired approval rejection, read-only recovery after a lost response, and selected-task isolation passed. Simulated services and browsers closed successfully, and temporary data was cleaned up.
+
+证据包含 150 个执行源码／配置文件 hash、8 张截图中的两张精选图、CLI 回执、场景 run ID、网络与清理结果。浏览器、Node 与 CLI 检测到的外部网络尝试均为零，真实 provider 写入为零。已有 3458 保持 `7f77057`、暂停且无活动 job，原真实任务未执行；本次只增加测试和文档，无需重新部署业务实例。
+
+Evidence includes hashes for 150 executable source/configuration files, two selected screenshots from eight captures, the CLI receipt, scenario run IDs, and transport/cleanup results. Browser, Node, and CLI checks recorded zero external network attempts and zero real provider writes. Existing 3458 remains on `7f77057`, paused with no active job; its real task was not executed. This change adds tests and documentation and needs no application redeployment.
+
+- [结果与场景摘要 / Result and scenario summary](evidence/local-publishing-flow-20261104/summary.json)
+- [完整回归日志 / Full regression log](evidence/local-publishing-flow-20261104/npm-check.txt)
+- [本地集成日志 / Local integration log](evidence/local-publishing-flow-20261104/local-integration.txt)
+- [Studio 已发布状态 / Published Studio state](evidence/local-publishing-flow-20261104/studio-published.png)
+- [本地模拟 DEV 匿名页面 / Local simulated DEV anonymous page](evidence/local-publishing-flow-20261104/local-dev-page.png)
+
 ## 执行 / Run
 
 需要 Node.js 24.18.x、已安装的 npm dependencies 和 Chromium；可通过 `RENDER_BROWSER_EXECUTABLE` 指定浏览器。不读取既有 `.env`、账号凭证或运行数据库，不需要 Docker。

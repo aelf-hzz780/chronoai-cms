@@ -1,0 +1,299 @@
+{
+  "sourceCommit": "9cdd164ccdf537345d46909006b072a741132ff3",
+  "completedAt": "2026-11-04T06:48:42.226Z",
+  "status": "PASS_LOCAL_PUBLISHING_FLOW",
+  "classification": "REAL_CMS_UI_HTTP_AUTH_ADAPTERS_AND_WORKERS_WITH_LOCAL_PROTOCOL_SIMULATORS",
+  "scope": "Personal create with full-text copy; no real DEV publication",
+  "commands": {
+    "npm run check": {
+      "tests": 442,
+      "pass": 442,
+      "fail": 0,
+      "skip": 0
+    },
+    "npm run test:local-publishing": {
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "happyPath": {
+    "runId": "02fa01d8-2a89-4ed7-97c3-d4f9adfdd78d",
+    "status": "PASS_LOCAL_END_TO_END_PROTOCOL_SIMULATION",
+    "startedAt": "2026-11-04T06:48:34.392Z",
+    "finishedAt": "2026-11-04T06:48:42.226Z",
+    "cleanup": {
+      "browser": "closed",
+      "fetch": "restored",
+      "fixture": "closed"
+    },
+    "stages": [
+      {
+        "stage": "real_cms_oidc_session_from_local_identity_fixture",
+        "at": "2026-11-04T06:48:35.559Z",
+        "subject": "fixture-solo",
+        "ownerId": "personal-68fe78974b40d8962714d0394993432a"
+      },
+      {
+        "stage": "studio_created_and_saved_english_article",
+        "at": "2026-11-04T06:48:35.773Z",
+        "articleId": "7d23c9a2-40d3-498b-a5d8-d3852568fda7",
+        "revisionId": "65d0f15f-e02a-4543-9594-9669fa2c64b8",
+        "sourceDigest": "79c147a244e5ee5fdfdc7e7bc19ea959df3cbad0f4feed593cd1b91f43d68f12"
+      },
+      {
+        "stage": "real_release_worker_published_to_local_ghost_fixture",
+        "at": "2026-11-04T06:48:38.810Z",
+        "releaseId": "4f9a4016-383e-49cd-8bfc-98dcb577ba20",
+        "state": "published",
+        "url": "http://127.0.0.1:50375/chrono-7d23c9a2-40d3-498b-a5d8-d3852568fda7/"
+      },
+      {
+        "stage": "exact_request_created_without_provider_effect",
+        "at": "2026-11-04T06:48:39.640Z",
+        "deliveryId": "e23b0780-382c-4559-9fbb-54e4ccac9923",
+        "reference": "805f85c9-e7c2-4d68-a4a3-cac7165bb643"
+      },
+      {
+        "stage": "real_delivery_cli_redeemed_exact_request_over_local_http",
+        "at": "2026-11-04T06:48:41.836Z",
+        "deliveryId": "e23b0780-382c-4559-9fbb-54e4ccac9923",
+        "reference": "805f85c9-e7c2-4d68-a4a3-cac7165bb643",
+        "state": "published",
+        "remoteId": "1",
+        "url": "http://127.0.0.1:50374/fixture-author/1",
+        "history": [
+          "approval_needed",
+          "queued",
+          "sending",
+          "published"
+        ],
+        "cliReceipt": {
+          "mode": "execute",
+          "traceId": "b69eaa98-99a3-46f5-bc34-4596058c959f",
+          "processed": true,
+          "outboundPaused": false,
+          "eligible": false,
+          "requiresReadOnlyReconciliation": false,
+          "delivery": {
+            "id": "e23b0780-382c-4559-9fbb-54e4ccac9923",
+            "ownerId": "personal-68fe78974b40d8962714d0394993432a",
+            "connectionId": "fixture-dev-connection",
+            "target": "dev",
+            "action": "create",
+            "digest": "2da5fb29b08e92dec596ed46a2c949b6475425966f259a1ed25b94e9c1b726f8",
+            "state": "published",
+            "remoteId": "1",
+            "url": "http://127.0.0.1:50374/fixture-author/1",
+            "sourceVerified": true,
+            "errorCode": null,
+            "traceId": "9aef5934-70ed-4604-97d3-db422452ec18",
+            "jobState": "done"
+          }
+        }
+      },
+      {
+        "stage": "repeat_same_task_cli_does_not_dispatch",
+        "at": "2026-11-04T06:48:42.124Z",
+        "code": "DELIVERY_NOT_RUNNABLE",
+        "localDevWrites": 1,
+        "localDevPosts": 1
+      }
+    ],
+    "articleId": "7d23c9a2-40d3-498b-a5d8-d3852568fda7",
+    "releaseId": "4f9a4016-383e-49cd-8bfc-98dcb577ba20",
+    "deliveryId": "e23b0780-382c-4559-9fbb-54e4ccac9923",
+    "approvalReference": "805f85c9-e7c2-4d68-a4a3-cac7165bb643",
+    "localDevWrites": 1,
+    "localDevPosts": 1,
+    "externalBrowserAttempts": 0,
+    "externalServerAttempts": 0,
+    "externalCliAttempts": 0
+  },
+  "recoveryScenarios": [
+    {
+      "runId": "476da950-2d9c-4bcb-b0b6-efa4fc6d01ce",
+      "scenario": "http-approval-boundaries",
+      "status": "PASS",
+      "startedAt": "2026-11-04T06:48:15.935Z",
+      "completedAt": "2026-11-04T06:48:23.190Z",
+      "cleanup": {
+        "apiContextsClosed": true,
+        "fixtureClosed": true,
+        "fetchRestored": true
+      },
+      "localProviderWrites": 0,
+      "localRedemptionRequests": 0,
+      "checks": {
+        "pendingRejected": true,
+        "wrongReferenceRejected": true,
+        "expiredBeforeQueueRejected": true,
+        "expiredAfterQueueRejected": true,
+        "providerWrites": 0,
+        "redemptions": 0,
+        "deliveryIds": [
+          "39cb7e35-ac42-41d6-827b-269743e614dd",
+          "c17de471-5a4c-4896-a41b-db6ad4e1e904"
+        ]
+      }
+    },
+    {
+      "runId": "845f8380-95cd-4211-87d4-538f2939d092",
+      "scenario": "http-lost-response-readonly-recovery",
+      "status": "PASS",
+      "startedAt": "2026-11-04T06:48:23.191Z",
+      "completedAt": "2026-11-04T06:48:27.308Z",
+      "cleanup": {
+        "apiContextsClosed": true,
+        "fixtureClosed": true,
+        "fetchRestored": true
+      },
+      "localProviderWrites": 1,
+      "localRedemptionRequests": 1,
+      "checks": {
+        "deliveryId": "8393da58-0e4e-478e-871b-8cdbcc4e0d7f",
+        "requestRef": "d0f60fbc-8f20-40f0-942c-9392c296d575",
+        "lostResponseState": "uncertain",
+        "recoveredState": "published",
+        "remoteId": "1",
+        "sourceVerified": true,
+        "localProviderWrites": 1,
+        "redemptions": 1,
+        "recoveryProviderRequests": [
+          {
+            "at": "2026-11-04T06:48:27.295Z",
+            "service": "dev",
+            "method": "GET",
+            "path": "/api/articles/me/all",
+            "providerWrite": false
+          },
+          {
+            "at": "2026-11-04T06:48:27.302Z",
+            "service": "dev",
+            "method": "GET",
+            "path": "/api/articles/1",
+            "providerWrite": false
+          }
+        ],
+        "confirmationActorCiphertextSha256": "a37d94988f7ab69cda97a5a85142ba65ab4998628ba0499b17981bf3cb1f5e58",
+        "confirmationActorUnchanged": true,
+        "recoveryActorAndCredentialDiffer": true,
+        "freshOidcRecovery": true,
+        "outboundPaused": true
+      }
+    },
+    {
+      "runId": "1c51dec3-673f-46d2-b12d-74d4cd038fa6",
+      "scenario": "http-selected-worker-no-repeat",
+      "status": "PASS",
+      "startedAt": "2026-11-04T06:48:27.309Z",
+      "completedAt": "2026-11-04T06:48:34.050Z",
+      "cleanup": {
+        "apiContextsClosed": true,
+        "fixtureClosed": true,
+        "fetchRestored": true
+      },
+      "localProviderWrites": 1,
+      "localRedemptionRequests": 1,
+      "checks": {
+        "chosenDeliveryId": "7bd5aec4-e99a-4461-b7eb-3a7ae24b0aa3",
+        "untouchedDeliveryId": "ab5f0f0a-bbb5-49f8-94bd-81ca831fb870",
+        "chosenState": "published",
+        "untouchedState": "queued",
+        "olderJobUnchanged": true,
+        "olderActorUnchanged": true,
+        "repeatedWorkerProcessed": false,
+        "repeatedAuthorizationRejected": true,
+        "localProviderWrites": 1,
+        "redemptions": 1
+      }
+    }
+  ],
+  "screenshotsCaptured": 8,
+  "screenshotsPublished": {
+    "studio-published.png": "8f6dc1243322e3457d0869e7678e0fce48cb3d91c84adabe971fe092cad83449",
+    "local-dev-page.png": "4bb58b574ead0ee3a56143369c97470f508d70a79482c150cc48513d64c71e86"
+  },
+  "realComponents": [
+    "Studio browser UI",
+    "CMS Fastify HTTP API",
+    "AuthManager, JWT signature, PKCE, Session and CSRF validation",
+    "NyxAuthority native HTTP protocol client and request fences",
+    "SQLite queue and immutable actors/payloads",
+    "GhostAdapter with real Chromium body proof",
+    "DevAdapter and actual run-delivery-once CLI"
+  ],
+  "simulatedComponents": [
+    "OAuth issuer and Nyx approval execution server",
+    "Ghost HTTP API and anonymous page",
+    "DEV HTTP API and anonymous page"
+  ],
+  "realProviderWrites": 0,
+  "sharedServicesUsedForFlow": false,
+  "existingRuntimeReadback": {
+    "at": "2026-11-04T06:48:38.856936+00:00",
+    "status": "PASS_EXISTING_RUNTIME_PRESERVED",
+    "runtime": {
+      "revision": "7f7705712c36c4cd9a15a36c0b094699cf63a18f",
+      "workingTreeChanged": false,
+      "pause": "true",
+      "deliveries": [
+        {
+          "id": "7c2bb69b-b2f5-4f25-bcb4-32569d48613c",
+          "state": "approval_needed",
+          "approval_ref": "af119488-3262-4f31-9110-8920f3b6b290",
+          "remote_id": null
+        },
+        {
+          "id": "f582b12e-406f-43d2-ab0e-9c997048457a",
+          "state": "cancelled",
+          "approval_ref": null,
+          "remote_id": null
+        }
+      ],
+      "activeJobs": 0
+    },
+    "health": [
+      {
+        "port": 3458,
+        "path": "/health",
+        "status": 200
+      },
+      {
+        "port": 3457,
+        "path": "/health",
+        "status": 200
+      },
+      {
+        "port": 3001,
+        "path": "/health",
+        "status": 200
+      },
+      {
+        "port": 3468,
+        "path": "/",
+        "status": 200
+      }
+    ],
+    "writes": 0
+  },
+  "sourceManifest": {
+    "file": "source-manifest.json",
+    "trackedExecutableFiles": 150
+  },
+  "logs": {
+    "npm-check.txt": "9bfe0db9c0f449d515009ce7404233414cecbce540eb4a03c56b672468955837",
+    "local-integration.txt": "ef6da55b76a0e40db187369f01915116e113487da67fa635713176576add1480"
+  },
+  "independentReview": {
+    "result": "PASS_NO_REMAINING_ACTIONABLE_FINDINGS",
+    "evidenceLifecycle": "RUNNING before setup; FAIL on execution or cleanup error; PASS after cleanup; unique run IDs"
+  },
+  "limitations": [
+    "Local protocol simulations do not prove real Nyx approve/redeem or real DEV behavior",
+    "This content has no images",
+    "Organization, update/remove and other targets are outside this new bounded flow"
+  ],
+  "formalAcceptance": "NOT_ACCEPTED_NOT_IN_SCOPE_OF_LOCAL_FLOW"
+}
