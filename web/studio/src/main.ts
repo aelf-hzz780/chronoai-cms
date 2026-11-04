@@ -31,6 +31,7 @@ let navigationVersion=0;
 const api=new Transport();const context=new ContextGate();
 let locale:Language=localStorage.getItem('chrono.studio.locale')==='zh'?'zh':'en';
 let identity:Identity|null=null,owner:Workspace|null=null;
+let identityEstablished=false;
 let filters:Filters={language:'en',status:'all',q:'',offset:0,limit:20};
 let page:ContentPage|null=null,sites:Site[]=[],draft:EditorDraft|null=null,summary:Summary|null=null,history:History[]=[],source:Article|null=null;
 let pendingSource:{articleId:string;revisionId:string}|null=null;
@@ -82,7 +83,7 @@ function render(){
 }
 function renderLogin(){
  const authError=new URLSearchParams(location.search).has('authError');
- root.innerHTML=`<div class="studio-auth"><section class="studio-auth-art"><a href="/studio" class="wordmark"><span class="brand-symbol">◈</span><span>ChronoAI<small>PUBLISHING STUDIO</small></span></a><div><div class="eyebrow">IDEAS DESERVE A PLACE</div><h1>${t('loginTitle')}</h1><p>${t('loginCopy')}</p></div><small class="eyebrow">WRITE WITH INTENTION. SHARE WITH CONFIDENCE.</small></section><section class="studio-auth-side"><div class="studio-auth-card"><h2>${t('studio')}</h2><p>${t('session')}</p>${authError?`${renderNotice(`${t('loginError')}`,{tone:'error',className:`studio-notice error`,live:true})}`:''}${notice?.kind==='error'?`${renderNotice(`${escape(notice.text)}<code>${escape(notice.details??'')}</code>`,{tone:'error',className:`studio-notice error`,live:true})}`:''}${linkButton(`${t('signin')} →`,{"class":"btn primary full large","href":"/auth/login?returnTo=%2Fstudio","id":"signin"})}<div class="studio-auth-tools"><select id="locale" data-studio-picker="locale" aria-label="${t('interface')}"><option value="en" ${locale==='en'?'selected':''}>EN</option><option value="zh" ${locale==='zh'?'selected':''}>简中</option></select><a href="/">${t('legacy')}</a></div></div></section></div>`;
+ root.innerHTML=`<div class="studio-auth"><section class="studio-auth-art"><a href="/studio" class="wordmark"><span class="brand-symbol">◈</span><span>ChronoAI<small>PUBLISHING STUDIO</small></span></a><div><div class="eyebrow">IDEAS DESERVE A PLACE</div><h1>${t('loginTitle')}</h1><p>${t('loginCopy')}</p></div><small class="eyebrow">WRITE WITH INTENTION. SHARE WITH CONFIDENCE.</small></section><section class="studio-auth-side"><div class="studio-auth-card"><h2>${t('studio')}</h2><p>${t('loginIntro')}</p>${authError?`${renderNotice(`${t('loginError')}`,{tone:'error',className:`studio-notice error`,live:true})}`:''}${notice?.kind==='error'?`${renderNotice(`${escape(notice.text)}<code>${escape(notice.details??'')}</code>`,{tone:'error',className:`studio-notice error`,live:true})}`:''}${linkButton(`${t('signin')} →`,{"class":"btn primary full large","href":"/auth/login?returnTo=%2Fstudio","id":"signin"})}<div class="studio-auth-tools"><select id="locale" data-studio-picker="locale" aria-label="${t('interface')}"><option value="en" ${locale==='en'?'selected':''}>EN</option><option value="zh" ${locale==='zh'?'selected':''}>简中</option></select></div></div></section></div>`;
 }
 async function failure(error:unknown,stamp=context.current()){
  if(!context.accepts(stamp)||(error instanceof DOMException&&error.name==='AbortError'))return;
@@ -99,13 +100,18 @@ async function confirmInContext(message:string,stamp:Stamp):Promise<boolean>{
  return accepted&&context.accepts(stamp)&&!suspended&&owner===selectedOwner&&identity===session&&Boolean(identity)&&api.csrf===csrf;
 }
 async function unsavedAllowed(){if(!draft?.dirty)return true;const local=draft,stamp=context.current(),version=navigationVersion;const allowed=await confirmInContext(t('discard'),stamp);if(!allowed||draft!==local||version!==navigationVersion)return false;if(local.article)retainedDrafts.delete(`${local.article.ownerId}/${local.article.id}`);return true;}
-async function loadIdentity(){const stamp=context.advance();busy=true;render();try{
+async function loadIdentity(initial=false){const stamp=context.advance();busy=true;render();try{
  const me=await api.json<Identity>('/me',{signal:stamp.signal});if(!context.accepts(stamp))return;
- identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===sessionStorage.getItem('chrono.studio.owner'))??me.workspaces[0]??null;
+ identityEstablished=true;identity=me;api.csrf=me.csrf;owner=me.workspaces.find(w=>w.id===sessionStorage.getItem('chrono.studio.owner'))??me.workspaces[0]??null;
  const restored=sessionStorage.getItem('chrono.studio.return');sessionStorage.removeItem('chrono.studio.return');
  if(restored){const safe=safeReturnPath(restored);if(safe.startsWith('/studio#')){currentHash=safe.slice('/studio'.length);historyReplace(currentHash);}}
  busy=false;await loadRoute();
- }catch(error){await failure(error,stamp);}}
+ }catch(error){
+  if(initial&&!identity&&context.accepts(stamp)&&error instanceof ApiError&&error.status===401&&error.code==='UNAUTHENTICATED'){
+   busy=false;notice=null;sessionStorage.setItem('chrono.studio.return',safeReturnPath('/studio'+currentHash));render();return;
+  }
+  await failure(error,stamp);
+ }}
 function historyReplace(hash:string){window.history.replaceState(null,'',location.pathname+hash);lastHash=hash;}
 async function loadRoute(){
  poller.stop();taskReads.advance();connections.reset();distribution.reset();
@@ -349,7 +355,7 @@ async function exportRaw(){if(!draft?.article||busy)return;const article=draft.a
  if(file.articleId!==article.id||file.revisionId!==article.revision.id||file.encoding!=='base64'||file.byteLength!==bytes.length||file.data!==base64(bytes)||digest!==file.sha256)throw new ApiError(502,'MARKDOWN_INTEGRITY','Original Markdown integrity check failed');
  const anchor=document.createElement('a');anchor.href='data:text/markdown;base64,'+file.data;anchor.download='article.md';anchor.click();busy=false;render();
  }catch(error){await failure(error,stamp);}}
-async function logout(){if(!await unsavedAllowed())return;poller.stop();taskReads.advance();const stamp=context.advance();try{const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'x-csrf-token':api.csrf??''}});if(!response.ok)throw new ApiError(response.status,'LOGOUT_FAILED',t('error'),response.headers.get('x-trace-id')??'');connections.reset();distribution.reset();identity=null;owner=null;draft=null;retainedDrafts.clear();api.csrf=undefined;notice=null;sessionStorage.removeItem('chrono.studio.return');render();}catch(error){await failure(error,stamp);}}
+async function logout(){if(!await unsavedAllowed())return;poller.stop();taskReads.advance();const stamp=context.advance();try{const response=await fetch('/auth/logout',{method:'POST',credentials:'same-origin',headers:{'x-csrf-token':api.csrf??''}});if(!response.ok)throw new ApiError(response.status,'LOGOUT_FAILED',t('error'),response.headers.get('x-trace-id')??'');connections.reset();distribution.reset();identity=null;identityEstablished=false;owner=null;draft=null;retainedDrafts.clear();api.csrf=undefined;notice=null;sessionStorage.removeItem('chrono.studio.return');render();}catch(error){await failure(error,stamp);}}
 function navigate(hash:string){location.hash=hash;}
 async function action(name:string){
  if(/^(connection-|dist-|delivery-|plan-)/.test(name)){
@@ -434,6 +440,6 @@ window.addEventListener('hashchange',async()=>{const target=location.hash||'#/co
 document.addEventListener('visibilitychange',()=>poller.visibilityChanged());
 root.addEventListener('toggle',event=>{const details=event.target;if(details instanceof HTMLDetailsElement&&details.classList.contains('studio-plan-create'))distribution.setPlanOpen(details.open);},true);
 window.addEventListener('pagehide',event=>{dialogs.cancel();pickers.close();if(!event.persisted)pickers.dispose();retainEditor();poller.stop();taskReads.advance();context.advance();});
-window.addEventListener('pageshow',event=>{if(event.persisted)void loadIdentity();});
+window.addEventListener('pageshow',event=>{if(event.persisted)void loadIdentity(!identityEstablished);});
 window.addEventListener('beforeunload',event=>{if(draft?.dirty||[...retainedDrafts.values()].some(local=>local.dirty)){event.preventDefault();event.returnValue='';}});
-void loadIdentity();
+void loadIdentity(true);

@@ -19,6 +19,70 @@ async function staticAsset(route:Route):Promise<boolean>{const path=new URL(rout
 }
 async function newBrowser(t:TestContext){const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());return browser;}
 
+test('Studio sign-in welcomes an initial anonymous visitor in both locales without a diagnostic or legacy link',async t=>{
+ const browser=await newBrowser(t),page=await browser.newPage();
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;assert.equal(new URL(route.request().url()).pathname,'/api/cms/me');return route.fulfill({status:401,json:{code:'UNAUTHENTICATED',message:'Sign in with NyxID required',traceId:'initial-anonymous-trace'}});});
+ await page.goto('https://studio.invalid/studio#/article/article-a?revision=revision-1');await page.locator('#app[aria-busy="false"] #signin').waitFor();
+ assert.equal(await page.locator('.studio-auth-card .studio-notice.error').count(),0);
+ assert.doesNotMatch(await page.locator('.studio-auth-card').innerText(),/UNAUTHENTICATED|initial-anonymous-trace|Trace ID/);
+ assert.equal(await page.locator('#signin').getAttribute('href'),'/auth/login?returnTo=%2Fstudio');
+ assert.equal(await page.locator('a[href="/"]').count(),0,'the login page has no previous-CMS entry');
+ assert.match(await page.locator('.studio-auth-card').innerText(),/Sign in with NyxID to open your workspace and continue writing\./);
+ assert.equal(await page.evaluate(()=>sessionStorage.getItem('chrono.studio.return')),'/studio#/article/article-a?revision=revision-1','anonymous deep links retain their safe return destination');
+ await selectStudioOption(page,'locale','zh');assert.match(await page.locator('.studio-auth-card').innerText(),/使用 NyxID 登录，进入工作区继续创作。/);
+ assert.equal(await page.locator('.studio-auth-card .studio-notice.error,a[href="/"]').count(),0);
+});
+
+test('Studio sign-in retains a callback failure independently of the expected anonymous response',async t=>{
+ const browser=await newBrowser(t),page=await browser.newPage();
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;assert.equal(new URL(route.request().url()).pathname,'/api/cms/me');return route.fulfill({status:401,json:{code:'UNAUTHENTICATED',message:'Sign in with NyxID required',traceId:'anonymous-after-callback'}});});
+ await page.goto('https://studio.invalid/studio?authError=access_denied');await page.locator('#app[aria-busy="false"] #signin').waitFor();
+ assert.equal(await page.locator('.studio-auth-card .studio-notice.error').count(),1);
+ assert.match(await page.locator('.studio-auth-card').innerText(),/Sign-in was cancelled or could not be completed/);
+ await selectStudioOption(page,'locale','zh');assert.match(await page.locator('.studio-auth-card .studio-notice.error').innerText(),/登录已取消或未完成/);
+});
+
+test('Studio sign-in preserves unexpected identity errors and network failures',async t=>{
+ const browser=await newBrowser(t);
+ for(const [status,code] of [[401,'INVALID_TOKEN'],[403,'FORBIDDEN'],[503,'UNAUTHENTICATED']] as const){
+  const page=await browser.newPage();
+  await page.route('**/*',async route=>{if(await staticAsset(route))return;assert.equal(new URL(route.request().url()).pathname,'/api/cms/me');return route.fulfill({status,json:{code,message:'Identity request failed',traceId:'identity-failure-trace'}});});
+  await page.goto('https://studio.invalid/studio');await page.locator('.studio-auth-card .studio-notice.error').waitFor();
+  assert.match(await page.locator('.studio-auth-card .studio-notice.error').innerText(),new RegExp(code+'.*identity-failure-trace','s'));await page.close();
+ }
+ const page=await browser.newPage();await page.route('**/*',async route=>{if(await staticAsset(route))return;assert.equal(new URL(route.request().url()).pathname,'/api/cms/me');await route.abort('failed');});
+ await page.goto('https://studio.invalid/studio');await page.locator('.studio-auth-card .studio-notice.error').waitFor();assert.equal(await page.locator('#signin').isVisible(),true);
+});
+
+test('Studio session expiry keeps its diagnostic and clears write context, with no legacy entry in either view',async t=>{
+ const browser=await newBrowser(t),page=await browser.newPage();let reads=0;
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;
+  if(path==='/api/cms/me')return route.fulfill({json:identity});
+  if(path==='/api/cms/owners/owner-a/content-summary')return ++reads===1?route.fulfill({json:content(article())}):route.fulfill({status:401,json:{code:'UNAUTHENTICATED',message:'Sign in with NyxID required',traceId:'expired-session-trace'}});
+  throw Error('Unexpected session fixture request '+path);
+ });
+ await page.goto('https://studio.invalid/studio');await page.getByRole('link',{name:'Original title',exact:true}).waitFor();assert.equal(await page.locator('a[href="/"]').count(),0,'the signed-in topbar has no previous-CMS entry');
+ await page.locator('[data-action="refresh"]').click();await page.locator('#app[aria-busy="false"] #signin').waitFor();
+ assert.match(await page.locator('.studio-auth-card .studio-notice.error').innerText(),/UNAUTHENTICATED.*expired-session-trace/s);
+ assert.equal(await page.locator('[data-action="new"],[data-action="save"],a[href="/"]').count(),0);
+});
+
+test('Studio back-forward restoration distinguishes an anonymous entry from an expired authenticated page',async t=>{
+ const browser=await newBrowser(t);
+ for(const authenticated of [false,true]){
+  const page=await browser.newPage();let identityReads=0;
+  await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;
+   if(path==='/api/cms/me'){identityReads++;return authenticated&&identityReads===1?route.fulfill({json:identity}):route.fulfill({status:401,json:{code:'UNAUTHENTICATED',message:'Sign in with NyxID required',traceId:'restored-session-trace'}});}
+   if(path==='/api/cms/owners/owner-a/content-summary')return route.fulfill({json:content(article())});throw Error('Unexpected restoration request '+path);
+  });
+  await page.goto('https://studio.invalid/studio');await page.locator(authenticated?'#app[aria-busy="false"] .content-table':'#app[aria-busy="false"] #signin').waitFor();
+  const rechecked=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/cms/me'&&response.status()===401);
+  await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true})));await rechecked;await page.locator('#app[aria-busy="false"] #signin').waitFor();
+  assert.equal(identityReads,2);assert.equal(await page.locator('.studio-auth-card .studio-notice.error').count(),authenticated?1:0);
+  if(authenticated)assert.match(await page.locator('.studio-auth-card').innerText(),/restored-session-trace/);await page.close();
+ }
+});
+
 test('Studio shell pickers use one styled popup with keyboard commit, cancellation and focus across redraws',async t=>{
  const browser=await newBrowser(t),page=await browser.newPage({viewport:{width:1440,height:1000}});const reads:string[]=[];
  await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;if(path==='/api/cms/me')return route.fulfill({json:identity});for(const id of ['owner-a','owner-b'])if(path===`/api/cms/owners/${id}/content-summary`){reads.push(id);return route.fulfill({json:content(article(id))});}throw Error('Unexpected request '+path);});
