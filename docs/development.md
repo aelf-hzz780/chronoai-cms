@@ -37,6 +37,7 @@ node --env-file=.env scripts/provision.ts author org-en 'Example Author' actual-
 
 ```bash
 npm run check
+npm run test:local-publishing
 node --check web/app.js
 node --check web/tracker.js
 node --test test/media-ui.integration.ts
@@ -45,6 +46,8 @@ node scripts/test-local-four-ghost.mjs
 node scripts/source-fingerprint.ts
 ```
 
-前四项不连接真实账号；独立media-mount专项仅使用缓存runtime镜像、显式colima-blogsystem context及五个新建随机命名volume，network none，不挂现存站点volume/DB，不启动Ghost，并在finally清理自己的容器和卷。补图CMS浏览器专项的所有HTTP均由本地fixture接管，不连接真实App／Ghost／NyxID。完整检查中的渲染测试需要本机 Chromium，安装与RENDER_BROWSER_EXECUTABLE配置见[公开正文渲染证明](operations.md#公开正文渲染证明)。四站 harness 仅用于本任务已准备的 `colima-blogsystem`，不自动启动 Docker、不拉镜像、不改默认 context；临时 helper 使用缓存官方 Ghost 内置 Node22.23.4，真实应用支持运行时仍是主机 Node24.18。默认 Ghost Adapter 和共享文件系统未替换，覆盖 personal/organization × en/zh × CMS/service 八组合及素材、指标、译文互链、下线。证据生成于 `.runtime/blogsystem-integration-*/evidence.json`，含源码逐文件指纹，不含账号秘密。
+前五项不连接真实账号；独立media-mount专项仅使用缓存runtime镜像、显式colima-blogsystem context及五个新建随机命名volume，network none，不挂现存站点volume/DB，不启动Ghost，并在finally清理自己的容器和卷。补图CMS浏览器专项的所有HTTP均由本地fixture接管，不连接真实App／Ghost／NyxID。完整检查中的渲染测试需要本机 Chromium，安装与RENDER_BROWSER_EXECUTABLE配置见[公开正文渲染证明](operations.md#公开正文渲染证明)。四站 harness 仅用于本任务已准备的 `colima-blogsystem`，不自动启动 Docker、不拉镜像、不改默认 context；临时 helper 使用缓存官方 Ghost 内置 Node22.23.4，真实应用支持运行时仍是主机 Node24.18。默认 Ghost Adapter 和共享文件系统未替换，覆盖 personal/organization × en/zh × CMS/service 八组合及素材、指标、译文互链、下线。证据生成于 `.runtime/blogsystem-integration-*/evidence.json`，含源码逐文件指纹，不含账号秘密。
 
 恢复 CLI 与隔离演练见 `operations.md`。`test/*.integration.ts` 不是默认单测的一部分。已完成局部不等于 A01–A52 所有参数组合完成；独立验收由原任务执行，状态见 `delivery-status.md`。
+
+`npm run test:local-publishing` 显式执行个人 exact 分发的本地闭环：真实 CMS HTTP、OIDC 验签、Studio、SQLite、Ghost/DEV adapters 和 Worker，配合隔离的本地身份／审批／Ghost／DEV 协议模拟服务。它不需要现有账号、Docker 或公网 Ghost；模拟协议不代表对应真实服务已经验收。`LOCAL_EXACT_EVIDENCE_DIR` 可指定结果 JSON 与截图目录。运行要求与范围见[本地发布闭环](local-publishing-flow.md)。
