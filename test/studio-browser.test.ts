@@ -90,3 +90,20 @@ test('studio workspace selection remains visible and operable at phone and table
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,`no page overflow at ${width}px`);await page.close();
  }
 });
+
+test('Editor peer picker escapes clipped panels, fits narrow viewports and releases portal menus after navigation',async t=>{
+ const browser=await newBrowser(t),page=await browser.newPage({viewport:{width:390,height:844}}),current=article();
+ const peers=Array.from({length:12},(_,index)=>({articleId:`translation-${index}`,sourceArticleId:current.id,sourceRevisionId:current.revision.id,outdated:false}));
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;
+  if(path==='/api/cms/me')return route.fulfill({json:identity});if(path==='/api/cms/articles/article-a')return route.fulfill({json:current});
+  if(path.endsWith('/content-summary'))return route.fulfill({json:{...content(current),items:[{...summary(current),translations:peers}]}});
+  if(path.endsWith('/revisions'))return route.fulfill({json:[]});throw Error('Unexpected peer request '+path);
+ });
+ await page.goto('https://studio.invalid/studio#/article/article-a');await page.locator('#translation-peer-trigger').click();
+ const menu=page.locator('#translation-peer-listbox');assert.equal(await menu.evaluate(e=>e.parentElement===document.body),true);
+ const box=await menu.boundingBox();assert.ok(box&&box.x>=0&&box.x+box.width<=390&&box.y>=0&&box.y+box.height<=844);
+ assert.equal(await menu.evaluate(e=>{const r=e.getBoundingClientRect();return e.contains(document.elementFromPoint(r.x+r.width/2,r.y+15));}),true,'menu is hit-testable above editor clipping');
+ await page.locator('#translation-peer-trigger').press('End');await page.locator('#translation-peer-trigger').press('Escape');assert.equal(await page.locator('#translation-peer').inputValue(),'');
+ await page.locator('.sidebar a[href="#/content"]').click();await page.locator('#article-language-trigger').waitFor();assert.equal(await page.locator('#translation-peer-listbox').count(),0);
+ assert.equal(await page.locator('.studio-picker-menu').count(),await page.locator('#app select').count(),'one menu per current control; no abandoned portal menus');
+});

@@ -1,3 +1,4 @@
+import {channelPaused,manualChannelLabel} from './channel-policy.js';
 import {ApiError} from './transport.js';
 import {OperationIntent} from './publication-model.js';
 import {workflowText} from './workflow-i18n.js';
@@ -35,6 +36,7 @@ export class ConnectionController {
   const attempt=this.state.attempt;if(action==='connection-new'){if((attempt?.code==='CONNECT_RESULT_UNKNOWN'||this.state.unknownOutcome)&&!this.state.ack)return true;this.intent=new OperationIntent();this.saved=null;}
   this.state.busy=true;this.host.render();try{
    if(action==='connection-create'||action==='connection-new'){
+    if(channelPaused(this.state.target))throw new ApiError(409,'CHANNEL_MANUAL_ONLY',manualChannelLabel(this.host.locale()));
     if(!this.state.target)throw new Error(w('validation'));
     const body={target:this.state.target,...(this.state.connectionId?{connectionId:this.state.connectionId}:{}),...(this.state.ack?{acknowledgeUnknownResult:true}:{})};
     const matches=this.saved&&this.saved.subject===this.host.subject()&&this.saved.ownerId===this.ownerId&&this.saved.target===this.state.target&&this.saved.connectionId===this.state.connectionId;

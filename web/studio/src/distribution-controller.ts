@@ -1,3 +1,4 @@
+import {channelPaused,manualChannelLabel} from './channel-policy.js';
 import {ApiError} from './transport.js';
 import {ContextGate,type Stamp} from './state.js';
 import {OperationIntent} from './publication-model.js';
@@ -68,6 +69,7 @@ export class DistributionController {
   try{
    if(action==='dist-next'||action==='dist-previous'){this.state.offset=Math.max(0,this.state.offset+(action==='dist-next'?20:-20));const tasks=await this.readTasks(stamp);if(this.host.accepts(stamp))this.state.tasks=tasks;return true;}
    if(action==='dist-confirm'||action==='dist-plan'){
+    if(channelPaused(this.state.form.target))throw new ApiError(409,'CHANNEL_MANUAL_ONLY',manualChannelLabel(this.host.locale()));
     const source=this.state.source;if(!source?.snapshot||!this.canConnect()||source.language!=='en'||(this.state.form.action!=='remove'&&source.state!=='published'))throw new Error(w('validation'));
     if(this.state.form.action!=='create'&&!copyAccountMatches(this.state.selectedCopy?.distribution?.accountId,this.state.connections.find(connection=>connection.id===this.state.form.connectionId)?.accountId))throw new ApiError(409,'CONNECTION_CHANGED',w('inactive'));
     const body=distributionBody(this.ownerId,this.state.form);if(!window.confirm(w('actionConfirm')))return true;
@@ -77,7 +79,9 @@ export class DistributionController {
    }
    if(!task)return true;
    if(action==='plan-confirm'){
+    if(channelPaused(task.plan?.target))throw new ApiError(409,'CHANNEL_MANUAL_ONLY',manualChannelLabel(this.host.locale()));
     const fresh=await this.host.api.json<TaskDetail>(`/owners/${encodeURIComponent(this.ownerId)}/tasks/plan/${encodeURIComponent(task.id)}`,{signal:stamp.signal});if(!this.host.accepts(stamp))return true;this.state.task=fresh;
+    if(channelPaused(fresh.plan?.target))throw new ApiError(409,'CHANNEL_MANUAL_ONLY',manualChannelLabel(this.host.locale()));
     const body=planConfirmation(fresh,this.state.planRights);if(!this.canConnect()||!window.confirm(w('actionConfirm')))return true;
     const result=await this.host.api.json<{id:string}>(`/releases/${encodeURIComponent(fresh.plan!.releaseId)}/deliveries`,{method:'POST',data:{...body,idempotencyKey:this.intent.keyFor({releaseId:fresh.plan!.releaseId,...body})},signal:stamp.signal});if(!this.host.accepts(stamp))return true;if(!result.id)throw new ApiError(502,'DELIVERY_CONTEXT','Confirmation identity unavailable');this.host.navigate(`#/task/delivery/${encodeURIComponent(result.id)}`);return true;
    }
@@ -85,6 +89,7 @@ export class DistributionController {
    if(task.kind!=='delivery')return true;const path=`/deliveries/${encodeURIComponent(task.id)}`;
    if(action==='delivery-package'){const data=await this.host.api.json<ManualPackage>(path+'/package',{signal:stamp.signal});if(this.host.accepts(stamp))this.state.package=data;return true;}
    if(action.startsWith('delivery-download-')||action.startsWith('delivery-copy-')){if(!this.state.package)return true;const html=action.endsWith('html'),content=html?this.state.package.html:this.state.package.markdown;if(action.startsWith('delivery-copy-')){await navigator.clipboard.writeText(content);if(this.host.accepts(stamp))this.host.notice(w('copied'));}else {const link=document.createElement('a');link.href=`data:${html?'text/html':'text/markdown'};base64,`+base64(new TextEncoder().encode(content));link.download=html?'submission.html':'submission.md';link.click();}return true;}
+   if(['delivery-request-approval','delivery-authorize'].includes(action)&&channelPaused(task.distribution?.target??task.copy?.target))throw new ApiError(409,'CHANNEL_MANUAL_ONLY',manualChannelLabel(this.host.locale()));
    if(action==='delivery-request-approval'){
     if(this.state.approvalUnknown||!this.canConnect()||!task.allowedActions.includes('request-approval'))return true;
     const result=await this.host.api.json<{reference:string}>(path+'/request-approval',{method:'POST',data:{},signal:stamp.signal});if(!this.host.accepts(stamp))return true;this.state.approvalRef=result.reference;await this.readBack(stamp);return true;
