@@ -1,0 +1,44 @@
+{
+  "preparedAt": "2026-11-04T05:14:16.695Z",
+  "sourceCommit": "25b2b3e248878b67bdbef91f38082e698b531215",
+  "account": {
+    "username": "aelfhzz780",
+    "id": "4223973"
+  },
+  "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+  "action": "one public DEV article create followed by read-only reconciliation",
+  "method": "POST",
+  "providerEndpoint": "https://dev.to/api/articles",
+  "article": {
+    "title": "Verifying a NyxID-managed publishing workflow",
+    "body_markdown": "# Verifying a NyxID-managed publishing workflow\n\nThis article is a local integration test of an English publishing workflow. It connects a content management system, a self-hosted Ghost original, and a publishing account managed through NyxID.\n\n## Identity and ownership\n\nThe author signs in through a real local NyxID service. The CMS keeps personal ownership separate from organization publishing roles. The destination must use the explicitly selected connection and account, with no silent account fallback.\n\n## Confirmed content\n\nPublishing starts from a specific saved revision. The title, Markdown, credited author, owner, language, destination, and content rights are confirmed before the corresponding action. Later draft edits must not silently replace the confirmed version.\n\n## Original and receipt\n\nThe original is hosted on a local Ghost installation. Its visible page and saved revision are checked before any external copy is requested. A destination result must retain its remote article identifier and URL, and a readback must match the confirmed content and source link.\n\nThis local original is accessible on the test machine. Its localhost address is not evidence of public Internet reachability.\n\n## Safe execution\n\nThe integration run handles one explicitly selected task at a time. NyxID execution approvals remain applicable. If an operation times out or its result cannot be proved, it must be reconciled before another write is considered.\n\nThis test does not claim production readiness, organization-wide acceptance, or completion of all external publishing requirements. It contains no credentials, private keys, or user secrets.\n\n\nAuthor: BlogSystem Local Operator\n\nOriginal: [http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/](http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/)\n\n<!-- chrono-delivery:7c2bb69b-b2f5-4f25-bcb4-32569d48613c -->",
+    "published": true,
+    "canonical_url": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/"
+  },
+  "bodySha256": "0b748b2a570e8bee01224b9399792ac50593522ac51d34a406f81609b336f4e9",
+  "deliveryId": "7c2bb69b-b2f5-4f25-bcb4-32569d48613c",
+  "releaseId": "1bca49fa-8caa-4e7f-90b2-012e1fde3edc",
+  "contentDigest": "8a0c08e99df9d311df7c82fe35f0f272ae149b07ec87d3862a47467683eb24d4",
+  "connectionFingerprint": "1ebd00d6df70c7ce046b0869af187d8f1db86e5b8fd75b0a846b93332db4d1ea",
+  "executionApproval": "exact",
+  "oldDeliveryId": "f582b12e-406f-43d2-ab0e-9c997048457a",
+  "oldBodySha256": "f9c6baa837da2c2e6165e3226fe335de6959977e4f9a93871c5fa082008c0d9c",
+  "contentChange": "Only internal chrono-delivery marker changes; title, visible body, byline, original and account unchanged.",
+  "originalInternetReachability": "NOT_PUBLIC_LOCALHOST_ONLY",
+  "rollback": "DEV adapter has no enabled removal route. Unpublishing/removal requires an explicitly authorized action through the author account; cancellation is only safe before dispatch.",
+  "notIncluded": [
+    "updating existing unpublished draft 4969744",
+    "updating or deleting any DEV article",
+    "organization publication"
+  ],
+  "requestRef": "af119488-3262-4f31-9110-8920f3b6b290",
+  "operationDigest": "sha256:a25be98437629748edbe2dff65594981d27871dbb48f78d0b3fa35353b21b431",
+  "endpointContractDigest": "sha256:6396deb2eca3d0d6dbb57030ae129366260dfd2c306f5e4e01260cd6a0db19c0",
+  "catalogDigest": "sha256:b58f42a767aed2f02b5006c3f8dd2cc74dc8fbd56dd9725781d210a82b88c878",
+  "operationGeneration": 1,
+  "requestExpiresAt": "2026-11-04T05:19:21.998+00:00",
+  "externalAuthorization": "PENDING_EXPLICIT_USER_APPROVAL",
+  "expiryHandling": "Historical prepared request; never approve or redeem after expiry. A fresh confirmation is required if the saved authority or approval is no longer usable.",
+  "requestStateAtFinalReadback": "expired",
+  "finalReadbackAt": "2026-11-04T05:19:29.747Z"
+}

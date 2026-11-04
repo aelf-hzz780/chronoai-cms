@@ -1,0 +1,655 @@
+{
+  "at": "2026-11-04T05:20:51.693608+00:00",
+  "classification": "REAL_LOCAL_PERSONAL_EXACT_CREATE_AND_READ_ONLY_FINAL_VERIFICATION",
+  "creationCommit": "25b2b3e248878b67bdbef91f38082e698b531215",
+  "runningBusinessCommit": "7f7705712c36c4cd9a15a36c0b094699cf63a18f",
+  "automated": {
+    "command": "npm run check",
+    "tests": 442,
+    "pass": 442,
+    "fail": 0,
+    "skip": 0,
+    "logSha256": "b60a9ef4990ae972b08f7ce5868908ab4a5e8c6ecdeb807fd3f3fbe26fd7b01a",
+    "classification": "Automated tests include fixtures and do not prove a live DEV publication"
+  },
+  "independentReview": {
+    "verdict": "PASS_NO_REMAINING_ACTIONABLE_FINDINGS",
+    "nullGenerationRegression": "Found, fixed, verified; null omitted, numeric zero retained, numeric mismatch rejected",
+    "legacyFingerprintCompatibility": "byte-identical without opt-in"
+  },
+  "source": {
+    "revision": "7f7705712c36c4cd9a15a36c0b094699cf63a18f",
+    "sourceFiles": 472,
+    "workingTreeChanged": false,
+    "allHashesMatch": true
+  },
+  "oldDelivery": {
+    "id": "f582b12e-406f-43d2-ab0e-9c997048457a",
+    "state": "cancelled",
+    "actorUnchanged": true,
+    "payloadUnchanged": true,
+    "jobs": [
+      {
+        "id": "dede186f-cbfe-4982-ab2e-995774c45aa3",
+        "state": "cancelled",
+        "lease_until": null
+      }
+    ],
+    "leases": []
+  },
+  "newDelivery": {
+    "id": "7c2bb69b-b2f5-4f25-bcb4-32569d48613c",
+    "requestRef": "af119488-3262-4f31-9110-8920f3b6b290",
+    "state": "approval_needed",
+    "ownerId": "personal-f043eb15cd25b163f90fa41ff84e4f5e",
+    "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+    "traceId": "6482db9a-b070-4d84-90c1-1477a9a62238",
+    "jobs": [],
+    "leases": []
+  },
+  "identity": {
+    "issuer": "http://localhost:3001",
+    "subject": "81119484-ff5c-48d2-9173-20da5a847bf2",
+    "clientId": "9568aa1c-441d-401a-abfb-b8c3d8c25e49",
+    "audience": "http://localhost:3001",
+    "signatureVerified": true,
+    "expiresAt": "2026-11-04T05:29:08.000Z"
+  },
+  "proofs": {
+    "connectionFingerprint": "1ebd00d6df70c7ce046b0869af187d8f1db86e5b8fd75b0a846b93332db4d1ea",
+    "contentDigest": "8a0c08e99df9d311df7c82fe35f0f272ae149b07ec87d3862a47467683eb24d4",
+    "requestDigest": "9111d1efa00be5f1c480916aeeb6b13bf992e14e7a0159624e31d9db10fa268b",
+    "operationDigest": "sha256:a25be98437629748edbe2dff65594981d27871dbb48f78d0b3fa35353b21b431",
+    "endpointContractDigest": "sha256:6396deb2eca3d0d6dbb57030ae129366260dfd2c306f5e4e01260cd6a0db19c0",
+    "catalogDigest": "sha256:b58f42a767aed2f02b5006c3f8dd2cc74dc8fbd56dd9725781d210a82b88c878",
+    "bodySha256": "0b748b2a570e8bee01224b9399792ac50593522ac51d34a406f81609b336f4e9",
+    "completeContractFenceMatch": true,
+    "rawPendingFieldsIdentical": false,
+    "expiryPrecisionOnlyDifference": true
+  },
+  "approval": {
+    "readAt": "2026-11-04T05:19:29.747Z",
+    "currentState": "expired",
+    "createdState": "pending",
+    "expiresAt": "2026-11-04T05:19:21.998+00:00",
+    "storedExpiresAt": "2026-11-04T05:19:21.998321+00:00",
+    "fields": {
+      "request_id": "af119488-3262-4f31-9110-8920f3b6b290",
+      "user_service_id": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+      "endpoint_id": "nyx_generic_proxy_v1",
+      "operation_digest": "sha256:a25be98437629748edbe2dff65594981d27871dbb48f78d0b3fa35353b21b431",
+      "operation_id": "nyx_generic_proxy_v1",
+      "operation_generation": 1,
+      "idempotency_key": "7c2bb69b-b2f5-4f25-bcb4-32569d48613c",
+      "catalog_digest": "sha256:b58f42a767aed2f02b5006c3f8dd2cc74dc8fbd56dd9725781d210a82b88c878",
+      "endpoint_contract_digest": "sha256:6396deb2eca3d0d6dbb57030ae129366260dfd2c306f5e4e01260cd6a0db19c0",
+      "expires_at": "2026-11-04T05:19:21.998+00:00"
+    }
+  },
+  "initialPendingReadAt": "2026-11-04T05:14:23.848Z",
+  "initialPendingProof": "Exact request ID, owner, OAuth client, connection, idempotency key, operation/catalog/contract digests matched before expiry",
+  "runtimeVerification": {
+    "status": "PASS_RUNTIME_AND_PRESERVED_SERVICES",
+    "at": "2026-11-04T05:19:29.213265+00:00",
+    "database": {
+      "integrity": "ok",
+      "foreignKeyViolations": 0
+    },
+    "health": [
+      {
+        "port": 3458,
+        "path": "/health",
+        "status": 200
+      },
+      {
+        "port": 3458,
+        "path": "/studio",
+        "status": 200
+      },
+      {
+        "port": 3458,
+        "path": "/openapi.json",
+        "status": 200
+      },
+      {
+        "port": 3457,
+        "path": "/health",
+        "status": 200
+      },
+      {
+        "port": 3001,
+        "path": "/health",
+        "status": 200
+      },
+      {
+        "port": 3000,
+        "path": "/",
+        "status": 200
+      },
+      {
+        "port": 3468,
+        "path": "/",
+        "status": 200
+      },
+      {
+        "port": 3469,
+        "path": "/",
+        "status": 200
+      },
+      {
+        "port": 3478,
+        "path": "/",
+        "status": 200
+      },
+      {
+        "port": 3479,
+        "path": "/",
+        "status": 200
+      },
+      {
+        "port": 2468,
+        "path": "/",
+        "status": 200
+      },
+      {
+        "port": 2469,
+        "path": "/",
+        "status": 200
+      }
+    ],
+    "oldContainerIdentityImageMountsPreserved": true,
+    "backgroundWorkerRunning": false
+  },
+  "readOnlyVerificationRequests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/approvals/exact-service/requests/af119488-3262-4f31-9110-8920f3b6b290/status",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/.well-known/openid-configuration",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/.well-known/jwks.json",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/mcp/config",
+      "status": 200
+    }
+  ],
+  "outboundPaused": true,
+  "providerWritesThisRun": 0,
+  "approvalDecisions": 0,
+  "redemptions": 0,
+  "specificPublicAuthorization": "PENDING_USER_RESPONSE",
+  "legacyAutoApproval": "DISABLED_NO_RELIABLE_BODY_CORRELATION",
+  "expiryHandling": "Expired naturally; no renewal or recreation. A future authorized write requires fresh confirmation and a new valid exact request. Saved actors are never replaced.",
+  "privateDiagnosticHistory": [
+    {
+      "code": "FIXED_SOURCE_REVISION",
+      "resolution": "Verifier expectations were updated to final deployed revision"
+    },
+    {
+      "code": "STATUS_FENCE_MISMATCH",
+      "resolution": "All authorization fence fields match; expires_at is serialized with microseconds on creation and milliseconds on status. Compared as timestamps and retained both raw values."
+    }
+  ],
+  "serviceCatalogStillRoutesTo3457": true,
+  "originalInternetReachability": "NOT_PUBLIC_LOCALHOST_ONLY",
+  "heartbeat": "PAUSED_UNCHANGED",
+  "overallAcceptance": "NOT_ACCEPTED",
+  "finalRealAuth": {
+    "status": "PASS_FIXED_COMMIT_REAL_AUTH_UI_AND_APPROVAL_NEEDED_DEV_READBACK",
+    "sourceRevision": "7f7705712c36c4cd9a15a36c0b094699cf63a18f",
+    "completedAt": "2026-11-04T05:23:21.096Z",
+    "assertionCount": 29,
+    "assertions": [
+      {
+        "name": "solo_verified_subject",
+        "result": "PASS"
+      },
+      {
+        "name": "solo_personal_publish",
+        "result": "PASS"
+      },
+      {
+        "name": "solo_no_org",
+        "result": "PASS"
+      },
+      {
+        "name": "solo_studio_settings_loaded",
+        "result": "PASS"
+      },
+      {
+        "name": "member_verified_subject",
+        "result": "PASS"
+      },
+      {
+        "name": "member_personal_publish",
+        "result": "PASS"
+      },
+      {
+        "name": "member_org_role",
+        "result": "PASS"
+      },
+      {
+        "name": "member_org_publish",
+        "result": "PASS"
+      },
+      {
+        "name": "member_role_management",
+        "result": "PASS"
+      },
+      {
+        "name": "member_studio_settings_loaded",
+        "result": "PASS"
+      },
+      {
+        "name": "admin_verified_subject",
+        "result": "PASS"
+      },
+      {
+        "name": "admin_personal_publish",
+        "result": "PASS"
+      },
+      {
+        "name": "admin_org_role",
+        "result": "PASS"
+      },
+      {
+        "name": "admin_org_publish",
+        "result": "PASS"
+      },
+      {
+        "name": "admin_role_management",
+        "result": "PASS"
+      },
+      {
+        "name": "admin_studio_settings_loaded",
+        "result": "PASS"
+      },
+      {
+        "name": "publisher_verified_subject",
+        "result": "PASS"
+      },
+      {
+        "name": "publisher_personal_publish",
+        "result": "PASS"
+      },
+      {
+        "name": "publisher_org_role",
+        "result": "PASS"
+      },
+      {
+        "name": "publisher_org_publish",
+        "result": "PASS"
+      },
+      {
+        "name": "publisher_role_management",
+        "result": "PASS"
+      },
+      {
+        "name": "publisher_studio_settings_loaded",
+        "result": "PASS"
+      },
+      {
+        "name": "existing_original_published",
+        "result": "PASS"
+      },
+      {
+        "name": "exact_release_published",
+        "result": "PASS"
+      },
+      {
+        "name": "exact_dev_delivery_still_approval_needed",
+        "result": "PASS"
+      },
+      {
+        "name": "approval_needed_exact_dev_connection",
+        "result": "PASS"
+      },
+      {
+        "name": "final_solo_logout_ui",
+        "result": "PASS"
+      },
+      {
+        "name": "final_solo_cookie_replay_401",
+        "result": "PASS"
+      },
+      {
+        "name": "original_delivery_session_file_unchanged",
+        "result": "PASS"
+      }
+    ],
+    "accounts": [
+      {
+        "name": "solo",
+        "clientId": "9568aa1c-441d-401a-abfb-b8c3d8c25e49",
+        "subject": "81119484-ff5c-48d2-9173-20da5a847bf2",
+        "workspaces": [
+          {
+            "id": "personal-f043eb15cd25b163f90fa41ff84e4f5e",
+            "kind": "personal",
+            "role": "owner",
+            "capabilities": {
+              "canWrite": true,
+              "canPublish": true,
+              "canManagePublishers": false,
+              "canReadConnections": true,
+              "canReadMetrics": true
+            }
+          }
+        ],
+        "consentReused": true
+      },
+      {
+        "name": "member",
+        "clientId": "9568aa1c-441d-401a-abfb-b8c3d8c25e49",
+        "subject": "b5fd739e-8d8a-4e42-b15c-ab2e4f138f5a",
+        "workspaces": [
+          {
+            "id": "personal-64ff6d9c5e933c1a968ae3476f1e5ca1",
+            "kind": "personal",
+            "role": "owner",
+            "capabilities": {
+              "canWrite": true,
+              "canPublish": true,
+              "canManagePublishers": false,
+              "canReadConnections": true,
+              "canReadMetrics": true
+            }
+          },
+          {
+            "id": "native-org-a",
+            "kind": "organization",
+            "role": "member",
+            "capabilities": {
+              "canWrite": true,
+              "canPublish": false,
+              "canManagePublishers": false,
+              "canReadConnections": false,
+              "canReadMetrics": true
+            }
+          }
+        ],
+        "consentReused": true
+      },
+      {
+        "name": "admin",
+        "clientId": "9568aa1c-441d-401a-abfb-b8c3d8c25e49",
+        "subject": "c360c156-f8b1-4541-a44a-a59574a8461f",
+        "workspaces": [
+          {
+            "id": "personal-36eff423b0c1f549c551278517219353",
+            "kind": "personal",
+            "role": "owner",
+            "capabilities": {
+              "canWrite": true,
+              "canPublish": true,
+              "canManagePublishers": false,
+              "canReadConnections": true,
+              "canReadMetrics": true
+            }
+          },
+          {
+            "id": "native-org-a",
+            "kind": "organization",
+            "role": "admin",
+            "capabilities": {
+              "canWrite": true,
+              "canPublish": true,
+              "canManagePublishers": true,
+              "canReadConnections": true,
+              "canReadMetrics": true
+            }
+          }
+        ],
+        "consentReused": true
+      },
+      {
+        "name": "publisher",
+        "clientId": "9568aa1c-441d-401a-abfb-b8c3d8c25e49",
+        "subject": "643d0dc5-91b5-40a8-a34b-a763899a772f",
+        "workspaces": [
+          {
+            "id": "personal-f84768fe622536b8eeee39f2a42555a7",
+            "kind": "personal",
+            "role": "owner",
+            "capabilities": {
+              "canWrite": true,
+              "canPublish": true,
+              "canManagePublishers": false,
+              "canReadConnections": true,
+              "canReadMetrics": true
+            }
+          },
+          {
+            "id": "native-org-a",
+            "kind": "organization",
+            "role": "publisher",
+            "capabilities": {
+              "canWrite": true,
+              "canPublish": true,
+              "canManagePublishers": false,
+              "canReadConnections": true,
+              "canReadMetrics": true
+            }
+          }
+        ],
+        "consentReused": true
+      }
+    ],
+    "original": {
+      "articleId": "5c71a85d-1e45-40ae-85c5-4ecd2dd14824",
+      "releaseId": "1bca49fa-8caa-4e7f-90b2-012e1fde3edc",
+      "revisionId": "e338f045-c499-403e-9111-ec9f30de62b9",
+      "state": "published",
+      "url": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/"
+    },
+    "delivery": {
+      "id": "7c2bb69b-b2f5-4f25-bcb4-32569d48613c",
+      "state": "approval_needed",
+      "articleId": "5c71a85d-1e45-40ae-85c5-4ecd2dd14824",
+      "revisionId": "e338f045-c499-403e-9111-ec9f30de62b9",
+      "copy": {
+        "target": "dev",
+        "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+        "remoteId": null,
+        "url": null
+      },
+      "traceId": "6482db9a-b070-4d84-90c1-1477a9a62238"
+    },
+    "finalSoloSessionRevoked": true,
+    "applicationWrites": 0,
+    "externalProviderWrites": 0,
+    "nyxConsentWrites": 0,
+    "nyxRoleWrites": 0,
+    "newDrafts": 0,
+    "newTasks": 0,
+    "http": [
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/auth/login",
+        "status": 302,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/oauth/authorize",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/auth/callback",
+        "status": 302,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/cms/me",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/auth/login",
+        "status": 302,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/oauth/authorize",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/auth/callback",
+        "status": 302,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/cms/me",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/auth/login",
+        "status": 302,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/oauth/authorize",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/auth/callback",
+        "status": 302,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/cms/me",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/login",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/auth/login",
+        "status": 302,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/oauth/authorize",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/auth/callback",
+        "status": 302,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/cms/me",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/cms/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/content-summary",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/cms/articles/5c71a85d-1e45-40ae-85c5-4ecd2dd14824/releases",
+        "status": 200,
+        "code": null,
+        "traceId": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/cms/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/tasks/delivery/7c2bb69b-b2f5-4f25-bcb4-32569d48613c",
+        "status": 200,
+        "code": null,
+        "traceId": "6482db9a-b070-4d84-90c1-1477a9a62238"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cms/me",
+        "status": 401,
+        "code": "UNAUTHENTICATED",
+        "traceId": "428003b1-f9be-4287-a436-913c58d3b1fb"
+      }
+    ],
+    "screenshotCount": 5
+  },
+  "publicEvidenceReview": {
+    "verdict": "PASS",
+    "checked": "Independent field/body/log-hash comparison and credential/private-path scan; no actionable findings."
+  }
+}
