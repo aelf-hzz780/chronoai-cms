@@ -8,6 +8,7 @@ import {translator} from './i18n.js';
 import {StudioPickers} from './pickers.js';
 import {libraryView,type Filters} from './library.js';
 import {editorView} from './editor.js';
+import {siteGuidance,reviewGuidance} from './editor-guidance.js';
 import {publicationView,type PublicationView} from './publication.js';
 import {OperationIntent,publicationOptions} from './publication-model.js';
 import {taskDetailView,taskListView,linkStatusView,type TaskFilters} from './tasks.js';
@@ -32,6 +33,7 @@ const api=new Transport();const context=new ContextGate();
 let locale:Language=localStorage.getItem('chrono.studio.locale')==='zh'?'zh':'en';
 let identity:Identity|null=null,owner:Workspace|null=null;
 let identityEstablished=false;
+let sitesLoaded=false,createdArticleId:string|null=null;
 let filters:Filters={language:'en',status:'all',q:'',offset:0,limit:20};
 let page:ContentPage|null=null,sites:Site[]=[],draft:EditorDraft|null=null,summary:Summary|null=null,history:History[]=[],source:Article|null=null;
 let pendingSource:{articleId:string;revisionId:string}|null=null;
@@ -52,9 +54,9 @@ const t=(key:Parameters<ReturnType<typeof translator>>[0])=>translator(locale)(k
 const workflowHost:WorkflowHost={confirm:confirmInContext,api,owner:()=>owner,subject:()=>identity?.subject??'',locale:()=>locale,stamp:()=>context.current(),accepts:stamp=>context.accepts(stamp),render,fail:failure,navigate,remember:hash=>{currentHash=hash;historyReplace(hash);},notice:(text,kind='info')=>{notice={text,kind};showNotice();},pausePolling:()=>{poller.stop();taskReads.advance();},resumePolling:startTaskPolling,refreshTask:async stamp=>{await refreshTaskDetail(stamp);return currentTask;}};
 const connections=new ConnectionController(workflowHost),distribution=new DistributionController(workflowHost);
 function route(){const [path,query='']=currentHash.replace(/^#\/?/,'').split('?');const [name='content',id,taskId]=path.split('/');return {name,id,taskId,query:new URLSearchParams(query)};}
-function canEdit(){return Boolean(api.csrf&&draft&&!draft.historyRevision&&!suspended&&owner?.capabilities.canWrite&&(!draft.article||summary?.capabilities.canEdit));}
-function canSubmit(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canWrite&&summary?.capabilities.canSubmit);}
-function canReview(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canPublish&&summary?.capabilities.canPublish);}
+function canEdit(){return Boolean(api.csrf&&draft&&!draft.historyRevision&&!suspended&&owner?.capabilities.canWrite&&(!draft.article||summary?.capabilities.canEdit||draft.article.id===createdArticleId));}
+function canSubmit(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canWrite&&draft&&!draft.historyRevision&&(!draft.article||summary?.capabilities.canSubmit||draft.article.id===createdArticleId));}
+function canReview(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canPublish&&draft&&(!draft.article||summary?.capabilities.canPublish||draft.article.id===createdArticleId));}
 function showNotice(){const node=document.getElementById('notice');if(node)node.innerHTML=notice?`${renderNotice(`<p>${escape(notice.text)}</p>${notice.details?`<code>${escape(notice.details)}</code>`:''}`,{tone:notice.kind,className:'studio-notice '+notice.kind,live:true})}`:'';}
 function render(){
  const pickerFocus=pickers.beforeRender();
@@ -63,8 +65,8 @@ function render(){
  if(!identity){renderLogin();return;}
  if(!owner){root.innerHTML=`<div class="studio-loading"><div><h2>${t('noWorkspace')}</h2>${button(t('retry'),'identity')}${button(t('logout'),'logout')}</div></div>`;return;}
  const r=route();let content='';
- if(r.name==='content'&&page)content=libraryView(page,filters,locale,owner.capabilities.canWrite&&!suspended);
- else if((r.name==='article'||r.name==='new')&&draft)content=editorView({draft,locale,canEdit:canEdit(),canSubmit:canSubmit(),canPublish:canReview(),canDistribute:canReview()&&Boolean(summary?.live),busy,history,translations:summary?.translations??[],source,previewMode,previewHtml,pendingSource})+(summary?.live&&owner.capabilities.canPublish?linkStatusView(linkStatuses,locale,busy||suspended||linkUnknown):'');
+ if(r.name==='content'&&page)content=siteGuidance(sites,sitesLoaded,filters.language,locale)+libraryView(page,filters,locale,owner.capabilities.canWrite&&!suspended);
+ else if((r.name==='article'||r.name==='new')&&draft)content=editorView({draft,locale,canEdit:canEdit(),canSubmit:canSubmit(),canPublish:canReview(),canDistribute:canReview()&&Boolean(summary?.live),summary,sites,sitesLoaded,busy,history,translations:summary?.translations??[],source,previewMode,previewHtml,pendingSource})+(summary?.live&&owner.capabilities.canPublish?linkStatusView(linkStatuses,locale,busy||suspended||linkUnknown):'');
  else if(r.name==='publish'&&publication)content=publicationView({...publication,busy,allowed:publication.allowed&&!suspended},locale);
  else if(r.name==='tasks'&&taskPage)content=taskListView(taskPage,taskFilters,locale);
  else if(r.name==='task'&&currentTask)content=taskDetailView(currentTask,locale,busy,mediaRights,Boolean(api.csrf&&owner.capabilities.canPublish&&!suspended))+(suspended?'':distribution.taskView());
@@ -115,7 +117,7 @@ async function loadIdentity(initial=false){const stamp=context.advance();busy=tr
 function historyReplace(hash:string){window.history.replaceState(null,'',location.pathname+hash);lastHash=hash;}
 async function loadRoute(){
  poller.stop();taskReads.advance();connections.reset();distribution.reset();
- const stamp=context.advance();busy=true;suspended=false;notice=null;page=null;summary=null;history=[];sites=[];source=null;previewMode='write';previewHtml='';draft=null;pendingSource=null;publication=null;taskPage=null;currentTask=null;mediaRights=false;mediaIntent=new OperationIntent();linkStatuses=[];linkUnknown=false;metrics=null;metricCopy=null;memberDirectory=null;memberIntent=null;render();
+ const stamp=context.advance();busy=true;suspended=false;notice=null;page=null;summary=null;history=[];sites=[];sitesLoaded=false;createdArticleId=null;source=null;previewMode='write';previewHtml='';draft=null;pendingSource=null;publication=null;taskPage=null;currentTask=null;mediaRights=false;mediaIntent=new OperationIntent();linkStatuses=[];linkUnknown=false;metrics=null;metricCopy=null;memberDirectory=null;memberIntent=null;render();
  if(!owner){busy=false;render();return;}
  const ownerId=owner.id;const r=route();
  try{
@@ -175,29 +177,52 @@ async function loadRoute(){
    await refreshTaskDetail(stamp);if(!context.accepts(stamp))return;
    const loadedTask=currentTask as TaskDetail|null;if(loadedTask&&['delivery','plan'].includes(loadedTask.kind)){await distribution.loadTask(loadedTask,stamp);if(!context.accepts(stamp))return;}
   }else {currentHash='#/content';historyReplace(currentHash);await loadRoute();return;}
+  if(['content','article','new'].includes(r.name)){
+   try{const result=await api.json<{sites:Site[]}>(`/owners/${encodeURIComponent(ownerId)}/sites`,{signal:stamp.signal});if(!context.accepts(stamp))return;sites=result.sites;sitesLoaded=true;}
+   catch(error){if(!context.accepts(stamp))return;if(error instanceof ApiError&&(error.status===401||error.status===403))throw error;
+    notice={text:t('siteDraftUnknown'),kind:'info',details:error instanceof ApiError?`${error.code}${error.traceId?' · Trace ID '+error.traceId:''}`:undefined};
+   }
+  }
   busy=false;render();
   startTaskPolling();
  }catch(error){await failure(error,stamp);}
 }
-async function save(){
- if(!draft||!canEdit()||draft.conflict||busy)return;
- const local=draft;const stamp=context.current();const workspace=owner!;const body=markdownForSave(local);
- if(!local.title.trim()||!local.author.trim()||!body.trim()){notice={text:locale==='en'?'Title, credited author and Markdown are required.':'请填写标题、署名作者和 Markdown。',kind:'error'};showNotice();return;}
- busy=true;render();try{
-  let result:Article;
-  if(local.article)result=await api.json<Article>(`/articles/${encodeURIComponent(local.article.id)}`,{method:'PATCH',data:{expectedRevision:local.article.revision.id,title:local.title,creditedAuthor:local.author,...(local.markdownChanged||local.imported?{markdown:body}:{})},signal:stamp.signal});
+type EditorAction='save'|'submit'|'review';
+function submittedCurrent(){return Boolean(draft?.article&&!draft.dirty&&summary?.submission?.status==='pending'&&summary.submission.revisionId===draft.article.revision.id);}
+async function persistDraft(local:EditorDraft,workspace:Workspace,stamp:Stamp,accepts:()=>boolean):Promise<Article|null>{
+ let result=local.article;
+ if(!result||local.dirty){
+  const body=markdownForSave(local);
+  if(result)result=await api.json<Article>(`/articles/${encodeURIComponent(result.id)}`,{method:'PATCH',data:{expectedRevision:result.revision.id,title:local.title,creditedAuthor:local.author,...(local.markdownChanged||local.imported?{markdown:body}:{})},signal:stamp.signal});
   else if(local.imported&&!local.markdownChanged){const params=new URLSearchParams({ownerId:workspace.id,language:local.language,title:local.title,creditedAuthor:local.author});result=await api.json<Article>(`/articles/import?${params}`,{method:'POST',body:new TextEncoder().encode(body),contentType:'text/markdown',signal:stamp.signal});}
   else result=await api.json<Article>('/articles',{method:'POST',data:{ownerId:workspace.id,language:local.language,title:local.title,creditedAuthor:local.author,markdown:body},signal:stamp.signal});
-  if(!context.accepts(stamp)||draft!==local)return;
-  if(local.article)retainedDrafts.delete(`${local.article.ownerId}/${local.article.id}`);
-  draft=draftFrom(result);currentHash=`#/article/${encodeURIComponent(result.id)}`;historyReplace(currentHash);
-  if(pendingSource){await api.json<Article>(`/articles/${encodeURIComponent(result.id)}/translation`,{method:'POST',data:{sourceArticleId:pendingSource.articleId,sourceRevisionId:pendingSource.revisionId},signal:stamp.signal});if(!context.accepts(stamp))return;pendingSource=null;}
-  await loadRoute();
- }catch(error){if(context.accepts(stamp)&&error instanceof ApiError&&error.status===409&&draft===local){local.conflict=true;local.dirty=true;}await failure(error,stamp);}
+  if(!accepts())return null;
+  if(result.ownerId!==workspace.id||result.language!==local.language||(local.article&&result.id!==local.article.id))throw new ApiError(502,'SAVE_CONTEXT','Saved article context mismatch');
+  if(!local.article)createdArticleId=result.id;
+  retainedDrafts.delete(`${workspace.id}/${result.id}`);
+  Object.assign(local,draftFrom(result));currentHash=`#/article/${encodeURIComponent(result.id)}`;historyReplace(currentHash);
+ }
+ if(pendingSource){const link=pendingSource;await api.json(`/articles/${encodeURIComponent(result.id)}/translation`,{method:'POST',data:{sourceArticleId:link.articleId,sourceRevisionId:link.revisionId},signal:stamp.signal});if(!accepts()||pendingSource!==link)return null;pendingSource=null;}
+ return result;
 }
-async function submit(){if(!draft?.article||!canSubmit()||draft.dirty||busy||draft.historyRevision)return;const stamp=context.current();const article=draft.article;busy=true;render();try{
- await api.json(`/articles/${encodeURIComponent(article.id)}/submit`,{method:'POST',data:{revisionId:article.revision.id},signal:stamp.signal});if(!context.accepts(stamp))return;await loadRoute();notice={text:t('submitDone'),kind:'success'};showNotice();
- }catch(error){await failure(error,stamp);}}
+async function continueEditor(action:EditorAction){
+ if(!draft||!owner||busy||draft.conflict)return;
+ if(action==='review'?!canReview():!canEdit()||(action==='submit'&&(!canSubmit()||submittedCurrent())))return;
+ const local=draft,workspace=owner,session=identity,csrf=api.csrf,stamp=context.current();
+ const accepts=()=>context.accepts(stamp)&&draft===local&&owner===workspace&&identity===session&&api.csrf===csrf&&!suspended;
+ const needsSave=!local.article||local.dirty;
+ if(needsSave&&(!canEdit()||local.historyRevision))return;
+ if(needsSave&&(!local.title.trim()||!local.author.trim()||!markdownForSave(local).trim())){notice={text:locale==='en'?'Title, credited author and Markdown are required.':'请填写标题、署名作者和 Markdown。',kind:'error'};showNotice();return;}
+ busy=true;notice=null;render();try{
+  const article=await persistDraft(local,workspace,stamp,accepts);if(!article||!accepts())return;
+  if(action==='review'){busy=false;preserveNavigation=true;navigate(`#/publish/${encodeURIComponent(article.id)}?revision=${encodeURIComponent(article.revision.id)}`);return;}
+  if(action==='submit'){await api.json(`/articles/${encodeURIComponent(article.id)}/submit`,{method:'POST',data:{revisionId:article.revision.id},signal:stamp.signal});if(!accepts())return;}
+  await loadRoute();
+  if(owner===workspace&&identity===session&&draft?.article?.id===article.id&&!suspended){notice={text:t(action==='submit'?'submitDone':'saved'),kind:'success'};showNotice();}
+ }catch(error){if(accepts()&&needsSave&&local.dirty&&error instanceof ApiError&&error.status===409)local.conflict=true;await failure(error,stamp);}
+}
+async function save(){await continueEditor('save');}
+async function submit(){await continueEditor('submit');}
 async function previewSaved(){if(!draft?.article||busy)return;const stamp=context.current();const article=draft.article;busy=true;render();try{
  const result=await api.json<{html:string;revisionId:string;private:boolean}>(`/articles/${encodeURIComponent(article.id)}/preview?revision=${encodeURIComponent(article.revision.id)}`,{signal:stamp.signal});if(!context.accepts(stamp))return;
  if(result.revisionId!==article.revision.id||result.private!==true)throw new ApiError(502,'PREVIEW_CONTEXT','Preview revision mismatch');previewMode='saved';previewHtml=sanitizePreview(result.html);busy=false;render();
@@ -268,7 +293,7 @@ async function refreshCounters(){
   await readMetrics(stamp);if(!context.accepts(stamp))return;busy=false;notice={text:t(result.availability==='Available'?'countersRead':'counterUnavailable'),kind:result.availability==='Available'?'info':'error',details:result.code};render();
  }catch(error){await failure(error,stamp);}
 }
-function reviewPublication(){if(!draft?.article||!canReview()||busy)return;retainEditor();preserveNavigation=true;navigate(`#/publish/${encodeURIComponent(draft.article.id)}?revision=${encodeURIComponent(draft.article.revision.id)}`);}
+async function reviewPublication(){await continueEditor('review');}
 async function confirmOriginal(){
  if(!publication||busy||!publication.allowed||suspended||!publication.rights||!publication.site?.configured)return;
  const frozen=publication,stamp=context.current();
@@ -374,7 +399,7 @@ async function action(name:string){
   case 'member-confirm':await confirmMemberChange();break;
   case 'member-cancel':memberIntent=null;render();break;
   case 'refresh-counters':await refreshCounters();break;
-  case 'review-publication':reviewPublication();break;
+  case 'review-publication':await reviewPublication();break;
   case 'confirm-original':await confirmOriginal();break;
   case 'task-cancel':await taskCommand('cancel');break;
   case 'task-reconcile':await taskCommand('reconcile');break;
@@ -415,12 +440,12 @@ root.addEventListener('input',event=>{const input=event.target as HTMLInputEleme
  if(distribution.input(input))return;
  if(input.id==='metric-copy-id'){metricCopyId=input.value;metricCopy=null;const refresh=root.querySelector<HTMLButtonElement>('[data-action="refresh-counters"]');if(refresh)refresh.disabled=true;}
  if(input.id==='revoke-identity')manualMemberIdentity=input.value;
- if(!draft||!canEdit())return;
+ if(!draft||!canEdit()||busy)return;
  if(input.id==='source-id'){source=null;const confirm=root.querySelector<HTMLButtonElement>('[data-action="link-source"]');if(confirm)confirm.disabled=true;}
  if(input.id==='article-title'){draft.title=input.value;draft.dirty=true;}
  if(input.id==='credited-author'){draft.author=input.value;draft.dirty=true;}
  if(input.id==='markdown'){draft.markdown=input.value;draft.markdownChanged=true;draft.dirty=true;}
- if(['article-title','credited-author','markdown'].includes(input.id)){const submitButton=root.querySelector<HTMLButtonElement>('[data-action="submit"]');if(submitButton)submitButton.disabled=true;const status=root.querySelector('.editor-state');if(status)status.innerHTML=badge(t('unsaved'),'amber');}
+ if(['article-title','credited-author','markdown'].includes(input.id)){const submitButton=root.querySelector<HTMLButtonElement>('[data-action="submit"]');if(submitButton){submitButton.disabled=!canSubmit()||draft.conflict;submitButton.textContent=t(summary?.submission?.status==='pending'?'submitAgain':'submit');}const guidance=root.querySelector('.editor-review-guidance');if(guidance)guidance.textContent=reviewGuidance(summary,locale,true);const status=root.querySelector('.editor-state');if(status)status.innerHTML=badge(t('unsaved'),'amber');}
 });
 root.addEventListener('change',async event=>{const input=event.target as HTMLInputElement|HTMLSelectElement;
  if(connections.change(input)||distribution.change(input))return;
