@@ -1,3 +1,4 @@
+import {selectStudioOption} from './studio-picker-helper.ts';
 // Isolated browser contracts: fixture responses only, no external content writes.
 import {test,type TestContext} from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,6 +17,35 @@ async function staticAsset(route:Route):Promise<boolean>{const path=new URL(rout
  if(path.startsWith('/studio/assets/')){const relative=path.slice('/studio/assets/'.length);assert.match(relative,/^(?:styles\.css|studio\.css|vendor\/markdown-it\.js|dist\/[a-z0-9-]+\.js)$/);await route.fulfill({contentType:path.endsWith('.css')?'text/css':'text/javascript',body:await readFile(new URL('../web/studio/'+relative,import.meta.url),'utf8')});return true;}return false;
 }
 async function newBrowser(t:TestContext){const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());return browser;}
+
+test('Studio shell pickers use one styled popup with keyboard commit, cancellation and focus across redraws',async t=>{
+ const browser=await newBrowser(t),page=await browser.newPage({viewport:{width:1440,height:1000}});const reads:string[]=[];
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;if(path==='/api/cms/me')return route.fulfill({json:identity});for(const id of ['owner-a','owner-b'])if(path===`/api/cms/owners/${id}/content-summary`){reads.push(id);return route.fulfill({json:content(article(id))});}throw Error('Unexpected request '+path);});
+ await page.goto('https://studio.invalid/studio');await page.getByRole('link',{name:'Original title',exact:true}).waitFor();
+ assert.equal(await page.locator('#workspace-trigger').count(),1,'the entire workspace card is the custom picker trigger');
+ const workspace=page.locator('#workspace-trigger');await workspace.focus();await workspace.press('Enter');await page.locator('#workspace-listbox').waitFor();
+ await workspace.press('ArrowDown');assert.equal(await page.locator('#workspace').inputValue(),'owner-a');assert.deepEqual(reads,['owner-a'],'highlighting a choice does not switch the workspace');
+ await workspace.press('Escape');assert.equal(await workspace.getAttribute('aria-expanded'),'false');assert.equal(await page.locator(':focus').getAttribute('id'),'workspace-trigger');
+ await workspace.press('Enter');await workspace.press('End');await workspace.press('Enter');await page.getByRole('link',{name:'Team title',exact:true}).waitFor();
+ assert.equal(await page.locator('#workspace').inputValue(),'owner-b');assert.equal(await page.locator(':focus').getAttribute('id'),'workspace-trigger','focus survives loading and completed redraws');
+ await workspace.click();await page.locator('#workspace-listbox [aria-selected="true"]').click();assert.deepEqual(reads,['owner-a','owner-b'],'reselecting the current workspace does not reload it');
+ await workspace.click();await page.locator('#locale-trigger').click();assert.equal(await workspace.getAttribute('aria-expanded'),'false');await page.getByRole('heading',{name:'Content library',exact:true}).click();assert.equal(await page.locator('#locale-trigger').getAttribute('aria-expanded'),'false');
+ await page.locator('#locale-trigger').focus();await page.locator('#locale-trigger').press('Enter');await page.locator('#locale-trigger').press('End');await page.locator('#locale-trigger').press('Enter');
+ assert.equal(await page.locator('html').getAttribute('lang'),'zh-CN');assert.equal(await page.locator('#article-language').inputValue(),'en');assert.equal(await page.locator(':focus').getAttribute('id'),'locale-trigger');
+ await page.locator('#locale-trigger').press('Enter');await page.locator('#locale-trigger').press('Tab');assert.equal(await page.locator('#locale-trigger').getAttribute('aria-expanded'),'false');assert.notEqual(await page.locator(':focus').getAttribute('id'),'locale-trigger');
+ for(const width of [390,820,1440]){await page.setViewportSize({width,height:844});await page.locator('#workspace-trigger').click();const box=await page.locator('#workspace-listbox').boundingBox();assert.ok(box&&box.x>=0&&box.x+box.width<=width,`workspace popup stays inside ${width}px`);await page.locator('#workspace-trigger').press('Escape');await page.locator('#locale-trigger').click();const language=await page.locator('#locale-listbox').boundingBox();assert.ok(language&&language.x>=0&&language.x+language.width<=width,`language popup stays inside ${width}px`);await page.locator('#locale-trigger').press('Escape');}
+ const signedOut=await browser.newPage({viewport:{width:390,height:844}});
+ await signedOut.route('**/*',async route=>{if(await staticAsset(route))return;return route.fulfill({status:401,json:{code:'AUTH_REQUIRED',message:'Sign in to continue'}});});
+ await signedOut.goto('https://studio.invalid/studio');await signedOut.locator('#signin').waitFor();await signedOut.locator('#locale-trigger').click();const loginMenu=await signedOut.locator('#locale-listbox').boundingBox();assert.ok(loginMenu&&loginMenu.x>=0&&loginMenu.x+loginMenu.width<=390,'left-aligned login language menu remains inside the viewport');
+});
+
+test('a rejected workspace switch retains the displayed owner and unsaved editor text',async t=>{
+ const browser=await newBrowser(t),page=await browser.newPage();let otherReads=0;
+ await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;if(path==='/api/cms/me')return route.fulfill({json:identity});if(path==='/api/cms/owners/owner-b/content-summary'){otherReads++;return route.fulfill({json:content(article('owner-b'))});}throw Error('Unexpected request '+path);});
+ await page.goto('https://studio.invalid/studio#/new/en');await page.locator('#article-title').fill('Keep my unsaved title');
+ assert.equal(await page.locator('#workspace-trigger').count(),1);page.once('dialog',dialog=>dialog.dismiss());await page.locator('#workspace-trigger').click();await page.locator('#workspace-listbox [data-value="owner-b"]').click();
+ assert.equal(await page.locator('#workspace').inputValue(),'owner-a');assert.match(await page.locator('#workspace-trigger').innerText(),/Personal desk/);assert.equal(await page.locator('#article-title').inputValue(),'Keep my unsaved title');assert.equal(otherReads,0);assert.equal(await page.locator(':focus').getAttribute('id'),'workspace-trigger');
+});
 
 test('studio browser preserves imported bytes, metadata-only saves, conflict text and preview isolation',async t=>{
  const browser=await newBrowser(t);const page=await browser.newPage();const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -44,9 +74,9 @@ test('studio browser preserves imported bytes, metadata-only saves, conflict tex
 test('studio browser switches owners without accepting a late former-workspace response and separates UI locale',async t=>{
  const browser=await newBrowser(t);const page=await browser.newPage();const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));let delayed:Route|null=null;
  await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;if(path==='/api/cms/me')return route.fulfill({json:identity});if(path==='/api/cms/owners/owner-a/content-summary'){delayed=route;return;}if(path==='/api/cms/owners/owner-b/content-summary')return route.fulfill({json:content(article('owner-b'))});throw Error('Unexpected request '+path);});
- await page.goto('https://studio.invalid/studio#/content');await page.locator('#workspace').selectOption('owner-b');await page.getByRole('link',{name:'Team title',exact:true}).waitFor();
+ await page.goto('https://studio.invalid/studio#/content');await selectStudioOption(page,'workspace','owner-b');await page.getByRole('link',{name:'Team title',exact:true}).waitFor();
  if(delayed)await (delayed as Route).fulfill({json:content(article('owner-a'))}).catch(()=>{/* The browser may have already aborted this old request. */});
- await page.locator('#locale').selectOption('zh');assert.equal(await page.locator('#article-language').inputValue(),'en');assert.equal(await page.getByRole('link',{name:'Original title',exact:true}).count(),0);assert.equal(await page.getByRole('link',{name:'Team title',exact:true}).count(),1);assert.equal(await page.locator('#workspace').inputValue(),'owner-b');assert.deepEqual(errors,[]);
+ await selectStudioOption(page,'locale','zh');assert.equal(await page.locator('#article-language').inputValue(),'en');assert.equal(await page.getByRole('link',{name:'Original title',exact:true}).count(),0);assert.equal(await page.getByRole('link',{name:'Team title',exact:true}).count(),1);assert.equal(await page.locator('#workspace').inputValue(),'owner-b');assert.deepEqual(errors,[]);
 });
 
 test('studio workspace selection remains visible and operable at phone and tablet widths',async t=>{
@@ -55,8 +85,8 @@ test('studio workspace selection remains visible and operable at phone and table
   const page=await browser.newPage({viewport:{width,height:844}});
   await page.route('**/*',async route=>{if(await staticAsset(route))return;const path=new URL(route.request().url()).pathname;if(path==='/api/cms/me')return route.fulfill({json:identity});if(path==='/api/cms/owners/owner-a/content-summary')return route.fulfill({json:content(article('owner-a'))});if(path==='/api/cms/owners/owner-b/content-summary')return route.fulfill({json:content(article('owner-b'))});throw Error('Unexpected request '+path);});
   await page.goto('https://studio.invalid/studio#/content');await page.getByRole('link',{name:'Original title',exact:true}).waitFor();
-  assert.equal(await page.locator('#workspace').isVisible(),true,`workspace selector is visible at ${width}px`);
-  await page.locator('#workspace').selectOption('owner-b');await page.getByRole('link',{name:'Team title',exact:true}).waitFor();assert.equal(await page.locator('#workspace').inputValue(),'owner-b');
+  assert.equal(await page.locator('#workspace-trigger').isVisible(),true,`workspace selector is visible at ${width}px`);
+  await selectStudioOption(page,'workspace','owner-b');await page.getByRole('link',{name:'Team title',exact:true}).waitFor();assert.equal(await page.locator('#workspace').inputValue(),'owner-b');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,`no page overflow at ${width}px`);await page.close();
  }
 });

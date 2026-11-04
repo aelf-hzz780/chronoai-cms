@@ -3,6 +3,7 @@ import {ContextGate,draftFrom,safeReturnPath,type Stamp} from './state.js';
 import {base64,decodeMarkdown,markdownForSave} from './bytes.js';
 import {badge,button,escape,renderPreview,sanitizePreview,shell,siteCards} from './components.js';
 import {translator} from './i18n.js';
+import {StudioPickers} from './pickers.js';
 import {libraryView,type Filters} from './library.js';
 import {editorView} from './editor.js';
 import {publicationView,type PublicationView} from './publication.js';
@@ -22,6 +23,7 @@ import type {WorkflowHost} from './workflow-types.js';
 import type {Article,ContentPage,EditorDraft,History,Identity,Language,Site,Summary,Workspace,Release,TaskDetail,TaskPage,PublicationAction,LinkStatus,MemberDirectory,MemberIntent,MetricFilters,MetricDestination,Metrics} from './types.js';
 
 const root=document.getElementById('app')!;
+const pickers=new StudioPickers(root);
 const api=new Transport();const context=new ContextGate();
 let locale:Language=localStorage.getItem('chrono.studio.locale')==='zh'?'zh':'en';
 let identity:Identity|null=null,owner:Workspace|null=null;
@@ -50,6 +52,8 @@ function canSubmit(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.ca
 function canReview(){return Boolean(api.csrf&&!suspended&&owner?.capabilities.canPublish&&summary?.capabilities.canPublish);}
 function showNotice(){const node=document.getElementById('notice');if(node)node.innerHTML=notice?`<div class="studio-notice ${notice.kind}" role="${notice.kind==='error'?'alert':'status'}"><p>${escape(notice.text)}</p>${notice.details?`<code>${escape(notice.details)}</code>`:''}</div>`:'';}
 function render(){
+ const pickerFocus=pickers.beforeRender();
+ try{
  document.documentElement.lang=locale==='en'?'en':'zh-CN';root.setAttribute('aria-busy',String(busy));
  if(!identity){renderLogin();return;}
  if(!owner){root.innerHTML=`<div class="studio-loading"><div><h2>${t('noWorkspace')}</h2>${button(t('retry'),'identity')}${button(t('logout'),'logout')}</div></div>`;return;}
@@ -70,10 +74,11 @@ function render(){
  const directory=identity.organizationDirectory?.status==='unavailable'?`<div class="studio-notice studio-directory">${t('directory')}${identity.organizationDirectory.code?`<code>${escape(identity.organizationDirectory.code)}</code>`:''}</div>`:'';
  const csrf=!api.csrf?`<div class="studio-notice error">${t('csrfMissing')}</div>`:'';
  root.innerHTML=shell(directory+csrf+content,identity.workspaces,owner,identity.subject,locale,r.name);showNotice();
+ }finally{pickers.afterRender(pickerFocus);}
 }
 function renderLogin(){
  const authError=new URLSearchParams(location.search).has('authError');
- root.innerHTML=`<div class="studio-auth"><section class="studio-auth-art"><a href="/studio" class="wordmark"><span class="brand-symbol">◈</span><span>ChronoAI<small>PUBLISHING STUDIO</small></span></a><div><div class="eyebrow">IDEAS DESERVE A PLACE</div><h1>${t('loginTitle')}</h1><p>${t('loginCopy')}</p></div><small class="eyebrow">WRITE WITH INTENTION. SHARE WITH CONFIDENCE.</small></section><section class="studio-auth-side"><div class="studio-auth-card"><h2>${t('studio')}</h2><p>${t('session')}</p>${authError?`<div class="studio-notice error" role="alert">${t('loginError')}</div>`:''}${notice?.kind==='error'?`<div class="studio-notice error" role="alert">${escape(notice.text)}<code>${escape(notice.details??'')}</code></div>`:''}<a class="btn primary full large" href="/auth/login?returnTo=%2Fstudio" id="signin">${t('signin')} →</a><div class="studio-auth-tools"><select id="locale" aria-label="${t('interface')}"><option value="en" ${locale==='en'?'selected':''}>EN</option><option value="zh" ${locale==='zh'?'selected':''}>简中</option></select><a href="/">${t('legacy')}</a></div></div></section></div>`;
+ root.innerHTML=`<div class="studio-auth"><section class="studio-auth-art"><a href="/studio" class="wordmark"><span class="brand-symbol">◈</span><span>ChronoAI<small>PUBLISHING STUDIO</small></span></a><div><div class="eyebrow">IDEAS DESERVE A PLACE</div><h1>${t('loginTitle')}</h1><p>${t('loginCopy')}</p></div><small class="eyebrow">WRITE WITH INTENTION. SHARE WITH CONFIDENCE.</small></section><section class="studio-auth-side"><div class="studio-auth-card"><h2>${t('studio')}</h2><p>${t('session')}</p>${authError?`<div class="studio-notice error" role="alert">${t('loginError')}</div>`:''}${notice?.kind==='error'?`<div class="studio-notice error" role="alert">${escape(notice.text)}<code>${escape(notice.details??'')}</code></div>`:''}<a class="btn primary full large" href="/auth/login?returnTo=%2Fstudio" id="signin">${t('signin')} →</a><div class="studio-auth-tools"><select id="locale" data-studio-picker="locale" aria-label="${t('interface')}"><option value="en" ${locale==='en'?'selected':''}>EN</option><option value="zh" ${locale==='zh'?'selected':''}>简中</option></select><a href="/">${t('legacy')}</a></div></div></section></div>`;
 }
 async function failure(error:unknown,stamp=context.current()){
  if(!context.accepts(stamp)||(error instanceof DOMException&&error.name==='AbortError'))return;
@@ -409,7 +414,7 @@ root.addEventListener('change',event=>{const input=event.target as HTMLInputElem
 window.addEventListener('hashchange',()=>{if(!preserveNavigation&&!unsavedAllowed()){historyReplace(lastHash);return;}preserveNavigation=false;currentHash=location.hash||'#/content';lastHash=currentHash;void loadRoute();});
 document.addEventListener('visibilitychange',()=>poller.visibilityChanged());
 root.addEventListener('toggle',event=>{const details=event.target;if(details instanceof HTMLDetailsElement&&details.classList.contains('studio-plan-create'))distribution.setPlanOpen(details.open);},true);
-window.addEventListener('pagehide',()=>{retainEditor();poller.stop();taskReads.advance();context.advance();});
+window.addEventListener('pagehide',event=>{pickers.close();if(!event.persisted)pickers.dispose();retainEditor();poller.stop();taskReads.advance();context.advance();});
 window.addEventListener('pageshow',event=>{if(event.persisted)void loadIdentity();});
 window.addEventListener('beforeunload',event=>{if(draft?.dirty||[...retainedDrafts.values()].some(local=>local.dirty)){event.preventDefault();event.returnValue='';}});
 void loadIdentity();

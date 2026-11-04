@@ -1,3 +1,4 @@
+import {selectStudioOption} from './studio-picker-helper.ts';
 // Acceptance harness only: real Fastify/SQLite/session/CSRF, isolated identity provider.
 // This file is never imported by the production application.
 import {test} from 'node:test';
@@ -114,8 +115,8 @@ if(process.argv.includes('--serve')){
     const context=await browser.newContext({viewport:{width:1440,height:1024}});const page=await context.newPage();
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
     await page.goto(`${server.url}/studio`);await page.locator('#signin').waitFor();
-    await page.goto(`${server.url}/__acceptance/session/member`);await page.locator('#workspace').waitFor();
-    await page.locator('#workspace').selectOption('org');await page.getByRole('link',{name:'A calmer place to publish',exact:true}).waitFor();
+    await page.goto(`${server.url}/__acceptance/session/member`);await page.locator('#workspace-trigger').waitFor();
+    await selectStudioOption(page,'workspace','org');await page.getByRole('link',{name:'A calmer place to publish',exact:true}).waitFor();
     const evidence=evidenceDirectory('m1');await mkdir(evidence,{recursive:true});
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('content.png',evidence).pathname,fullPage:true});
     await page.getByRole('link',{name:'A calmer place to publish',exact:true}).click();await page.locator('#article-title').waitFor();
@@ -125,8 +126,8 @@ if(process.argv.includes('--serve')){
     await page.locator(`a[href="#/article/${server.english.id}"]`).first().click();
     await page.waitForFunction(()=>document.querySelector<HTMLInputElement>('#article-title')?.value==='A calmer place to publish');
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('editor.png',evidence).pathname,fullPage:true});
-    await page.locator('#locale').selectOption('zh');assert.match(await page.locator('.editor-title-label').innerText(),/English/);
-    await page.locator('#locale').selectOption('en');
+    await selectStudioOption(page,'locale','zh');assert.match(await page.locator('.editor-title-label').innerText(),/English/);
+    await selectStudioOption(page,'locale','en');
     const raw='\uFEFF# Browser-imported source\r\n\r\n中文 UTF-8 stays intact.\r\n';
     await page.setInputFiles('#markdown-file',{name:'source.md',mimeType:'text/markdown',buffer:Buffer.from(raw)});
     await page.getByText('Original UTF-8 file loaded.',{exact:false}).waitFor();
@@ -157,14 +158,14 @@ if(process.argv.includes('--serve')){
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('conflict.png',evidence).pathname,fullPage:true});
     // An organization Admin may publish submitted material, not edit its author’s draft.
     const adminPage=await context.newPage();await adminPage.goto(`${server.url}/__acceptance/session/admin`);
-    await adminPage.locator('#workspace').selectOption('org');await adminPage.goto(`${server.url}/studio#/article/${server.english.id}`);
+    await selectStudioOption(adminPage,'workspace','org');await adminPage.goto(`${server.url}/studio#/article/${server.english.id}`);
     await adminPage.locator('#article-title').waitFor();assert.equal(await adminPage.locator('[data-action="save"]').isDisabled(),true);
     assert.equal(await adminPage.locator('#article-title').inputValue(),'A calmer place to publish','only the submitted revision is exposed');
     assert.equal(await adminPage.getByText('Concurrent accepted edit',{exact:true}).count(),0);
     assert.equal((await context.request.get(`${server.url}/api/cms/assets/${assetId}`)).status(),403,'Admin cannot read the new unsubmitted private image');
     await adminPage.setViewportSize({width:390,height:844});
-    assert.equal(await adminPage.locator('#workspace').isVisible(),true,'mobile workspace selector remains usable');
-    await adminPage.locator('#workspace').selectOption('admin');await adminPage.locator('.empty').waitFor();
+    assert.equal(await adminPage.locator('#workspace-trigger').isVisible(),true,'mobile workspace selector remains usable');
+    await selectStudioOption(adminPage,'workspace','admin');await adminPage.locator('.empty').waitFor();
     assert.equal(await adminPage.locator('#workspace').inputValue(),'admin');
     await adminPage.waitForFunction(()=>document.documentElement.scrollWidth<=innerWidth);
     await adminPage.screenshot({path:new URL('mobile.png',evidence).pathname,fullPage:true});
@@ -174,7 +175,7 @@ if(process.argv.includes('--serve')){
     const server=await acceptanceServer();t.after(()=>server.close());
     const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
     const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
-    await page.goto(`${server.url}/__acceptance/session/admin`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/__acceptance/session/admin`);await selectStudioOption(page,'workspace','org');
     await page.goto(`${server.url}/studio#/connections`);await page.locator('#connections-target').selectOption('dev');
     await page.locator('[data-action="connection-create"]').click();await page.locator('.studio-attempt').waitFor();
     const attempt=server.f.store.get('SELECT * FROM connection_attempts WHERE owner_id=?','org')!;
@@ -194,7 +195,7 @@ if(process.argv.includes('--serve')){
     const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
     const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
     page.on('dialog',dialog=>dialog.accept());
-    await page.goto(`${server.url}/__acceptance/session/publisher`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/__acceptance/session/publisher`);await selectStudioOption(page,'workspace','org');
     await page.goto(`${server.url}/studio#/distribution/${server.english.id}`);
     await page.locator('#distribution-target').selectOption('medium');await page.locator('#distribution-connection').selectOption('org-medium');
     await page.locator('#distribution-format').selectOption('excerpt');await page.locator('#distribution-excerpt').fill('A private, confirmed excerpt for this exact copy.');
@@ -210,7 +211,7 @@ if(process.argv.includes('--serve')){
     assert.equal(server.f.store.get('SELECT note FROM delivery_notes WHERE delivery_id=?',manualId)!.note,'Submitted via the editorial workflow.');
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:new URL('manual-followup.png',evidence).pathname,fullPage:true});
     const mobile=await context.newPage();await mobile.setViewportSize({width:390,height:844});
-    await mobile.goto(`${server.url}/studio`);await mobile.locator('#workspace').selectOption('org');
+    await mobile.goto(`${server.url}/studio`);await selectStudioOption(mobile,'workspace','org');
     await mobile.goto(`${server.url}/studio#/distribution/${server.english.id}`);await mobile.locator('#distribution-target').selectOption('medium');
     await mobile.locator('#distribution-connection').selectOption('org-medium');
     assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
@@ -247,7 +248,7 @@ if(process.argv.includes('--serve')){
     const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
     const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
     page.on('dialog',dialog=>dialog.accept());
-    await page.goto(`${server.url}/__acceptance/session/admin`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/__acceptance/session/admin`);await selectStudioOption(page,'workspace','org');
     await page.goto(`${server.url}/studio#/distribution/${server.english.id}`);await page.locator('#distribution-target').selectOption('dev');
     await page.locator('#distribution-connection').selectOption('org-dev');await page.locator('#distribution-rights').check();
     await page.locator('[data-action="dist-confirm"]').click();await page.waitForURL(url=>url.hash.startsWith('#/task/delivery/'));
@@ -271,7 +272,7 @@ if(process.argv.includes('--serve')){
     await page.waitForFunction(()=>document.querySelector('#notice')?.textContent==='已保存新版本。');
     const first=server.f.store.get('SELECT a.id,a.current_revision FROM articles a JOIN revisions r ON r.id=a.current_revision WHERE r.title=?','Legacy and Studio share this draft')!;
     const before=server.f.store.all('SELECT version FROM migrations ORDER BY version');
-    await page.goto(`${server.url}/studio`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/studio`);await selectStudioOption(page,'workspace','org');
     await page.getByRole('link',{name:'Legacy and Studio share this draft',exact:true}).click();await page.locator('#article-title').waitFor();
     await page.locator('#article-title').fill('Saved in Studio, read in legacy');await page.locator('[data-action="save"]').click();
     await page.waitForFunction(()=>document.querySelector('.editor-state')?.textContent?.includes('Saved'));
@@ -289,7 +290,7 @@ if(process.argv.includes('--serve')){
     const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
     const evidence=evidenceDirectory('wp06');await mkdir(evidence,{recursive:true});
-    await page.goto(`${server.url}/__acceptance/session/admin`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/__acceptance/session/admin`);await selectStudioOption(page,'workspace','org');
     await page.goto(`${server.url}/studio#/members`);await page.locator('.studio-member-directory').waitFor();
     await page.locator('[data-action="member-select"][data-identity="member"][data-enabled="true"]').click();
     assert.equal(server.f.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?','org','member'),undefined,'selection alone does not grant authority');
@@ -333,7 +334,7 @@ if(process.argv.includes('--serve')){
     const browser=await chromium.launch({executablePath:await new BrowserRenderProof().executable(),headless:true});t.after(()=>browser.close());
     const context=await browser.newContext({viewport:{width:1440,height:1024}}),page=await context.newPage();
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
-    await page.goto(`${server.url}/__acceptance/session/publisher`);await page.locator('#workspace').selectOption('org');
+    await page.goto(`${server.url}/__acceptance/session/publisher`);await selectStudioOption(page,'workspace','org');
     await page.getByRole('link',{name:'A calmer place to publish',exact:true}).click();
     await page.locator('[data-action="review-publication"]').click();await page.locator('#publication-rights').waitFor();
     assert.equal(await page.locator('[data-action="confirm-original"]').isDisabled(),true);
@@ -362,9 +363,9 @@ if(process.argv.includes('--serve')){
     await page.goto(`${server.url}/studio#/tasks?articleId=${server.english.id}`);await page.locator('.studio-task-table').waitFor();
     assert.match(await page.locator('.studio-task-table').innerText(),/Cancelled/);
     const mobile=await context.newPage();await mobile.setViewportSize({width:390,height:844});
-    await mobile.goto(`${server.url}/studio#/tasks?articleId=${server.english.id}`);await mobile.locator('#workspace').selectOption('org');
+    await mobile.goto(`${server.url}/studio#/tasks?articleId=${server.english.id}`);await selectStudioOption(mobile,'workspace','org');
     await mobile.goto(`${server.url}/studio#/tasks?articleId=${server.english.id}`);await mobile.locator('.studio-task-table').waitFor();
-    assert.equal(await mobile.locator('#workspace').isVisible(),true);assert.equal(await mobile.locator('.sidebar').count(),1);
+    assert.equal(await mobile.locator('#workspace-trigger').isVisible(),true);assert.equal(await mobile.locator('.sidebar').count(),1);
     assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     await mobile.screenshot({path:new URL('tasks-mobile.png',evidence).pathname,fullPage:true});
     assert.deepEqual(errors,[]);
