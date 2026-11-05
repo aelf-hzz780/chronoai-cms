@@ -145,7 +145,13 @@ export class HashnodeAdapter implements Target {
       ? await this.gql(send, HASHNODE_READ_QUERIES.post, { id: payload.remoteId })
       : await this.gql(send, HASHNODE_READ_QUERIES.find, { publication: connection.publicationId, slug: `chrono-${payload.deliveryId}` });
     const post = payload.remoteId ? result.post : result.publication?.post;
-    if (payload.action === 'remove' && !post && payload.remoteId) return { state: 'removed', remoteId: payload.remoteId, url: payload.remoteUrl ?? '', sourceVerified: true };
+    if (payload.action === 'remove') {
+      // Hashnode soft-deleted posts can remain readable by id. Retained or
+      // malformed data cannot prove removal and must stay uncertain.
+      return post === null && payload.remoteId
+        ? { state: 'removed', remoteId: payload.remoteId, url: payload.remoteUrl ?? '', sourceVerified: true }
+        : null;
+    }
     if (!post || payload.remoteId && post.id!==payload.remoteId || post.publication?.id !== connection.publicationId || post.author?.id!==connection.accountId || post.title!==payload.title || post.canonicalUrl!==payload.sourceUrl || !post.publishedAt || Date.parse(post.publishedAt)>Date.now() || !sameBody(post.content?.markdown,payload)) return null;
     return { state: 'published', remoteId: post.id, url: post.url, sourceVerified: true };
   }
