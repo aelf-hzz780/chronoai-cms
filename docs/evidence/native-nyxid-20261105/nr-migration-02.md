@@ -22,3 +22,7 @@ Reproduce with `node --test scripts/native-nyxid-migration.test.ts`. The first T
 边界：这里是真实 CLI 进程与合成数据库/fake Docker 的 Local 编排行为验证，未执行正式容器启停、Mongo 写入、数据库恢复、服务注册变更或发文。它不代替官方镜像、真实切流 hook 和独立验收。根代理将为本修复提交新的固定 SHA，协调方须按该 SHA 复验；此记录不是自行签收。
 
 Boundary: these Local tests exercise real CLI processes with synthetic databases and fake Docker. They do not start/stop production containers, write Mongo, restore databases, change registration or publish content. They do not replace official-image, real-hook or independent acceptance checks. The root agent will publish a new fixed commit for independent revalidation; this record does not self-approve it.
+
+独立复验已在 `d67e768997ebb1bbfe530e4ffa61cf32c92bba0e` 关闭本缺陷：14 项迁移测试和另 9 种 CLI 场景通过。协调方证据为本任务私有 runtime `independent-review/NR-MIGRATION-02-retest/result.json`。这只关闭该迁移缺陷，不解除 M0 或正式切换阻塞。
+
+Independent revalidation closed this defect at `d67e768997ebb1bbfe530e4ffa61cf32c92bba0e`: 14 migration tests and 9 additional CLI scenarios passed. Coordinator evidence is retained under the private task runtime at `independent-review/NR-MIGRATION-02-retest/result.json`. This closes the migration defect only; M0 and formal cutover remain blocked.

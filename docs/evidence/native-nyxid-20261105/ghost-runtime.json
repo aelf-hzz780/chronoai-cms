@@ -1,0 +1,139 @@
+{
+  "officialNyxidCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "cmsCommit": "c7e9376f2110a6085d0c318c3bbabc526de52087",
+  "manifest": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/manifest.json",
+  "result": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/ghost-result-api-readback.json",
+  "containers": [
+    {
+      "name": "nyxid-native-ghost-personal",
+      "id": "23d5789719f69b159dd65f8c4691901b12de8f5f4822482e64653eb77fc25dcc",
+      "image": "ghost@sha256:4195f6c405e40230cd10c0770425cf500c1f542a96e9f6584c11649c150e5a89",
+      "state": "exited",
+      "ports": {},
+      "configuredPortBindings": {
+        "2368/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "33168"
+          }
+        ]
+      },
+      "memoryBytes": 402653184,
+      "networks": [
+        "bridge"
+      ],
+      "volumes": [
+        {
+          "name": "09a479d6bb5ab7fffcd1bee879746a73e0dfffee40626a6c1aaeaab239d0dc5a",
+          "destination": "/var/lib/ghost/content"
+        }
+      ]
+    },
+    {
+      "name": "nyxid-native-ghost-personal-r2",
+      "id": "ada6c7ee1e7b101508f6f5e709e6f140c19247ae09c846b67b72558f4bb7520a",
+      "image": "ghost@sha256:4195f6c405e40230cd10c0770425cf500c1f542a96e9f6584c11649c150e5a89",
+      "state": "running",
+      "ports": {
+        "2368/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "33169"
+          }
+        ]
+      },
+      "configuredPortBindings": {
+        "2368/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "33169"
+          }
+        ]
+      },
+      "memoryBytes": 402653184,
+      "networks": [
+        "bridge"
+      ],
+      "volumes": [
+        {
+          "name": "ae8c3e1984ae77a20d33155aedea01197beb00cf73b1a3d592b0d847d96039fe",
+          "destination": "/var/lib/ghost/content"
+        }
+      ]
+    },
+    {
+      "name": "nyxid-native-ghost-organization",
+      "id": "c310da279f01a2135da84fcd63a675ae13ee7e9a20d3c481b2c3363bef467851",
+      "image": "ghost@sha256:4195f6c405e40230cd10c0770425cf500c1f542a96e9f6584c11649c150e5a89",
+      "state": "running",
+      "ports": {
+        "2368/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "33178"
+          }
+        ]
+      },
+      "configuredPortBindings": {
+        "2368/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "33178"
+          }
+        ]
+      },
+      "memoryBytes": 402653184,
+      "networks": [
+        "bridge"
+      ],
+      "volumes": [
+        {
+          "name": "e43db43e536cd7cdadd815572e2c7f385ecebe03fc18be2a20a620a283439867",
+          "destination": "/var/lib/ghost/content"
+        }
+      ]
+    },
+    {
+      "name": "nyxid-m0-ghost-relay",
+      "id": "902a48516d5388306927c431a9bf720f8edfd29adc32443bc5f29063a222db4e",
+      "image": "blogsystem-review-runtime:node24-chromium-20261029",
+      "state": "running",
+      "ports": {},
+      "configuredPortBindings": {},
+      "memoryBytes": 67108864,
+      "networks": [
+        "bridge",
+        "nyxid-m0-native-20261105"
+      ],
+      "volumes": []
+    }
+  ],
+  "cmsListenerAfterRun": "stopped (127.0.0.1:33317 TCP connection refused)",
+  "workerAfterRun": "stopped (probe exited after manual once() calls)",
+  "existingGhostsChanged": false,
+  "formalAcceptance": false,
+  "scripts": [
+    {
+      "file": "scripts/native-nyxid-ghost-fixture.py",
+      "sha256": "b3d9f484b82c4dc4a2884acbfb30015e44851a9f5bef5dbd24a49f495ecb4022"
+    },
+    {
+      "file": "scripts/native-nyxid-ghost-probe.ts",
+      "sha256": "b10fa24bb58f343ef363f91e39ca5bcff489ac51998ae2c56ad0cdb57fd4baf7"
+    }
+  ],
+  "recordedAt": "2026-11-05T04:36:35.667992+00:00",
+  "dockerContext": "colima-blogsystem",
+  "cmsExecutionHead": "d67e768997ebb1bbfe530e4ffa61cf32c92bba0e",
+  "cmsBusinessSourceUnchangedFromCommit": true,
+  "resultSha256": "17f5d9b7d85c961aa1491bc6cb0720b7ac2b01b4d1cbcafcd89aa1db2b27df67",
+  "priorResult": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/ghost-result.json",
+  "priorResultSha256": "cdbd0c5e99e06de1c07fbfaa4ce8caa4954512d34563aaa8356f74e919a0be22",
+  "keptRunningReason": "Fixtures frozen after API readback run and reserved for root independent checkout review",
+  "sourceIngressApproval": {
+    "scope": "new m0-cms-ghost CMS ingress service only",
+    "effect": "AutoAllow",
+    "externalM0RequireApprovalChanged": false,
+    "officialOrganizationApprovalValidated": false
+  }
+}

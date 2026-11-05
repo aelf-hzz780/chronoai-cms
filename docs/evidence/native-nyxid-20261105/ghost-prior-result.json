@@ -1,0 +1,357 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-05T04:22:17.477Z",
+  "run": "84eb68f7-add5-4a78-9c59-f74f39c12881",
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "cmsCommit": "c7e9376f2110a6085d0c318c3bbabc526de52087",
+  "level": "OFFICIAL_NYXID_AND_REAL_CMS_WORKER_AND_LOCAL_GHOST",
+  "formalAcceptance": false,
+  "productionChanged": false,
+  "ingress": "official-proxy",
+  "authority": "real signature/JWKS/introspection and native organization membership",
+  "fakeAuthority": false,
+  "fakeGhost": false,
+  "renderer": "real BrowserRenderProof",
+  "cases": [
+    {
+      "name": "official-native-identities-and-current-roles",
+      "status": "PASS",
+      "writesBefore": 0,
+      "writesAfter": 0,
+      "personalHasNoCmsPublisher": true,
+      "adminGrantedPublisher": true,
+      "memberCannotSelfGrant": true
+    },
+    {
+      "name": "personal-without-organization-publisher-publishes",
+      "status": "PASS",
+      "writesBefore": 0,
+      "writesAfter": 1,
+      "releaseId": "7790cf63-9986-4801-a05f-06d2ae75b25b",
+      "articleId": "3185b8b2-5e9d-4285-98b8-7df5c9b0b2a1",
+      "remoteId": "6aec047e52eb8700012d4849",
+      "url": "http://127.0.0.1:33169/chrono-3185b8b2-5e9d-4285-98b8-7df5c9b0b2a1/",
+      "workerState": "published",
+      "readback": true
+    },
+    {
+      "name": "organization-admin-publishes-without-external-exact-approval",
+      "status": "PASS",
+      "writesBefore": 1,
+      "writesAfter": 2,
+      "releaseId": "79940a84-4bcc-4b16-ac90-957e030da0c6",
+      "articleId": "05e5a2ce-ed5a-47a7-a665-72f94f4fac8d",
+      "remoteId": "6aec048df94c80000167a8b9",
+      "url": "http://127.0.0.1:33178/chrono-05e5a2ce-ed5a-47a7-a665-72f94f4fac8d/",
+      "workerState": "published",
+      "readback": true
+    },
+    {
+      "name": "organization-member-submits-publisher-publishes",
+      "status": "PASS",
+      "writesBefore": 2,
+      "writesAfter": 3,
+      "releaseId": "271a8653-9f9f-41ec-843d-00a4c889e695",
+      "articleId": "4e9fd2ba-d2cf-40a2-9a2d-40cd8b685846",
+      "remoteId": "6aec0499f94c80000167a8c4",
+      "url": "http://127.0.0.1:33178/chrono-4e9fd2ba-d2cf-40a2-9a2d-40cd8b685846/",
+      "workerState": "published",
+      "readback": true,
+      "memberPublicationDenied": true
+    },
+    {
+      "name": "queued-publisher-revocation-blocks-real-worker",
+      "status": "PASS",
+      "writesBefore": 3,
+      "writesAfter": 3,
+      "releaseId": "2593b149-40ae-499b-8888-77135be15a5e",
+      "articleId": "cad09c5d-4d94-453c-b64f-93b2451806ee",
+      "workerState": "blocked",
+      "errorCode": "FORBIDDEN",
+      "ghostPostAbsent": true,
+      "actorAuditUnchanged": true,
+      "retainedCredentialValidImmediatelyBeforeWorker": {
+        "at": "2026-11-05T04:22:58.874Z",
+        "status": "PASS",
+        "purpose": "queued-write",
+        "source": "service-delegation",
+        "traceId": "f5e2346a-1efe-4761-9763-2a7d0675cc4a"
+      },
+      "roleRestorationDoesNotRevive": true
+    },
+    {
+      "name": "queued-cancellation-blocks-real-worker",
+      "status": "PASS",
+      "writesBefore": 3,
+      "writesAfter": 3,
+      "releaseId": "e18f869e-9bc7-4f35-8d42-c2f487eca0a2",
+      "articleId": "ec53dba2-c598-4f40-a53f-f91171294603",
+      "workerState": "cancelled",
+      "errorCode": null,
+      "ghostPostAbsent": true,
+      "actorAuditUnchanged": true,
+      "retainedCredentialValidImmediatelyBeforeWorker": {
+        "at": "2026-11-05T04:23:01.651Z",
+        "status": "PASS",
+        "purpose": "queued-write",
+        "source": "service-delegation",
+        "traceId": "702d7b06-c69e-4db2-9fe3-7a3431ffda22"
+      }
+    },
+    {
+      "name": "queued-native-membership-removal-blocks-real-worker",
+      "status": "PASS",
+      "writesBefore": 3,
+      "writesAfter": 3,
+      "releaseId": "6103d1e4-9a32-4930-b845-19973ec8616d",
+      "articleId": "2d2350f6-18d4-469d-846d-9695c794c27d",
+      "workerState": "blocked",
+      "errorCode": "FORBIDDEN",
+      "ghostPostAbsent": true,
+      "actorAuditUnchanged": true,
+      "retainedCredentialValidImmediatelyBeforeWorker": {
+        "at": "2026-11-05T04:23:03.511Z",
+        "status": "PASS",
+        "purpose": "queued-write",
+        "source": "service-delegation",
+        "traceId": "cf399d79-a887-4d3f-8ded-1c06fe0c6dbb"
+      },
+      "nativeMembershipRestorationDoesNotRevive": true
+    }
+  ],
+  "httpChecks": [
+    {
+      "actor": "personal",
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "admin",
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "publisher",
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "member",
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "admin",
+      "method": "PUT",
+      "path": "/owners/native-org-22c9c833dda3ca12ab76338e/publishers/1e28ca1b-22f5-4bab-bb70-3f8c5362e2d3",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "member",
+      "method": "PUT",
+      "path": "/owners/native-org-22c9c833dda3ca12ab76338e/publishers/d30b0376-4db8-4204-b4c4-2cdd168c771e",
+      "status": 403,
+      "expected": 403,
+      "traceId": null,
+      "code": "FORBIDDEN"
+    },
+    {
+      "actor": "personal",
+      "method": "POST",
+      "path": "/articles",
+      "status": 201,
+      "expected": 201,
+      "traceId": null
+    },
+    {
+      "actor": "personal",
+      "method": "POST",
+      "path": "/articles/3185b8b2-5e9d-4285-98b8-7df5c9b0b2a1/releases",
+      "status": 202,
+      "expected": 202,
+      "traceId": null
+    },
+    {
+      "actor": "admin",
+      "method": "POST",
+      "path": "/articles",
+      "status": 201,
+      "expected": 201,
+      "traceId": null
+    },
+    {
+      "actor": "admin",
+      "method": "POST",
+      "path": "/articles/05e5a2ce-ed5a-47a7-a665-72f94f4fac8d/releases",
+      "status": 202,
+      "expected": 202,
+      "traceId": null
+    },
+    {
+      "actor": "member",
+      "method": "POST",
+      "path": "/articles",
+      "status": 201,
+      "expected": 201,
+      "traceId": null
+    },
+    {
+      "actor": "member",
+      "method": "POST",
+      "path": "/articles/4e9fd2ba-d2cf-40a2-9a2d-40cd8b685846/submit",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "member",
+      "method": "POST",
+      "path": "/articles/4e9fd2ba-d2cf-40a2-9a2d-40cd8b685846/releases",
+      "status": 403,
+      "expected": 403,
+      "traceId": null,
+      "code": "FORBIDDEN"
+    },
+    {
+      "actor": "publisher",
+      "method": "POST",
+      "path": "/articles/4e9fd2ba-d2cf-40a2-9a2d-40cd8b685846/releases",
+      "status": 202,
+      "expected": 202,
+      "traceId": null
+    },
+    {
+      "actor": "publisher",
+      "method": "POST",
+      "path": "/articles",
+      "status": 201,
+      "expected": 201,
+      "traceId": null
+    },
+    {
+      "actor": "publisher",
+      "method": "POST",
+      "path": "/articles/cad09c5d-4d94-453c-b64f-93b2451806ee/releases",
+      "status": 202,
+      "expected": 202,
+      "traceId": null
+    },
+    {
+      "actor": "admin",
+      "method": "PUT",
+      "path": "/owners/native-org-22c9c833dda3ca12ab76338e/publishers/1e28ca1b-22f5-4bab-bb70-3f8c5362e2d3",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "admin",
+      "method": "PUT",
+      "path": "/owners/native-org-22c9c833dda3ca12ab76338e/publishers/1e28ca1b-22f5-4bab-bb70-3f8c5362e2d3",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "publisher",
+      "method": "POST",
+      "path": "/articles",
+      "status": 201,
+      "expected": 201,
+      "traceId": null
+    },
+    {
+      "actor": "publisher",
+      "method": "POST",
+      "path": "/articles/ec53dba2-c598-4f40-a53f-f91171294603/releases",
+      "status": 202,
+      "expected": 202,
+      "traceId": null
+    },
+    {
+      "actor": "publisher",
+      "method": "POST",
+      "path": "/releases/e18f869e-9bc7-4f35-8d42-c2f487eca0a2/cancel",
+      "status": 200,
+      "expected": 200,
+      "traceId": null
+    },
+    {
+      "actor": "publisher",
+      "method": "POST",
+      "path": "/articles",
+      "status": 201,
+      "expected": 201,
+      "traceId": null
+    },
+    {
+      "actor": "publisher",
+      "method": "POST",
+      "path": "/articles/2d2350f6-18d4-469d-846d-9695c794c27d/releases",
+      "status": 202,
+      "expected": 202,
+      "traceId": null
+    }
+  ],
+  "ghostWrites": [
+    {
+      "site": "personal",
+      "method": "POST",
+      "path": "/ghost/api/admin/posts/?source=html",
+      "at": "2026-11-05T04:22:21.054Z",
+      "bodySha256": "3d5dd96a96d036756c8c23a8dfd812df7c048c8f1ed8cd986e1e2263342b5287",
+      "http": 201
+    },
+    {
+      "site": "organization",
+      "method": "POST",
+      "path": "/ghost/api/admin/posts/?source=html",
+      "at": "2026-11-05T04:22:36.422Z",
+      "bodySha256": "27568a8504b76f78e9b5c0d7ad47ca840f895d589b25cbc4a3bdbd4738896a7e",
+      "http": 201
+    },
+    {
+      "site": "organization",
+      "method": "POST",
+      "path": "/ghost/api/admin/posts/?source=html",
+      "at": "2026-11-05T04:22:48.880Z",
+      "bodySha256": "96ba7db63facee215c75b0af5cfbd2292473967f45f32d67c8002bfcd3d319c4",
+      "http": 201
+    }
+  ],
+  "notExercised": [
+    "real NyxBot conversation",
+    "CMS browser OAuth session path",
+    "official NyxID approval UI",
+    "external distribution",
+    "real DEV account",
+    "production migration"
+  ],
+  "sqlite": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/cms-ghost-native-D5Tgrg/cms.sqlite",
+  "vaultKeyFile": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/cms-ghost-native-D5Tgrg/vault-key.json",
+  "ownerSiteIsolation": true,
+  "cmsHttpAddress": "http://127.0.0.1:33317",
+  "status": "PASS",
+  "totalGhostWrites": 3,
+  "summary": {
+    "publishedOriginals": 3,
+    "thirdPartyWrites": 0,
+    "queuedLossCases": 3,
+    "organizationGhostRequiresExternalExactApproval": false,
+    "sourceProofRequired": false
+  }
+}

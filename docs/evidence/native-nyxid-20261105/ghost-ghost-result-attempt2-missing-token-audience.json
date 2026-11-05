@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-05T04:20:31.952Z",
+  "run": "9547315c-d7e8-4fef-a1f9-cba6a2feeaf7",
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "cmsCommit": "c7e9376f2110a6085d0c318c3bbabc526de52087",
+  "level": "OFFICIAL_NYXID_AND_REAL_CMS_WORKER_AND_LOCAL_GHOST",
+  "formalAcceptance": false,
+  "productionChanged": false,
+  "ingress": "official-proxy",
+  "authority": "real signature/JWKS/introspection and native organization membership",
+  "fakeAuthority": false,
+  "fakeGhost": false,
+  "renderer": "real BrowserRenderProof",
+  "cases": [],
+  "httpChecks": [
+    {
+      "actor": "personal",
+      "method": "GET",
+      "path": "/me",
+      "status": 503,
+      "expected": 200,
+      "traceId": null,
+      "code": "SERVICE_IDENTITY_CONFIGURATION"
+    }
+  ],
+  "ghostWrites": [],
+  "notExercised": [
+    "real NyxBot conversation",
+    "CMS browser OAuth session path",
+    "official NyxID approval UI",
+    "external distribution",
+    "real DEV account",
+    "production migration"
+  ],
+  "sqlite": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/cms-ghost-native-n6IAsQ/cms.sqlite",
+  "vaultKeyFile": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/cms-ghost-native-n6IAsQ/vault-key.json",
+  "ownerSiteIsolation": true,
+  "cmsHttpAddress": "http://127.0.0.1:33317",
+  "currentStage": "official-native-identities-and-current-roles",
+  "status": "FAIL",
+  "error": {
+    "code": "ERR_ASSERTION",
+    "message": "personal GET /me: SERVICE_IDENTITY_CONFIGURATION\n\n503 !== 200\n"
+  }
+}

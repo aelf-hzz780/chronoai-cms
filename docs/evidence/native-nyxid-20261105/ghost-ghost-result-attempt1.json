@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-05T04:18:29.000Z",
+  "run": "af325468-c36e-44a8-9f21-546682484928",
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "cmsCommit": "c7e9376f2110a6085d0c318c3bbabc526de52087",
+  "level": "OFFICIAL_NYXID_AND_REAL_CMS_WORKER_AND_LOCAL_GHOST",
+  "formalAcceptance": false,
+  "productionChanged": false,
+  "ingress": "official-proxy",
+  "authority": "real signature/JWKS/introspection and native organization membership",
+  "fakeAuthority": false,
+  "fakeGhost": false,
+  "renderer": "real BrowserRenderProof",
+  "cases": [],
+  "httpChecks": [],
+  "ghostWrites": [],
+  "notExercised": [
+    "real NyxBot conversation",
+    "CMS browser OAuth session path",
+    "official NyxID approval UI",
+    "external distribution",
+    "real DEV account",
+    "production migration"
+  ],
+  "sqlite": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/cms-ghost-native-32yKVO/cms.sqlite",
+  "vaultKeyFile": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/ghost-positive-r2/cms-ghost-native-32yKVO/vault-key.json",
+  "ownerSiteIsolation": true,
+  "status": "FAIL",
+  "error": {
+    "code": "ERR_ASSERTION",
+    "message": "Invalid local Ghost key format"
+  }
+}
