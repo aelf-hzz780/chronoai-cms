@@ -54,3 +54,13 @@ node --test prototypes/site-provisioning/model.test.mjs
 以上命令从仓库根目录运行。实际验收见 evidence/acceptance.md，截图见 review.html。
 
 Run from the repository root. See evidence/acceptance.md for verification and review.html for screenshots.
+
+## 首发地址范围 / Initial address scope
+
+申请人只需确认博客归属与名称。中英文站点默认使用平台自有域名下的子域名，由运维分配并回填；首版不提供自定义域名申请。原型中的 chronoai.example 仅用于展示，不代表已确定真实平台根域名。
+
+Applicants confirm ownership and the blog name. Operations assigns and records platform-owned subdomains for the two language sites. Custom-domain requests are excluded from the initial release. The prototype uses chronoai.example as a sample, not a confirmed production base domain.
+
+旧版原型的域名偏好字段会在读取本机状态时移除，既有申请编号、进度、备注、草稿和已登记地址保留。
+
+Legacy domain-preference fields are removed when loading local state. Existing request IDs, progress, notes, writing drafts and registered addresses are preserved.

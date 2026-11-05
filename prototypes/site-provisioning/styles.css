@@ -7,3 +7,5 @@
 
 @media(max-width:760px){.nav>[data-action=help]{display:none}}
 @media(max-width:760px){.dialog-header{flex-wrap:nowrap;gap:4px;position:sticky;top:0;padding:18px 16px 10px;background:white;z-index:3}.dialog-header h2{flex-basis:auto;min-width:0;font-size:18px}.dialog-header .picker-trigger{font-size:11px;padding:6px 8px;gap:5px}.dialog-footer{position:sticky;bottom:0;z-index:2;background:#fcfbfe}}
+
+.dialog-content>.notice{margin:20px 0}.dialog-footer{position:sticky;bottom:0;z-index:2;background:#fcfbfe}

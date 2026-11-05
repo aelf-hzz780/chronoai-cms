@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {initialState,applyRequest,requestInfo,provideInfo,claim,registerSite,verifySite,canRequest,loadScenario} from './model.js';
-const fields={name:'A bilingual journal',domain:'',note:''};
+import {initialState,applyRequest,requestInfo,provideInfo,claim,registerSite,verifySite,canRequest,loadScenario,normalizeSetupScope} from './model.js';
+const fields={name:'A bilingual journal',note:''};
 test('Owner/Admin can apply; publishing role alone cannot',()=>{
  assert.equal(canRequest('personal','member'),true);assert.equal(canRequest('org','admin'),true);
  for(const role of ['member','publisher'])assert.equal(canRequest('org',role),false);
@@ -42,4 +42,12 @@ test('registering a changed address clears only that language’s old evidence',
 });
 test('verification is tied to the registered address and rejects an old response',()=>{
  const s=initialState(),r=applyRequest(s,'org',fields);claim(r);registerSite(r,'en','https://en.first.example');registerSite(r,'en','https://en.second.example');assert.throws(()=>verifySite(r,'en',true,'https://en.first.example'),/URL_CHANGED/);assert.equal(r.sites.en.status,'checking');
+});
+
+test('retiring domain preferences preserves existing requests and drafts',()=>{
+ const s=initialState(),r=applyRequest(s,'org',fields);claim(r);registerSite(r,'en','https://en.chronoai.example');verifySite(r,'en',true);
+ r.domain='previous-domain.example';s.forms.org.domain='draft-domain.example';s.drafts.org.title='Keep this draft';r.note='Keep the applicant note';
+ const oldReason='Please confirm whether you would like a platform address or your own domain.';s.requests.alex.infoReason=oldReason;s.requests.alex.events.push({type:'info',note:oldReason});
+ const id=r.id,ready=structuredClone(r.sites.en);normalizeSetupScope(s);
+ assert.equal(Object.hasOwn(r,'domain'),false);assert.equal(Object.hasOwn(s.forms.org,'domain'),false);assert.equal(r.id,id);assert.deepEqual(r.sites.en,ready);assert.equal(r.note,'Keep the applicant note');assert.equal(s.drafts.org.title,'Keep this draft');assert.doesNotMatch(s.requests.alex.infoReason,/own domain/);assert.equal(s.requests.alex.events.at(-1).note,s.requests.alex.infoReason);
 });
