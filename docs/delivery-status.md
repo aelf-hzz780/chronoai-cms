@@ -1,5 +1,9 @@
 # 交付状态（开发台账，不是正式签收）
 
+2026-11-05 用户范围调整：Medium/HackerNoon 只需页面提示，现有 Studio 的手动处理说明和官方链接已满足；F2 完成，V2 真实辅助投稿验收取消。材料包、新建投稿及审核跟踪不再是当前必需欠账。当前剩余必需功能开发为组织 DEV/Hashnode 分发；已有实现的本地验证完成。依据与原始需求差异见 [009 范围调整](009-local-acceptance.md#验收后确认的范围调整--scope-adjustment-after-acceptance)。
+
+User scope adjustment, 2026-11-05: Medium/HackerNoon now require page notices only, satisfied by the existing Studio manual-handling guidance and official links. F2 is complete; V2 real assisted-submission acceptance is removed. Packages, new submissions and editorial tracking are no longer required backlog. Organization DEV/Hashnode distribution remains the outstanding required functionality; local verification of existing functionality is complete. The 009 report records the decision and its difference from the original specification.
+
 当前入口为 [009 运维合并与本地验收](009-local-acceptance.md)，个人 DEV 真实发布证据另见 [008 公开正向验证](evidence/external-publication-20261105/public-positive/README.md)。当前实现、本地实测、本地部署、远端 push、PR 五种状态独立记录；正式 D1–D9 仍为 **NOT_ACCEPTED**。新运维文档已经合并，开站原型仍是原型，不代表自动开站已实现。新本地结果不回填下方历史 A 表或累计成完成百分比。
 
 The current entry point is the [009 operations merge and local acceptance](009-local-acceptance.md); real personal DEV publication evidence is linked separately above. Implementation, local verification, deployment, push and PR status are distinct. D1–D9 remain **NOT_ACCEPTED**. The setup prototype is not an implemented provisioning service; new evidence does not rewrite historical case counts.

@@ -4,6 +4,10 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 
 ## 当前证据与交接入口
 
+2026-11-05 用户明确将 Medium/HackerNoon 缩减为页面提示。当前 Studio 的“需手动处理”与官方说明链接满足该项；不再以新建辅助投稿、材料包、审核跟踪或真实账号投稿作为当前验收门禁。下方 A32 和原始 R7/D6 保留原文用于追溯，以 [009 范围调整](009-local-acceptance.md#验收后确认的范围调整--scope-adjustment-after-acceptance) 为当前口径；相关 D7 生命周期验收继续针对受支持的 DEV/Hashnode。已有本地验收结果保持完成，不重写历史证据。
+
+On 2026-11-05 the user reduced Medium/HackerNoon to page notices, satisfied by current Studio manual-handling guidance and official links. New assisted submissions, packages, editorial tracking and real-account submission are no longer current gates. Historical A32 and original R7/D6 wording remain for traceability; the 009 scope adjustment controls current acceptance. Related D7 lifecycle checks continue for supported DEV/Hashnode flows. Completed local acceptance and historical evidence are preserved.
+
 最新本地证据见 [009 运维合并与本地验收](009-local-acceptance.md)，个人 DEV 真实 create/update/register/sync 见 [008 公开正向验证](evidence/external-publication-20261105/public-positive/README.md)。下方历史记录与矩阵保留原版本，不以测试数量替代当前逐项验收。
 
 Current local evidence is recorded in the [009 report](009-local-acceptance.md); bounded real personal DEV create/update/register/sync evidence is linked separately above. Historical entries retain their original revisions and do not establish current whole-deliverable acceptance.

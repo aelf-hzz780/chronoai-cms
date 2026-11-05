@@ -65,14 +65,19 @@ The [evidence README](evidence/local-acceptance-009-20261105/README.md) records 
 
 Render diagnostics retain every failure, including a two-pixel edge variation and one candidate cold-start false without a captured stage. Its cause is not guessed. Subsequent instrumented 5/5, independent same-remote/HTML read-only 3/3, final suite and four-site checks passed within a bounded scope. Linux default/software 6/6 controls establish compatibility, not the cause of the initial Linux failure. Earlier environment/harness failures remain recorded; the same failed publication was diagnosed through reads rather than resent.
 
+## 验收后确认的范围调整 / Scope adjustment after acceptance
+
+2026-11-05，用户明确要求：“Medium / HackerNoon 辅助投稿 页面有个提示就行了，没API不要搞太多事情”。这项后续决定将两平台的当前必需交付缩减为页面提示，引导用户到平台自行处理。Studio 已显示“需手动处理”、平台限制及官方说明链接，且不提供新建自动发布操作，因此 **F2 按调整后范围完成**；V2 真实辅助投稿验收取消，不再要求开发材料包、新建投稿任务或提交／审核状态跟踪。现有后端及历史记录保留，不据此扩大当前交付范围。两份原始 v0.7 文件和本轮原始证据保持历史原貌；其中 R7、D6/A32 及相关 D7 的 Medium/HackerNoon 辅助流程以本次明确决定为准。DEV/Hashnode 要求不变。
+
+On 2026-11-05 the user explicitly limited Medium/HackerNoon to a page notice instead of additional assisted-submission work. Studio already shows manual-handling notices, platform limits and official guidance, with new automatic publication unavailable. **F2 is complete under the revised scope**; V2 real assisted-submission acceptance is removed. Preparing packages, creating submission tasks and tracking submission/editorial states are no longer required for these two platforms. Existing backend functionality and history remain without expanding current scope. Original v0.7 files and evidence retain their historical contents; this decision supersedes the Medium/HackerNoon assisted-flow requirements in R7, D6/A32 and related D7. DEV/Hashnode requirements are unchanged.
+
 ## 仍未闭合的工作 / Remaining work
 
 | 分类 / Category | 当前边界及下一步 / Current boundary and next step |
 | --- | --- |
-| 功能：辅助渠道 / Assisted-channel functionality | Medium/HackerNoon 新建辅助流程仍被 Studio 的既有暂停策略禁用；后端材料包和历史跟进已有实现。需恢复并验收新建辅助入口，再开展真实账号流程。 / Studio still pauses new assisted workflows; backend packages and historical follow-up exist. Restore and verify the entry before real-account validation. |
 | 功能：组织自动分发 / Organization automatic distribution | service-origin exact 与 nested proxy dispatch 仍分别受 `NATIVE_EXACT_UNSUPPORTED`、`NATIVE_DISPATCH_UNSUPPORTED` 约束；008 外部登记仅支持个人 DEV。组织路径不能只写成“待账号”。 / Native exact/dispatch capability gaps remain, and 008 registration supports personal DEV only. Organization work is not merely awaiting an account. |
 | 本地交接配置 / Shared local rollout | 本轮为隔离验收；共享 LAN 服务的 catalog、媒体挂载、指标开关和官方版本切换仍按其独立交接执行，不把隔离通过当作已切换。 / Isolated acceptance does not update the shared LAN catalog, mounts, metrics configuration or official-version cutover. |
-| 线上验证 / Online verification | Hashnode 组织 Pro/权限与真实发布、Medium/HackerNoon 真实辅助提交、组织 DEV、真实外部分发生命周期与恢复，仍需各自账号、内容及动作授权。 / Real account/plan eligibility, publication, assisted submissions and external lifecycle/recovery need their own authorized checks. |
+| 线上验证 / Online verification | Hashnode 组织 Pro/权限与真实发布、组织 DEV、DEV/Hashnode 真实外部分发生命周期与恢复，仍需各自账号、内容及动作授权；Medium/HackerNoon 仅提示，不再要求真实投稿验收。 / Organization DEV/Hashnode account/plan eligibility, publication and external lifecycle/recovery need authorized checks. Notice-only Medium/HackerNoon requires no real submission acceptance. |
 | 上线与上线后 / Deployment and post-launch | 目标 Linux nginx/systemd、正式域名/TLS/SMTP、持久化、监控、隐私/保留流程、备份和具名成本/维护责任；数值 RPO/RTO 仅在另有约定时按约验证。 / Target Linux services, domains/TLS/SMTP, persistence, monitoring, privacy/retention, backups and named cost/maintenance ownership; numerical recovery targets apply if separately agreed. |
 
 已选定的个人路径“NyxBot 读取 CMS 冻结文章 → 顶层 NyxID DEV 工具发文 → CMS 独立登记/同步”已有真实公开 create/update 和 generated sync 证据，见 [008](evidence/external-publication-20261105/public-positive/README.md)；本轮不重复发文，不把该成果退回为未完成，也不扩大为组织或所有平台通过。用户已明确不保留定制门户 Open app；本轮不新增恢复该入口、定制来源协议、自动开站或任意数值 RPO/RTO 的要求。
