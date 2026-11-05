@@ -1,5 +1,9 @@
 # API 使用指南
 
+个人 DEV 的新外部执行路径使用 `prepareExternalPublication → 独立顶层 DEV 调用 → registerExternalPublication`。丢回执用 `reconcileExternalPublication`；后续 `syncExternalPublication` 永远只读。完整参数、取消边界、组织拒绝和 NyxBot 顺序见 [008 操作说明](008-cms-external-publication.md)。旧 delivery Worker 的嵌套写限制不代表 NyxBot 顶层工具不能发文。
+
+The new personal DEV path uses `prepareExternalPublication → independent top-level DEV call → registerExternalPublication`. Recover lost receipts with `reconcileExternalPublication`; subsequent `syncExternalPublication` is always read-only. See [008 operation instructions](008-cms-external-publication.md) for inputs, cancellation limits, organization rejection and NyxBot ordering. Nested legacy delivery Worker restrictions do not imply that NyxBot's top-level DEV tool cannot publish.
+
 同一用例在 `/api/cms` 与 `/api/service` 可用；服务器每次按真实 owner 与实时权限判断。完整操作、参数和响应见运行实例 `/openapi.json`。CMS 需 OIDC cookie，写入另需 `/me` 返回的 CSRF；service 使用已验证的人类 Bearer access token 或 NyxID 签名 identity+delegation。不要在 shell 历史中粘贴真实 token。
 
 ## 内容到原文

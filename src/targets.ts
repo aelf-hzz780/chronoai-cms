@@ -22,6 +22,7 @@ export interface Target {
   name: string; automatic: boolean;
   automaticActions?:string[];
   request?(payload:CopyPayload,connection:any):RemoteRequest;
+  reconcileExternal?(payload:CopyPayload,connection:any,send:Send):Promise<CopyResult|null>;
   metrics?(payload:CopyPayload,connection:any,send:Send):Promise<Engagement>;
   write(payload: CopyPayload, connection: any, send: Send): Promise<CopyResult>;
   reconcile(payload: CopyPayload, connection: any, send: Send): Promise<CopyResult | null>;
@@ -43,8 +44,8 @@ function hashnodeData(result: any) {
   requireValue(result.data, 502, 'REMOTE_CONTRACT', 'Missing Hashnode data'); return result.data;
 }
 export class DevAdapter implements Target {
-  name = 'dev'; automatic = true; automaticActions=['create','update']; endpoint: string;
-  constructor(endpoint: string) { this.endpoint = safeUrl(endpoint).href.replace(/\/$/, ''); }
+  name = 'dev'; automatic = true; automaticActions=['create','update']; endpoint: string; publicHosts: Set<string>;
+  constructor(endpoint: string, publicHosts:string[]=['dev.to']) { this.endpoint = safeUrl(endpoint).href.replace(/\/$/, ''); this.publicHosts=new Set(publicHosts); }
   normalize(post: any, payload: CopyPayload, connection: any): CopyResult | null {
     if (!post || payload.remoteId && String(post.id)!==payload.remoteId || String(post.user?.user_id ?? post.user_id) !== String(connection.accountId) || (payload.ownerKind === 'organization' && String(post.organization?.id ?? post.organization_id) !== String(connection.organizationId))) return null;
     const content = post.body_markdown ?? '';
@@ -75,6 +76,34 @@ export class DevAdapter implements Target {
       if (articles.length < 100) break;
     }
     return null;
+  }
+  private externalResult(post:any,payload:CopyPayload,connection:any):CopyResult|null {
+    if(payload.ownerKind!=='personal'||post?.organization?.id!=null||post?.organization_id!=null)return null;
+    if(!Number.isSafeInteger(Number(post?.id))||Number(post?.id)<=0)return null;
+    if(post.published===false||(post.published_at&&(!Number.isFinite(Date.parse(post.published_at))||Date.parse(post.published_at)>Date.now())))return null;
+    const result=this.normalize(post,payload,connection);if(!result)return null;
+    let url:URL;try{url=new URL(result.url);}catch{throw new AppError(502,'REMOTE_URL_UNTRUSTED','DEV returned an invalid publication URL');}
+    requireValue(url.protocol==='https:'&&this.publicHosts.has(url.hostname)&&!url.username&&!url.password&&!url.port&&!url.hash&&!url.search&&url.pathname.split('/').filter(Boolean).length>=2,502,'REMOTE_URL_UNTRUSTED','DEV returned a publication URL outside the configured HTTPS hosts');
+    return {...result,url:url.href};
+  }
+  async reconcileExternal(payload:CopyPayload,connection:any,send:Send):Promise<CopyResult|null> {
+    requireValue(payload.ownerKind==='personal'&&payload.action!=='remove',409,'EXTERNAL_ORGANIZATION_UNSUPPORTED','External execution currently supports personal DEV create/update only');
+    if(payload.remoteId)return this.externalResult(await send({method:'GET',url:`${this.endpoint}/articles/${encodeURIComponent(payload.remoteId)}`}),payload,connection);
+    const matches=new Map<string,CopyResult>();let complete=false;
+    for(let page=1;page<=10;page++){
+      const articles=await send({method:'GET',url:`${this.endpoint}/articles/me/all?per_page=100&page=${page}`});
+      requireValue(Array.isArray(articles),502,'REMOTE_CONTRACT','Unexpected DEV article list');
+      for(const article of articles){
+        if(article.canonical_url!==payload.sourceUrl||article.title!==payload.title)continue;
+        requireValue(Number.isSafeInteger(Number(article.id))&&Number(article.id)>0,502,'REMOTE_CONTRACT','DEV article identity is invalid');
+        const result=this.externalResult(await send({method:'GET',url:`${this.endpoint}/articles/${encodeURIComponent(article.id)}`}),{...payload,remoteId:String(article.id)},connection);
+        if(result)matches.set(result.remoteId,result);
+      }
+      if(articles.length<100){complete=true;break;}
+    }
+    requireValue(complete,409,'RECONCILIATION_INCOMPLETE','The bounded DEV search was incomplete; do not resend');
+    requireValue(matches.size<=1,409,'MULTIPLE_REMOTE_MATCHES','Multiple matching DEV copies require manual reconciliation; do not resend');
+    return [...matches.values()][0]??null;
   }
   async metrics(payload:CopyPayload,connection:any,send:Send):Promise<Engagement> {
     requireValue(payload.remoteId,409,'COPY_MISMATCH','Known DEV copy required');
@@ -134,7 +163,7 @@ export class AssistedAdapter implements Target {
   async reconcile(): Promise<null> { return null; }
 }
 export function createTargets(env: NodeJS.ProcessEnv = process.env) {
-  const targets: Target[] = [new DevAdapter(env.DEV_API_URL ?? 'https://dev.to/api'), new HashnodeAdapter(env.HASHNODE_API_URL ?? 'https://gql-beta.hashnode.com'), new AssistedAdapter('medium'), new AssistedAdapter('hackernoon')];
+  const targets: Target[] = [new DevAdapter(env.DEV_API_URL ?? 'https://dev.to/api',(env.DEV_PUBLIC_HOSTS??'dev.to').split(',').map(host=>host.trim()).filter(Boolean)), new HashnodeAdapter(env.HASHNODE_API_URL ?? 'https://gql-beta.hashnode.com'), new AssistedAdapter('medium'), new AssistedAdapter('hackernoon')];
   return new TargetRegistry(targets,targets.filter(t=>env[`${t.name.toUpperCase()}_ENABLED`]==='false').map(t=>t.name));
 }
 export function isRead(request: RemoteRequest) {

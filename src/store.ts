@@ -65,6 +65,7 @@ export class Store {
     this.migrateSubmissionLifecycle();
     this.migrateConnectionAttempts();
     this.migrateDistributionFollowup();
+    this.migrateExternalPublications();
   }
   private migrateSubmissionLifecycle(){
     if(this.get('SELECT 1 FROM migrations WHERE version=2'))return;
@@ -111,6 +112,24 @@ export class Store {
         CREATE TABLE IF NOT EXISTS delivery_observations (id TEXT PRIMARY KEY,delivery_id TEXT NOT NULL REFERENCES deliveries(id),url TEXT NOT NULL,proof TEXT NOT NULL CHECK(proof='content_attribution'),source_state TEXT NOT NULL,follow_up_required INTEGER NOT NULL CHECK(follow_up_required=1),actor TEXT NOT NULL,trace_id TEXT NOT NULL,observed_at TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS delivery_observations_delivery ON delivery_observations(delivery_id,observed_at);
         INSERT INTO migrations VALUES (4,strftime('%Y-%m-%dT%H:%M:%fZ','now'));
+      `);
+    });
+  }
+  private migrateExternalPublications(){
+    if(this.get('SELECT 1 FROM migrations WHERE version=5'))return;
+    this.transaction(()=>{
+      if(this.get('SELECT 1 FROM migrations WHERE version=5'))return;
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS external_publications (
+          delivery_id TEXT PRIMARY KEY REFERENCES deliveries(id),revision_id TEXT NOT NULL REFERENCES revisions(id),execution_mode TEXT NOT NULL CHECK(execution_mode='external'),
+          request_json TEXT NOT NULL,connection_json TEXT NOT NULL,sync_actor_json TEXT NOT NULL,
+          last_sync_at TEXT,last_verified_at TEXT,sync_status TEXT NOT NULL,sync_error_code TEXT,next_sync_at TEXT NOT NULL,
+          follow_up_state TEXT NOT NULL DEFAULT 'none',generation INTEGER NOT NULL DEFAULT 0);
+        CREATE INDEX IF NOT EXISTS external_publications_sync ON external_publications(next_sync_at);
+        CREATE TABLE IF NOT EXISTS external_publication_observations (
+          id TEXT PRIMARY KEY,delivery_id TEXT NOT NULL REFERENCES external_publications(delivery_id),state TEXT NOT NULL,code TEXT,remote_id TEXT,url TEXT,trace_id TEXT NOT NULL,observed_at TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS external_publication_observations_delivery ON external_publication_observations(delivery_id,observed_at);
+        INSERT INTO migrations VALUES (5,strftime('%Y-%m-%dT%H:%M:%fZ','now'));
       `);
     });
   }

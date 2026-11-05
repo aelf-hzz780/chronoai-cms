@@ -15,3 +15,7 @@ export interface DeliveryObservation {id:string;url:string;status:'verified';pro
 export interface FrozenDistribution {releaseId:string;target:string;connectionId:string|null;accountId:string|null;format:'full'|'excerpt';sourceUrl:string|null;sourceDigest:string}
 export interface PlanMetadata {notBeforeAt:string;releaseId:string;target:string;connectionId:string|null;action:string;format:'full'|'excerpt';copyId:string|null;consumedDeliveryId:string|null}
 export type WorkflowTask=TaskDetail;
+export interface ExternalObservation {id:string;state:string;code:string|null;remoteId:string|null;url:string|null;traceId:string;observedAt:string}
+export interface ExternalPublicationSummary {lastSyncAt:string|null;lastVerifiedAt:string|null;syncStatus:string;syncErrorCode:string|null;followUpState:string;observations?:ExternalObservation[]}
+export interface ExternalPublication extends ExternalPublicationSummary {id:string;intentId:string;deliveryId:string;executionMode:'external';revisionId:string;ownerId:string;releaseId:string;target:string;connectionId:string;accountId:string;action:string;format:string;digest:string;state:string;remoteId:string|null;url:string|null;request:{method:string;url:string;body?:Record<string,unknown>};history:Array<{state:string;code:string|null;traceId:string;createdAt:string}>}
+export interface ExternalPublicationState {view:ExternalPublication|null;remoteId:string;note:string;unknown:boolean}

@@ -1,3 +1,5 @@
+import {externalPublicationView,externalText} from './external-publication-view.js';
+import type {ExternalPublication,ExternalPublicationState} from './workflow-types.js';
 import {channelPaused,manualChannelLabel} from './channel-policy.js';
 import {ApiError} from './transport.js';
 import {ContextGate,type Stamp} from './state.js';
@@ -10,15 +12,15 @@ import type {ContentPage,Release,Summary,TaskDetail,TaskPage} from './types.js';
 import type {Delivery,Destination,DistributionForm,ManualPackage,OwnerConnection,WorkflowHost} from './workflow-types.js';
 export interface DistributionState {summary:Summary|null;releases:Release[];deliveries:Delivery[];targets:Destination[];connections:OwnerConnection[];errors:string[];tasks:TaskPage|null;offset:number;source:TaskDetail|null;selectedCopy:TaskDetail|null;task:TaskDetail|null;row:Delivery|null;form:DistributionForm;busy:boolean;unknown:boolean;approvalUnknown:boolean;approvalRef:string;approvalRights:boolean;package:ManualPackage|null;reportState:string;reportUrl:string;reportNote:string;note:string;observationUrl:string;planRights:boolean;planOpen:boolean}
 export class DistributionController {
- host:WorkflowHost;state:DistributionState;private ownerId='';private articleId='';private intent=new OperationIntent();private planIntent=new OperationIntent();private selection=new ContextGate();
+ host:WorkflowHost;state:DistributionState;external:ExternalPublicationState={view:null,remoteId:'',note:'',unknown:false};private externalIntent=new OperationIntent();private registrationIntent=new OperationIntent();private ownerId='';private articleId='';private intent=new OperationIntent();private planIntent=new OperationIntent();private selection=new ContextGate();
  constructor(host:WorkflowHost){this.host=host;this.state=this.empty();}
  private empty():DistributionState{return {summary:null,releases:[],deliveries:[],targets:[],connections:[],errors:[],tasks:null,offset:0,source:null,selectedCopy:null,task:null,row:null,form:{target:'',connectionId:'',action:'create',format:'full',excerpt:'',copyId:'',rights:false,notBeforeAt:''},busy:false,unknown:false,approvalUnknown:false,approvalRef:'',approvalRights:false,package:null,reportState:'submitted',reportUrl:'',reportNote:'',note:'',observationUrl:'',planRights:false,planOpen:false};}
  setPlanOpen(open:boolean){this.state.planOpen=open;}
- reset(){this.selection.advance();this.state=this.empty();this.ownerId='';this.articleId='';this.intent=new OperationIntent();this.planIntent=new OperationIntent();}
+ reset(){this.external={view:null,remoteId:'',note:'',unknown:false};this.externalIntent=new OperationIntent();this.registrationIntent=new OperationIntent();this.selection.advance();this.state=this.empty();this.ownerId='';this.articleId='';this.intent=new OperationIntent();this.planIntent=new OperationIntent();}
  allowed(){const owner=this.host.owner();return Boolean(owner&&owner.id===this.ownerId&&owner.capabilities.canPublish);}
  private canConnect(){return Boolean(this.allowed()&&this.host.owner()?.capabilities.canReadConnections);}
  view(){return distributionView(this.state,this.host.owner()!,this.host.locale(),this.canConnect());}
- taskView(){const task=this.state.task;if(!task)return '';return task.kind==='plan'?planFollowupView(this.state,this.host.locale(),this.canConnect()):task.kind==='delivery'?deliveryFollowupView(this.state,this.host.owner()!,this.host.locale(),this.allowed(),this.canConnect()):'';}
+ taskView(){const task=this.state.task;if(!task)return '';if(task.executionMode==='external')return externalPublicationView(this.external,task,this.host.locale(),this.state.busy,this.allowed()&&this.canConnect());return task.kind==='plan'?planFollowupView(this.state,this.host.locale(),this.canConnect()):task.kind==='delivery'?deliveryFollowupView(this.state,this.host.owner()!,this.host.locale(),this.allowed(),this.canConnect()):'';}
  receiveTask(task:TaskDetail){if(this.state.task?.id===task.id)this.state.task=task;}
  private async catalog(stamp:Stamp){
   const calls:Array<Promise<Destination[]|OwnerConnection[]>>=[this.host.api.json<Destination[]>('/targets',{signal:stamp.signal})];if(this.canConnect())calls.push(this.host.api.json<OwnerConnection[]>(`/owners/${encodeURIComponent(this.ownerId)}/connections`,{signal:stamp.signal}));
@@ -35,9 +37,10 @@ export class DistributionController {
   this.ownerId=task.ownerId;this.articleId=task.articleId;this.state.task=task;if(!this.allowed())return;
   this.state.reportState=['submitted','reviewing','rejected','manual_action_needed','published'].includes(task.state)?task.state:'submitted';
   await this.catalog(stamp);if(!this.host.accepts(stamp))return;
-  if(task.kind==='delivery'&&this.canConnect())await this.readRow(stamp);
+  if(task.kind==='delivery'&&this.canConnect()){await this.readRow(stamp);if(task.executionMode==='external')await this.readExternal(task,stamp);}
   if(task.distribution?.releaseId){const source=await this.host.api.json<TaskDetail>(`/owners/${encodeURIComponent(this.ownerId)}/tasks/release/${encodeURIComponent(task.distribution.releaseId)}`,{signal:stamp.signal});if(this.host.accepts(stamp))this.state.source=source;}
  }
+ private async readExternal(task:TaskDetail,stamp:Stamp){const view=await this.host.api.json<ExternalPublication>(`/external-publications/${encodeURIComponent(task.id)}`,{signal:stamp.signal});if(!this.host.accepts(stamp))return;if(view.executionMode!=='external'||view.intentId!==task.id||view.ownerId!==this.ownerId)throw new ApiError(502,'EXTERNAL_CONTEXT','External intent identity mismatch');this.external.view=view;if(!this.external.remoteId)this.external.remoteId=view.remoteId??'';}
  private async readRow(stamp:Stamp){const rows=await this.host.api.json<Delivery[]>(`/articles/${encodeURIComponent(this.articleId)}/deliveries`,{signal:stamp.signal});if(!this.host.accepts(stamp))return;this.state.deliveries=rows;this.state.row=rows.find(row=>row.id===this.state.task?.id&&row.owner_id===this.ownerId)??null;if(!this.state.approvalRef)this.state.approvalRef=this.state.row?.approval_ref??'';if(!this.state.reportUrl)this.state.reportUrl=this.state.row?.url??'';if(!this.state.observationUrl)this.state.observationUrl=this.state.row?.url??'';}
  private async inspectSource(stamp:Stamp){
   const selection=this.selection.advance(),form=this.state.form,copy=this.state.deliveries.find(copy=>copy.id===form.copyId);
@@ -47,6 +50,7 @@ export class DistributionController {
   if(!this.host.accepts(stamp)||!this.selection.accepts(selection))return;if(task.ownerId!==this.ownerId||task.articleId!==this.articleId||task.kind!=='release'||selectedCopy&&(selectedCopy.ownerId!==this.ownerId||selectedCopy.articleId!==this.articleId||selectedCopy.id!==copy?.id))throw new ApiError(502,'SOURCE_CONTEXT','Frozen source/copy mismatch');this.state.source=task;this.state.selectedCopy=selectedCopy;
  }
  change(input:HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement):boolean{
+  if(input.id==='external-remote-id'){this.external.remoteId=input.value;const button=document.querySelector<HTMLButtonElement>('[data-action="delivery-external-register"]');if(button)button.disabled=this.state.busy||!input.value.trim();return true;}if(input.id==='external-follow-up-note'){this.external.note=input.value;return true;}
   if(input.id==='distribution-excerpt'||input.id==='distribution-not-before')return this.input(input as HTMLInputElement|HTMLTextAreaElement);
   const form=this.state.form;const mapping:Record<string,keyof DistributionForm>={'distribution-target':'target','distribution-connection':'connectionId','distribution-action':'action','distribution-copy':'copyId','distribution-format':'format','distribution-excerpt':'excerpt','distribution-not-before':'notBeforeAt'};
   if(input.id==='distribution-rights'){form.rights=(input as HTMLInputElement).checked;this.host.render();return true;}
@@ -61,13 +65,18 @@ export class DistributionController {
   if(input.id==='approval-rights'){this.state.approvalRights=(input as HTMLInputElement).checked;this.host.render();return true;}
   if(input.id==='plan-rights'){this.state.planRights=(input as HTMLInputElement).checked;this.host.render();return true;}return false;
  }
- input(input:HTMLInputElement|HTMLTextAreaElement):boolean{if(input.id==='distribution-excerpt'||input.id==='distribution-not-before'){this.state.form[input.id==='distribution-excerpt'?'excerpt':'notBeforeAt']=input.value;this.state.form.rights=false;const checkbox=document.getElementById('distribution-rights') as HTMLInputElement|null;if(checkbox)checkbox.checked=false;for(const button of document.querySelectorAll<HTMLButtonElement>('[data-action="dist-confirm"],[data-action="dist-plan"]'))button.disabled=true;return true;}return ['approval-reference','delivery-report-url','delivery-report-note','delivery-note','delivery-observation-url'].includes(input.id)?this.change(input):false;}
- private async readBack(stamp:Stamp){const task=await this.host.refreshTask(stamp);if(!this.host.accepts(stamp)||!task)return;this.state.task=task;if(task.kind==='delivery'&&this.canConnect())await this.readRow(stamp);if(task.distribution?.releaseId){const source=await this.host.api.json<TaskDetail>(`/owners/${encodeURIComponent(this.ownerId)}/tasks/release/${encodeURIComponent(task.distribution.releaseId)}`,{signal:stamp.signal});if(this.host.accepts(stamp))this.state.source=source;}}
+ input(input:HTMLInputElement|HTMLTextAreaElement):boolean{if(input.id==='distribution-excerpt'||input.id==='distribution-not-before'){this.state.form[input.id==='distribution-excerpt'?'excerpt':'notBeforeAt']=input.value;this.state.form.rights=false;const checkbox=document.getElementById('distribution-rights') as HTMLInputElement|null;if(checkbox)checkbox.checked=false;for(const button of document.querySelectorAll<HTMLButtonElement>('[data-action="dist-confirm"],[data-action="dist-plan"],[data-action="dist-external-prepare"]'))button.disabled=true;return true;}return ['external-remote-id','external-follow-up-note','approval-reference','delivery-report-url','delivery-report-note','delivery-note','delivery-observation-url'].includes(input.id)?this.change(input):false;}
+ private async readBack(stamp:Stamp){const task=await this.host.refreshTask(stamp);if(!this.host.accepts(stamp)||!task)return;this.state.task=task;if(task.kind==='delivery'&&this.canConnect()){await this.readRow(stamp);if(task.executionMode==='external')await this.readExternal(task,stamp);}if(task.distribution?.releaseId){const source=await this.host.api.json<TaskDetail>(`/owners/${encodeURIComponent(this.ownerId)}/tasks/release/${encodeURIComponent(task.distribution.releaseId)}`,{signal:stamp.signal});if(this.host.accepts(stamp))this.state.source=source;}}
  async action(action:string){
   if(!/^(dist-|delivery-|plan-)/.test(action))return false;if(!this.allowed()||this.state.busy||!this.host.api.csrf)return true;
   const stamp=this.host.stamp(),w=workflowText(this.host.locale()),task=this.state.task;this.state.busy=true;this.host.pausePolling();this.host.render();
   try{
    if(action==='dist-next'||action==='dist-previous'){this.state.offset=Math.max(0,this.state.offset+(action==='dist-next'?20:-20));const tasks=await this.readTasks(stamp);if(this.host.accepts(stamp))this.state.tasks=tasks;return true;}
+   if(action==='dist-external-prepare'){
+    const source=this.state.source,form=this.state.form;if(this.host.owner()?.kind!=='personal'||form.target!=='dev'||form.action==='remove'||!source?.snapshot||source.state!=='published'||source.language!=='en'||!this.canConnect())throw new Error(w('validation'));
+    const body=distributionBody(this.ownerId,form);if(!await this.host.confirm(externalText(this.host.locale())('prepareNote'),stamp)||!this.host.accepts(stamp)||!this.allowed()||!this.host.api.csrf)return true;
+    const result=await this.host.api.json<ExternalPublication>(`/releases/${encodeURIComponent(source.id)}/external-publications`,{method:'POST',data:{...body,idempotencyKey:this.externalIntent.keyFor({releaseId:source.id,...body})},signal:stamp.signal});if(!this.host.accepts(stamp))return true;if(!result.intentId||result.executionMode!=='external')throw new ApiError(502,'EXTERNAL_CONTEXT','External intent identity unavailable');this.host.navigate(`#/task/delivery/${encodeURIComponent(result.intentId)}`);return true;
+   }
    if(action==='dist-confirm'||action==='dist-plan'){
     if(channelPaused(this.state.form.target))throw new ApiError(409,'CHANNEL_MANUAL_ONLY',manualChannelLabel(this.host.locale()));
     const source=this.state.source;if(!source?.snapshot||!this.canConnect()||source.language!=='en'||(this.state.form.action!=='remove'&&source.state!=='published'))throw new Error(w('validation'));
@@ -78,6 +87,7 @@ export class DistributionController {
     const result=await this.host.api.json<{id:string}>(`/releases/${encodeURIComponent(source.id)}/${action==='dist-plan'?'distribution-plans':'deliveries'}`,{method:'POST',data:{...body,idempotencyKey:key},signal:stamp.signal});if(!this.host.accepts(stamp))return true;if(!result.id)throw new ApiError(502,'DELIVERY_CONTEXT','Confirmation identity unavailable');this.host.navigate(`#/task/${action==='dist-plan'?'plan':'delivery'}/${encodeURIComponent(result.id)}`);return true;
    }
    if(!task)return true;
+   if(action.startsWith('delivery-external-')){await this.externalAction(action,task,stamp);return true;}
    if(action==='plan-confirm'){
     if(channelPaused(task.plan?.target))throw new ApiError(409,'CHANNEL_MANUAL_ONLY',manualChannelLabel(this.host.locale()));
     const fresh=await this.host.api.json<TaskDetail>(`/owners/${encodeURIComponent(this.ownerId)}/tasks/plan/${encodeURIComponent(task.id)}`,{signal:stamp.signal});if(!this.host.accepts(stamp))return true;this.state.task=fresh;
@@ -100,8 +110,16 @@ export class DistributionController {
    else if(action==='delivery-note'){if(!this.state.note.trim())throw new Error(w('note'));await this.host.api.json(path+'/notes',{method:'POST',data:{note:this.state.note},signal:stamp.signal});if(this.host.accepts(stamp))this.state.note='';}
    else if(action==='delivery-observe'){await this.host.api.json(path+'/verify-observation',{method:'POST',data:{url:this.state.row?.url??task.copy?.url??this.state.observationUrl},signal:stamp.signal});}
    if(this.host.accepts(stamp)){await this.readBack(stamp);if(this.host.accepts(stamp))this.host.notice(w('readback'));}
-  }catch(error){if(this.host.accepts(stamp)){if(!(error instanceof ApiError)||error.status>=500){if(action==='delivery-request-approval')this.state.approvalUnknown=true;else if(['dist-confirm','dist-plan','plan-confirm'].includes(action))this.state.unknown=true;}await this.host.fail(error,stamp);}}
+  }catch(error){if(this.host.accepts(stamp)){if(!(error instanceof ApiError)||error.status>=500){if(action==='delivery-external-register')this.external.unknown=true;else if(action==='delivery-request-approval')this.state.approvalUnknown=true;else if(['dist-external-prepare','dist-confirm','dist-plan','plan-confirm'].includes(action))this.state.unknown=true;}await this.host.fail(error,stamp);}}
   finally{if(this.host.accepts(stamp)){this.state.busy=false;this.host.render();this.host.resumePolling();}}return true;
+ }
+ private async externalAction(action:string,task:TaskDetail,stamp:Stamp){
+  if(task.executionMode!=='external'||!this.canConnect())return;const command=action.slice('delivery-external-'.length),t=externalText(this.host.locale()),followUp=['correction','removal','verify-removal'].includes(command);
+  if(!task.allowedActions.includes('external-'+(followUp&&command!=='verify-removal'?'follow-up':command)))return;let data:Record<string,unknown>={};
+  if(command==='register'){const remoteId=this.external.remoteId.trim();if(!/^[1-9][0-9]*$/.test(remoteId))throw new Error(t('remote'));data={remoteId,idempotencyKey:this.registrationIntent.keyFor({intentId:task.id,remoteId})};}
+  if(followUp)data={action:command,...(this.external.note.trim()?{note:this.external.note.trim()}:{})};
+  if(['register','cancel','correction','removal','verify-removal'].includes(command)&&(!await this.host.confirm(t(command==='register'?'registerConfirm':command==='cancel'?'cancelConfirm':command==='verify-removal'?'verifyRemovalConfirm':'followUpConfirm'),stamp)||!this.host.accepts(stamp)||!this.allowed()||!this.host.api.csrf))return;
+  const result=await this.host.api.json<ExternalPublication>(`/external-publications/${encodeURIComponent(task.id)}/${followUp?'follow-up':command}`,{method:'POST',data,signal:stamp.signal});if(!this.host.accepts(stamp))return;this.external.view=result;this.external.unknown=false;await this.readBack(stamp);if(this.host.accepts(stamp))this.host.notice(t('readback'));
  }
  manual(){const task=this.state.task,row=this.state.row;return Boolean(task&&manualFollowup(this.state.targets.find(target=>target.name===(task.distribution?.target??task.copy?.target)),row?.action??task.action,task.history));}
 }

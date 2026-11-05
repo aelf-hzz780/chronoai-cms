@@ -1,5 +1,9 @@
 # BlogSystem
 
+008 个人 DEV 外部执行、CMS 独立登记及只读同步的设计和操作顺序：[008 外部发布](docs/008-cms-external-publication.md)。NyxBot 使用自身顶层 NyxID DEV 工具授权；CMS 页面提供材料、登记和只读刷新。公开发布与组织路径须按各自范围独立验收。
+
+Design and operation order for 008 personal DEV execution, independent CMS registration and read-only synchronization: [008 external publication](docs/008-cms-external-publication.md). NyxBot uses its own top-level NyxID DEV tool authorization; CMS provides material, registration and read-only refresh. Public publication and organization flows require their own scoped acceptance.
+
 006 合并后本机升级、登录恢复与最新验收：[2026-11-05 本机验收](docs/cms-local-acceptance-20261105.md)。
 
 Local upgrade, login recovery and acceptance after the 006 merge: [November 5 local acceptance](docs/cms-local-acceptance-20261105.md).

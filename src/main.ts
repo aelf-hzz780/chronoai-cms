@@ -14,6 +14,9 @@ import { DistributionService } from './distribution.ts';
 import { createTargets } from './targets.ts';
 import {ConnectionAttemptService} from './connection-attempts.ts';
 import {WorkspaceReadService} from './workspace-read.ts';
+import {ExternalPublicationService} from './external-publication.ts';
+import {GhostAdapter} from './ghost.ts';
+import {externalSyncConfig} from './external-sync.ts';
 
 const config = loadConfig();
 await mkdir(dirname(config.database), { recursive: true, mode: 0o700 });
@@ -23,8 +26,9 @@ const nyx = new NyxAuthority(config,store), policy = new Policy(store, nyx), con
 const auth = new AuthManager(config, store, vault, policy);
 const metrics = new MetricsService(content, { enabled: config.analyticsEnabled, requireConsent: config.requireConsent, secret: config.trackingSecret });
 const distribution = new DistributionService(new PublishingService(content, vault), nyx, createTargets());
+const externalPublications=new ExternalPublicationService(distribution,new GhostAdapter(store,config.publicMediaDirectory,config.allowLoopback,process.env,{metrics,publicUrl:config.publicUrl,requireConsent:config.requireConsent}),{syncIntervalMs:externalSyncConfig().intervalMs});
 const connectionAttempts=new ConnectionAttemptService(new WorkspaceReadService(policy),nyx,vault,config);
-const app = await createApp({ store, policy, content, vault, publicUrl: config.publicUrl, auth, metrics, distribution, connectionAttempts, trustedProxyCidrs:config.trustedProxyCidrs, authenticate: request => auth.authenticate(request) });
+const app = await createApp({ store, policy, content, vault, publicUrl: config.publicUrl, auth, metrics, distribution, externalPublications, connectionAttempts, trustedProxyCidrs:config.trustedProxyCidrs, authenticate: request => auth.authenticate(request) });
 for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, async () => { await app.close(); store.close(); });
 await app.listen({ host: config.host, port: config.port });
 process.stdout.write(JSON.stringify({ event: 'server.ready', address: `${config.host}:${config.port}` }) + '\n');

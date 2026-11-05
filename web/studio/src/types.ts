@@ -12,7 +12,7 @@ export interface Site {language:Language;configured:boolean;publicUrl:string|nul
 export interface History {id:string;title:string;digest:string;credited_author:string;created_at:string}
 export interface EditorDraft {article:Article|null;language:Language;title:string;author:string;markdown:string;originalMarkdown:string;markdownChanged:boolean;dirty:boolean;conflict:boolean;historyRevision:boolean;imported:boolean}
 export type TaskKind='release'|'delivery'|'media'|'projection'|'plan';
-export interface TaskItem {id:string;kind:TaskKind;ownerId:string;articleId:string;language:Language;title:string;revisionId:string|null;action:string;state:string;createdAt:string;updatedAt:string;traceId:string;errorCode:string|null;url:string|null;allowedActions:string[];plan?:import('./workflow-types.js').PlanMetadata}
+export interface TaskItem {id:string;kind:TaskKind;ownerId:string;articleId:string;language:Language;title:string;revisionId:string|null;action:string;state:string;createdAt:string;updatedAt:string;traceId:string;errorCode:string|null;url:string|null;allowedActions:string[];executionMode?:'external';externalPublication?:import('./workflow-types.js').ExternalPublicationSummary;plan?:import('./workflow-types.js').PlanMetadata}
 export interface TaskPage {items:TaskItem[];total:number;limit:number;offset:number}
 export interface TaskHistory {state:string;code:string|null;traceId:string;createdAt:string;note?:string;actor?:string}
 export interface TaskMedia {id:string;state:string;publicFiles:number;errorCode:string|null;traceId:string;createdAt:string;updatedAt:string}

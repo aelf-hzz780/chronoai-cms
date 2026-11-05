@@ -56,6 +56,7 @@ export class DistributionService {
     for (const previous of this.store.all("SELECT id FROM deliveries WHERE owner_id=? AND target=? AND connection_id=? AND remote_id=? AND id<>? AND state='published'", delivery.owner_id, delivery.target, delivery.connection_id, remoteId, delivery.id)) this.event(previous.id, state === 'removed' ? 'removed' : 'superseded', trace);
   }
   manualWorkflow(delivery: any) {
+    if(this.store.get('SELECT 1 FROM external_publications WHERE delivery_id=?',delivery.id))return false;
     return !this.targets.get(delivery.target,true).automatic || this.targets.disabled.has(delivery.target) || !!this.store.get("SELECT 1 FROM delivery_events WHERE delivery_id=? AND state='manual_action_needed'",delivery.id);
   }
   private frozenCopyAccount(id:string){
@@ -63,7 +64,7 @@ export class DistributionService {
     let account:unknown;try{account=JSON.parse(saved.payload_json)?.accountId;}catch{throw new AppError(409,'COPY_MISMATCH','Historical copy account is unavailable');}
     requireValue(typeof account==='string'&&account.trim().length>0,409,'COPY_MISMATCH','Historical copy account is unavailable');return account;
   }
-  private async prepareIntent(actor:Actor,owner:Row,release:Row,target:Target,connectionId:string,input:Record<string,unknown>,id:string,strictConnection=false){
+  async prepareIntent(actor:Actor,owner:Row,release:Row,target:Target,connectionId:string,input:Record<string,unknown>,id:string,strictConnection=false){
     const original=this.originals.input(release),ownerRef={kind:owner.kind,issuer:owner.issuer,subject:owner.subject};
     requireValue(original.language==='en',409,'LANGUAGE_NOT_VERIFIED','External distribution is initially enabled for English only');
     if(input.action!=='remove')requireValue(release.state==='published',409,'ORIGINAL_NOT_LIVE','Exact confirmed original must currently be live');
@@ -104,6 +105,7 @@ export class DistributionService {
     const actorKey = `${actor.issuer}|${actor.subject}`;
     const prior = this.store.get('SELECT * FROM idempotency WHERE actor=? AND operation=? AND key=?', actorKey, 'delivery', key);
     if (prior) { requireValue(prior.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key reused for different delivery');const row=this.store.get('SELECT * FROM deliveries WHERE id=?', prior.resource_id)!;return row; }
+    if(input.copyId)requireValue(!this.store.get('SELECT 1 FROM external_publications WHERE delivery_id=?',String(input.copyId)),409,'EXTERNAL_EXECUTION_ONLY','Use external preparation or manual follow-up for externally executed copies');
     const id=randomUUID(),prepared=await this.prepareIntent(actor,owner,release,target,connectionId,input,id,!!planId);
     const {copy,connectionLost,payload,contentDigest,state}=prepared,now=new Date().toISOString();
     if(planId){
@@ -114,7 +116,7 @@ export class DistributionService {
     }
     this.store.transaction(() => {
       if(planId)this.assertPlan(planId,release,owner,input,this.intentDigest(release,connectionId,target.name,input,prepared),prepared.copy);
-      if (input.action === 'create') requireValue(!this.store.get("SELECT 1 FROM deliveries d JOIN releases r ON r.id=d.release_id WHERE r.article_id=? AND d.target=? AND d.connection_id=? AND d.action='create' AND d.state NOT IN ('failed','blocked','cancelled','removed')", release.article_id, target.name, connectionId), 409, 'DUPLICATE_TARGET', 'An existing or uncertain copy already targets this connection; update or reconcile it');
+      if (input.action === 'create') requireValue(!this.store.get("SELECT 1 FROM deliveries d JOIN releases r ON r.id=d.release_id WHERE r.article_id=? AND d.target=? AND d.connection_id=? AND (d.action='create' OR EXISTS(SELECT 1 FROM external_publications mode WHERE mode.delivery_id=d.id)) AND (d.state NOT IN ('failed','blocked','cancelled','removed') OR EXISTS(SELECT 1 FROM external_publications e WHERE e.delivery_id=d.id AND d.state<>'removed'))", release.article_id, target.name, connectionId), 409, 'DUPLICATE_TARGET', 'An existing or uncertain copy already targets this connection; update or reconcile it');
       this.store.run('INSERT INTO deliveries(id,release_id,owner_id,connection_id,target,action,format,digest,state,remote_id,url,approval_ref,trace_id,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', id, releaseId, owner.id, connectionId, target.name, input.action as string, input.format as string, contentDigest, state, copy?.remote_id ?? null, copy?.url ?? null, null, trace, now, now);
       const bound=bindActorCommand(this.store,actor,deliveryCommand(this.store.get('SELECT * FROM deliveries WHERE id=?',id)!));
       this.store.run('INSERT INTO delivery_payloads VALUES (?,?,?)', id, this.originals.vault.seal(bound), JSON.stringify(payload));
@@ -164,6 +166,7 @@ export class DistributionService {
     this.store.transaction(()=>{const current=this.store.get('SELECT * FROM distribution_plans WHERE id=?',id)!;requireValue(current.state!=='confirmed',409,'PLAN_CONSUMED','A confirmed plan cannot be cancelled');this.store.run("UPDATE distribution_plans SET state='cancelled',updated_at=? WHERE id=? AND state='scheduled'",new Date().toISOString(),id);this.store.audit(actor.subject,row.owner_id,'distribution-plan.cancel',id,trace);});return this.planView(this.store.get('SELECT * FROM distribution_plans WHERE id=?',id)!);
   }
   async authorize(actor: Actor, id: string, approvalRef: string, trace: string) {
+    requireValue(!this.store.get('SELECT 1 FROM external_publications WHERE delivery_id=?',id),409,'EXTERNAL_EXECUTION_ONLY','External intents cannot authorize CMS worker writes');
     const { delivery, owner, payload } = await this.context(actor, id);
     assertCommandRequest(actor,'POST',`/api/service/deliveries/${id}/authorize`);
     requireValue(delivery.state === 'approval_needed'&&requiresExactApproval(owner.kind,payload), 409, 'DELIVERY_STATE', 'Delivery is not awaiting exact authorization');
@@ -181,6 +184,7 @@ export class DistributionService {
     }); return this.store.get('SELECT * FROM deliveries WHERE id=?', id);
   }
   async requestApproval(actor:Actor,id:string,trace:string) {
+    requireValue(!this.store.get('SELECT 1 FROM external_publications WHERE delivery_id=?',id),409,'EXTERNAL_EXECUTION_ONLY','External intents use independent top-level destination authority');
     const {delivery,owner,payload}=await this.context(actor,id);
     requireValue(delivery.state==='approval_needed' && requiresExactApproval(owner.kind,payload),409,'DELIVERY_STATE','Exact execution approval is not pending');
     if(delivery.approval_ref) return {reference:delivery.approval_ref,state:'approval_needed',expiresAt:null};
@@ -194,6 +198,7 @@ export class DistributionService {
     return result;
   }
   async cancel(actor: Actor, id: string, trace: string) {
+    requireValue(!this.store.get('SELECT 1 FROM external_publications WHERE delivery_id=?',id),409,'EXTERNAL_EXECUTION_ONLY','External cancellation cannot revoke independent destination requests');
     const { delivery } = await this.context(actor, id,'access');
     this.store.transaction(() => {
       const current = this.store.get('SELECT state FROM deliveries WHERE id=?', id)!;
@@ -203,6 +208,7 @@ export class DistributionService {
     }); return { id, state: 'cancelled' };
   }
   async reconcile(actor: Actor, id: string, trace: string) {
+    requireValue(!this.store.get('SELECT 1 FROM external_publications WHERE delivery_id=?',id),409,'EXTERNAL_EXECUTION_ONLY','External intents must use read-only external reconciliation');
     const { delivery } = await this.context(actor, id,'access');
     requireValue(delivery.state === 'uncertain', 409, 'DELIVERY_STATE', 'Only uncertain deliveries can reconcile');
     this.store.transaction(() => {
@@ -309,9 +315,10 @@ export class DeliveryWorker {
   async once(resourceId?:string) {
     const { store } = this.service;
     const lease = this.queue.claim('delivery', id => {
-      this.service.event(id, 'uncertain', 'recovery', 'WORKER_INTERRUPTED');
+      if(!store.get('SELECT 1 FROM external_publications WHERE delivery_id=?',id))this.service.event(id, 'uncertain', 'recovery', 'WORKER_INTERRUPTED');
     },resourceId);
     if (!lease) return false;
+    if(store.get('SELECT 1 FROM external_publications WHERE delivery_id=?',lease.resourceId)){this.queue.mutate(lease,()=>store.audit('worker',store.get('SELECT owner_id FROM deliveries WHERE id=?',lease.resourceId)!.owner_id,'external.worker-rejected',lease.resourceId,'external-worker',{code:'EXTERNAL_EXECUTION_ONLY'}),true);return true;}
     const snapshot = store.get('SELECT actor_json FROM delivery_payloads WHERE delivery_id=?', lease.resourceId)!;
     const recovering = store.get('SELECT state FROM deliveries WHERE id=?',lease.resourceId)?.state === 'uncertain';
     const recovery = recovering ? store.get("SELECT actor_json FROM recovery_actors WHERE kind='delivery' AND resource_id=?",lease.resourceId) : undefined;

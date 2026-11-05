@@ -53,14 +53,26 @@ export class TaskReadService {
     FROM distribution_plans p JOIN releases r ON r.id=p.release_id AND r.owner_id=p.owner_id JOIN articles a ON a.id=r.article_id AND a.owner_id=p.owner_id
       JOIN revisions v ON v.id=p.revision_id AND v.article_id=a.id WHERE a.owner_id=:owner
   ), classified AS (
-    SELECT t.*,p.not_before_at AS plan_not_before,p.copy_id AS plan_copy_id,p.delivery_id AS plan_delivery_id,p.format AS plan_format,CASE WHEN json_valid(delivery_payload.payload_json) THEN json_extract(delivery_payload.payload_json,'$.executionApproval') END AS execution_approval,CASE WHEN t.creator=:subject OR :publisher=1 OR public.revision_id IS NOT NULL THEN 1 ELSE 0 END AS readable
+    SELECT t.*,external.execution_mode,external.last_sync_at,external.last_verified_at,external.sync_status,external.sync_error_code,external.follow_up_state,p.not_before_at AS plan_not_before,p.copy_id AS plan_copy_id,p.delivery_id AS plan_delivery_id,p.format AS plan_format,CASE WHEN json_valid(delivery_payload.payload_json) THEN json_extract(delivery_payload.payload_json,'$.executionApproval') END AS execution_approval,CASE WHEN t.creator=:subject OR :publisher=1 OR public.revision_id IS NOT NULL THEN 1 ELSE 0 END AS readable
     FROM tasks t LEFT JOIN public_revisions public ON public.article_id=t.article_id AND public.revision_id=t.revision_id
       LEFT JOIN distribution_plans p ON t.kind='plan' AND p.id=t.id
       LEFT JOIN delivery_payloads delivery_payload ON t.kind='delivery' AND delivery_payload.delivery_id=t.id
+      LEFT JOIN external_publications external ON t.kind='delivery' AND external.delivery_id=t.id
   )`;}
   private params(actor:Actor,access:WorkspaceAccess){return {owner:access.owner.id as string,subject:actor.subject,publisher:access.publishingRole?1:0,now:new Date().toISOString()};}
   private allowedActions(actor:Actor,access:WorkspaceAccess,row:Row){
     if(!this.workspaces.capabilities(actor,access).canPublish)return [];
+    if(row.execution_mode==='external'){
+      if(access.owner.kind!=='personal'||!this.workspaces.capabilities(actor,access).canReadConnections)return [];
+      if(['awaiting_external','uncertain'].includes(row.state))return ['external-register','external-reconcile','external-cancel'];
+      if(row.state==='published'||row.state==='cancelled'){
+        const actions=row.state==='cancelled'?['external-reconcile']:[];
+        if(row.remote_id)actions.push('external-sync','external-follow-up');
+        if(row.remote_id&&row.follow_up_state==='removal_requested')actions.push('external-verify-removal');
+        return actions;
+      }
+      return [];
+    }
     const actions:string[]=[];
     if(row.kind==='release'){
       if(row.state==='queued'&&row.job_state==='queued')actions.push('cancel');
@@ -77,8 +89,9 @@ export class TaskReadService {
     }
     return actions;
   }
+  private externalSummary(row:Row){return {lastSyncAt:row.last_sync_at??null,lastVerifiedAt:row.last_verified_at??null,syncStatus:row.sync_status,syncErrorCode:row.sync_error_code??null,followUpState:row.follow_up_state};}
   private item(actor:Actor,access:WorkspaceAccess,row:Row){
-    return {id:row.id,kind:row.kind,ownerId:row.owner_id,articleId:row.article_id,language:row.language,title:row.title,revisionId:row.revision_id??null,action:row.action,state:row.state,createdAt:row.created_at,updatedAt:row.updated_at,traceId:row.trace_id,errorCode:row.error_code??null,url:row.url??null,allowedActions:this.allowedActions(actor,access,row),...(row.kind==='plan'?{plan:{notBeforeAt:row.plan_not_before,releaseId:row.release_id,target:row.target,connectionId:this.workspaces.capabilities(actor,access).canReadConnections?row.connection_id:null,action:row.action,format:row.plan_format,copyId:row.plan_copy_id??null,consumedDeliveryId:row.plan_delivery_id??null}}:{})};
+    return {id:row.id,kind:row.kind,ownerId:row.owner_id,articleId:row.article_id,language:row.language,title:row.title,revisionId:row.revision_id??null,action:row.action,state:row.state,createdAt:row.created_at,updatedAt:row.updated_at,traceId:row.trace_id,errorCode:row.error_code??null,url:row.url??null,allowedActions:this.allowedActions(actor,access,row),...(row.execution_mode==='external'?{executionMode:'external' as const,externalPublication:this.externalSummary(row)}:{}),...(row.kind==='plan'?{plan:{notBeforeAt:row.plan_not_before,releaseId:row.release_id,target:row.target,connectionId:this.workspaces.capabilities(actor,access).canReadConnections?row.connection_id:null,action:row.action,format:row.plan_format,copyId:row.plan_copy_id??null,consumedDeliveryId:row.plan_delivery_id??null}}:{})};
   }
   async list(actor:Actor,ownerId:string,query:TaskQuery){
     const {kind,language}=query,limit=Number(query.limit??50),offset=Number(query.offset??0);
@@ -146,7 +159,8 @@ export class TaskReadService {
     const privateRead=access.owner.kind==='personal'||access.publishingRole,store=this.workspaces.policy.store;
     const notes=privateRead&&row.kind==='delivery'?store.all('SELECT id,note,actor,trace_id,created_at FROM delivery_notes WHERE delivery_id=? ORDER BY created_at,rowid',id).map(note=>({id:note.id,note:note.note,actor:note.actor,traceId:note.trace_id,createdAt:note.created_at})):[];
     const observations=privateRead&&row.kind==='delivery'?store.all('SELECT id,url,proof,source_state,actor,trace_id,observed_at FROM delivery_observations WHERE delivery_id=? ORDER BY observed_at,rowid',id).map(observation=>({id:observation.id,url:observation.url,status:'verified',proof:observation.proof,sourceState:observation.source_state,followUpRequired:true,actor:observation.actor,traceId:observation.trace_id,observedAt:observation.observed_at})):[];
-    return {...this.item(actor,access,row),snapshot:payloadVisible?this.snapshot(row):null,distribution:payloadVisible?this.distributionContext(row,capabilities.canReadConnections):null,confirmationDigest:payloadVisible?row.confirmation_digest??null:null,history:this.history(row),notes,observations,copy:row.kind==='delivery'?{target:row.target,connectionId:capabilities.canReadConnections?row.connection_id:null,remoteId:row.remote_id??null,url:row.url??null}:null,...(['release','media'].includes(row.kind)?{mediaHistory:this.mediaHistory(row)}:{})};
+    const externalObservations=row.execution_mode==='external'?store.all('SELECT id,state,code,remote_id,url,trace_id,observed_at FROM external_publication_observations WHERE delivery_id=? ORDER BY observed_at,rowid',id).map(observation=>({id:observation.id,state:observation.state,code:observation.code??null,remoteId:observation.remote_id??null,url:observation.url??null,traceId:observation.trace_id,observedAt:observation.observed_at})):[];
+    return {...this.item(actor,access,row),...(row.execution_mode==='external'?{externalPublication:{...this.externalSummary(row),observations:externalObservations}}:{}),snapshot:payloadVisible?this.snapshot(row):null,distribution:payloadVisible?this.distributionContext(row,capabilities.canReadConnections):null,confirmationDigest:payloadVisible?row.confirmation_digest??null:null,history:this.history(row),notes,observations,copy:row.kind==='delivery'?{target:row.target,connectionId:capabilities.canReadConnections?row.connection_id:null,remoteId:row.remote_id??null,url:row.url??null}:null,...(['release','media'].includes(row.kind)?{mediaHistory:this.mediaHistory(row)}:{})};
   }
   async asset(actor:Actor,ownerId:string,kind:string,id:string,assetId:string){
     const {access,row}=await this.context(actor,ownerId,kind,id);

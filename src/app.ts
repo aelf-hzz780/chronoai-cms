@@ -20,6 +20,7 @@ import {ContentReadService} from './content-read.ts';
 import {installStudioAssets} from './studio-assets.ts';
 import {TaskReadService} from './task-read.ts';
 import type {ConnectionAttemptService} from './connection-attempts.ts';
+import type {ExternalPublicationService} from './external-publication.ts';
 
 declare module 'fastify' { interface FastifyRequest { actor: Actor; rawBody:Buffer|null; } }
 export interface AppDependencies {
@@ -27,6 +28,7 @@ export interface AppDependencies {
   authenticate(request: FastifyRequest): Promise<Actor | null>; auth?: AuthManager;
   metrics?: MetricsService;
   distribution?: DistributionService;
+  externalPublications?: ExternalPublicationService;
   connectionAttempts?:ConnectionAttemptService;
   trustedProxyCidrs?: string[];
 }
@@ -71,6 +73,7 @@ export async function createApp(deps: AppDependencies) {
   const workspaces = new WorkspaceReadService(deps.policy),contentRead = new ContentReadService(workspaces);
   const tasks = new TaskReadService(workspaces,media);
   const distribution = () => { requireValue(deps.distribution, 503, 'DISTRIBUTION_UNAVAILABLE', 'Distribution is not configured'); return deps.distribution; };
+  const externalPublications=()=>{requireValue(deps.externalPublications,503,'EXTERNAL_PUBLICATION_UNAVAILABLE','External publication registration is not configured');return deps.externalPublications;};
   const connectionAttempts=()=>{requireValue(deps.connectionAttempts,503,'CONNECTION_SETUP_UNAVAILABLE','Connection setup is not configured');return deps.connectionAttempts;};
   const connectionCookie={httpOnly:true,secure:deps.publicUrl.startsWith('https:'),sameSite:'lax' as const,path:'/connections/return'};
   app.get('/connections/return',async(request,reply)=>{
@@ -131,6 +134,13 @@ export async function createApp(deps: AppDependencies) {
       api.get('/targets', async request => { await deps.policy.scope(request.actor, 'publish'); return distribution().targets.list(); });
       api.get('/owners/:id/connections',async request=>distribution().availableConnections(request.actor,(request.params as {id:string}).id));
       api.post('/releases/:id/deliveries', async (request, reply) => reply.code(202).send(await distribution().request(request.actor, (request.params as {id:string}).id, object(request.body), request.id)));
+      api.post('/releases/:id/external-publications',async(request,reply)=>reply.code(201).send(await externalPublications().prepare(request.actor,(request.params as {id:string}).id,object(request.body),request.id)));
+      api.get('/external-publications/:id',async request=>externalPublications().get(request.actor,(request.params as {id:string}).id));
+      api.post('/external-publications/:id/register',async request=>externalPublications().register(request.actor,(request.params as {id:string}).id,object(request.body),request.id));
+      api.post('/external-publications/:id/reconcile',async request=>externalPublications().reconcile(request.actor,(request.params as {id:string}).id,request.id));
+      api.post('/external-publications/:id/sync',async request=>externalPublications().sync(request.actor,(request.params as {id:string}).id,request.id));
+      api.post('/external-publications/:id/cancel',async request=>externalPublications().cancel(request.actor,(request.params as {id:string}).id,request.id));
+      api.post('/external-publications/:id/follow-up',async request=>externalPublications().followUp(request.actor,(request.params as {id:string}).id,object(request.body),request.id));
       api.post('/releases/:id/distribution-plans',async(request,reply)=>reply.code(201).send(await distribution().createPlan(request.actor,(request.params as {id:string}).id,object(request.body),request.id)));
       api.post('/distribution-plans/:id/cancel',async request=>distribution().cancelPlan(request.actor,(request.params as {id:string}).id,request.id));
       api.get('/articles/:id/deliveries', async request => distribution().list(request.actor, (request.params as {id:string}).id));
