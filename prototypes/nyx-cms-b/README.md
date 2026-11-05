@@ -2,17 +2,29 @@
 
 2026-11-03 · 三个工作包完善版。14 个主页面及对应的确认、错误、权限、连接、任务和隐私交互。保留 B 方案视觉、浅／深色与响应式布局，仅修改本目录的独立静态原型，不调用 CMS、NyxID、Ghost 或发布平台 API。
 
+## 2026-11-05 站点开通增量
+
+本次直接整合在这套全站原型中，保留原有 14 页面和侧栏。申请、补充资料、进度和地址全部归入「站点与工作区」；开通说明归入「开始使用」。不再另设「开通申请」「使用说明」或「写作工作台」侧栏入口。编辑器未开通提示携带当前文章上下文进入站点页，并保留现有未保存保护。
+
+- 完整预览：http://localhost:4182/nyx-cms-b/#content
+- 站点页：http://localhost:4182/nyx-cms-b/#settings?owner=personal
+- 本轮效果与全站总览：http://localhost:4182/nyx-cms-b/review.html#site-setup
+- 运维演示：底部「场景演示 → 进入运维演示」。回到普通侧栏或切换工作区会退出运维视角。
+- 同域 /en/、/zh/，根入口固定英文。开通模型与专项存档复用同一个 `provisioning-domain.js`；不是复制两套状态逻辑。
+- 开通申请和表单保存在本机，旧专项申请会保留编号和归属迁入；文章等原有样例保持原来的会话内行为。
+- 本轮 17 + 54 + 17 = 88 项检查通过；14 页面浏览器冒烟及 375px 窄屏检查通过。详见 [增量验收](INCREMENT-20261105.md)。
+
 ## 预览
 
-- 工作台：http://127.0.0.1:4173/#content
-- 全站效果图总览：http://127.0.0.1:4173/review.html
-- 从登录开始：http://127.0.0.1:4173/#login
-- 公开博客：http://127.0.0.1:4173/#blog?owner=org&lang=en
+- 工作台：http://localhost:4182/nyx-cms-b/#content
+- 全站效果图总览：http://localhost:4182/nyx-cms-b/review.html
+- 从登录开始：http://localhost:4182/nyx-cms-b/#login
+- 公开博客：http://localhost:4182/nyx-cms-b/#blog?owner=org&lang=en
 
-若预览服务未运行，在本目录执行并保持终端运行：
+若预览服务未运行，在仓库根目录执行并保持终端运行：
 
 ```sh
-python3 -m http.server 4173 --bind 127.0.0.1
+python3 -m http.server 4182 --bind 127.0.0.1 --directory prototypes
 ```
 
 无需 npm 安装、构建或凭据。Markdown 引擎随原型本地提供，许可证见 `vendor/markdown-it.LICENSE`。字体来自 Google Fonts，离线时回退系统字体。
@@ -24,7 +36,7 @@ python3 -m http.server 4173 --bind 127.0.0.1
 - **CMS 界面语言**：默认 English，支持简体中文；切换只更新 UI，不重建表单，不改变文章正文、未保存输入、选中文件、任务、权利勾选或发布目标。
 - **文章语言**：编辑器 EN／中文对应两篇关联稿件，草稿、提交、修订和公开状态分别管理；只发布当前语言。
 - **公开阅读语言**：切换对应语言的公开站点；公开页面 UI 跟随阅读语言，返回 CMS 恢复界面偏好。
-- **两个 Ghost**：每 publication × language 一个 Ghost。当前每工作区展示一个双语 publication；组织、个人和另一个组织各有自己的 `en.<owner>.example` 与 `zh.<owner>.example`。本地 hash 路由模拟跨站浏览。
+- **两个 Ghost**：每 publication × language 一个 Ghost。当前每工作区展示一个双语 publication；组织、个人和另一个组织各有一个平台子域名，使用 `/en/` 和 `/zh/` 路径。根路径默认英文。本地 hash 路由模拟跨站浏览。
 
 ## 三个工作包
 
@@ -63,8 +75,8 @@ node workflow-checks.cjs
 - 私有图片使用本地 Blob URL，按 owner／文章／语言作用域展示；真实私有上传、Ghost 转存、持久化及读取授权仍由业务服务实现。
 - 工作区名称、简介和域名来自配置，仅只读展示；没有虚构在线设置保存接口。
 - 指标为标注过的样例；公开页不发送任何统计事件。Markdown HTML 禁用，未知图片来源不自动加载。
-- 状态仅在当前页面会话中保留，刷新／关闭页会重置；跨页面继续不等于已接入持久任务系统。
+- 原有文章与发布样例仅在页面会话中保留；站点开通申请单独保存在 localStorage。均未接入真实持久任务系统。
 
 ## 回退
 
-本轮修改前快照：`/tmp/nyx-cms-b-before-workpackages-20261103.tar.gz`。只包含独立原型，未修改业务源码或现有基础设施改动。尚未提交或推送。
+本次增量之前的提交为 `e67aca7`。只修改 `prototypes/`，可按 Git 提交恢复原型；不涉及业务源码、真实部署或发布服务。

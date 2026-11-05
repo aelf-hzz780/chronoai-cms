@@ -34,6 +34,8 @@ NyxID 后端 `049ee1c2ca811a002590dc8330ce646078bb1158` 与门户 `c65dc4bedb7da
 
 ## 运行与交接入口
 
+- **运维须知 / Operator runbook**：[简体中文](docs/operations/README.md) · [English](docs/operations/README.en.md)。按步骤部署/复用双 Ghost、绑定 CMS、只读核验与交接；保持外发暂停。 / Step-by-step deployment/reuse, CMS binding, read-only checks, and handoff with outbound paused.
+
 - [开发运行与验证](docs/development.md)：Node.js 24.18.x、npm ci、本地 API/Worker、站点开通及测试分层。运行需要实际身份配置，生产入口没有测试登录后门。
 - [CMS 与 service API 指南](docs/api-guide.md)：双入口、源文／素材、发布、分发历史及指标；运行时契约为 `/openapi.json`。
 - [NyxID 注册与连接交接](docs/nyxid-registration.md)：目标实例注册、scope、精确连接及尚缺的 Live 验证。

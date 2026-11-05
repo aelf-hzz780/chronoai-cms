@@ -32,7 +32,7 @@ function latestOriginal(articleId=state.articleId,lang=state.lang){return origin
 function createOriginalJob(action='publish'){
   if(confirmationProblem()||!canPublish()||!state.rights)return null;
   if(originalJobs.some(j=>j.articleId===state.articleId&&j.lang===state.lang&&['queued','verifying','uncertain'].includes(j.status)))return null;
-  const job={id:nextWorkflowId('original'),actor:'self',owner:state.workspace,articleId:state.articleId,lang:state.lang,action,snapshot:Object.freeze({...snapshot(language())}),host:publicationTarget().host,status:'queued',events:[],outcome:site.originalOutcome||'published'};
+  const job={id:nextWorkflowId('original'),actor:'self',owner:state.workspace,articleId:state.articleId,lang:state.lang,action,snapshot:Object.freeze({...snapshot(language())}),host:publicationTarget().displayAddress,status:'queued',events:[],outcome:site.originalOutcome||'published'};
   originalJobs.push(job);addJobEvent(job,'queued');
   scheduleWorkflow(()=>advanceOriginal(job.id),1800);return job;
 }
