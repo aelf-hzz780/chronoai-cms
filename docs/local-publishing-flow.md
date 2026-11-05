@@ -4,6 +4,10 @@
 
 This run verifies personal original publication and DEV distribution to a local, observable result. A public Ghost deployment, a real DEV publication, and formal D1–D9 acceptance are not prerequisites for this local test.
 
+008 更新：当前正向用例覆盖 Studio 准备外部材料 → 独立本地工具经模拟 NyxID 写入模拟 DEV → Studio 回传 ID → CMS 独立 GET 登记 → 只读指标同步。CMS 不创建 DEV Worker job；三项旧 exact API/恢复用例继续运行。`test/deprecated-personal-exact-local.historical.ts` 保留旧 UI/CLI 正向用例，不属于当前自动测试。下面 2026-11-04 的结果仍是其固定历史版本的证据，不能当作 008 的执行结果。
+
+008 update: the current positive case covers Studio preparation → an independent local tool writing simulated DEV through simulated NyxID → Studio receipt submission → independent CMS GET registration → read-only metrics sync. CMS creates no DEV Worker job, and the three legacy exact API/recovery cases still run. `test/deprecated-personal-exact-local.historical.ts` preserves the old UI/CLI positive case outside the current automatic tests. The 2026-11-04 results below remain evidence for that historical version, not execution results for 008.
+
 ## 已完成结果 / Verified result
 
 2026-11-04，在固定 commit `9cdd164ccdf537345d46909006b072a741132ff3` 上，`npm run check` 为 **442/442 通过**，`npm run test:local-publishing` 为 **4/4 通过**，均无失败或跳过。主流程真实 CLI 回执 `published`、`sourceVerified=true`；本地 DEV 仅一次写入、一次 exact redeem，重复 CLI 返回 `DELIVERY_NOT_RUNNABLE`。未批准／过期、提交后丢响应只读恢复和指定任务隔离均通过。全部模拟服务与浏览器已关闭，临时数据已清理。
@@ -41,8 +45,8 @@ Set `LOCAL_EXACT_EVIDENCE_DIR` to choose the JSON and screenshot output director
 | Studio、CMS HTTP、Session/CSRF、SQLite | 真实应用代码 / Production application code |
 | OIDC 验签、PKCE、在线身份重验 | 真实 AuthManager 与 NyxAuthority，对接本地签名 issuer / Production auth against a locally signed issuer |
 | 原文发布与公开正文核验 | 真实 GhostAdapter、ReleaseWorker、Chromium；Ghost HTTP 服务为模拟 / Production adapter, worker, and renderer; simulated Ghost HTTP service |
-| 精确请求、批准、redeem | 真实 CMS 请求与校验；Nyx 协议服务为模拟 / Production CMS requests and validation; simulated Nyx protocol service |
-| DEV 写入与读回 | 真实 DevAdapter、DeliveryWorker；DEV HTTP 与匿名页面为模拟 / Production adapter and worker; simulated DEV HTTP and anonymous page |
+| 精确请求、批准、redeem | 三项旧 API/恢复用例；真实 CMS 校验、模拟 Nyx 协议服务 / Three legacy API/recovery cases; production CMS validation and simulated Nyx protocol service |
+| 外部 DEV 写入与读回 | 独立模拟工具凭据执行；真实 ExternalPublicationService/DevAdapter 核验，DEV HTTP 与匿名页面为模拟 / Independent simulated tool credential executes; production service/adapter verifies simulated DEV HTTP and page |
 
 服务绑定随机 loopback 端口。DEV 的逻辑 HTTPS 地址只用作请求契约，由本地 Nyx 模拟服务映射到本地 HTTP 端点；不改变生产 HTTPS 校验，也不向真实 DEV 地址发送请求。测试采用现有 adapter 边界，模拟服务与产品代码分离，不添加生产测试登录后门。
 
@@ -51,8 +55,8 @@ Services bind random loopback ports. The logical HTTPS DEV address is a request-
 ## 验收路径 / Acceptance paths
 
 1. 浏览器登录、确认原文发布，Worker 发布后匿名核验正文。Browser login and original confirmation, followed by worker publication and anonymous body verification.
-2. 浏览器确认全文分发、请求精确审批、本地批准并关联；实际运行 `scripts/run-delivery-once.ts --delivery <id> --execute`，回执为 `published`、`sourceVerified=true`。Browser full-copy confirmation, exact request, local decision and attachment, followed by the actual single-delivery CLI returning `published` and `sourceVerified=true`.
-3. 核对副本内容、署名、来源、远端 ID、URL 与状态历史；重复 CLI 执行返回 `DELIVERY_NOT_RUNNABLE`，本地 DEV 写入与 exact redeem 均保持一次，普通 proxy 写入为零。Verify body, byline, source, remote ID, URL, and history. A repeated CLI invocation returns `DELIVERY_NOT_RUNNABLE`; the local DEV write and exact redemption counts stay at one, with no legacy proxy write.
+2. 浏览器准备全文材料，核对精确 request；独立本地工具凭据写入一次模拟 DEV。此时 CMS 仍 awaiting_external，尚未承认发布成功。Browser preparation freezes the full-copy request; a separate local tool credential writes simulated DEV once. CMS remains awaiting_external until independent verification.
+3. 浏览器回传远端 ID，CMS 只读核验正文、署名、来源、账号和 HTTPS 逻辑 URL；随后只读同步指标。重复登记保持一个副本、一次外部工具写入和零 CMS DEV job，所有实际传输都在 loopback。Browser receipt submission triggers CMS read-only verification of content, attribution, source, account and the logical HTTPS URL, followed by read-only metrics sync. Repeated registration preserves one copy, one independent tool write and zero CMS DEV jobs; all actual traffic stays on loopback.
 4. 未批准或过期请求不能排队执行。Pending or expired approvals cannot authorize execution.
 5. 写入完成后丢失响应进入 `uncertain`，通过当前身份只读对账恢复，provider 写入次数保持一次。Losing the response after an accepted write yields `uncertain`; current-authority read-only reconciliation recovers it while the provider write count stays at one.
 

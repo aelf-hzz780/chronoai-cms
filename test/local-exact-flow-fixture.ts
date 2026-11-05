@@ -17,6 +17,7 @@ import {loadConfig} from '../src/config.ts';
 import {createApp} from '../src/app.ts';
 import {PublishingService,ReleaseWorker} from '../src/publishing.ts';
 import {DistributionService,DeliveryWorker} from '../src/distribution.ts';
+import {ExternalPublicationService} from '../src/external-publication.ts';
 import {DevAdapter,TargetRegistry} from '../src/targets.ts';
 import {GhostAdapter} from '../src/ghost.ts';
 import {render} from '../src/render.ts';
@@ -36,17 +37,24 @@ const now=()=>new Date().toISOString();
 function fail(status:number,message:string):never {throw Object.assign(new Error(message),{statusCode:status});}
 function demand(value:unknown,message:string,status=400):asserts value {if(!value)fail(status,message);}
 
-export async function createLocalExactFlow(){
+export async function createLocalExactFlow(options:{externalPublication?:boolean}={}){
   const directory=await mkdtemp(join(tmpdir(),'chrono-local-exact-'));
   const servers:FastifyInstance[]=[];let store:Store|undefined,closed=false;
   const logs:LocalFixtureLog[]=[],approvals=new Map<string,Json>(),posts=new Map<string,Json>(),ghostPosts=new Map<string,Json>();
   const subject='fixture-solo',clientId='fixture-cms',connectionId='fixture-dev-connection',creditedAuthor='Local Fixture Author';
   const logicalDevBase='https://dev.local.invalid/api',slug='fixture-dev',accountId='fixture-author';
-  const ghostKeyId=randomBytes(12).toString('hex'),ghostSecret=randomBytes(32),controlSecret=randomBytes(32).toString('hex');
+  const ghostKeyId=randomBytes(12).toString('hex'),ghostSecret=randomBytes(32),controlSecret=randomBytes(32).toString('hex'),independentToolToken=randomBytes(32).toString('hex');
   const keys=await generateKeyPair('RS256'),jwk={...await exportJWK(keys.publicKey),kid:'local-fixture-key'};
   const codes=new Map<string,Json>(),issued=new Set<string>();let latestAccess='';
   const origins={cms:'',nyx:'',ghost:'',dev:''};
   const fixture={baseUrl:'',origins,logs,approvals,posts,ghostPosts,loseNextRedeemResponseAfterWrite:false,
+    async executeExternal(request:{method:string;url:string;body?:Record<string,unknown>}){
+      demand(options.externalPublication&&request.method==='POST'&&request.url===logicalDevBase+'/articles','Only the isolated external article fixture can execute',403);
+      // A separate local tool credential simulates the independent top-level call.
+      // It is never passed to CMS or returned in evidence; this is not real NyxBot.
+      const response=await fetch(`${origins.nyx}/api/v1/proxy/s/${slug}/articles?_nyxid_via=${connectionId}`,{method:'POST',headers:{authorization:'Bearer '+independentToolToken,'content-type':'application/json'},body:JSON.stringify(request.body),redirect:'error'});
+      demand(response.status===201,'Independent local tool write failed: '+response.status,response.status);return response.json() as Promise<Json>;
+    },
     async decide(reference:string){
       demand(latestAccess,'Complete fixture OAuth before deciding',409);
       const response=await fetch(origins.nyx+'/api/v1/approvals/requests/'+encodeURIComponent(reference)+'/decide',{method:'POST',headers:{authorization:'Bearer '+latestAccess,'content-type':'application/json'},body:JSON.stringify({approved:true})});
@@ -86,9 +94,10 @@ export async function createLocalExactFlow(){
     dev.post('/api/articles',async(request,reply)=>{
       const article=(request.body as Json)?.article;demand(article&&typeof article.title==='string'&&typeof article.body_markdown==='string'&&article.published===true,'Invalid local DEV article');
       demand(new URL(article.canonical_url).origin===origins.ghost,'Original must stay on fixture Ghost');
-      const id=String(posts.size+1),post={...article,id,url:origins.dev+'/fixture-author/'+id,user:{user_id:accountId},published_at:now()};posts.set(id,post);return reply.code(201).send(post);
+      const id=String(posts.size+1),post={...article,id,url:(options.externalPublication?new URL(logicalDevBase).origin:origins.dev)+'/fixture-author/'+id,user:{user_id:accountId},published_at:now(),page_views_count:17,public_reactions_count:3,comments_count:2};posts.set(id,post);return reply.code(201).send(post);
     });
     dev.get('/api/articles/me/all',async()=>[...posts.values()]);
+    dev.get('/api/articles/me/published',async()=>[...posts.values()].filter(post=>post.published===true));
     dev.get('/api/articles/:id',async request=>{const post=posts.get((request.params as Json).id);demand(post,'Unknown local DEV article',404);return post;});
     dev.get('/fixture-author/:id',async(request,reply)=>{const post=posts.get((request.params as Json).id);demand(post,'Unknown local DEV article',404);return reply.type('text/html').send('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>'+escape(post.title)+'</title><link rel="canonical" href="'+escape(post.canonical_url)+'"></head><body><aside>LOCAL DEV PROTOCOL FIXTURE — no external publication</aside><article><h1>'+escape(post.title)+'</h1>'+render(post.body_markdown,new Set())+'</article></body></html>');});
     origins.dev=await dev.listen({host:'127.0.0.1',port:0});
@@ -161,9 +170,15 @@ export async function createLocalExactFlow(){
       if(fixture.loseNextRedeemResponseAfterWrite){fixture.loseNextRedeemResponseAfterWrite=false;reply.hijack();reply.raw.destroy();return;}
       return publicApproval(record);
     });
+    nyx.post('/api/v1/proxy/s/:slug/articles',async(request,reply)=>{
+      demand(options.externalPublication&&request.headers.authorization==='Bearer '+independentToolToken,'Independent fixture tool credential required',401);
+      demand((request.params as Json).slug===slug&&(request.query as Json)._nyxid_via===connectionId,'Independent fixture account selector required',403);
+      const response=await fetch(origins.dev+'/api/articles',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(request.body),redirect:'error'});
+      return reply.code(response.status).type('application/json').send(await response.text());
+    });
     nyx.get('/api/v1/proxy/s/:slug/*',async(request,reply)=>{
       await bearer(request);const params=request.params as Json,q=request.query as Json;demand(params.slug===slug&&q._nyxid_via===connectionId,'Fixture exact proxy selector');
-      demand(/^articles\/(?:[0-9]+|me\/all)$/.test(params['*']),'Fixture read route denied',403);
+      demand(/^articles\/(?:[0-9]+|me\/(?:all|published))$/.test(params['*']),'Fixture read route denied',403);
       const target=new URL(origins.dev+'/api/'+params['*']);for(const [key,value]of Object.entries(q))if(key!=='_nyxid_via')target.searchParams.set(key,String(value));
       const response=await fetch(target,{redirect:'error'});return reply.code(response.status).type('application/json').send(await response.text());
     });
@@ -177,8 +192,9 @@ export async function createLocalExactFlow(){
     store.run('INSERT INTO sites VALUES (?,?,?,?,?)','fixture-ghost-en',ownerId,'en',origins.ghost,'FIXTURE_GHOST_KEY');
     store.run('INSERT INTO author_mappings VALUES (?,?,?)','fixture-ghost-en',creditedAuthor,'fixture-ghost-author');
     const vault=new Vault(config.encryptionKey),authority=new NyxAuthority(config,store),policy=new Policy(store,authority),content=new ContentService(store,policy),auth=new AuthManager(config,store,vault,policy);
-    const originals=new PublishingService(content,vault),distribution=new DistributionService(originals,authority,new TargetRegistry([new DevAdapter(logicalDevBase)])),original=new GhostAdapter(store,config.publicMediaDirectory,true,environment);
-    const dependencies={store,policy,content,vault,publicUrl:config.publicUrl,auth,distribution,authenticate:(request:FastifyRequest)=>auth.authenticate(request)};
+    const originals=new PublishingService(content,vault),distribution=new DistributionService(originals,authority,new TargetRegistry([new DevAdapter(logicalDevBase,['dev.local.invalid'])])),original=new GhostAdapter(store,config.publicMediaDirectory,true,environment);
+    const externalPublications=new ExternalPublicationService(distribution,original);
+    const dependencies={store,policy,content,vault,publicUrl:config.publicUrl,auth,distribution,externalPublications,authenticate:(request:FastifyRequest)=>auth.authenticate(request)};
     const app=await createApp(dependencies);servers.push(app);
     app.addHook('onSend',async(request,_reply,payload)=>{
       if(!['/studio','/studio/'].includes(request.url.split('?')[0]!))return payload;
@@ -187,6 +203,6 @@ export async function createLocalExactFlow(){
     });
     origins.cms=await app.listen({host:'127.0.0.1',port:0});config.publicUrl=origins.cms;dependencies.publicUrl=origins.cms;environment.PUBLIC_URL=origins.cms;environment.PORT=String(new URL(origins.cms).port);
     assert.ok(Object.values(origins).every(value=>new URL(value).hostname==='127.0.0.1'));
-    return {url:origins.cms,store,config,environment,directory,ownerId,subject,creditedAuthor,connectionId,content,auth,authority,originals,distribution,original,releaseWorker:new ReleaseWorker(originals,original),deliveryWorker:new DeliveryWorker(distribution,original),fixture,close};
+    return {url:origins.cms,store,config,environment,directory,ownerId,subject,creditedAuthor,connectionId,content,auth,authority,originals,distribution,externalPublications,original,releaseWorker:new ReleaseWorker(originals,original),deliveryWorker:new DeliveryWorker(distribution,original),fixture,close};
   }catch(error){try{await close();}catch(cleanupError){throw new AggregateError([error,cleanupError],'Local fixture startup and cleanup failed');}throw error;}
 }
