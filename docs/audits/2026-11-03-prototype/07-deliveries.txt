@@ -1,0 +1,71 @@
+Browser tab: 4, Title: "Publishing & distribution · ChronoAI", URL: "http://127.0.0.1:4173/#deliveries?owner=org".
+0 AXWebArea Publishing & distribution · ChronoAI, URL: 127.0.0.1:4173/#deliveries?owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Publishing & distribution UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 text EVERY DESTINATION, ONE VIEW
+			27 heading Publishing & distribution, Value: 1
+				28 text Publishing & distribution
+			29 text Track each article and channel, with a clear result for every publication.
+			30 button Manage channels
+			31 text Needs attention
+			32 container
+				33 text 3 channel tasks
+			34 text Approvals, manual submissions or status checks
+			35 text Verified as published
+			36 container
+				37 text 0 external copies
+			38 text Publication status verified separately
+			39 text Results to verify
+			40 container
+				41 text 0 tasks with unknown outcomes
+			42 text Verify first to avoid duplicate writes
+			43 button All tasks
+			44 button Needs attention
+			45 button Published
+			46 text field (settable) Description: Search distribution tasks, ID: delivery-search
+			47 pop up button (collapsed, settable) Description: Filter distribution platforms, Value: All platforms, ID: delivery-platform, Secondary Actions: Expand
+				48 menu
+					49 (selected) All platforms
+					50 DEV
+					51 Hashnode
+					52 Medium
+					53 HackerNoon
+			54 container
+				55 text From identity to action: a safer way for AI to work EN · Jing Chen · Original v7 DEV DEV @chronoai-team Awaiting approval
+				56 button View approval
+				57 text From identity to action: a safer way for AI to work EN · Jing Chen · Original v7 M Medium Assisted submission Manual submission required
+				58 button Prepare submission
+				59 text From identity to action: a safer way for AI to work EN · Jing Chen · Original v7 H HackerNoon Assisted submission Manual submission required
+				60 button Prepare submission
+			61 text Known copies remain in the task list after unpublishing the original. Restoring a connection does not automatically republish.
+		62 container Prototype controls
+			63 button B Full-site prototype · Sample data
+				64 text B
+				65 text Full-site prototype · Sample data
+			66 button Page map
+			67 button Scenarios
+
+The focused UI element is 0 AXWebArea Publishing & distribution · ChronoAI, URL: 127.0.0.1:4173/#deliveries?owner=org

@@ -1,0 +1,64 @@
+Browser tab: 4, Title: "Confirm publication · ChronoAI", URL: "http://127.0.0.1:4173/#publish?id=draft-1793693122758&lang=en&owner=org".
+0 AXWebArea Confirm publication · ChronoAI, URL: 127.0.0.1:4173/#publish?id=draft-1793693122758&lang=en&owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		92 container
+			93 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			94 button Switch workspace
+			95 container Workspace navigation
+				96 button Content
+				97 button Publishing & distribution
+				98 button Analytics
+			99 container Workspace management
+				100 button Connections & channels
+				101 button Workspace settings
+				102 button Members & permissions
+			103 button Getting started
+			104 button JC
+		105 container
+			106 text ChronoAI Confirm publication UI
+			107 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				108 menu
+					109 (selected) English
+					110 简体中文
+			111 button Switch to dark theme
+			112 button Task notifications
+			113 button Account menu
+		114 container main-content
+			115 button Back to editor
+			116 text READY TO SHARE
+			117 heading Confirm publication, Value: 1
+				118 text Confirm publication
+			119 text Check the content, identity and destination for this publication.
+			120 container
+				121 text  Content preview Saved version v2 · English ChronoAI Journal IDEAS. PEOPLE. POSSIBILITIES. UNCATEGORIZED · ENGLISH
+				122 heading Audit sample: original content, Value: 2
+					123 text Audit sample: original content
+				124 text JC Jing Chen · Nov 2, 2026 · 3 min read First paragraph for the review.
+				125 heading Identity is the starting point, Value: 3
+					126 text Identity is the starting point
+				127 text First paragraph for the review.
+			128 container
+				129 heading Publication summary, Value: 3
+					130 text Publication summary
+				131 text Content owner ChronoAI  Organization Author Jing Chen Publication language English Confirmed version v2
+				132 text Further edits will not change this confirmed content
+				133 text This action First publication
+				134 text Publish to original site
+				135 text ChronoAI Journal
+				136 text en.chronoai.example
+				137 text This publishes only the selected language. Arrange external distribution once the original is live.
+				138 checkbox (settable, integer) Description: I have checked this version and confirm my rights to publish its text and images., Value: 0, ID: rights-confirm
+				139 button (disabled) Confirm original publication
+				140 text Publish with your current permissions. No additional editorial review is required.
+				141 text This confirms the Ghost original only. Automatic external organization writes still require NyxID Admin approval for the specific content and action.
+				142 button Download current Markdown source
+		143 container Prototype controls
+			144 button B Full-site prototype · Sample data
+				145 text B
+				146 text Full-site prototype · Sample data
+			147 button Page map
+			148 button Scenarios
+	91 text Draft v2 saved; not yet published.
+
+The focused UI element is 0 AXWebArea Confirm publication · ChronoAI, URL: 127.0.0.1:4173/#publish?id=draft-1793693122758&lang=en&owner=org

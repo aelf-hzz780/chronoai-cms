@@ -1,0 +1,38 @@
+Browser tab: 4, Title: "Welcome back · ChronoAI", URL: "http://127.0.0.1:4173/#login".
+0 AXWebArea Welcome back · ChronoAI, URL: 127.0.0.1:4173/#login
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container main-content
+			4 container
+				5 link 127.0.0.1:4173/#blog
+				6 text A PLACE FOR YOUR NEXT IDEA
+				7 heading Good ideas deserve to be seen., Value: 1
+					8 text Good ideas
+					9 text deserve to be  seen.
+				10 text From a first idea to a finished article and the readers it belongs with. Make writing and publishing one continuous flow.
+				11 text ChronoAI · An open space for connected ideas.
+			12 container
+				13 container
+					14 text UI
+					15 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+						16 menu
+							17 (selected) English
+							18 简体中文
+				19 button Toggle theme
+				20 text WELCOME TO YOUR STUDIO
+				21 heading Keep going. Put your ideas into words., Value: 2
+					22 text Keep going. Put your ideas into words.
+				23 text Use NyxID to enter your workspace, create your own content, or publish with your organization. One identity, from creation to publication. Accounts and organization permissions are managed by NyxID
+				24 button Sign in with NyxID
+				25 text This prototype simulates sign-in and does not collect credentials. Want to explore first?
+				26 button Browse ChronoAI Journal
+				27 button Simulate canceled sign-in
+				28 button Simulate failed sign-in
+		29 container Prototype controls
+			30 button B Full-site prototype · Sample data
+				31 text B
+				32 text Full-site prototype · Sample data
+			33 button Page map
+			34 button Scenarios
+
+The focused UI element is 0 AXWebArea Welcome back · ChronoAI, URL: 127.0.0.1:4173/#login

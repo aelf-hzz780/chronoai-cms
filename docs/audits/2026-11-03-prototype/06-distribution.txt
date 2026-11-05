@@ -1,0 +1,89 @@
+Browser tab: 4, Title: "Article distribution · ChronoAI", URL: "http://127.0.0.1:4173/#distribution?id=identity&lang=en&owner=org".
+0 AXWebArea Article distribution · ChronoAI, URL: 127.0.0.1:4173/#distribution?id=identity&lang=en&owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Article distribution UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 button All distribution tasks
+			27 text Updated at 16:42
+			28 heading A clear next step for every channel., Value: 1
+				29 text A clear next step for every channel.
+			30 text Track this article’s public version, distribution progress and tasks.
+			31 button Refresh status
+			32 container
+				33 text From identity to action: a safer way for AI to work
+				34 text Ghost original published
+				35 text ChronoAI · English · v7 · en.chronoai.example/identity
+			36 heading Distribution channels Track each channel independently, Value: 2
+				37 text Distribution channels  Track each channel independently
+			38 text EN / English content
+			39 container
+				40 text DEV DEV Community Automatic publishing · Full copy Awaiting organization approval This write requires NyxID Admin approval Approval is bound to this content, DEV account and create-copy action. Publishing permission for the original is unaffected. ChronoAI @chronoai-team Original v7
+				41 button Activity log
+				42 button View approval request
+			43 container
+				44 text M Medium Assisted import · Manual action required Awaiting manual import Take the content and source link to the final step Markdown, byline and source link are ready. Import on Medium, then record the result. Preserve original attribution By Jing Chen English · v7
+				45 button Get submission materials
+				46 button Record submission result
+			47 container
+				48 text Hashnode Organization Pro publication · Automatic publishing Connection not configured Arrange distribution for developer content Confirm the Pro publication and account, then request approval for the specific content and action.
+				49 button View connection
+				50 button View requirements
+			51 container
+				52 text H HackerNoon Assisted submission · Editorial review Manual submission required Submit manually once the materials are ready After submission, verify the public result before marking it as published. Preserve source attribution.
+				53 button Get submission materials
+				54 button Record submission result
+			55 container
+				56 heading Article progress, Value: 2
+					57 text Article progress
+				58 text Original public
+				59 text 1
+				60 text Needs attention
+				61 text 3
+				62 text Published externally
+				63 text 0
+				64 text Channels are tracked independently. One failure does not affect successful results elsewhere.
+				65 heading Recent activity, Value: 2
+					66 text Recent activity
+				67 content list
+					68 container
+						69 text Medium submission materials prepared 16:42 · Jing Chen
+					70 container
+						71 text Specific DEV approval requested 16:41 · Awaiting organization Admin
+					72 container
+						73 text Original public status verified 16:40 · Ghost
+					74 container
+						75 text Article version and identity confirmed 16:39 ·  v7
+				76 button View full history
+			77 text Original article management · English
+			78 text Unpublish this language only. Other languages and external copies remain unchanged.
+			79 button Unpublish original
+		80 container Prototype controls
+			81 button B Full-site prototype · Sample data
+				82 text B
+				83 text Full-site prototype · Sample data
+			84 button Page map
+			85 button Scenarios
+
+The focused UI element is 0 AXWebArea Article distribution · ChronoAI, URL: 127.0.0.1:4173/#distribution?id=identity&lang=en&owner=org

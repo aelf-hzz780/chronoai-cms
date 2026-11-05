@@ -82,7 +82,7 @@ process.on('exit',()=>writeFileSync(${JSON.stringify(networkPath)},JSON.stringif
   await page.locator('[data-action="new"]').click();await page.locator('#article-title').waitFor();
   await page.locator('#article-title').fill(title);await page.locator('#credited-author').fill(server.creditedAuthor);await page.locator('#markdown').fill(markdown);
   await page.locator('[data-action="save"]').click();await page.waitForURL(url=>url.hash.startsWith('#/article/'));
-  await page.waitForFunction(()=>document.querySelector('.editor-state')?.textContent?.includes('Saved'));
+  await page.locator('.editor-state').getByText('Draft saved',{exact:true}).waitFor();
   const articleId=new URL(page.url()).hash.split('/').at(-1)!;
   const stored=server.store.get('SELECT a.language,v.id AS revision_id,v.title,v.markdown,v.credited_author FROM articles a JOIN revisions v ON v.id=a.current_revision WHERE a.id=?',articleId)!;
   assert.ok(stored);assert.equal(stored.language,'en');assert.equal(stored.title,title);assert.equal(Buffer.from(stored.markdown).toString('utf8'),markdown);assert.equal(stored.credited_author,server.creditedAuthor);

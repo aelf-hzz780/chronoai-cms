@@ -15,6 +15,7 @@ services:
     environment:
       NODE_ENV: production
       url: ${GHOST_EN_URL:?Set GHOST_EN_URL}
+      security__staffDeviceVerification: "${GHOST_STAFF_DEVICE_VERIFICATION:-false}"
       database__client: mysql
       database__connection__host: db-en
       database__connection__user: ${DATABASE_USER:?Set DATABASE_USER}
@@ -36,6 +37,7 @@ services:
     environment:
       NODE_ENV: production
       url: ${GHOST_ZH_URL:?Set GHOST_ZH_URL}
+      security__staffDeviceVerification: "${GHOST_STAFF_DEVICE_VERIFICATION:-false}"
       database__client: mysql
       database__connection__host: db-zh
       database__connection__user: ${DATABASE_USER:?Set DATABASE_USER}

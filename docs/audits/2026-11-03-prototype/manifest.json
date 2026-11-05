@@ -1,0 +1,123 @@
+{
+  "auditDate": "2026-11-03",
+  "createdAt": "2026-11-03T08:15:26.430346+00:00",
+  "scope": "read-only business/prototype audit; only report artifacts added",
+  "cms": {
+    "repository": "aelf-hzz780/chronoai-cms",
+    "branch": "codex/003-blogsystem-delivery",
+    "head": "ce4fb1a9bc3f5785aca141ea7e17f77bb0da006a",
+    "businessSource": "c16cde700963959d3fd7fc226853b71f5551573a",
+    "checkout": "/tmp/chronoai-cms-review-20261103"
+  },
+  "nyxid": {
+    "repository": "ChronoAIProject/NyxID",
+    "head": "ff302d5ecfe8d188cf0f167995e87bc08c722296",
+    "review": "latest commit delta inspected; existing parent source used where unchanged; no deployment"
+  },
+  "requirements": {
+    "gist": "eea0b7fc47d09d4c891adfbb1c4684af",
+    "revision": "79e69842f5bacba7f8204f62d151018bacf98d91",
+    "updatedAt": "2026-10-28T03:57:39Z",
+    "repositoryCopiesIdentical": true
+  },
+  "validation": {
+    "prototypeExistingChecks": {
+      "passed": 17,
+      "failed": 0,
+      "output": "prototype-checks.txt"
+    },
+    "browserPages": 14,
+    "viewport": {
+      "width": 816,
+      "height": 1136
+    },
+    "screenshots": 27,
+    "businessTestSuiteRerun": false,
+    "externalWrites": false,
+    "fullAccessibilityAudit": false,
+    "deliveryEvidenceManifestHashChecks": {
+      "performedBy": "read-only Verifier subagent",
+      "counts": [
+        103,
+        25
+      ],
+      "allMatched": true,
+      "qualification": "files match recorded hashes; not a rerun of historical tests"
+    },
+    "reportReview": {
+      "reviewers": 2,
+      "result": "fact and scope review complete; 3 wording clarifications applied",
+      "clarifications": [
+        "same revision render consistency, distinct draft/confirmed/live snapshots",
+        "Ghost media completion confirmation does not add org Admin approval",
+        "source URLs already exist; missing full/excerpt preview and delay"
+      ]
+    }
+  },
+  "prototypeSourceSha256": {
+    "prototypes/nyx-cms-b/app.js": "92f0f7a657943654fbf74ca30891e1875552b3aa9bfd509e699c343f019c51a5",
+    "prototypes/nyx-cms-b/checks.cjs": "274f2c9618ee7ca5e4a5f4c361bd078e2c9895c2f7e4e8a9aafa2c99d341f61f",
+    "prototypes/nyx-cms-b/editor-messages.js": "1bff30d863234ad66e38c046f2d06e13f934cdaa862759eef8e8853ced0602db",
+    "prototypes/nyx-cms-b/i18n.js": "4aa9dc13df7c1557d98de5f8c51e85bc0174ac50f37dfb03f8693e449e3ead94",
+    "prototypes/nyx-cms-b/index.html": "c1eb79c9d8f75dbe7db716832c6c152bcf99fb3945063a456e5fbf765696fcb7",
+    "prototypes/nyx-cms-b/messages.js": "6e2cdacd79ef32887b80981c559efca522ca92c8790de811f617acd6f221a8f4",
+    "prototypes/nyx-cms-b/review.html": "e32fcf4957af252f7bb2106dcd57a7b043031588d8f424c52a2f3a71332fa498",
+    "prototypes/nyx-cms-b/site-messages.js": "2d980e2b2698303f67921b8a2054281dfb14905184dfb048f75364d5bf48d50a",
+    "prototypes/nyx-cms-b/site.css": "a0e0621e826f51bd52aa644ae10148a1facf62dff6cac63e7b8b4a688b85651b",
+    "prototypes/nyx-cms-b/site.js": "bb47e799b82c8b6cc99df9a7aeb8a513d58a7c50019c2145d0f4dc8cc8510c0c",
+    "prototypes/nyx-cms-b/styles.css": "687ab9691e51f31e4f0bc2cb347abe13e181f4b07a222ec3f1eeccfaf8b537a5"
+  },
+  "artifactSha256": {
+    "01-login.txt": "6cb9ad7ae2be11fcde5410b75185ba835ebca0a61eaca9a084a73fce66193468",
+    "02-onboarding.txt": "c9f1cfcd1e79e2fb08fe6f177e0535f208165e2917c5fe9518de0ba5e0e45f1c",
+    "03-content.txt": "78fa0622fe0da129b74edf898a3f490fd1baacab256b61b7a87f983b85a2c6f1",
+    "03b-awaiting-list-missing-en.txt": "0dd7df12a32cb9ab9dc836a56444ca5405ad6af2e4804a58ed509e94fbc6ea77",
+    "04b-en-submission-still-exists.txt": "062af0d81519a3cb9cd982d1a8e2d05a7ef9528dda8a36c96c0525fcc6b3fb7e",
+    "04c-markdown-preview.txt": "bf49e6761bcdb320638dea8b721d7a4760daf7b3aa33f2de1314c4f7d9e61568",
+    "05-publish.txt": "6becfa1124d5e9d2af499059b573f815a28b7c65a0a21dfda84523b11235a4a7",
+    "05a-confirmation-wrong-body.txt": "1bae49f71f1d84d092dd2e4fd7781430545934463580758e037bf0ccca44a361",
+    "06-distribution.txt": "a062c3b1091805d4e3f9623ffd4041e817da1e1d0829dbf0e3542ac09709f61d",
+    "06b-dev-remove-overpromise.txt": "c239fa51e74688b7b6e8d0b62862a825614725dfcacfd92be4c654dc9ff87e43",
+    "06c-hacker-followup.txt": "60b8dda07731db8edc78b04b7540e43a4af7fa4978f652554c26dc8ecddd130a",
+    "06d-hacker-no-url.txt": "ae2eccd98750fcca9e9ab719dab7e89963503a4f7dc9093754b22e47a02a5f67",
+    "07-deliveries.txt": "eedb0df784240665c10b729553f08928e6158a75afd681734f602aff3537e1de",
+    "08-analytics.txt": "b2b3a42650470b00e0ad328998d91f62694cce33060f7634b51adb0ed0a359b4",
+    "08a-dev-metric-scope.txt": "fd4c2611275d73b5fbd933e64b113ba8497f461eda4d8ef7070e50579af17144",
+    "09-connections.txt": "cb5b663d92d3e8b2391c2ea5859736349af446ad22e82ef2ff58c9d085b2f77e",
+    "09a-connect-binding-gap.txt": "30dd1085789d6ad79519798ca4bde154e66f807f3cbd737e55cec92c566ab62d",
+    "10-settings.txt": "4ff21a7ce13ad894db348559e76149e3ad3def509eada3b73be9db3fe41ae670",
+    "11-members.txt": "cf239815686f98a4f4436f9acf9ce04a86cb8e7e130330c1b85337b17862fab7",
+    "12-guide.txt": "07c6a5aad5e73c64207f1d32d80a1202bd0867bf90dc2d6b5350aade785e57d8",
+    "13-blog.txt": "f0721e33532eb25ba0782315db68ca62f9e59249ff00101f864fc95c657eb185",
+    "14-story.txt": "65226c8ed70c257e4287915a2635e57f61fc021d367caae5b4243c2ca46f7450",
+    "README.md": "0ec95d86f672bb0842eac19e3726c15467253698a4740aa299cfe520c43cd958",
+    "prototype-checks.txt": "51cd83b9b6be30e13601447b327b4401fac64ac5c4f1b16e3a6ed0053bf6f5c5",
+    "screenshots/01-login.jpg": "a407dfe5c7200c2c91999f3a66616bc75694f1c8739eb05f80ced8600529c948",
+    "screenshots/02-onboarding.jpg": "c8a448dde635cc23a6bfdad91077a705a46316ff7ae15e15fddf9374c44a156f",
+    "screenshots/03-content.jpg": "13e73c1308a8df1bc1680e2059bd9b4327063725d26efd7190b4390002a20f56",
+    "screenshots/03a-language-status-overwrite.jpg": "007b21607a6e24216590f4d53789fd9f892f32a419dbc7e25e8be984af3035ed",
+    "screenshots/03b-awaiting-list-missing-en.jpg": "9d57b2ffd8ef7936f28ee13f1175c879cbf6ef018e04c80d3ef13a0994cca659",
+    "screenshots/04-editor-zh.jpg": "e487171738a377428d4b1ec41173ac0e32e7730b455b72abd0f7f48c9c803f94",
+    "screenshots/04a-history.jpg": "ce7228e0f1536e38822c5b2d443e6603fd8306beff284a9581b9331756d9b5ee",
+    "screenshots/04b-en-submission-still-exists.jpg": "b1723c0d04376c5259125ae4db1e8e827098c6b10e0b3c754c19d8af9636bf83",
+    "screenshots/04c-markdown-preview.jpg": "77501452c016c46ea743117eca7b2868d17fa2b8d20694ed784125848c0e007a",
+    "screenshots/05-publish.jpg": "f0b7b7b619dd21f90e4256e1fe1de8ff71e397029c2ed59b7d0f9f0d9fdfa8e1",
+    "screenshots/05a-confirmation-wrong-body.jpg": "f1d58b599c81901b713fa5f267e19e8dfa340d316c2792b0a4a766f95e81840f",
+    "screenshots/06-distribution.jpg": "879d6ca2b75ba4dfea4e282dc2785fe8fb7185447c67e8e2bd9b3c61cf2bad14",
+    "screenshots/06a-dev-fixed-full-format.jpg": "9d29ee6396f57daac4e699ce59b7671eda8fb333788445f4a8974211abaffbba",
+    "screenshots/06b-dev-remove-overpromise.jpg": "146e23262117b23cb893959fce2cdd066f3518640cf0aa0f541cb26190461a1a",
+    "screenshots/06c-hacker-followup.jpg": "062ffda2b2df48f6d378e8835aa4ba4fbf8e880398a4c25c8dc261e7a247fa09",
+    "screenshots/06d-hacker-no-url.jpg": "53e3b0be6c7f44661004baec74ea402da74cb2fa6771a7df8e969af5f7a0a7b4",
+    "screenshots/07-deliveries.jpg": "5ec4b7e26a06db1e2f546517be839fd32edc325a09359e4a93e1dfae2b289c70",
+    "screenshots/08-analytics.jpg": "0c520e85c86db0edbeefd48603c6fc18e5740b195f42fe421314a8069313e45b",
+    "screenshots/08a-dev-metric-scope.jpg": "4ffd1d2e15ce11d5f501c9c672802a73a734600efb10daa9a1f03820afb823a8",
+    "screenshots/08b-zh-interface.jpg": "b1d91b620c6ee43d9ab9ebb0022bddae0fb2b602aee7f69098c6ac6ce73f3594",
+    "screenshots/09-connections.jpg": "d6fba61d152ccbcac0fa05c8ab0fbee5f347b3477468b17f29802c7f86493028",
+    "screenshots/09a-connect-binding-gap.jpg": "e63c0b5b45cae3585143a2b3802676718088ed954ac1d64a45d8b921c669e736",
+    "screenshots/10-settings.jpg": "d907f5b474fd2e6dbed278b684b915dc3c77feb7732d5d0c1a8d1d467fdd967f",
+    "screenshots/11-members.jpg": "7c1a7155c17e959a64c406cea5c7389c619e6acb7244c054e8e533c53ab2e5d8",
+    "screenshots/12-guide.jpg": "9d305c65bcb9b2fb64b76787ab13c70ca57d7abe59467f8bbed55e1a3f55740b",
+    "screenshots/13-blog.jpg": "c57a36705fcb2f3a483745b34a3971c6559f0eeaa2e144b0c92e8acf7459648c",
+    "screenshots/14-story.jpg": "e847e6e595a5e271e27b6a7d0c16a13cf8ecae2b56d06392d56ad7edce1cd60c"
+  }
+}

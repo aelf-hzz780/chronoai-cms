@@ -1,0 +1,60 @@
+Browser tab: 4, Title: "Workspace settings · ChronoAI", URL: "http://127.0.0.1:4173/#settings?owner=org".
+0 AXWebArea Workspace settings · ChronoAI, URL: 127.0.0.1:4173/#settings?owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Workspace settings UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 text A SPACE THAT FEELS LIKE YOURS
+			27 heading Workspace settings, Value: 1
+				28 text Workspace settings
+			29 text Set workspace identity, public sites and default writing language.
+			30 text Read-only view
+			31 container
+				32 button General
+				33 button Publishing sites
+			34 container
+				35 heading Languages & sites, Value: 2
+					36 text Languages & sites
+				37 text One bilingual publication has two independent Ghost sites, each with its own articles, published versions and URLs. English en.chronoai.example Provisioned
+				38 button View original site
+				39 text Simplified Chinese zh.chronoai.example Provisioned
+				40 button View original site
+				41 text Domains and Ghost sites are managed by deployment configuration. This page does not create, migrate or delete sites.
+				42 button View public blog
+			43 container
+				44 heading Settings & permissions, Value: 2
+					45 text Settings & permissions
+				46 text Admins manage organization display information and publishing roles. Publishers do not automatically receive organization management permissions.
+				47 button View members & permissions
+				48 heading Check before publishing, Value: 2
+					49 text Check before publishing
+				50 text The site name and description appear publicly. Drafts, internal tasks and approval details stay private.
+		51 container Prototype controls
+			52 button B Full-site prototype · Sample data
+				53 text B
+				54 text Full-site prototype · Sample data
+			55 button Page map
+			56 button Scenarios
+
+The focused UI element is 0 AXWebArea Workspace settings · ChronoAI, URL: 127.0.0.1:4173/#settings?owner=org

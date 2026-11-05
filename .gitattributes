@@ -1,0 +1,2 @@
+# Historical accessibility snapshots retain their exact bytes and manifest hashes.
+docs/audits/2026-11-03-prototype/*.txt -text whitespace=-blank-at-eol

@@ -1,5 +1,9 @@
 # CMS B handoff / CMS B 交接
 
+> 2026-11-05 更新：当前 Git 交付范围、真实 NyxID 和组织英文 Ghost 首发结果见 [交付更新](cms-delivery-update-2026-11-05.md)。以下保留最初交接时的验收边界；其中“联调后置／没有 push”属于历史状态。
+>
+> Update (2026-11-05): see the [delivery update](cms-delivery-update-2026-11-05.md) for current Git scope and real NyxID/Ghost acceptance. The sections below preserve the original handoff; deferred integration and no-push statements are historical.
+
 本文件交接已批准 WP00–08 的实现、验收边界和后续上线步骤。真实 NyxID 位于另一台机器，用户明确要求后置联调。本地验收使用真实 CMS 服务、SQLite、session/CSRF 与隔离身份；公开站另有本机真实双 Ghost 证据。外部平台 fixture 不代替真实账号或生产批准。
 
 This handoff separates implementation and local acceptance from the deferred real NyxID integration. Local browser acceptance uses the actual CMS services, SQLite and session/CSRF with isolated identity. Actual local dual-Ghost evidence is recorded separately; external-provider fixtures are not production approval.
