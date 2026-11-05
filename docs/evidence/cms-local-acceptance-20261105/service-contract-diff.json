@@ -1,0 +1,195 @@
+{
+  "candidate": "ec3f0ef8c504923c08aa408f8f1a696564620bc5",
+  "oldCount": 35,
+  "currentCount": 49,
+  "added": [
+    {
+      "operationId": "appendDeliveryNote",
+      "path": "/api/service/deliveries/{id}/notes",
+      "method": "post"
+    },
+    {
+      "operationId": "cancelConnectionAttempt",
+      "path": "/api/service/owners/{id}/connection-attempts/{attemptId}/cancel",
+      "method": "post"
+    },
+    {
+      "operationId": "cancelDistributionPlan",
+      "path": "/api/service/distribution-plans/{id}/cancel",
+      "method": "post"
+    },
+    {
+      "operationId": "createConnectionAttempt",
+      "path": "/api/service/owners/{id}/connection-attempts",
+      "method": "post"
+    },
+    {
+      "operationId": "createDistributionPlan",
+      "path": "/api/service/releases/{id}/distribution-plans",
+      "method": "post"
+    },
+    {
+      "operationId": "getConnectionAttempt",
+      "path": "/api/service/owners/{id}/connection-attempts/{attemptId}",
+      "method": "get"
+    },
+    {
+      "operationId": "getOwnerTask",
+      "path": "/api/service/owners/{id}/tasks/{kind}/{taskId}",
+      "method": "get"
+    },
+    {
+      "operationId": "getTaskImage",
+      "path": "/api/service/owners/{id}/tasks/{kind}/{taskId}/assets/{assetId}",
+      "method": "get"
+    },
+    {
+      "operationId": "listOwnerContentSummary",
+      "path": "/api/service/owners/{id}/content-summary",
+      "method": "get"
+    },
+    {
+      "operationId": "listOwnerMembers",
+      "path": "/api/service/owners/{id}/members",
+      "method": "get"
+    },
+    {
+      "operationId": "listOwnerSites",
+      "path": "/api/service/owners/{id}/sites",
+      "method": "get"
+    },
+    {
+      "operationId": "listOwnerTasks",
+      "path": "/api/service/owners/{id}/tasks",
+      "method": "get"
+    },
+    {
+      "operationId": "recheckConnectionAttempt",
+      "path": "/api/service/owners/{id}/connection-attempts/{attemptId}/recheck",
+      "method": "post"
+    },
+    {
+      "operationId": "verifyAssistedObservation",
+      "path": "/api/service/deliveries/{id}/verify-observation",
+      "method": "post"
+    }
+  ],
+  "removed": [],
+  "changed": {
+    "attachExactApproval": [
+      "responses"
+    ],
+    "cancelDistribution": [
+      "responses"
+    ],
+    "cancelOriginal": [
+      "responses"
+    ],
+    "confirmDistribution": [
+      "responses",
+      "requestBody",
+      "summary"
+    ],
+    "confirmOriginal": [
+      "responses"
+    ],
+    "createArticle": [
+      "responses"
+    ],
+    "downloadMarkdown": [
+      "responses"
+    ],
+    "editArticle": [
+      "responses"
+    ],
+    "getArticle": [
+      "responses"
+    ],
+    "getAssistedPackage": [
+      "responses"
+    ],
+    "getPrivateImage": [
+      "responses"
+    ],
+    "getPublishedAlternatesStatus": [
+      "responses"
+    ],
+    "getWorkspaces": [
+      "responses",
+      "summary"
+    ],
+    "importMarkdownFile": [
+      "responses"
+    ],
+    "linkTranslation": [
+      "responses"
+    ],
+    "listArticles": [
+      "responses"
+    ],
+    "listDestinations": [
+      "responses"
+    ],
+    "listDistribution": [
+      "responses"
+    ],
+    "listOriginals": [
+      "responses"
+    ],
+    "listOwnerConnections": [
+      "responses"
+    ],
+    "listRevisions": [
+      "responses"
+    ],
+    "materializeOriginalMedia": [
+      "responses"
+    ],
+    "previewArticle": [
+      "responses"
+    ],
+    "queryMetrics": [
+      "responses"
+    ],
+    "readAudit": [
+      "responses"
+    ],
+    "reconcileDistribution": [
+      "responses"
+    ],
+    "reconcileOriginal": [
+      "responses"
+    ],
+    "refreshExternalMetrics": [
+      "responses"
+    ],
+    "replaceMarkdownFile": [
+      "responses"
+    ],
+    "reportAssistedSubmission": [
+      "responses",
+      "requestBody",
+      "summary"
+    ],
+    "requestExactApproval": [
+      "responses",
+      "summary"
+    ],
+    "setPublishingPermission": [
+      "responses",
+      "summary"
+    ],
+    "submitDraft": [
+      "responses"
+    ],
+    "syncPublishedAlternates": [
+      "responses"
+    ],
+    "uploadPrivateImage": [
+      "responses"
+    ]
+  },
+  "registeredByThisRun": false,
+  "serviceEntryEnabled": false,
+  "targetRegistrationRequiresOperator": true
+}

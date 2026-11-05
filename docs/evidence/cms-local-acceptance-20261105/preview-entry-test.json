@@ -1,0 +1,24 @@
+{
+  "loginRedirect": "/__acceptance",
+  "chooserRoles": 4,
+  "fixtureOnly": true,
+  "realOIDCContacted": false,
+  "environment": {
+    "environment": "isolated acceptance preview",
+    "revision": "unversioned",
+    "identity": "fixture",
+    "realProviderWrites": false
+  },
+  "cssVerification": {
+    "sameOriginStylesheet": true,
+    "contentSecurityPolicy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+    "computedStyleObservedInBrowser": {
+      "background": "rgb(247, 247, 251)",
+      "cardRadius": "20px",
+      "layout": "grid"
+    },
+    "applicationBaseCommit": "ec3f0ef8c504923c08aa408f8f1a696564620bc5",
+    "previewPort": 4176,
+    "purpose": "isolated harness verification; not final runtime receipt"
+  }
+}

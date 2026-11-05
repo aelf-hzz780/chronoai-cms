@@ -1,5 +1,9 @@
 # BlogSystem
 
+006 合并后本机升级、登录恢复与最新验收：[2026-11-05 本机验收](docs/cms-local-acceptance-20261105.md)。
+
+Local upgrade, login recovery and acceptance after the 006 merge: [November 5 local acceptance](docs/cms-local-acceptance-20261105.md).
+
 最新 CMS B 交付、原型归档及真实 NyxID／Ghost 验收摘要：[2026-11-05 更新](docs/cms-delivery-update-2026-11-05.md)。
 
 Latest CMS B delivery, prototype archive and real NyxID/Ghost acceptance summary: [2026-11-05 update](docs/cms-delivery-update-2026-11-05.md).
