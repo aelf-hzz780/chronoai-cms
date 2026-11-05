@@ -61,7 +61,7 @@ Object.assign(uiMessages, {
 '原文下线，外部副本会自动消失吗？':'Are external copies removed when the original is unpublished?',
 '不会。下线阻止新的分发写入，已知副本仍需要按平台逐一核验与清理。':'No. Unpublishing blocks new distribution writes. Check and remove known copies on each platform.',
 '这套原型会向平台发送内容吗？':'Does this prototype send content to platforms?',
-'不会。所有操作与身份均为本地演示；刷新页面恢复样例数据。':'No. All actions and identities are local demonstrations. Refreshing restores sample data.',
+'不会。所有操作与身份均为本地演示；内容样例刷新恢复，开通申请保存在本机。':'No. All actions and identities are local demonstrations. Content samples reset on reload; setup requests remain on this device.',
 '博客导航':'Blog navigation','关于':'About','工作台':'Studio','登录':'Sign in','示例站点':'Sample site','精选文章':'Featured story','3 分钟阅读':'3 min read','最近的想法':'The latest thinking','搜索公开文章':'Search published articles','全部文章':'All stories','清除搜索与分类':'Clear search & category','阅读中文版':'Read in Chinese','文章目录':'On this page','分享文章':'Share this story','继续阅读':'Keep reading',
 '登录已取消。可以重新登录，或继续浏览公开内容。':'Sign-in was canceled. Try again or explore public content.',
 '暂时无法连接 NyxID。请重试，已有内容不会受到影响。':'NyxID is temporarily unavailable. Try again; existing content is unaffected.',

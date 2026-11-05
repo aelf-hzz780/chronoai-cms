@@ -68,12 +68,12 @@ check('UI locale preserves unsaved content, publication confirmation and domain 
   assert.equal(run('JSON.stringify({state,site,articles,tasks:[...distributionStates]})'),run('originalState'));
 });
 check('Locale changes never alter owner × language Ghost destinations',()=>{
-  assert.equal(run("publicationTarget('org','en').host"),'en.chronoai.example');
-  assert.equal(run("publicationTarget('org','zh').host"),'zh.chronoai.example');
-  assert.equal(run("publicationTarget('personal','en').host"),'en.jing.example');
-  assert.equal(run("publicationTarget('personal','zh').host"),'zh.jing.example');
+  assert.equal(run("publicationTarget('org','en').displayAddress"),'chronoai.chronoai.example/en/');
+  assert.equal(run("publicationTarget('org','zh').displayAddress"),'chronoai.chronoai.example/zh/');
+  assert.equal(run("publicationTarget('personal','en').displayAddress"),'jing.chronoai.example/en/');
+  assert.equal(run("publicationTarget('personal','zh').displayAddress"),'jing.chronoai.example/zh/');
   run("setUiLocale('zh')");
-  assert.equal(run('sourceUrl()'),'https://zh.chronoai.example/identity');
+  assert.equal(run('sourceUrl()'),'https://chronoai.chronoai.example/zh/identity');
 });
 check('Public locale is independent and CMS preference is restored on return',()=>{
   run("setUiLocale('en');state.route='blog';site.publicLang='zh';");

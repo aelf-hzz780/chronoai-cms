@@ -1,0 +1,18 @@
+PASS All 14 routes render
+PASS Member reads and exports only the public language snapshot
+PASS Opening a distribution detail does not create tasks
+PASS Personal retry stays in personal authorization
+PASS Unprovisioned personal workspace does not block organization
+PASS DEV missing data is unavailable, not zero
+PASS Public reader never falls back to a draft
+PASS Workspace and article deep links restore ownership
+PASS Unknown article returns to content without substituting another
+PASS Browser history protects the old unsaved context
+PASS Logout restricts CMS while public reading remains open
+PASS Public locale does not alter CMS editing language
+PASS UI locale defaults to English and rejects invalid locales
+PASS UI locale preserves unsaved content, publication confirmation and domain state
+PASS Locale changes never alter owner × language Ghost destinations
+PASS Public locale is independent and CMS preference is restored on return
+PASS UI text roundtrip preserves canonical Chinese and leaves content nodes unchanged
+17 prototype state checks passed.

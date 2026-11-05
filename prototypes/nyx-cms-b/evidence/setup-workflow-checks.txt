@@ -1,0 +1,55 @@
+PASS P1: publishing Chinese keeps English submission discoverable
+PASS P1: confirmation renders exact custom body and complete Markdown
+PASS P1: confirmed original survives navigation with its frozen version
+PASS P1: DEV removal is manual while Hashnode removal can be automatic
+PASS P1: assisted channels require a verified owner connection
+PASS P1: unedited Markdown roundtrip retains BOM CRLF without duplicate title
+PASS Language and submission filters must match the same language
+PASS A queued original retains its owner after workspace switch
+PASS Original revocation blocks queued execution using captured owner
+PASS New drafts do not replace an already confirmed original revision
+PASS A pending original can only be cancelled explicitly
+PASS Uncertain original is read-only and revoked roles cannot reconcile
+PASS Unpublish reconciliation requires absence, not presence
+PASS Saved revisions are immutable and current-authorized only
+PASS Normalized textarea line endings do not alter original Markdown on title edit
+PASS A private media reference cannot render in another article
+PASS Automatic publication requires exact approval and creates one known copy
+PASS Approval cannot be reused after content or account changes
+PASS Unknown automatic result cannot resend and revoked reconciliation is blocked
+PASS DEV known-copy correction is automatic and preserves copy identity
+PASS DEV removal requires the exact known URL, even if connection expires
+PASS Hashnode supports all three automatic actions only for organizations
+PASS Excerpt confirmation preserves selected text and attribution
+PASS Delayed action waits until due and obtains approval then
+PASS Manual submissions, review and rejection remain distinct from publication
+PASS Manual publication requires platform URL, checked attribution and current source
+PASS Submitted manual tasks cannot be cancelled as unsent work
+PASS All connection return outcomes remain owner-scoped
+PASS Cancelled connection returns restore prior state without resetting tasks
+PASS Multiple organizations keep roles, articles and hostnames independent
+PASS Organization load failure preserves access to personal workspace
+PASS English provisioning does not open the Chinese site
+PASS Member grants recheck Admin, capability, workspace and save result
+PASS Returning sign-in resumes while first sign-in opens onboarding
+PASS Platform counters filter capture time without scaling lifetime values
+PASS Public consent is host-specific and GPC/DNT override any opt-in
+PASS Closing a pending connection restores it and consumes the return
+PASS Members cannot inspect private channel account metadata
+PASS Public owner routing is independent from CMS membership
+PASS Partial images require exact live version and independent image rights
+PASS Image completion cannot expose assets after publication permission is withdrawn
+PASS Old manual results have a separate read-only verification without new writes
+PASS Setup: original sidebar remains complete with no duplicate request or help entries
+PASS Setup: personal application retains the existing English site and creates no publication jobs
+PASS Setup: organization Admin permission is checked for every organization
+PASS Setup: three successful checks open both languages without publishing
+PASS Setup: failed Chinese retry keeps the English and root evidence
+PASS Setup: unregistered root edits cannot change readiness evidence
+PASS Setup: editor handoff keeps article language and existing unsaved-change protection
+PASS Setup: request creation rechecks the workspace after a modal was opened
+PASS Setup: same-domain language paths keep consent and source URLs independent
+PASS Setup: root preview remains English when the CMS interface is Chinese
+PASS Setup: root draft survives language-tab rendering
+PASS Setup: workspace switching and ordinary settings navigation leave operations mode
+54 passed, 0 failed

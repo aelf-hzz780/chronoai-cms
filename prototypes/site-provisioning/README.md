@@ -1,4 +1,8 @@
-# 博客开通高保真交互原型 / Blog setup prototype
+# 站点专项原型存档 / Archived standalone setup prototype
+
+当前交付已整合回 [全站原型](../nyx-cms-b/README.md)，本目录仅保留专项设计过程，不再作为主入口。
+
+The current deliverable is the integrated full-site prototype; this directory preserves the standalone design history only.
 
 本原型延续已确认的 B 方案，演示首版「用户申请、运维人工部署、逐语言核验」流程。自动部署留到后续迭代。
 
@@ -6,17 +10,17 @@ This prototype follows the approved B direction and demonstrates the first-relea
 
 ## 预览 / Preview
 
-在本目录启动静态服务，然后打开交互入口或页面总览。
+从仓库根目录启动下列静态服务。主入口为 /nyx-cms-b/；存档入口为 /site-provisioning/。
 
-Start a static server from this directory, then open the interactive experience or the review gallery.
+Serve prototypes from the repository root. The current entry is /nyx-cms-b/; /site-provisioning/ is archival.
 
 ```sh
-python3 -m http.server 4182 --bind 127.0.0.1
+python3 -m http.server 4182 --bind 127.0.0.1 --directory prototypes
 ```
 
-- 中文 / Chinese: http://127.0.0.1:4182/?lang=zh#sites
-- English: http://127.0.0.1:4182/?lang=en#sites
-- 页面总览 / Review gallery: http://127.0.0.1:4182/review.html
+- 中文 / Chinese: http://localhost:4182/site-provisioning/?lang=zh#sites
+- English: http://localhost:4182/site-provisioning/?lang=en#sites
+- 页面总览 / Review gallery: http://localhost:4182/site-provisioning/review.html
 
 页面包括站点概览、申请弹窗、申请进度、运维列表与运维详情。附带博客效果页用于预览站点地址。文章创作继续使用现有 CMS 编辑器，不新增写作入口。
 
@@ -61,9 +65,9 @@ Run from the repository root. See evidence/acceptance.md for verification and re
 
 Applicants confirm ownership and the blog name. Operations assigns one platform subdomain. English uses /en/, Chinese uses /zh/, and the root always redirects to /en/, independently of the CMS interface language. The two Ghost instances and their data remain separate. Custom-domain requests are excluded.
 
-原型中的 chronoai.example 仅用于展示，实际平台根域名由部署配置决定。运维流程与后续实施边界见 [operations.md](operations.md)，也可在 [页面总览](http://127.0.0.1:4182/review.html#operations) 中阅读。
+原型中的 chronoai.example 仅用于展示，实际平台根域名由部署配置决定。运维流程与后续实施边界见 [operations.md](operations.md)，也可在 [页面总览](http://localhost:4182/site-provisioning/review.html#operations) 中阅读。
 
-chronoai.example is a sample only. The production base domain is deployment configuration. See [operations.md](operations.md) or the [review gallery](http://127.0.0.1:4182/review.html#operations) for the operator flow and implementation boundary.
+chronoai.example is a sample only. The production base domain is deployment configuration. See [operations.md](operations.md) or the [review gallery](http://localhost:4182/site-provisioning/review.html#operations) for the operator flow and implementation boundary.
 
 旧原型的语言子域名记录会转换为新的路径示例，保留申请编号、草稿、备注及负责人；旧地址的核验结果失效，必须重新核验。该迁移只处理本浏览器原型数据，刷新后不会重复重置。新格式下修改根地址也会同时清空两语言和根入口的证据，界面会先确认；同址单语言重试保留另一语言结果。
 

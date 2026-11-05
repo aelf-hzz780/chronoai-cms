@@ -1,0 +1,94 @@
+'use strict';
+// Shared local-prototype transitions; no API or deployment side effects.
+globalThis.SiteSetupModel=(()=>{
+const STORAGE_KEY='chronoai-site-prototype-v1';
+const workspaces={org:{name:'ChronoAI',kind:'organization',initials:'CH',slug:'chronoai'},personal:{name:'My journal',kind:'personal',initials:'ME',slug:'my-journal'},fieldnotes:{name:'Fieldnotes',kind:'organization',initials:'FN',slug:'fieldnotes'},alex:{name:'Alex’s journal',kind:'personal',initials:'AL',slug:'alex-journal'}};
+const DEMO_PLATFORM_DOMAIN='chronoai.example';
+const ADDRESS_LAYOUT='language-paths-v1';
+const demoRootUrl=owner=>`https://${workspaces[owner].slug}.${DEMO_PLATFORM_DOMAIN}/`;
+const demoSiteUrl=(owner,lang)=>`${demoRootUrl(owner)}${lang}/`;
+const languages=['en','zh'];
+const stamp=()=>new Date().toISOString();
+const site=(url='')=>({status:url?'checking':'pending',url,checkedAt:null,checks:[],attempts:0});
+const rootCheck=()=>({status:'pending',checkedAt:null,target:null});
+const canRequest=(owner,role)=>workspaces[owner]?.kind==='personal'||workspaces[owner]?.kind==='organization'&&role==='admin';
+function demand(value,code){if(!value)throw new Error(code);}
+function event(r,type,note='',language=''){r.updatedAt=stamp();r.events.push({type,note,language,at:r.updatedAt});}
+function freshRequest(owner,fields,id){return {id,owner,addressLayout:ADDRESS_LAYOUT,rootUrl:'',rootCheck:rootCheck(),name:fields.name.trim(),note:fields.note.trim(),status:'queued',assignee:null,submittedAt:stamp(),updatedAt:stamp(),infoReason:'',supplement:'',internalNote:'',sites:{en:site(),zh:site()},events:[{type:'submitted',at:stamp(),note:'',language:''}]};}
+function initialState(){
+ const state={version:1,locale:'en',workspace:'org',role:'admin',mode:'user',scenario:'new',checkResult:'pass',readError:false,outboundPaused:true,counter:418,requests:{org:null,personal:null},forms:{org:{name:'ChronoAI Journal',note:''},personal:{name:'My journal',note:''}},drafts:{org:{title:'',body:''},personal:{title:'',body:''}},supplementDrafts:{},infoDrafts:{},operatorRoots:{},queueFilter:'all',queueSearch:'',activeLanguage:'en'};
+ state.requests.fieldnotes=freshRequest('fieldnotes',{name:'Fieldnotes Journal',note:''},'REQ-2026-0416');state.requests.fieldnotes.assignee='Operations';state.requests.fieldnotes.status='working';event(state.requests.fieldnotes,'claimed');
+ state.requests.alex=freshRequest('alex',{name:'Alex’s journal',note:''},'REQ-2026-0417');requestInfo(state.requests.alex,'Please confirm the public blog name. It will appear on both language sites.');return state;
+}
+function applyRequest(s,owner,fields){demand(canRequest(owner,s.role),'PERMISSION');if(s.requests[owner])return s.requests[owner];demand(typeof fields.name==='string'&&fields.name.trim().length>0&&fields.name.trim().length<=80,'NAME_REQUIRED');demand(typeof fields.note==='string'&&fields.note.length<=1000,'INVALID_FIELDS');const r=freshRequest(owner,fields,`REQ-2026-${String(s.counter++).padStart(4,'0')}`);s.requests[owner]=r;return r;}
+function claim(r){demand(r&&r.status!=='complete','INVALID_STATE');r.assignee='Operations';r.status=r.status==='info'?'info':Object.values(r.sites).some(s=>s.status==='ready')?'partial':'working';event(r,'claimed');}
+function requestInfo(r,reason){demand(r&&r.status!=='complete','INVALID_STATE');demand(typeof reason==='string'&&reason.trim().length>0&&reason.length<=600,'INFO_REQUIRED');r.infoReason=reason.trim();r.status='info';event(r,'info',reason.trim());}
+function provideInfo(s,owner,text){demand(canRequest(owner,s.role),'PERMISSION');const r=s.requests[owner];demand(r?.status==='info','INVALID_STATE');demand(typeof text==='string'&&text.trim().length>0&&text.length<=1000,'INFO_REQUIRED');r.supplement=text.trim();r.status=r.assignee?'working':'queued';event(r,'supplement',r.supplement);}
+function updateReadiness(r){
+ const values=Object.values(r.sites);
+ const bothReady=values.every(value=>value.status==='ready');
+ r.status=bothReady&&r.rootCheck.status==='passed'?'complete':r.rootCheck.status==='failed'?'blocked':bothReady?'verifying':values.some(value=>value.status==='ready')?'partial':values.some(value=>value.status==='failed')?'blocked':'verifying';
+}
+function canonicalRootUrl(url){
+ let u;try{u=new URL(url);}catch{throw new Error('DEMO_URL');}
+ demand(u.protocol==='https:'&&u.hostname.endsWith('.'+DEMO_PLATFORM_DOMAIN)&&!u.username&&!u.password&&!u.port&&u.pathname==='/'&&!u.search&&!u.hash,'DEMO_URL');
+ return u.origin+'/';
+}
+function registerBlogRoot(r,url){
+ demand(r&&r.assignee&&r.status!=='info','INVALID_STATE');
+ const root=canonicalRootUrl(url);
+ if(r.rootUrl===root)return;
+ const changed=Boolean(r.rootUrl);
+ r.rootUrl=root;r.rootCheck=rootCheck();r.addressLayout=ADDRESS_LAYOUT;
+ for(const lang of languages)r.sites[lang]=site(root+lang+'/');
+ updateReadiness(r);event(r,changed?'root-changed':'root-registered');
+}
+function verifySite(r,lang,success,expectedUrl=r?.sites[lang]?.url){
+ demand(r&&languages.includes(lang)&&r.assignee&&r.status!=='info','INVALID_STATE');
+ const current=r.sites[lang];
+ demand(current.url&&current.status!=='ready','SITE_REQUIRED');
+ demand(current.url===expectedUrl,'URL_CHANGED');
+ current.attempts++;current.checkedAt=stamp();
+ current.checks=['ownership','https','routing','connection','storage'].map((key,i)=>({key,ok:success||i!==1}));
+ current.status=success?'ready':'failed';
+ updateReadiness(r);event(r,success?'verified':'failed','',lang);
+ if(r.status==='complete')event(r,'complete');
+}
+function verifyRoot(r,success,expectedRoot=r?.rootUrl){
+ demand(r&&r.assignee&&r.status!=='info','INVALID_STATE');
+ demand(r.rootUrl&&r.rootUrl===expectedRoot,'URL_CHANGED');
+ demand(r.sites.en.status==='ready','ENGLISH_REQUIRED');
+ r.rootCheck={status:success?'passed':'failed',checkedAt:stamp(),target:r.sites.en.url};
+ updateReadiness(r);event(r,success?'root-verified':'root-failed');
+ if(r.status==='complete')event(r,'complete');
+}
+function loadScenario(s,owner,scenario){s.readError=scenario==='unavailable';s.scenario=scenario;s.activeLanguage='en';if(scenario==='unavailable')return;if(scenario==='new'){s.requests[owner]=null;return;}const r=freshRequest(owner,{name:owner==='org'?'ChronoAI Journal':'My journal',note:''},`REQ-2026-${String(s.counter++).padStart(4,'0')}`);s.requests[owner]=r;if(scenario==='queued')return;if(scenario==='info'){requestInfo(r,s.locale==='zh'?'请确认博客公开名称。这个名称会显示在中英文博客首页。':'Please confirm the public blog name. It will appear on both language sites.');return;}claim(r);if(scenario==='working')return;registerBlogRoot(r,demoRootUrl(owner));verifySite(r,'en',true);verifyRoot(r,true);verifySite(r,'zh',scenario==='complete');}
+
+function normalizeSetupScope(s){
+ const legacyReason='Please confirm whether you would like a platform address or your own domain.';
+ const replacement='Please confirm the public blog name. It will appear on both language sites.';
+ for(const form of Object.values(s.forms))if(form)delete form.domain;
+ s.operatorRoots??={};
+ delete s.operatorUrls;
+ for(const r of Object.values(s.requests)){
+  if(!r)continue;
+  if(r.addressLayout!==ADDRESS_LAYOUT){
+   const hadAddresses=Object.values(r.sites).some(value=>value.url);
+   for(const entry of r.events??[])if(entry.type==='complete')entry.type='legacy-complete';
+   r.addressLayout=ADDRESS_LAYOUT;r.rootUrl=hadAddresses?demoRootUrl(r.owner):'';r.rootCheck=rootCheck();
+   for(const lang of languages)r.sites[lang]=site(hadAddresses?r.rootUrl+lang+'/':'');
+   delete s.operatorRoots[r.owner];
+   if(hadAddresses){
+    if(r.status!=='info')r.status=r.assignee?'verifying':'queued';
+    event(r,'address-layout');
+   }
+  }
+  delete r.domain;
+  if(r.infoReason===legacyReason)r.infoReason=replacement;
+  for(const entry of r.events??[])if(entry.type==='info'&&entry.note===legacyReason)entry.note=replacement;
+ }
+ return s;
+}
+
+return {STORAGE_KEY,workspaces,ADDRESS_LAYOUT,demoRootUrl,demoSiteUrl,canRequest,initialState,applyRequest,claim,requestInfo,provideInfo,canonicalRootUrl,registerBlogRoot,verifySite,verifyRoot,loadScenario,normalizeSetupScope};
+})();
