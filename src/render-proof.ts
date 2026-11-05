@@ -14,7 +14,9 @@ export class BrowserRenderProof implements RenderProof {
   }
   async verify(url:string,html:string,marker?:string) {
     const origin=new URL(url).origin,allowed=new Set([origin,...(this.environment.RENDER_ASSET_ORIGINS??'').split(',').filter(Boolean).map(value=>new URL(value.trim()).origin)]);
-    const browser=await chromium.launch({executablePath:await this.executable(),headless:true,chromiumSandbox:this.environment.RENDER_BROWSER_SANDBOX!=='false',timeout:15000});
+    // Avoid GPU-dependent raster differences at fractional text/underline edges
+    // across the exact baseline, hidden and restored captures.
+    const browser=await chromium.launch({executablePath:await this.executable(),headless:true,args:['--disable-gpu'],chromiumSandbox:this.environment.RENDER_BROWSER_SANDBOX!=='false',timeout:15000});
     try {
       const context=await browser.newContext({viewport:{width:1280,height:900},serviceWorkers:'block',acceptDownloads:false});
       const page=await context.newPage();let unavailable=false;

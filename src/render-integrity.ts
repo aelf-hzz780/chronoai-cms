@@ -34,7 +34,9 @@ export async function beginRenderIntegrity(page:Page,html:string,marker?:string)
         const span=document.createElement('span'),parent=node.parentNode!;
         ownMutation([{target:parent,added:[span],removed:[node]},{target:span,added:[node]}],()=>{node.replaceWith(span);span.append(node);});return span;
       });},
-      hide(spans:HTMLSpanElement[]){for(const span of spans)ownMutation([{target:span,attribute:'style'}],()=>span.style.setProperty('opacity','0','important'));},
+      // Hide glyph ink only. Opacity also removes propagated underlines, which
+      // could incorrectly make invisible text appear to have painted glyphs.
+      hide(spans:HTMLSpanElement[]){for(const span of spans)ownMutation([{target:span,attribute:'style'}],()=>{span.style.cssText='-webkit-text-fill-color:transparent!important;-webkit-text-stroke-color:transparent!important;text-shadow:none!important';});},
       restore(spans:HTMLSpanElement[]){for(const span of spans){const node=span.firstChild!,parent=span.parentNode!;
         ownMutation([{target:span,removed:[node]},{target:parent,added:[node],removed:[span]}],()=>span.replaceWith(node));
       }},
