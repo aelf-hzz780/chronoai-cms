@@ -1,5 +1,9 @@
 # 008 验证证据 / Validation evidence
 
+最新个人公开 create/update/register/generated typed sync 的独立 PASS 及范围限制见 [public-positive/README.md](public-positive/README.md)。以下内容为先前阶段历史记录，其中 pending 与未重跑描述仅适用于当时；保留原文供追溯。
+
+The latest independent PASS for personal public create/update/register/generated typed sync, with its scope limits, is recorded in [public-positive/README.md](public-positive/README.md). The content below is historical; its pending and not-rerun statements apply to those earlier stages and are retained for traceability.
+
 以下为首轮交付 `41a320c` 的证据。其独立验收退回的 4 项时序问题已另行修复，最新结果见 [review-fixes.json](review-fixes.json)：新增 12 项回归，标准检查 513 PASS、本地发布集成 4 PASS，等待协调对话复验。旧现场证据及其 source manifest 保持原版本，本轮没有重跑真实模型或外部平台。
 
 The evidence below describes the initial `41a320c` delivery. Four timing issues returned by independent review have been fixed separately; [review-fixes.json](review-fixes.json) records 12 new regressions, 513 passing standard checks and 4 passing local publishing integrations, pending coordinator reacceptance. Existing live evidence and its source manifest retain their original revision. These fixes did not rerun a real model or external platform.

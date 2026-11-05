@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-05T09:26:43.416543+00:00",
+  "verdict": "PASS",
+  "commit": "eff6c5fecee106f52addaf93297010670bd9bb02",
+  "runtimePid": 73122,
+  "model": "gpt-6.1-sol",
+  "conversationId": "nyxa-a148b10f2ad54a5cae5fbe250e5ba037",
+  "tool": "blog-external-008-20261105__syncexternalpublication",
+  "nativeCallId": "call_a8c4af64bd4542e5906b7c96a6f747f3",
+  "toolStartedAt": "2026-11-05T09:25:25.552Z",
+  "toolReturnedAt": "2026-11-05T09:25:35.329Z",
+  "state": "published",
+  "syncStatus": "verified",
+  "remoteId": "4980723",
+  "url": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+  "lastSyncAt": "2026-11-05T09:25:35.168Z",
+  "lastVerifiedAt": "2026-11-05T09:25:35.168Z",
+  "cmsReadbackMatchesTool": true,
+  "devToolCallsInPhase": 0,
+  "providerWritesInPhase": 0,
+  "nativeEvidenceSha256": "3108b503b069bd41e1b76aae402ce07e8f54b8f71651e4b88fe490f116e285fb",
+  "source": {
+    "runtimeEvidence": "live-positive/generated-sync-verified.json",
+    "sourceSha256": "b6079664bc605eea19c16b3fd5502f28f0a859d3ecb00a8455868368956c21e0"
+  },
+  "intentId": "49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+  "argumentNames": [
+    "id"
+  ],
+  "requestBodyPresent": false,
+  "http": [
+    {
+      "at": "2026-11-05T09:26:42.265913+00:00",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "code": null,
+      "trace_id": "024f5c230b4d4785b0887e94226b1308"
+    },
+    {
+      "at": "2026-11-05T09:26:42.489439+00:00",
+      "method": "GET",
+      "path": "/api/v1/users/me",
+      "status": 200,
+      "code": null,
+      "trace_id": "024f5c230b4d4785b0887e94226b1308"
+    },
+    {
+      "at": "2026-11-05T09:26:43.416514+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/external-publications/49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+      "status": 200,
+      "code": null,
+      "trace_id": "024f5c230b4d4785b0887e94226b1308"
+    }
+  ],
+  "providerCountLimitation": "Phase tool-capture counts; not a complete server-egress audit or total historical write count.",
+  "modelEvidence": "Configuration, not upstream response echo or provider model attestation."
+}

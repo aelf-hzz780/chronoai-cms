@@ -1,0 +1,17 @@
+{
+  "008-IR05.json": "a044cf9a1268aacc23d79cab22c531c3b60dda525ce4b453408896146c79a886",
+  "README.md": "2d5fa0ed9feb6f0f0b692ac1038284dea99989b1c41346714a6875ce9ece30bf",
+  "generated-sync-verified.json": "51ff64d8856e12350c583c483727e889917cad40277578838cc03d3fac4b27a3",
+  "ir05-live-catalog.json": "6dcc63bfffe64f446ad0aec16f59978996added925553830819e35307cf0855e",
+  "model-create-update-audit.json": "b2bbfb9e3ce5bc196084ea51849ceee93808364b9a777cc2f556083d33abb8dc",
+  "model-generated-sync-audit.json": "dd7bdeac09d59bfbf902233aa9b3336adef4e758a9343d795c99082dbb9ce2d9",
+  "public-create-readback.json": "88c8c7342082cdf36808c78d622f5aee8948a47a672fb1c85bf91fffa05349d0",
+  "public-dev-page.json": "7d0754c5b711d165fe5b4dd96ab2049d3e29958d92543b033ede8a2919dbadb2",
+  "public-final-readback-eff6c5f.json": "a2691f97e1c1af922d2c18ed1020a99465b8884e52c83cb29632ca472fb9ebaf",
+  "public-update-readback.json": "166f79568b5396edb4bc469fe8418f41d617b085fa614de990b7de503c353fa9",
+  "review-live-final-eff6c5f.json": "d5ec5d351b40f6ecf9af4d093f4029f52ca51d4e062816a1fe6d9c500907f708",
+  "runtime-provenance.json": "14ef06dbca64be16ef045253d9c649b7ec907f3da79190bb8be31b6a1c7043d6",
+  "schema-fix.json": "ffd414e4f5b0f04c68c1c6271523f586a5d6187e0f50e188e884260eef3028db",
+  "schema-mcp-contract-verified.json": "0b2a4cbb23a1025e9782db5532b90dc40d4eecd92bc9841bc574c4ff38df8d51",
+  "summary.json": "53bc548e6d3330c3563290232a9f10933d39035eeb6cf64ff3c880b1fc106471"
+}

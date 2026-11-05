@@ -1,0 +1,361 @@
+{
+  "at": "2026-11-05T09:27:18.933443+00:00",
+  "completedAt": "2026-11-05T09:27:30.517954+00:00",
+  "status": "PASS_READ_ONLY_PUBLIC_READBACK",
+  "scope": "Independent actual NyxID login, DEV GET, CMS service GET and browser-session GET; no model turn/provider write/CMS business mutation/grant changes.",
+  "providerWrites": 0,
+  "cmsBusinessWrites": 0,
+  "authorizationChanges": 0,
+  "limitation": "No claim of organization acceptance, public Ghost availability, or historical provider-write count from present readback.",
+  "registrationSha256": "7ced8e91e65dbce4d91cd49f2d6f81494c85c872a31a705f0aa11d744016bdc9",
+  "runtimeManifestSha256": "e24f8f0f66f8a507f76a3a8fdc4d99f776565007ee096b2a3dca2f5e08e07917",
+  "serviceSlug": "blog-external-008-20261105",
+  "remoteId": "4980723",
+  "createIntentId": "de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+  "updateIntentId": "49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+  "expectedUsername": "aelfhzz780",
+  "expectedAccountId": "4223973",
+  "source": {
+    "runtimeEvidence": "independent-review/public-final-readback-eff6c5f.json",
+    "sourceSha256": "38c04442d20ffd3c07f0ac161ae4cbc5644d3e571f533600283f1be0f76f77a5"
+  },
+  "checks": {
+    "normalMainProcess": true,
+    "sourceBytesAtCommit": true,
+    "selectedDevAccount": true,
+    "remoteId": true,
+    "remoteAuthor": true,
+    "remotePublic": true,
+    "publicDevUrl": true,
+    "approvedTitle": true,
+    "createRemoteAndConnection": true,
+    "createRemoteUrl": true,
+    "createTaskState": true,
+    "createObservedOnly": true,
+    "updateRemoteAndConnection": true,
+    "updateRemoteUrl": true,
+    "updateTaskState": true,
+    "updateObservedOnly": true,
+    "activePayloadMatchesRemote": true,
+    "activeStatePublishedVerified": true,
+    "activeSourceMatchesCanonical": true,
+    "createAction": true,
+    "sameCopyTwoGenerations": true,
+    "updateAction": true,
+    "priorCopySuperseded": true,
+    "bodyChanged": true,
+    "approvedResultSentence": true,
+    "exactlyOnePublicCopy": true,
+    "sameVerifiedIdentity": true,
+    "samePersonalWorkspace": true,
+    "createIntentEntryParity": true,
+    "createTaskEntryParity": true,
+    "updateIntentEntryParity": true,
+    "updateTaskEntryParity": true
+  },
+  "passedCheckCount": 32,
+  "runtime": {
+    "pid": 73122,
+    "entrypoint": "src/main.ts",
+    "fixtureEntrypointAbsent": true,
+    "commandSha256": "7d6cea5e4ac4d0ca534f2040b02e42990305f79c3561bed1b953b80d85a52dde",
+    "repoMatchesCwd": true,
+    "commit": "eff6c5fecee106f52addaf93297010670bd9bb02",
+    "limitation": "Process command/CWD and current source bytes observed; does not prove already-loaded module bytes without a restart/attestation.",
+    "sourceFiles": {
+      "src/main.ts": {
+        "commitSha256": "9133a233b3366188b3cfd603c42002eff0c1ab6403a4ac021bbdfbbe0c1df8e3",
+        "diskSha256": "9133a233b3366188b3cfd603c42002eff0c1ab6403a4ac021bbdfbbe0c1df8e3",
+        "matches": true
+      },
+      "src/app.ts": {
+        "commitSha256": "7bf96fadaf4bb1f99f480238b0f0a9665b5ba1ff920ad701c9a114dc83d5acec",
+        "diskSha256": "7bf96fadaf4bb1f99f480238b0f0a9665b5ba1ff920ad701c9a114dc83d5acec",
+        "matches": true
+      },
+      "src/external-publication.ts": {
+        "commitSha256": "cc427ff7f7d68ce74f8a08d7739779b214d1bcc122d77ae65c11a5ab25679ee3",
+        "diskSha256": "cc427ff7f7d68ce74f8a08d7739779b214d1bcc122d77ae65c11a5ab25679ee3",
+        "matches": true
+      },
+      "src/targets.ts": {
+        "commitSha256": "f6ec0ec9a077ee7eb7b10d1b3cda18d4fa73d187365154ed64ce67bc6f08aaab",
+        "diskSha256": "f6ec0ec9a077ee7eb7b10d1b3cda18d4fa73d187365154ed64ce67bc6f08aaab",
+        "matches": true
+      },
+      "src/auth.ts": {
+        "commitSha256": "888ff979ddb50fe03fb73b38c95aa34403264743fb2293e575d4463078753e2f",
+        "diskSha256": "888ff979ddb50fe03fb73b38c95aa34403264743fb2293e575d4463078753e2f",
+        "matches": true
+      },
+      "src/nyxid.ts": {
+        "commitSha256": "803840f7da894918225f87f4cb47b614e7d5ceb662274daba15319aa44fae115",
+        "diskSha256": "803840f7da894918225f87f4cb47b614e7d5ceb662274daba15319aa44fae115",
+        "matches": true
+      },
+      "src/caller-authorization.ts": {
+        "commitSha256": "b92d034955601a360af1161184968848ca99f0efd71580c4aee777cf2625e69e",
+        "diskSha256": "b92d034955601a360af1161184968848ca99f0efd71580c4aee777cf2625e69e",
+        "matches": true
+      }
+    }
+  },
+  "remote": {
+    "id": "4980723",
+    "title": "Verifying a NyxID-managed publishing workflow",
+    "url": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+    "canonicalUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/",
+    "publishedAt": "2026-11-05T09:08:50Z",
+    "published": null,
+    "authorId": "4223973",
+    "username": "aelfhzz780",
+    "markdownSha256": "a4470ee0b9873cd8b7542bf301590772dd7e5efcb3d78b28cfd84550c2f3151a",
+    "markdownBytes": 1996
+  },
+  "intents": {
+    "create": {
+      "id": "de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "intentId": "de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "revisionId": "6851e5d5-3da6-40e0-8ae1-203abd94b828",
+      "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+      "accountId": "4223973",
+      "action": "create",
+      "state": "superseded",
+      "remoteId": "4980723",
+      "url": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+      "digest": "10ab0a583538db98a46e30d79c1e61e7c603b6cdab7a2e574d6beea6523b5701",
+      "sourceUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/",
+      "creditedAuthor": "BlogSystem Local Operator",
+      "lastSyncAt": "2026-11-05T09:12:47.669Z",
+      "lastVerifiedAt": "2026-11-05T09:12:47.668Z",
+      "syncStatus": "verified",
+      "syncErrorCode": null,
+      "executionMode": "external",
+      "executionAllowed": false,
+      "followUpState": "none",
+      "frozenRequestMetadata": {
+        "method": "POST",
+        "url": "https://dev.to/api/articles",
+        "title": "Verifying a NyxID-managed publishing workflow",
+        "canonicalUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/",
+        "published": true,
+        "markdownSha256": "2016d1ab8cd4474a6077813b567eea6df19f32c37800db47efc7979233ef32b9",
+        "markdownBytes": 1906
+      }
+    },
+    "update": {
+      "id": "49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+      "intentId": "49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+      "revisionId": "e43dbaab-a8a5-4bd6-9a5a-c56249f2f505",
+      "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+      "accountId": "4223973",
+      "action": "update",
+      "state": "published",
+      "remoteId": "4980723",
+      "url": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+      "digest": "2b0d17d6d87e05fad13a3a380e9a9b0880d34b93378a2f9db0c83cf93a7e6f45",
+      "sourceUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/",
+      "creditedAuthor": "BlogSystem Local Operator",
+      "lastSyncAt": "2026-11-05T09:25:35.168Z",
+      "lastVerifiedAt": "2026-11-05T09:25:35.168Z",
+      "syncStatus": "verified",
+      "syncErrorCode": null,
+      "executionMode": "external",
+      "executionAllowed": false,
+      "followUpState": "none",
+      "frozenRequestMetadata": {
+        "method": "PUT",
+        "url": "https://dev.to/api/articles/4980723",
+        "title": "Verifying a NyxID-managed publishing workflow",
+        "canonicalUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/",
+        "published": true,
+        "markdownSha256": "a4470ee0b9873cd8b7542bf301590772dd7e5efcb3d78b28cfd84550c2f3151a",
+        "markdownBytes": 1996
+      }
+    }
+  },
+  "publishedInventory": {
+    "count": 1,
+    "complete": true,
+    "matchingCopies": [
+      {
+        "id": "4980723",
+        "title": "Verifying a NyxID-managed publishing workflow",
+        "canonicalUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/"
+      }
+    ]
+  },
+  "nyxHttp": [
+    {
+      "at": "2026-11-05T09:27:19.192661+00:00",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "code": null,
+      "responseSha256": "d2c175926ad147ffad2a07ef3ae2a5811defe2824123df1b813e60d51034d132"
+    },
+    {
+      "at": "2026-11-05T09:27:19.413978+00:00",
+      "method": "GET",
+      "path": "/api/v1/users/me",
+      "status": 200,
+      "code": null,
+      "responseSha256": "6dc2985415eae20c3d68d9f26ffbea05697c129262f779cce902a84f6f5d88a7"
+    },
+    {
+      "at": "2026-11-05T09:27:19.669681+00:00",
+      "method": "GET",
+      "path": "/api/v1/keys",
+      "status": 200,
+      "code": null,
+      "responseSha256": "b7a2f6c039038b358adbc1c819d5e21e775f688a724784c0e60d0cd55124b3e8"
+    },
+    {
+      "at": "2026-11-05T09:27:21.035763+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/devto-blogsystem/users/me",
+      "status": 200,
+      "code": null,
+      "responseSha256": "ca07f39061ebcf6e7464406a858e84a58687de9f0d0ab8911958da28b0dd5bf6"
+    },
+    {
+      "at": "2026-11-05T09:27:21.339051+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/devto-blogsystem/articles/4980723",
+      "status": 200,
+      "code": null,
+      "responseSha256": "781dc2b64ac071a20c33cab91de535d4647cb504e4c213306887639d3da88fc8"
+    },
+    {
+      "at": "2026-11-05T09:27:21.919667+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/me",
+      "status": 200,
+      "code": null,
+      "responseSha256": "2bdd0d67bcc1fc06124436ef75d1e08d455c40f88ecbb13feba631eb046ae9c7"
+    },
+    {
+      "at": "2026-11-05T09:27:22.644979+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/external-publications/de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "status": 200,
+      "code": null,
+      "responseSha256": "86e8c976def33421b333d58b0cd5706e4171a8de6d6755aad1147d648f4b59a6"
+    },
+    {
+      "at": "2026-11-05T09:27:23.412970+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/external-publications/49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+      "status": 200,
+      "code": null,
+      "responseSha256": "c10c8c292b3e836ec400b6a0059abdcd70e60120a98d605c8a57d764dfe685bf"
+    },
+    {
+      "at": "2026-11-05T09:27:24.038771+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/tasks/delivery/de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "status": 200,
+      "code": null,
+      "responseSha256": "f41c557d529b16caa1a47e8acba507199aec802e2eada1e8412e6a7e489d167b"
+    },
+    {
+      "at": "2026-11-05T09:27:25.200946+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/tasks/delivery/49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+      "status": 200,
+      "code": null,
+      "responseSha256": "510e4615a9a292f9833ba88c84d21b937808c759df89dd61b6323171450f90f4"
+    },
+    {
+      "at": "2026-11-05T09:27:25.726113+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/devto-blogsystem/articles/me/published",
+      "status": 200,
+      "code": null,
+      "responseSha256": "a872433e0e59aced4964c610588733f94b7e59d401b6833102c05f248dda855c"
+    }
+  ],
+  "cmsHttp": [
+    {
+      "at": "2026-11-05T09:27:25.837738+00:00",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "origin": "http://localhost:3001",
+      "status": 200,
+      "code": null,
+      "responseSha256": "9ff82dd2d45e912ac739d393e56fce41e3644688f037b18af2f6a2d76cba0983"
+    },
+    {
+      "at": "2026-11-05T09:27:25.840377+00:00",
+      "method": "GET",
+      "path": "/auth/login",
+      "origin": "http://127.0.0.1:33417",
+      "status": 302,
+      "code": null,
+      "responseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "at": "2026-11-05T09:27:25.954262+00:00",
+      "method": "GET",
+      "path": "/oauth/authorize",
+      "origin": "http://localhost:3001",
+      "status": 200,
+      "code": null,
+      "responseSha256": "cee72aead04c8acd165a9e9705e7651e6eec82581e633988e7289c863c375cbf"
+    },
+    {
+      "at": "2026-11-05T09:27:26.633234+00:00",
+      "method": "GET",
+      "path": "/auth/callback",
+      "origin": "http://127.0.0.1:33417",
+      "status": 302,
+      "code": null,
+      "responseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "at": "2026-11-05T09:27:27.151164+00:00",
+      "method": "GET",
+      "path": "/api/cms/me",
+      "origin": "http://127.0.0.1:33417",
+      "status": 200,
+      "code": null,
+      "responseSha256": "9b9c315e91143eb5664099e16fa97e9d4331bed1397af874b049aac60ca0eb87"
+    },
+    {
+      "at": "2026-11-05T09:27:28.024388+00:00",
+      "method": "GET",
+      "path": "/api/cms/external-publications/de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "origin": "http://127.0.0.1:33417",
+      "status": 200,
+      "code": null,
+      "responseSha256": "86e8c976def33421b333d58b0cd5706e4171a8de6d6755aad1147d648f4b59a6"
+    },
+    {
+      "at": "2026-11-05T09:27:28.842190+00:00",
+      "method": "GET",
+      "path": "/api/cms/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/tasks/delivery/de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "origin": "http://127.0.0.1:33417",
+      "status": 200,
+      "code": null,
+      "responseSha256": "f41c557d529b16caa1a47e8acba507199aec802e2eada1e8412e6a7e489d167b"
+    },
+    {
+      "at": "2026-11-05T09:27:29.702979+00:00",
+      "method": "GET",
+      "path": "/api/cms/external-publications/49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+      "origin": "http://127.0.0.1:33417",
+      "status": 200,
+      "code": null,
+      "responseSha256": "c10c8c292b3e836ec400b6a0059abdcd70e60120a98d605c8a57d764dfe685bf"
+    },
+    {
+      "at": "2026-11-05T09:27:30.517878+00:00",
+      "method": "GET",
+      "path": "/api/cms/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/tasks/delivery/49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+      "origin": "http://127.0.0.1:33417",
+      "status": 200,
+      "code": null,
+      "responseSha256": "510e4615a9a292f9833ba88c84d21b937808c759df89dd61b6323171450f90f4"
+    }
+  ]
+}

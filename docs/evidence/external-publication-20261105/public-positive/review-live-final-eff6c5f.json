@@ -1,0 +1,97 @@
+{
+  "reviewedAt": "2026-11-05T09:30:02.313899+00:00",
+  "reviewerThreadId": "01a19a1d-b9ec-7911-b730-fe4c8122cfdb",
+  "verdict": "PASS_PERSONAL_DEV_REAL_CREATE_UPDATE_REGISTER_TYPED_SYNC",
+  "scope": "Bounded authorized personal DEV workflow with a local Ghost original; no organization or complete production delivery claim",
+  "publishingCommit": "829b5373642d906164701a889c8f5daa2c05a185",
+  "finalBusinessCommit": "eff6c5fecee106f52addaf93297010670bd9bb02",
+  "wholeProjectAcceptance": "NOT_ACCEPTED",
+  "remoteId": "4980723",
+  "url": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+  "createIntentId": "de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+  "updateIntentId": "49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+  "source": {
+    "runtimeEvidence": "independent-review/review-live-final-eff6c5f.json",
+    "sourceSha256": "77969a1d888604824819a105371cdc082b9fb9baeb630fc59cd8c8879290b3eb"
+  },
+  "levels": {
+    "Document": "PASS_FOR_PERSONAL_WORKFLOW_SCOPE",
+    "Local": "PASS",
+    "Live": "PASS_PERSONAL_DEV_REAL_CREATE_UPDATE_REGISTER_TYPED_SYNC"
+  },
+  "checks": {
+    "independentCreateReadback": 21,
+    "independentUpdateReadback": 32,
+    "independentFinalRuntimeReadback": 32,
+    "independentGeneratedSyncAudit": 28,
+    "independentCatalogAssertions": 6,
+    "independentNoBodyHttpTests": 3,
+    "developerFullCheck": {
+      "passed": 514,
+      "failed": 0
+    }
+  },
+  "runtime": {
+    "pid": 73122,
+    "entrypoint": "src/main.ts",
+    "cmsUrl": "http://127.0.0.1:33417",
+    "ghostUrl": "http://127.0.0.1:33418",
+    "finalRuntimeReadbackSourceMatches": true,
+    "fixtureUsedForFinalRun": false
+  },
+  "defects": {
+    "008-IR01": "CLOSED",
+    "008-IR02": "CLOSED",
+    "008-IR03": "CLOSED",
+    "008-IR04": "CLOSED",
+    "008-IR05": "CLOSED_INDEPENDENT_LOCAL_AND_REAL_TYPED_TOOL_RETEST"
+  },
+  "providerWrites": {
+    "successfulCreatePhase": 1,
+    "successfulUpdatePhase": 1,
+    "generatedSyncPhase": 0,
+    "rootIndependentReview": 0,
+    "scope": "Counts apply to the captured successful phases. Prior localhost 422 and timed-out attempts retain separate history; no global historical write-count claim."
+  },
+  "limitations": [
+    "Ghost original is loopback-only as explicitly approved for the bounded technical test; public production original and deployment remain unaccepted.",
+    "Personal DEV result does not establish organization exact Admin approval, Hashnode, Medium, HackerNoon, or all D1-D9.",
+    "Real sync proved an on-demand typed call. A short-lived delegated credential does not establish indefinite scheduled sync.",
+    "Nine pre-existing empty-body OpenAPI declarations outside these three external actions are tracked separately in live-positive/ir05-existing-empty-body-debt.json.",
+    "PR creation was previously blocked by connector authorization; this is separate from feature acceptance."
+  ],
+  "sourceEvidence": [
+    {
+      "runtimeEvidence": "independent-review/public-create-readback.json",
+      "sourceSha256": "4114401e4f2d1260652516cc771a66ddd0efc585c32c13df4aadde8742b42294"
+    },
+    {
+      "runtimeEvidence": "independent-review/public-update-readback.json",
+      "sourceSha256": "8a75b8e984af303e216b7fccfb5905ed978db9d2002c66bbca28deb642e37d5e"
+    },
+    {
+      "runtimeEvidence": "independent-review/public-final-readback-eff6c5f.json",
+      "sourceSha256": "38c04442d20ffd3c07f0ac161ae4cbc5644d3e571f533600283f1be0f76f77a5"
+    },
+    {
+      "runtimeEvidence": "independent-review/public-dev-page.json",
+      "sourceSha256": "213e13e00f85d86f968a3362c09dcc90d47f77f2351898daa25715a3464dc0d3"
+    },
+    {
+      "runtimeEvidence": "independent-review/model-create-update-audit.json",
+      "sourceSha256": "c41bae8777dfa21354b94034b5f5d792514069a71babf221c0f3494663af12e9"
+    },
+    {
+      "runtimeEvidence": "independent-review/model-generated-sync-audit.json",
+      "sourceSha256": "3790c01d75e0e29ee26358569102e6eafec3679ced3b6885649505fc5dfd000d"
+    },
+    {
+      "runtimeEvidence": "independent-review/ir05-live-catalog.json",
+      "sourceSha256": "33ae8b8dfe111ffd411b2173daa3d95a42d90b7ec3fa86689aafda918d211a43"
+    },
+    {
+      "runtimeEvidence": "independent-review/ir05-eff6c5f-tests.log",
+      "sourceSha256": "b9d4ff67f66d11e1b91ffbc068184fdf429e289fee3ed585b5d2c24274be4713"
+    }
+  ]
+}

@@ -1,0 +1,453 @@
+{
+  "schemaVersion": 1,
+  "scope": "Personal public DEV create, same-copy update, CMS registration and generated typed sync; bounded technical acceptance.",
+  "currentBusinessCommit": "eff6c5fecee106f52addaf93297010670bd9bb02",
+  "createUpdateBusinessCommit": "829b5373642d906164701a889c8f5daa2c05a185",
+  "currentRuntimePid": 73122,
+  "remoteId": "4980723",
+  "publicDevUrl": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+  "results": {
+    "independentCreateReadback": {
+      "passed": 21,
+      "failed": 0,
+      "evidence": "public-create-readback.json"
+    },
+    "independentUpdateReadback": {
+      "passed": 32,
+      "failed": 0,
+      "evidence": "public-update-readback.json"
+    },
+    "independentFinalRuntimeReadback": {
+      "passed": 32,
+      "failed": 0,
+      "evidence": "public-final-readback-eff6c5f.json"
+    },
+    "independentCreateNativeAudit": {
+      "passed": 29,
+      "failed": 0,
+      "evidence": "model-create-update-audit.json"
+    },
+    "independentUpdateNativeAudit": {
+      "passed": 30,
+      "failed": 0,
+      "evidence": "model-create-update-audit.json"
+    },
+    "independentGeneratedSyncNativeAudit": {
+      "passed": 28,
+      "failed": 0,
+      "evidence": "model-generated-sync-audit.json"
+    },
+    "publicPage": {
+      "httpStatus": 200,
+      "withoutCredentials": true,
+      "evidence": "public-dev-page.json"
+    },
+    "generatedSync": {
+      "verdict": "PASS",
+      "lastSyncAt": "2026-11-05T09:25:35.168Z",
+      "evidence": "generated-sync-verified.json"
+    },
+    "schemaContract": {
+      "verifiedOperations": 3,
+      "existingUnchangedDebt": 9,
+      "evidence": "schema-fix.json"
+    },
+    "independentSchemaCatalog": {
+      "passed": 6,
+      "failed": 0,
+      "evidence": "ir05-live-catalog.json"
+    },
+    "independentNoBodyHttpTests": {
+      "passed": 3,
+      "failed": 0,
+      "evidence": "review-live-final-eff6c5f.json"
+    },
+    "developerFullCheck": {
+      "passed": 514,
+      "failed": 0,
+      "evidence": "schema-fix.json"
+    }
+  },
+  "writeCounting": {
+    "scope": "Only the named successful create/update native captures.",
+    "createCapturedDevWrites": 1,
+    "createCapturedMethod": "POST",
+    "updateCapturedDevWrites": 1,
+    "updateCapturedMethod": "PUT",
+    "generatedSyncCapturedDevToolCalls": 0,
+    "countsAreGlobalHistoricalWriteCounts": false,
+    "completeServerEgressAudit": false,
+    "earlierFailedOrUnknownLocalhostAttemptsIncluded": false
+  },
+  "phases": [
+    {
+      "phase": "prepare-create",
+      "run_id": "008-positive-prepare-create-1793867105934261000",
+      "started_at": "2026-11-05T08:25:05.934666+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "785917edc22f0a9e676a6922453beeb9a6f6adf7b1893cd27e1cf3da08f7090a",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T08:26:08.569891+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/prepare-create-summary.json",
+        "sourceSha256": "fed4f1029aa8ad3e570b13bd634d5672cfa29baadacb4601be6a387d6b515247"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 3,
+        "activity_statuses": {
+          "completed": 3
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "create-register-sync",
+      "run_id": "008-positive-create-register-sync-1793867243986362000",
+      "started_at": "2026-11-05T08:27:23.987156+00:00",
+      "status": "INCOMPLETE_DO_NOT_RETRY",
+      "prompt_sha256": "651bc6090524a67edb9b609e5345e00a2f719f084b0ff574d5d0bcbb7664423b",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T08:29:26.130636+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/create-register-sync-summary.json",
+        "sourceSha256": "5ae98105c039ae46db36c5e3774ae8ca43d82a901375df7d45d1a63b2adde4fb"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "failed",
+        "error_code": "outcome_unknown",
+        "activity_count": 3,
+        "activity_statuses": {
+          "completed": 2,
+          "error": 1
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "create-recovered",
+      "run_id": "008-positive-create-recovered-1793867790336642000",
+      "started_at": "2026-11-05T08:36:30.337571+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "1040c3e71abf16612a5afc6be500be1da6aaf066a935c2ec3f26aae0df87dd95",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T08:37:17.836245+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/create-recovered-summary.json",
+        "sourceSha256": "b0ebd8a8455362c0be710ab5069879b0aa665930f26123d4558431e34162d2f5"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 2,
+        "activity_statuses": {
+          "completed": 1,
+          "error": 1
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "ip-create-prepare",
+      "run_id": "008-positive-ip-create-prepare-1793868939359343000",
+      "started_at": "2026-11-05T08:55:39.360178+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "dedf572d70b01af842412bf9b7d6b75f5c40dab37fdf54073e667b438e95cb8f",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T08:57:04.579747+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/ip-create-prepare-summary.json",
+        "sourceSha256": "01a7844b13d19405c23d2bfdde8fe3e56b42068d1a09f248f0a0cc6ecdb01145"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 3,
+        "activity_statuses": {
+          "completed": 2,
+          "error": 1
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "ip-create-prepare-recheck",
+      "run_id": "008-positive-ip-create-prepare-recheck-1793869312343332000",
+      "started_at": "2026-11-05T09:01:52.344237+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "a1600655b40904dd79e955fd4a78e3b9cac1d868c38ef56bf82bb3be1ff85b1a",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T09:02:52.463955+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/ip-create-prepare-recheck-summary.json",
+        "sourceSha256": "ccfb5efe0fe32d9688406a544c52475a851b1f87d87874b24af8d9a9df4ca6bc"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 2,
+        "activity_statuses": {
+          "completed": 2
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "ip-create-execute",
+      "run_id": "008-positive-ip-create-execute-1793869700128882000",
+      "started_at": "2026-11-05T09:08:20.129732+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "1755379a9541551f5142afbe79ac04e957ec22f42a956cecfc17460fa348b578",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T09:09:46.201659+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/ip-create-execute-summary.json",
+        "sourceSha256": "e547125e1333c090791891e27d46f44c70cffec8cd406f1edf06c826c169cee9"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 4,
+        "activity_statuses": {
+          "completed": 3,
+          "error": 1
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "ip-create-sync",
+      "run_id": "008-positive-ip-create-sync-1793869852857321000",
+      "started_at": "2026-11-05T09:10:52.858137+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "d3097814afef66c225e5e38abd02944b9f893acb483dfaec37e0adaa0ecf8887",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T09:11:30.211199+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/ip-create-sync-summary.json",
+        "sourceSha256": "9dd4b8210df4244239f4c449b973985d7d16fde82edf3cd4893831590ece24d0"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 1,
+        "activity_statuses": {
+          "completed": 1
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "update-prepare",
+      "run_id": "008-positive-update-prepare-1793870028798167000",
+      "started_at": "2026-11-05T09:13:48.799046+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "42e62355b2a43a903a0d1fb23a36927bf1e849a548657bf94047cae976fac609",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T09:14:47.490337+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/update-prepare-summary.json",
+        "sourceSha256": "eb2de42bc7231a72f57a05f5a5ad2b681227b5db4f5ffab67d5d169564bbc95c"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 2,
+        "activity_statuses": {
+          "completed": 2
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "update-execute",
+      "run_id": "008-positive-update-execute-1793870124785005000",
+      "started_at": "2026-11-05T09:15:24.785542+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "31458ff789f2e599a82422c477d1fd0963bfd3a630237700eeb0057804932196",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T09:16:16.719092+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/update-execute-summary.json",
+        "sourceSha256": "b6870e9f4628e35b1f7316d0708ce31275c321fcb271d4d6a6a851e9753b2874"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 2,
+        "activity_statuses": {
+          "completed": 2
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    },
+    {
+      "phase": "generated-sync-fixed",
+      "run_id": "008-positive-generated-sync-fixed-1793870704103002000",
+      "started_at": "2026-11-05T09:25:04.103437+00:00",
+      "status": "TURN_COMPLETED",
+      "prompt_sha256": "57efd6e90ce91e38ef6e319e5c5a158106f4193d3c983cb25a371df62c791ebc",
+      "model_profile": "nyxagent/chat",
+      "finished_at": "2026-11-05T09:25:53.659926+00:00",
+      "source": {
+        "runtimeEvidence": "live-positive/generated-sync-fixed-summary.json",
+        "sourceSha256": "59175b9eb1c271e56643c1b07fc90531289bdecff223536d44de126e93718f10"
+      },
+      "history": {
+        "active_turn": false,
+        "reply_status": "completed",
+        "error_code": null,
+        "activity_count": 2,
+        "activity_statuses": {
+          "completed": 2
+        }
+      },
+      "usage": {
+        "available": false,
+        "expected_model_recorded": false,
+        "upstream_response_echo_claimed": false,
+        "recordCount": 0
+      },
+      "driverApprovesRequests": false
+    }
+  ],
+  "historicalFailures": {
+    "localhostCreateTimeout": {
+      "status": "INCOMPLETE_DO_NOT_RETRY",
+      "errorCode": "outcome_unknown",
+      "source": {
+        "runtimeEvidence": "live-positive/create-register-sync-summary.json",
+        "sourceSha256": "5ae98105c039ae46db36c5e3774ae8ca43d82a901375df7d45d1a63b2adde4fb"
+      },
+      "subsequentCompleteInventoryMatchedIds": []
+    },
+    "localhostCanonicalRejected": {
+      "state": "CANCELLED_AFTER_DEV_422_CANONICAL_URL",
+      "failure": "DEV HTTP 422: Canonical url is not a valid URL",
+      "source": {
+        "runtimeEvidence": "live-positive/controlled-plan-localhost.json",
+        "sourceSha256": "3ee77c760098f7cffd101a2293a4e3ca4584cd76f2062651f3fa59c7dd554dad"
+      }
+    },
+    "generatedSyncBeforeFix": {
+      "issue": "008-IR05",
+      "failure": "Generated sync rejected missing body fields before CMS execution.",
+      "operatorSyncIsModelSuccess": false,
+      "source": {
+        "runtimeEvidence": "live-positive/ip-create-operator-sync.json",
+        "sourceSha256": "904aa2a6952e31d7d2379a28c8772d4267094629b99d7240b2b9e784425f45de"
+      },
+      "laterPassingEvidence": "model-generated-sync-audit.json"
+    }
+  },
+  "limitations": {
+    "ghostOriginalLoopbackOnly": true,
+    "publicGhostAvailabilityAccepted": false,
+    "organizationAcceptanceClaimed": false,
+    "fullD6D7AcceptanceClaimed": false,
+    "finalProjectAcceptanceClaimed": false,
+    "prPermissionsOrStateChangedByThisEvidence": false,
+    "usageLedgerEmpty": true,
+    "upstreamModelResponseEchoVerified": false,
+    "turnCompletedImpliesBusinessSuccess": false,
+    "readbackSourceBytesProveLoadedModuleBytesWithoutRestartOrAttestation": false,
+    "historicalEvidenceRetained": true
+  },
+  "redaction": {
+    "method": "Explicit field allowlists; source files referenced by runtime-relative path and SHA-256.",
+    "rawToolArgumentsIncluded": false,
+    "rawArticleBodiesIncluded": false,
+    "credentialsIncluded": false,
+    "privateAbsolutePathsIncluded": false,
+    "privateCaptureContentsIncluded": false
+  },
+  "finalReview": {
+    "verdict": "PASS_PERSONAL_DEV_REAL_CREATE_UPDATE_REGISTER_TYPED_SYNC",
+    "wholeProjectAcceptance": "NOT_ACCEPTED",
+    "issue008IR05": "CLOSED_INDEPENDENT_LOCAL_AND_REAL_TYPED_TOOL_RETEST",
+    "evidence": "review-live-final-eff6c5f.json"
+  },
+  "approvalExecution": {
+    "driverApprovesRequests": false,
+    "exactPhaseCompanionUsed": true,
+    "mode": "Single-request approval under existing explicit user authorization.",
+    "companionChecks": [
+      "method",
+      "path",
+      "body equals frozen request",
+      "active turn"
+    ],
+    "policyChanged": false,
+    "interpretation": "Driver approval flags describe the model-run driver only; they do not mean that no approval companion executed."
+  },
+  "modelEvidence": {
+    "configuredModel": "gpt-6.1-sol",
+    "description": "Actual NyxBot configured for gpt-6.1-sol; configuration evidence, not upstream model-response echo or provider model attestation.",
+    "usageLedgerRecordCount": 0,
+    "upstreamResponseEchoVerified": false
+  }
+}

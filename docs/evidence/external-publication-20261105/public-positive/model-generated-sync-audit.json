@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-05T09:28:40.258832+00:00",
+  "reviewer": "native_proxy_boundary_review",
+  "reviewMethod": "Independent offline verification of raw native model tool arguments and returned CMS payload against the phase verification record and earlier CMS readback. No network request, service operation, or business-source change was performed.",
+  "verdict": "PASS_FOR_ACTUAL_GENERATED_TYPED_SYNC",
+  "issue": "008-IR05",
+  "reportedRuntimeCommit": "eff6c5fecee106f52addaf93297010670bd9bb02",
+  "runtimeCommitIndependentlyProbed": false,
+  "intentId": "49fec6e9-932f-45fa-a04c-69e84ecaa2e1",
+  "remoteId": "4980723",
+  "runId": "008-positive-generated-sync-fixed-1793870704103002000",
+  "nativeCallId": "call_a8c4af64bd4542e5906b7c96a6f747f3",
+  "tool": "blog-external-008-20261105__syncexternalpublication",
+  "source": {
+    "runtimeEvidence": "independent-review/model-generated-sync-audit.json",
+    "sourceSha256": "3790c01d75e0e29ee26358569102e6eafec3679ced3b6885649505fc5dfd000d"
+  },
+  "argumentNames": [
+    "id"
+  ],
+  "requestBodyPresent": false,
+  "countsWithinThisCapture": {
+    "nativeCalls": 2,
+    "searchToolCalls": 1,
+    "typedSyncCalls": 1,
+    "devToolCalls": 0,
+    "genericHttpToolCalls": 0,
+    "directProviderWriteToolCalls": 0
+  },
+  "result": {
+    "state": "published",
+    "syncStatus": "verified",
+    "syncErrorCode": null,
+    "remoteId": "4980723",
+    "lastSyncAt": "2026-11-05T09:25:35.168Z",
+    "lastVerifiedAt": "2026-11-05T09:25:35.168Z"
+  },
+  "timestamps": {
+    "toolStartedAt": "2026-11-05T09:25:25.552Z",
+    "toolReturnedAt": "2026-11-05T09:25:35.329Z",
+    "priorLastSyncAt": "2026-11-05T09:16:54.204Z",
+    "priorLastVerifiedAt": "2026-11-05T09:16:54.204Z"
+  },
+  "checks": {
+    "exactlyOneTypedSyncCall": true,
+    "typedSyncIsOnlyNonSearchToolCall": true,
+    "nativeModelToolInvocation": true,
+    "rawArgumentsMatchParsedCapture": true,
+    "rawToolNameMatchesTypedSync": true,
+    "rawNestedArgumentsMatchCapturedArguments": true,
+    "argumentsContainOnlyExpectedId": true,
+    "noBodyArgument": true,
+    "noCapturedGenericHttpToolCalls": true,
+    "noCapturedDevToolCalls": true,
+    "noCapturedDirectProviderWriteToolCalls": true,
+    "toolResponseSucceeded": true,
+    "resultMatchesIntent": true,
+    "resultIsPublished": true,
+    "resultSyncIsVerified": true,
+    "resultRemoteIdIsExpected": true,
+    "lastSyncIsNewerThanPriorReadback": true,
+    "lastVerifiedIsNewerThanPriorReadback": true,
+    "lastSyncWithinToolExecution": true,
+    "lastVerifiedEqualsLastSync": true,
+    "verificationRecordMatchesCall": true,
+    "verificationRecordMatchesToolTimes": true,
+    "verificationRecordMatchesResult": true,
+    "verificationRecordMatchesCaptureHash": true,
+    "verificationRecordHasExpectedCommit": true,
+    "captureHasNoErrorsOrUnpairedOutputs": true,
+    "turnCompleted": true,
+    "sameRunAcrossSummaryAndCapture": true
+  },
+  "passedCheckCount": 28,
+  "limitations": {
+    "countsAreGlobalHistoricalCounts": false,
+    "directToolCountsAreServerEgressAudit": false,
+    "currentRuntimeReadbackPerformedByThisReviewer": false,
+    "currentRuntimeReadbackOwner": "root",
+    "priorFailedGeneratedSyncAndOperatorSyncAreNotSuccessEvidenceForThisRun": true,
+    "scope": "Only this captured generated-sync phase is verified. Root separately owns the final current-runtime readback; this report does not claim historical global provider counts or replace a complete server-egress audit."
+  }
+}

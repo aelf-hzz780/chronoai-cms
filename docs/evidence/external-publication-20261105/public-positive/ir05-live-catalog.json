@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-05T09:26:01.462120+00:00",
+  "status": "PASS",
+  "catalogCount": 56,
+  "businessMutations": 0,
+  "schemaMutations": 0,
+  "providerWrites": 0,
+  "source": {
+    "runtimeEvidence": "independent-review/ir05-live-catalog.json",
+    "sourceSha256": "33ae8b8dfe111ffd411b2173daa3d95a42d90b7ec3fa86689aafda918d211a43"
+  },
+  "checks": {
+    "reconcileOpenApiNoBody": true,
+    "reconcileCatalogNoBody": true,
+    "syncOpenApiNoBody": true,
+    "syncCatalogNoBody": true,
+    "cancelOpenApiNoBody": true,
+    "cancelCatalogNoBody": true
+  },
+  "passedCheckCount": 6,
+  "selected": [
+    {
+      "id": "16fe5eed-4b62-4a75-85b5-773815fabcd3",
+      "name": "reconcileexternalpublication",
+      "path": "/api/service/external-publications/{id}/reconcile",
+      "method": "POST",
+      "is_active": true,
+      "request_body_required": false,
+      "request_body_schema": null,
+      "request_content_type": null
+    },
+    {
+      "id": "7637906f-dab6-4c56-87e6-ff946e3b0ad1",
+      "name": "syncexternalpublication",
+      "path": "/api/service/external-publications/{id}/sync",
+      "method": "POST",
+      "is_active": true,
+      "request_body_required": false,
+      "request_body_schema": null,
+      "request_content_type": null
+    },
+    {
+      "id": "d41dc414-e17b-4d4e-986c-e482d9df471c",
+      "name": "cancelexternalpublication",
+      "path": "/api/service/external-publications/{id}/cancel",
+      "method": "POST",
+      "is_active": true,
+      "request_body_required": false,
+      "request_body_schema": null,
+      "request_content_type": null
+    }
+  ]
+}

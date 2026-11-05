@@ -54,6 +54,10 @@ CMS and DEV calls are independent authorization and network transactions. Prepar
 
 Every operation is available under both `/api/cms` and `/api/service` with shared permissions, state and history. Studio exposes material, receipt registration and read-only refresh; it does not promise a CMS one-click DEV write. OpenAPI operation IDs are the registration source. Inspect the refreshed NyxID catalog for actual tool names instead of guessing stale names.
 
+`reconcileExternalPublication`、`syncExternalPublication` 和 `cancelExternalPublication` 只使用 path `id`，OpenAPI 不声明 `requestBody`。HTTP POST 不发送 payload 或 JSON Content-Type；generated tool 只传 `id`。这修复了 008-IR05：必填空 object 无法被 NyxID 展平为有效 body 字段。prepare、register、follow-up 的真实必填 body、认证和 path 约束保持不变。
+
+`reconcileExternalPublication`, `syncExternalPublication` and `cancelExternalPublication` use only the path `id` and omit OpenAPI `requestBody`. Their HTTP POST sends neither a payload nor a JSON Content-Type, and the generated tool receives only `id`. This fixes 008-IR05, where NyxID could not flatten a required empty object into valid body fields. Required bodies for prepare, register and follow-up, authentication and path constraints remain intact.
+
 只有刚完成在线原文与连接核验的 `prepare` 响应可返回 `executionAllowed:true`，它仍不是 DEV 授权，也不能保证后续独立调用的原子性。`get` 及其他观察响应中的该字段为 false；重新取到历史预览不能替代新一次准备核验。同一 prepare 幂等 key 的重试会重新核验仍待执行的 Ghost 原文。
 
 Only a `prepare` response that has just verified the original and connection online may return `executionAllowed:true`. It is still not DEV authority or an atomicity guarantee for the later independent call. The field is false in `get` and other observation responses. Reading an old preview does not replace fresh preparation checks. Retrying the same prepare idempotency key re-verifies an original whose external intent is still pending.
@@ -97,3 +101,17 @@ Evidence is separated into Document (contracts and requirements), Local (unit/in
 新表为增量迁移，部署前保存 CMS DB 与配置；新接口和独立同步进程可先在隔离实例运行。停止同步进程即停止新观察；回滚应用前保留新表/数据与记录，不将外部任务转换为 Worker job，不删除已发布 DEV 内容。回滚 CMS 不能撤回外部工具的网络请求；发生未知结果时保留 intent 并人工只读核对。每个错误沿用 Trace ID，日志仅记安全错误码，不记录 token、connection secret 或原始远端错误对象。
 
 The schema change is additive. Back up the CMS database and configuration before deployment, then run the new routes and separate sync process in isolation. Stopping sync stops new observations. Preserve the new tables/data when rolling back the application; never convert external tasks into Worker jobs or delete DEV posts. CMS rollback cannot revoke an external tool request. Preserve an intent with unknown outcome for manual read-only investigation. Errors retain Trace IDs and logs contain safe classifications without tokens, connection secrets or raw remote error objects.
+
+## 2026-11-05 个人 DEV 真实闭环 / Personal DEV live validation
+
+具体公开创建、同文更新与读回已获得授权并执行。[测试文章](https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh) 的 remoteId 为 `4980723`。配置为 `gpt-6.1-sol` 的真实 NyxBot 经顶层 DEV 工具成功创建一次、随后更新同一篇文章；CMS 独立核验并登记，旧 create 为 `superseded`，update 为 `published / verified`。协调对话第一版 21 项、第二版 32 项检查通过。原始创建与更新在正常 `src/main.ts`、固定 `829b537` 上完成，已替换本任务自己的 33417 fixture；此前“未获公开授权、正向未运行、正式入口未验证”属于历史状态。
+
+The specific public create, same-article update and readback were authorized and executed. The [test article](https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh) has remoteId `4980723`. Actual NyxBot calls configured for `gpt-6.1-sol` performed one successful create and one update through the top-level DEV tool. CMS independently verified and registered both versions; create is `superseded`, and update is `published / verified`. The coordinator passed 21 checks for the first version and 32 for the second. Creation and update used normal `src/main.ts` at `829b537`, replacing this task's own 33417 fixture. Earlier missing-authorization, unexecuted-positive-path and unverified-normal-entry statements are historical.
+
+真实验收发现的 008-IR05 已在 `eff6c5fecee106f52addaf93297010670bd9bb02` 最小修复，标准检查 514 项通过。刷新原 NyxID catalog 的三条操作后，真实 generated `syncExternalPublication` 仅传 `id` 即成功，返回 `published / verified`，同步时间为 `2026-11-05T09:25:35.168Z`。早期 operator 只读 sync 与修复后的真实 generated sync 分别保留证据；此前 localhost 超时、422 canonical URL 拒绝也保留，成功阶段次数不代表历史总请求次数。
+
+The live-discovered 008-IR05 received a minimal fix at `eff6c5fecee106f52addaf93297010670bd9bb02`; all 514 standard checks passed. After refreshing three operations in the existing NyxID catalog, the actual generated `syncExternalPublication` succeeded with only `id`, returning `published / verified` at `2026-11-05T09:25:35.168Z`. Earlier operator read-only sync and the repaired generated sync have separate evidence. Prior localhost timeout and 422 canonical URL rejection remain recorded; successful-phase counts do not describe all historical requests.
+
+脱敏证据、版本 hash、独立读回及剩余边界见 [真实闭环证据索引](evidence/external-publication-20261105/public-positive/README.md)。原文仍为专用 loopback Ghost，已明确接受用于本轮技术闭环，不证明公网部署。组织具体 Admin 授权、整体 D1–D9、完整 D6/D7 与 PR 仍未宣告通过；另九个既有无参数操作的空 body 契约问题单独记录，不纳入本次三条最小修复。
+
+See the [live evidence index](evidence/external-publication-20261105/public-positive/README.md) for sanitized evidence, version hashes, independent readbacks and remaining boundaries. The dedicated Ghost original remains on loopback, explicitly accepted for this technical test without proving public deployment. Organization-specific Admin authorization, overall D1–D9, complete D6/D7 and a PR remain unaccepted. The empty-body contract issue in nine legacy parameterless operations is recorded separately from this three-operation fix.

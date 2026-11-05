@@ -1,0 +1,140 @@
+{
+  "at": "2026-11-05T09:24:31.287988+00:00",
+  "id": "008-IR05",
+  "commit": "eff6c5fecee106f52addaf93297010670bd9bb02",
+  "changedOperations": [
+    "reconcileexternalpublication",
+    "syncexternalpublication",
+    "cancelexternalpublication"
+  ],
+  "source": {
+    "runtimeEvidence": "live-positive/schema-fix.json",
+    "sourceSha256": "97c645e9eb411294e591a37e7564e85dd3e80b2eba100eb44f21db938af75ee8"
+  },
+  "tests": {
+    "check": {
+      "passed": 514,
+      "failed": 0
+    },
+    "targeted": {
+      "passed": 5,
+      "failed": 0
+    },
+    "tddRed": "schema contract rejected original required empty body"
+  },
+  "catalogRefresh": {
+    "at": "2026-11-05T09:24:31.287509+00:00",
+    "serviceId": "60fefbc7-0944-4f81-b9de-c8fccc37731c",
+    "total": 56,
+    "untouched": 53,
+    "operation": "three official endpoint partial PUTs",
+    "source": {
+      "runtimeEvidence": "live-positive/schema-catalog-refresh.json",
+      "sourceSha256": "21ae7fb9937c315fd05a20c032eb8d289d89341a27d235809c1ddb4f2bf02cb9"
+    },
+    "changed": [
+      {
+        "id": "16fe5eed-4b62-4a75-85b5-773815fabcd3",
+        "name": "reconcileexternalpublication",
+        "path": "/api/service/external-publications/{id}/reconcile",
+        "method": "POST",
+        "publication": "published",
+        "is_active": true,
+        "changedFields": [
+          "request_body_required",
+          "request_body_schema",
+          "request_content_type",
+          "updated_at"
+        ],
+        "request_body_required": false
+      },
+      {
+        "id": "7637906f-dab6-4c56-87e6-ff946e3b0ad1",
+        "name": "syncexternalpublication",
+        "path": "/api/service/external-publications/{id}/sync",
+        "method": "POST",
+        "publication": "published",
+        "is_active": true,
+        "changedFields": [
+          "request_body_required",
+          "request_body_schema",
+          "request_content_type",
+          "updated_at"
+        ],
+        "request_body_required": false
+      },
+      {
+        "id": "d41dc414-e17b-4d4e-986c-e482d9df471c",
+        "name": "cancelexternalpublication",
+        "path": "/api/service/external-publications/{id}/cancel",
+        "method": "POST",
+        "publication": "published",
+        "is_active": true,
+        "changedFields": [
+          "request_body_required",
+          "request_body_schema",
+          "request_content_type",
+          "updated_at"
+        ],
+        "request_body_required": false
+      }
+    ]
+  },
+  "existingDebt": {
+    "at": "2026-11-05T09:21:39.275Z",
+    "issue": "008-IR05",
+    "scope": "Existing declarations left unchanged by the three external-publication operation fix; require separate review before expansion",
+    "count": 9,
+    "source": {
+      "runtimeEvidence": "live-positive/ir05-existing-empty-body-debt.json",
+      "sourceSha256": "ed1584922392313c97b8d167e4b611e335b0b067a3f8a1527cfd94e25e61106e"
+    },
+    "operations": [
+      {
+        "operationId": "cancelConnectionAttempt",
+        "method": "POST",
+        "path": "/api/service/owners/{id}/connection-attempts/{attemptId}/cancel"
+      },
+      {
+        "operationId": "cancelOriginal",
+        "method": "POST",
+        "path": "/api/service/releases/{id}/cancel"
+      },
+      {
+        "operationId": "reconcileOriginal",
+        "method": "POST",
+        "path": "/api/service/releases/{id}/reconcile"
+      },
+      {
+        "operationId": "cancelDistributionPlan",
+        "method": "POST",
+        "path": "/api/service/distribution-plans/{id}/cancel"
+      },
+      {
+        "operationId": "requestExactApproval",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/request-approval"
+      },
+      {
+        "operationId": "cancelDistribution",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/cancel"
+      },
+      {
+        "operationId": "reconcileDistribution",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/reconcile"
+      },
+      {
+        "operationId": "refreshExternalMetrics",
+        "method": "POST",
+        "path": "/api/service/deliveries/{id}/metrics/refresh"
+      },
+      {
+        "operationId": "syncPublishedAlternates",
+        "method": "POST",
+        "path": "/api/service/articles/{id}/sync-links"
+      }
+    ]
+  }
+}

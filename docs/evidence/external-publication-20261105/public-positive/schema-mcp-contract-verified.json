@@ -1,0 +1,82 @@
+{
+  "verifiedAt": "2026-11-05T09:26:27.096816+00:00",
+  "verified": true,
+  "scope": "Read-only validation of saved official MCP configuration; no API or model calls.",
+  "sourceSha256": "8f1fa0b17a5ec6f6e235fd406f018c231943e5a79c0ad68052a2467d4165c9d5",
+  "catalogServiceId": "60fefbc7-0944-4f81-b9de-c8fccc37731c",
+  "connectionId": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+  "serviceSlug": "blog-external-008-20261105",
+  "selection": "services[].service_slug and services[].service_id identify the exact connection; endpoints inherit that service and have endpoint_id.",
+  "endpointCount": 56,
+  "isGenericProxy": false,
+  "verifiedOperationCount": 3,
+  "apiCalls": 0,
+  "apiWrites": 0,
+  "modelCalls": 0,
+  "source": {
+    "runtimeEvidence": "live-positive/schema-mcp-contract-verified.json",
+    "sourceSha256": "5e50e768606982b380045851d8c02d3b7786cd0f7a2b80ae62c58b489389c7ea"
+  },
+  "operations": [
+    {
+      "endpoint_id": "16fe5eed-4b62-4a75-85b5-773815fabcd3",
+      "name": "reconcileexternalpublication",
+      "method": "POST",
+      "path": "/api/service/external-publications/{id}/reconcile",
+      "request_body_required": false,
+      "operation_digest": "sha256:4deb56b86f8cf445536c13a05aa20ec06f4512f544dad64bc270b2cf4f37ba53",
+      "request_body_schema": null,
+      "request_content_type": null,
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "endpoint_id": "7637906f-dab6-4c56-87e6-ff946e3b0ad1",
+      "name": "syncexternalpublication",
+      "method": "POST",
+      "path": "/api/service/external-publications/{id}/sync",
+      "request_body_required": false,
+      "operation_digest": "sha256:633a812420b31ba7e8e06a423bf8eff623f295fecdf84b4dbe4629580f280568",
+      "request_body_schema": null,
+      "request_content_type": null,
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "endpoint_id": "d41dc414-e17b-4d4e-986c-e482d9df471c",
+      "name": "cancelexternalpublication",
+      "method": "POST",
+      "path": "/api/service/external-publications/{id}/cancel",
+      "request_body_required": false,
+      "operation_digest": "sha256:105c0ee379076bd2a2387b7fc536a1e199d551afb341d936e256ccecf4e6108e",
+      "request_body_schema": null,
+      "request_content_type": null,
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "at": "2026-11-05T09:10:35.798556+00:00",
+  "completedAt": "2026-11-05T09:10:43.747215+00:00",
+  "status": "PASS_READ_ONLY_PUBLIC_READBACK",
+  "scope": "Independent actual NyxID login, DEV GET, CMS service GET and browser-session GET; no model turn/provider write/CMS business mutation/grant changes.",
+  "providerWrites": 0,
+  "cmsBusinessWrites": 0,
+  "authorizationChanges": 0,
+  "limitation": "No claim of organization acceptance, public Ghost availability, or historical provider-write count from present readback.",
+  "registrationSha256": "7ced8e91e65dbce4d91cd49f2d6f81494c85c872a31a705f0aa11d744016bdc9",
+  "runtimeManifestSha256": "4eb8f4d4137a3151e32825dfb99839d38a3f46953c1d4d9fd228e5fdd7572c72",
+  "serviceSlug": "blog-external-008-20261105",
+  "remoteId": "4980723",
+  "createIntentId": "de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+  "updateIntentId": null,
+  "expectedUsername": "aelfhzz780",
+  "expectedAccountId": "4223973",
+  "source": {
+    "runtimeEvidence": "independent-review/public-create-readback.json",
+    "sourceSha256": "4114401e4f2d1260652516cc771a66ddd0efc585c32c13df4aadde8742b42294"
+  },
+  "checks": {
+    "normalMainProcess": true,
+    "sourceBytesAtCommit": true,
+    "selectedDevAccount": true,
+    "remoteId": true,
+    "remoteAuthor": true,
+    "remotePublic": true,
+    "publicDevUrl": true,
+    "approvedTitle": true,
+    "createRemoteAndConnection": true,
+    "createRemoteUrl": true,
+    "createTaskState": true,
+    "createObservedOnly": true,
+    "activePayloadMatchesRemote": true,
+    "activeStatePublishedVerified": true,
+    "activeSourceMatchesCanonical": true,
+    "createAction": true,
+    "exactlyOnePublicCopy": true,
+    "sameVerifiedIdentity": true,
+    "samePersonalWorkspace": true,
+    "createIntentEntryParity": true,
+    "createTaskEntryParity": true
+  },
+  "passedCheckCount": 21,
+  "runtime": {
+    "pid": 67395,
+    "entrypoint": "src/main.ts",
+    "fixtureEntrypointAbsent": true,
+    "commandSha256": "7d6cea5e4ac4d0ca534f2040b02e42990305f79c3561bed1b953b80d85a52dde",
+    "repoMatchesCwd": true,
+    "commit": "829b5373642d906164701a889c8f5daa2c05a185",
+    "limitation": "Process command/CWD and current source bytes observed; does not prove already-loaded module bytes without a restart/attestation.",
+    "sourceFiles": {
+      "src/main.ts": {
+        "commitSha256": "9133a233b3366188b3cfd603c42002eff0c1ab6403a4ac021bbdfbbe0c1df8e3",
+        "diskSha256": "9133a233b3366188b3cfd603c42002eff0c1ab6403a4ac021bbdfbbe0c1df8e3",
+        "matches": true
+      },
+      "src/app.ts": {
+        "commitSha256": "7bf96fadaf4bb1f99f480238b0f0a9665b5ba1ff920ad701c9a114dc83d5acec",
+        "diskSha256": "7bf96fadaf4bb1f99f480238b0f0a9665b5ba1ff920ad701c9a114dc83d5acec",
+        "matches": true
+      },
+      "src/external-publication.ts": {
+        "commitSha256": "cc427ff7f7d68ce74f8a08d7739779b214d1bcc122d77ae65c11a5ab25679ee3",
+        "diskSha256": "cc427ff7f7d68ce74f8a08d7739779b214d1bcc122d77ae65c11a5ab25679ee3",
+        "matches": true
+      },
+      "src/targets.ts": {
+        "commitSha256": "f6ec0ec9a077ee7eb7b10d1b3cda18d4fa73d187365154ed64ce67bc6f08aaab",
+        "diskSha256": "f6ec0ec9a077ee7eb7b10d1b3cda18d4fa73d187365154ed64ce67bc6f08aaab",
+        "matches": true
+      },
+      "src/auth.ts": {
+        "commitSha256": "888ff979ddb50fe03fb73b38c95aa34403264743fb2293e575d4463078753e2f",
+        "diskSha256": "888ff979ddb50fe03fb73b38c95aa34403264743fb2293e575d4463078753e2f",
+        "matches": true
+      },
+      "src/nyxid.ts": {
+        "commitSha256": "803840f7da894918225f87f4cb47b614e7d5ceb662274daba15319aa44fae115",
+        "diskSha256": "803840f7da894918225f87f4cb47b614e7d5ceb662274daba15319aa44fae115",
+        "matches": true
+      },
+      "src/caller-authorization.ts": {
+        "commitSha256": "b92d034955601a360af1161184968848ca99f0efd71580c4aee777cf2625e69e",
+        "diskSha256": "b92d034955601a360af1161184968848ca99f0efd71580c4aee777cf2625e69e",
+        "matches": true
+      }
+    }
+  },
+  "remote": {
+    "id": "4980723",
+    "title": "Verifying a NyxID-managed publishing workflow",
+    "url": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+    "canonicalUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/",
+    "publishedAt": "2026-11-05T09:08:50Z",
+    "published": null,
+    "authorId": "4223973",
+    "username": "aelfhzz780",
+    "markdownSha256": "2016d1ab8cd4474a6077813b567eea6df19f32c37800db47efc7979233ef32b9",
+    "markdownBytes": 1906
+  },
+  "intents": {
+    "create": {
+      "id": "de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "intentId": "de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "revisionId": "6851e5d5-3da6-40e0-8ae1-203abd94b828",
+      "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+      "accountId": "4223973",
+      "action": "create",
+      "state": "published",
+      "remoteId": "4980723",
+      "url": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+      "digest": "10ab0a583538db98a46e30d79c1e61e7c603b6cdab7a2e574d6beea6523b5701",
+      "sourceUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/",
+      "creditedAuthor": "BlogSystem Local Operator",
+      "lastSyncAt": "2026-11-05T09:09:22.229Z",
+      "lastVerifiedAt": "2026-11-05T09:09:22.229Z",
+      "syncStatus": "verified",
+      "syncErrorCode": null,
+      "executionMode": "external",
+      "executionAllowed": false,
+      "followUpState": "none",
+      "frozenRequestMetadata": {
+        "method": "POST",
+        "url": "https://dev.to/api/articles",
+        "title": "Verifying a NyxID-managed publishing workflow",
+        "canonicalUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/",
+        "published": true,
+        "markdownSha256": "2016d1ab8cd4474a6077813b567eea6df19f32c37800db47efc7979233ef32b9",
+        "markdownBytes": 1906
+      }
+    }
+  },
+  "publishedInventory": {
+    "count": 1,
+    "complete": true,
+    "matchingCopies": [
+      {
+        "id": "4980723",
+        "title": "Verifying a NyxID-managed publishing workflow",
+        "canonicalUrl": "http://127.0.0.1:33418/chrono-d1710bd7-9732-488b-b8d0-c6d7030300e3/"
+      }
+    ]
+  },
+  "nyxHttp": [
+    {
+      "at": "2026-11-05T09:10:36.079952+00:00",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "code": null,
+      "responseSha256": "855670048c6d149b7d49eebe0e67f871aa4d2102280eaa0de6b1c8ae02898b48"
+    },
+    {
+      "at": "2026-11-05T09:10:36.262458+00:00",
+      "method": "GET",
+      "path": "/api/v1/users/me",
+      "status": 200,
+      "code": null,
+      "responseSha256": "5d6778a19c03a3f842782fb9271dd263d3b6d732d00e23be4e3193192deba95d"
+    },
+    {
+      "at": "2026-11-05T09:10:36.526973+00:00",
+      "method": "GET",
+      "path": "/api/v1/keys",
+      "status": 200,
+      "code": null,
+      "responseSha256": "83009b450b6b5337fcd3a0577023d7e784d8bb5da1f33742b7a247bb085c95a2"
+    },
+    {
+      "at": "2026-11-05T09:10:37.578535+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/devto-blogsystem/users/me",
+      "status": 200,
+      "code": null,
+      "responseSha256": "ca07f39061ebcf6e7464406a858e84a58687de9f0d0ab8911958da28b0dd5bf6"
+    },
+    {
+      "at": "2026-11-05T09:10:37.819188+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/devto-blogsystem/articles/4980723",
+      "status": 200,
+      "code": null,
+      "responseSha256": "a470fb8226234491ebb1e87d229caaeae2d4ec88257941ee27e0d882034cdefb"
+    },
+    {
+      "at": "2026-11-05T09:10:38.463419+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/me",
+      "status": 200,
+      "code": null,
+      "responseSha256": "2bdd0d67bcc1fc06124436ef75d1e08d455c40f88ecbb13feba631eb046ae9c7"
+    },
+    {
+      "at": "2026-11-05T09:10:39.187364+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/external-publications/de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "status": 200,
+      "code": null,
+      "responseSha256": "99adac5a34b9f29fb1c4e1a153e829c59e7ac28fb2726852d81886a00e09bb33"
+    },
+    {
+      "at": "2026-11-05T09:10:39.739422+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/tasks/delivery/de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "status": 200,
+      "code": null,
+      "responseSha256": "681f2e26199b86b49e7fa009849efb414c9f3622eb828390c099aacf2f4c9c05"
+    },
+    {
+      "at": "2026-11-05T09:10:40.564766+00:00",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/devto-blogsystem/articles/me/published",
+      "status": 200,
+      "code": null,
+      "responseSha256": "d5a180bb62a2ba6f41f0f62c1eacf6709d0f1dca7c44d07862d5aca35a1e537e"
+    }
+  ],
+  "cmsHttp": [
+    {
+      "at": "2026-11-05T09:10:40.685736+00:00",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "origin": "http://localhost:3001",
+      "status": 200,
+      "code": null,
+      "responseSha256": "9ff82dd2d45e912ac739d393e56fce41e3644688f037b18af2f6a2d76cba0983"
+    },
+    {
+      "at": "2026-11-05T09:10:40.688267+00:00",
+      "method": "GET",
+      "path": "/auth/login",
+      "origin": "http://127.0.0.1:33417",
+      "status": 302,
+      "code": null,
+      "responseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "at": "2026-11-05T09:10:40.732538+00:00",
+      "method": "GET",
+      "path": "/oauth/authorize",
+      "origin": "http://localhost:3001",
+      "status": 200,
+      "code": null,
+      "responseSha256": "05260b6614f020cb01efd38739f62788522b9e58ea534869c8881dfe4604d31e"
+    },
+    {
+      "at": "2026-11-05T09:10:41.408785+00:00",
+      "method": "GET",
+      "path": "/auth/callback",
+      "origin": "http://127.0.0.1:33417",
+      "status": 302,
+      "code": null,
+      "responseSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "at": "2026-11-05T09:10:42.251921+00:00",
+      "method": "GET",
+      "path": "/api/cms/me",
+      "origin": "http://127.0.0.1:33417",
+      "status": 200,
+      "code": null,
+      "responseSha256": "bc18c1e4004921f13e3ff034729d4e40ee9c07d96b98a61f6c15f5d6842dfcfb"
+    },
+    {
+      "at": "2026-11-05T09:10:43.056114+00:00",
+      "method": "GET",
+      "path": "/api/cms/external-publications/de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "origin": "http://127.0.0.1:33417",
+      "status": 200,
+      "code": null,
+      "responseSha256": "99adac5a34b9f29fb1c4e1a153e829c59e7ac28fb2726852d81886a00e09bb33"
+    },
+    {
+      "at": "2026-11-05T09:10:43.747140+00:00",
+      "method": "GET",
+      "path": "/api/cms/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/tasks/delivery/de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+      "origin": "http://127.0.0.1:33417",
+      "status": 200,
+      "code": null,
+      "responseSha256": "681f2e26199b86b49e7fa009849efb414c9f3622eb828390c099aacf2f4c9c05"
+    }
+  ]
+}

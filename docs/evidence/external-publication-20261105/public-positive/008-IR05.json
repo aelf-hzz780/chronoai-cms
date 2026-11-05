@@ -1,0 +1,41 @@
+{
+  "id": "008-IR05",
+  "priority": "P2",
+  "commit": "829b5373642d906164701a889c8f5daa2c05a185",
+  "requirements": [
+    "D2",
+    "D7",
+    "A06",
+    "A35"
+  ],
+  "status": "CLOSED_INDEPENDENT_LOCAL_AND_REAL_TYPED_TOOL_RETEST",
+  "rolePrecondition": "Authorized personal owner, legitimate native NyxBot session, CMS service connected, registered DEV copy",
+  "reproduction": "Invoke generated blog-external-008-20261105__syncexternalpublication with known published intent de49efc8-f4e9-4d2a-a35e-14f84122c6a9",
+  "expected": "Native generated tool reaches CMS and performs GET-only remote sync",
+  "actual": "NyxID rejects generated request before CMS: Request body for application/json must include at least one body field",
+  "proposedScope": "CMS-only OpenAPI: no requestBody for actual no-body actions; check reconcile and cancel; retain auth and permission controls; reimport isolated service and prove actual generated sync",
+  "fixedCommit": "eff6c5fecee106f52addaf93297010670bd9bb02",
+  "closedAt": "2026-11-05T09:30:02.313899+00:00",
+  "source": {
+    "runtimeEvidence": "independent-review/008-IR05.json",
+    "sourceSha256": "8d7519508cc5395e2797aba9e41ebfd0849322a709453a0ba9a9789324e08cde"
+  },
+  "closureEvidence": [
+    {
+      "runtimeEvidence": "independent-review/ir05-eff6c5f-tests.log",
+      "sourceSha256": "b9d4ff67f66d11e1b91ffbc068184fdf429e289fee3ed585b5d2c24274be4713"
+    },
+    {
+      "runtimeEvidence": "independent-review/ir05-live-catalog.json",
+      "sourceSha256": "33ae8b8dfe111ffd411b2173daa3d95a42d90b7ec3fa86689aafda918d211a43"
+    },
+    {
+      "runtimeEvidence": "independent-review/model-generated-sync-audit.json",
+      "sourceSha256": "3790c01d75e0e29ee26358569102e6eafec3679ced3b6885649505fc5dfd000d"
+    },
+    {
+      "runtimeEvidence": "independent-review/public-final-readback-eff6c5f.json",
+      "sourceSha256": "38c04442d20ffd3c07f0ac161ae4cbc5644d3e571f533600283f1be0f76f77a5"
+    }
+  ]
+}

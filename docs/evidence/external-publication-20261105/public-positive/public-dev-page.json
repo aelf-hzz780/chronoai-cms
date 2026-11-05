@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-05T09:12:03.357398+00:00",
+  "url": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+  "finalUrl": "https://dev.to/aelfhzz780/verifying-a-nyxid-managed-publishing-workflow-5bmh",
+  "status": 200,
+  "htmlSha256": "09222a99943018c8384d5d69b797ef38f487757eb1ba2e393fcd6930e2cda248",
+  "titlePresent": true,
+  "publicWithoutCredentials": true,
+  "providerWrites": 0,
+  "source": {
+    "runtimeEvidence": "independent-review/public-dev-page.json",
+    "sourceSha256": "213e13e00f85d86f968a3362c09dcc90d47f77f2351898daa25715a3464dc0d3"
+  }
+}
