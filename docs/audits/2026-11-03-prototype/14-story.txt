@@ -1,0 +1,64 @@
+Browser tab: 4, Title: "Read article · ChronoAI", URL: "http://127.0.0.1:4173/#story?id=identity&lang=en&owner=org".
+0 AXWebArea Read article · ChronoAI, URL: 127.0.0.1:4173/#story?id=identity&lang=en&owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container main-content
+			4 container
+				5 link Description: ChronoAI JOURNAL, Value: 127.0.0.1:4173/#blog
+				6 button 中文
+				7 button Toggle theme
+				8 button Studio
+			9 container
+				10 button All stories
+				11 text PRODUCT INSIGHTS / ENGLISH
+				12 heading From identity to action: a safer way for AI to work, Value: 1
+					13 text From identity to action: a safer way for AI to work
+				14 text JC Jing Chen
+				15 text Nov 3, 2026 · 3 min read
+				16 button 阅读中文版
+				17 text ON THIS PAGE
+				18 link Description: Identity is the starting point, Value: 127.0.0.1:4173/#section-0
+				19 link Description: From a draft to a deliberate action, Value: 127.0.0.1:4173/#section-1
+				20 button Share this story
+				21 text Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop?
+				22 heading Identity is the starting point, Value: 2, ID: section-0
+					23 text Identity is the starting point
+				24 text As agents move from answering questions to getting things done, identity becomes part of the workflow — not just the sign-in screen. A connected identity gives every action the context it needs:
+				25 content list
+					26 container
+						27 AXListMarker • 
+						28 text A clear owner and a verifiable permission
+					29 container
+						30 AXListMarker • 
+						31 text The right account for the right destination
+					32 container
+						33 AXListMarker • 
+						34 text A meaningful confirmation before publishing
+				35 text Give agents the ability to act, and people the confidence to stay in control.
+				36 heading From a draft to a deliberate action, Value: 2, ID: section-1
+					37 text From a draft to a deliberate action
+				38 text With NyxID, a draft, its author, and the account that publishes it stay connected. Every action has a scope. Every published version has a history. JC Jing Chen Building useful things. Writing about identity, agents, and the way we work.
+				39 heading Keep exploring, Value: 2
+					40 text Keep exploring
+				41 button All stories
+				42 button DESIGN NOTES Designing for trust, one interaction at a time Alex Wu
+					43 text DESIGN NOTES
+					44 heading Designing for trust, one interaction at a time, Value: 3
+						45 text Designing for trust, one interaction at a time
+					46 text Alex Wu
+				47 button DEVELOPER GUIDES OAuth, explained through real workflows Jing Chen
+					48 text DEVELOPER GUIDES
+					49 heading OAuth, explained through real workflows, Value: 3
+						50 text OAuth, explained through real workflows
+					51 text Jing Chen
+			52 container
+				53 text ChronoAI Good ideas travel further. © 2026 · Sample site
+				54 button Publishing Studio
+		55 container Prototype controls
+			56 button B Full-site prototype · Sample data
+				57 text B
+				58 text Full-site prototype · Sample data
+			59 button Page map
+			60 button Scenarios
+
+The focused UI element is 0 AXWebArea Read article · ChronoAI, URL: 127.0.0.1:4173/#story?id=identity&lang=en&owner=org

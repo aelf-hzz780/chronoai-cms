@@ -1,0 +1,62 @@
+Browser tab: 4, Title: "Members & permissions · ChronoAI", URL: "http://127.0.0.1:4173/#members?owner=org".
+0 AXWebArea Members & permissions · ChronoAI, URL: 127.0.0.1:4173/#members?owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Members & permissions UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 text THE PEOPLE BEHIND THE WORDS
+			27 heading Members & permissions, Value: 1
+				28 text Members & permissions
+			29 text Permissions define what each person can do; the byline records who created the content.
+			30 text Member
+			31 text Write & submit
+			32 text Edit your organization drafts, submit an exact version and view aggregate organization data.
+			33 text Publisher
+			34 text Publishing & distribution
+			35 text Publish your content or submitted, authorized versions and manage distribution tasks.
+			36 text Admin
+			37 text Organization management
+			38 text Manage workspace settings and Publisher permissions within organization boundaries.
+			39 container
+				40 heading Organization members 4, Value: 2
+					41 text Organization members  4
+				42 text Read-only JC Jing Chen 
+				43 text Current identity
+				44 text jing@chronoai.example Publisher
+				45 button (disabled) Revoke publishing permission
+				46 text AW Alex Wu alex@chronoai.example Publisher
+				47 button (disabled) Revoke publishing permission
+				48 text SL Sarah Lin sarah@chronoai.example Member
+				49 button (disabled) Grant publishing permission
+				50 text EL Evan Liu evan@chronoai.example Admin
+				51 button (disabled) Managed by NyxID
+			52 text Membership and Admin roles come from NyxID. This demonstrates Publisher permission management; it does not grant access to other members’ private drafts. Use Scenarios below to switch to Admin and explore management. This is a prototype demonstration control.
+		53 container Prototype controls
+			54 button B Full-site prototype · Sample data
+				55 text B
+				56 text Full-site prototype · Sample data
+			57 button Page map
+			58 button Scenarios
+
+The focused UI element is 0 AXWebArea Members & permissions · ChronoAI, URL: 127.0.0.1:4173/#members?owner=org

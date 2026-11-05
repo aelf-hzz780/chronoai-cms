@@ -1,0 +1,26 @@
+Browser tab: 4, Title: "Content · ChronoAI", URL: "http://127.0.0.1:4173/#content?owner=org".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 71-145
+~				42 checkbox All content 8, Value: 0
+~				44 checkbox Awaiting publication 1, Value: 1
+~							61 checkbox (settable, integer) Description: Select article: A new chapter for connected work, Value: 0
+~							63 button A new chapter for connected work
+~							64 text Product updates · A fixed version has been submitted
+~							66 text Awaiting publication
+~							68 text EN
+~							70 button Article actions: A new chapter for connected work
++				71 text 1 articles · Showing 1–1
++				72 button (disabled) Previous page
++				73 button Page 1
++				74 button (disabled) Next page
++			75 text Managing content as 
++			76 text ChronoAI
++			77 text  . Authorship and ownership are recorded separately.
++			78 button About content ownership 
++		79 container Prototype controls
++			80 button B Full-site prototype · Sample data
++				81 text B
++				82 text Full-site prototype · Sample data
++			83 button Page map
++			84 button Scenarios
+The focused UI element is 0 AXWebArea Content · ChronoAI, URL: 127.0.0.1:4173/#content?owner=org

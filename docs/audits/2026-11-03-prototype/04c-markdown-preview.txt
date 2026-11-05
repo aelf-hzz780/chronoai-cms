@@ -1,0 +1,23 @@
+Browser tab: 4, Title: "Edit article · ChronoAI", URL: "http://127.0.0.1:4173/#editor?id=draft-1793693122758&lang=en&owner=org".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 49-59
+~			27 text  Draft v2 · Saved
+~				48 text Private preview · Saved version v2 · Excluded from readership metrics
++				49 heading Audit sample: original content, Value: 1
++					50 text Audit sample: original content
++				51 text First paragraph for the review.
++				52 heading Our actual second section, Value: 2
++					53 text Our actual second section
++				54 text This is the second paragraph that must be confirmed.
++				55 text ```js
++				56 text const answer = 42;
++				57 text ```
++				58 text | Name | Value |
++				59 text | --- | --- |
+~				60 text | Alpha | 42 |
+~				61 text [Documentation](https://example.com/docs)
+~				62 text ![Private image](/private-media/demo.png)
+~					64 text 278 characters · About 3 min read
+~				80 text v2
++	91 text Draft v2 saved; not yet published.
+The focused UI element is 0 AXWebArea Edit article · ChronoAI, URL: 127.0.0.1:4173/#editor?id=draft-1793693122758&lang=en&owner=org

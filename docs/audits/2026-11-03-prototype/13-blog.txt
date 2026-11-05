@@ -1,0 +1,73 @@
+Browser tab: 4, Title: "Journal · ChronoAI", URL: "http://127.0.0.1:4173/#blog?lang=en&owner=org".
+0 AXWebArea Journal · ChronoAI, URL: 127.0.0.1:4173/#blog?lang=en&owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container main-content
+			4 container
+				5 link Description: ChronoAI JOURNAL, Value: 127.0.0.1:4173/#blog
+				6 button 中文
+				7 button Toggle theme
+				8 button Studio
+			9 container
+				10 text IDEAS · PEOPLE · POSSIBILITIES
+				11 heading Thoughts for a more connected world., Value: 1
+					12 text Thoughts for a
+					13 text more connected world.
+				14 text Ideas on identity, agents, and the future of connected work.
+			15 button FEATURED STORY PRODUCT INSIGHTS · 3 MIN READ From identity to action: a safer way for AI to work Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop? JC Jing Chen Nov 3, 2026
+				16 text FEATURED STORY
+				17 text PRODUCT INSIGHTS · 3 MIN READ
+				18 heading From identity to action: a safer way for AI to work, Value: 2
+					19 text From identity to action: a safer way for AI to work
+				20 text Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop?
+				21 text JC
+				22 text Jing Chen
+				23 text Nov 3, 2026
+			24 container
+				25 heading The latest thinking, Value: 2
+					26 text The latest thinking
+				27 search text field (settable) Description: Search published articles, ID: public-search
+				28 button All stories
+				29 button Product insights
+				30 button Design notes
+				31 button Developer guides
+				32 container public-list
+					33 button PRODUCT INSIGHTS · 3 MIN READ From identity to action: a safer way for AI to work Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop? Jing Chen Nov 3, 2026
+						34 text PRODUCT INSIGHTS · 3 MIN READ
+						35 heading From identity to action: a safer way for AI to work, Value: 3
+							36 text From identity to action: a safer way for AI to work
+						37 text Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop?
+						38 text Jing Chen
+						39 text Nov 3, 2026
+					40 button DESIGN NOTES · 3 MIN READ Designing for trust, one interaction at a time Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop? Alex Wu Nov 3, 2026
+						41 text DESIGN NOTES · 3 MIN READ
+						42 heading Designing for trust, one interaction at a time, Value: 3
+							43 text Designing for trust, one interaction at a time
+						44 text Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop?
+						45 text Alex Wu
+						46 text Nov 3, 2026
+					47 button DEVELOPER GUIDES · 3 MIN READ OAuth, explained through real workflows Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop? Jing Chen Nov 3, 2026
+						48 text DEVELOPER GUIDES · 3 MIN READ
+						49 heading OAuth, explained through real workflows, Value: 3
+							50 text OAuth, explained through real workflows
+						51 text Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop?
+						52 text Jing Chen
+						53 text Nov 3, 2026
+			54 container
+				55 text INDEPENDENT IDEAS. SHARED POSSIBILITIES.
+				56 heading Better work starts with a new perspective., Value: 2
+					57 text Better work starts
+					58 text with a new perspective.
+				59 text Notes from the people building what comes next.
+				60 button Explore the studio
+			61 container
+				62 text ChronoAI Good ideas travel further. © 2026 · Sample site
+				63 button Publishing Studio
+		64 container Prototype controls
+			65 button B Full-site prototype · Sample data
+				66 text B
+				67 text Full-site prototype · Sample data
+			68 button Page map
+			69 button Scenarios
+
+The focused UI element is 0 AXWebArea Journal · ChronoAI, URL: 127.0.0.1:4173/#blog?lang=en&owner=org

@@ -1,0 +1,86 @@
+Browser tab: 4, Title: "Getting started · ChronoAI", URL: "http://127.0.0.1:4173/#guide?owner=org".
+0 AXWebArea Getting started · ChronoAI, URL: 127.0.0.1:4173/#guide?owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Getting started UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 text FROM YOUR FIRST DRAFT, FORWARD
+			27 heading Bring good content to the right places., Value: 1
+				28 text Bring good content to the right places.
+			29 text Keep identities and versions clear at every step, from writing to distribution.
+			30 container
+				31 text YOUR FIRST PUBLISHING JOURNEY
+				32 heading One article. One continuous workflow., Value: 2
+					33 text One article. One continuous workflow.
+				34 text Write in your workspace, confirm the original, then arrange external distribution. English and Chinese progress independently.
+				35 button Start in Content
+				36 button View onboarding
+				37 container Write, confirm, publish original, distribute
+					38 text 01 / Write
+					39 text 02 / Confirm
+					40 text 03 / Original
+					41 text 04 / Distribute
+			42 button 01 Writing in two languages Each language has its own draft and live version. Saving does not publish. Translations are published separately. View page
+				43 text 01
+				44 heading Writing in two languages, Value: 3
+					45 text Writing in two languages
+				46 text Each language has its own draft and live version. Saving does not publish. Translations are published separately.
+				47 text View page
+			48 button 02 Publishing & identity Publish your own personal content. In an organization, Members submit; Publishers or Admins publish authorized versions. View page
+				49 text 02
+				50 heading Publishing & identity, Value: 3
+					51 text Publishing & identity
+				52 text Publish your own personal content. In an organization, Members submit; Publishers or Admins publish authorized versions.
+				53 text View page
+			54 button 03 External distribution Automatic DEV and organization Hashnode workflows require specific approval. Medium and HackerNoon submissions are manual. View page
+				55 text 03
+				56 heading External distribution, Value: 3
+					57 text External distribution
+				58 text Automatic DEV and organization Hashnode workflows require specific approval. Medium and HackerNoon submissions are manual.
+				59 text View page
+			60 button 04 Understanding results Submitted does not mean published. Verify unknown outcomes first; unavailable data is never shown as zero. View page
+				61 text 04
+				62 heading Understanding results, Value: 3
+					63 text Understanding results
+				64 text Submitted does not mean published. Verify unknown outcomes first; unavailable data is never shown as zero.
+				65 text View page
+			66 container
+				67 heading Frequently asked questions, Value: 2
+					68 text Frequently asked questions
+				69 button (collapsed) Will readers see new content after I save?, Secondary Actions: Expand
+					70 text Will readers see new content after I save?
+				71 button (collapsed) Can I view other members’ drafts?, Secondary Actions: Expand
+					72 text Can I view other members’ drafts?
+				73 button (collapsed) Are external copies removed when the original is unpublished?, Secondary Actions: Expand
+					74 text Are external copies removed when the original is unpublished?
+				75 button (collapsed) Does this prototype send content to platforms?, Secondary Actions: Expand
+					76 text Does this prototype send content to platforms?
+		77 container Prototype controls
+			78 button B Full-site prototype · Sample data
+				79 text B
+				80 text Full-site prototype · Sample data
+			81 button Page map
+			82 button Scenarios
+
+The focused UI element is 0 AXWebArea Getting started · ChronoAI, URL: 127.0.0.1:4173/#guide?owner=org

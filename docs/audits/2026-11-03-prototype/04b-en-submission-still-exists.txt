@@ -1,0 +1,110 @@
+Browser tab: 4, Title: "Edit article · ChronoAI", URL: "http://127.0.0.1:4173/#editor?id=permissions&lang=en&owner=org".
+0 AXWebArea Edit article · ChronoAI, URL: 127.0.0.1:4173/#editor?id=permissions&lang=en&owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Edit article UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 button Back to Content
+			27 text  Draft v4 · Saved
+			28 text ·  Visible to authorized members only
+			29 heading View an authorized version, Value: 1
+				30 text View an authorized version
+			31 text Submitted
+			32 button (disabled) Save draft
+			33 button Prepare to publish
+			34 container Article navigation
+				35 button Edit
+				36 button Publishing & distribution
+				37 button Analytics
+				38 button Version history
+			39 container
+				40 container Article language version
+					41 checkbox EN · English, Value: 1
+					42 checkbox 中 · 简体中文, Value: 0
+				43 container Editor view
+					44 button Markdown
+					45 button Private preview
+				46 text Original site en.chronoai.example Only this language is published. Each language is saved and published independently.
+				47 button Languages & sites
+				48 container Formatting toolbar
+					49 button Add heading
+					50 button Bold
+						51 text B
+					52 button Italic
+						53 text I
+					54 button Blockquote
+					55 button Insert link
+					56 button Bulleted list
+					57 button Code block
+					58 button Insert private image
+					59 text MARKDOWN SOURCE
+				60 text ENGINEERING / ENGLISH
+				61 text entry area Description: Article title, Value: Permissions that move with your team, ID: article-title
+				62 text entry area Description: Markdown body, ID: markdown, Value: Every useful AI action starts with a question of trust. Who is acting, what can they access, and when should a person stay in the loop?
+
+## Identity is the starting point
+
+As agents move from answering questions to getting things done, identity becomes part of the workflow — not just the sign-in screen.
+
+A connected identity gives every action the context it needs:
+
+- A clear owner and a verifiable permission
+- The right account for the right destination
+- A meaningful confirmation before publishing
+
+> Give agents the ability to act, and people the confidence to stay in control.
+
+## From a draft to a deliberate action
+
+With NyxID, a draft, its author, and the account that publishes it stay connected. Every action has a scope. Every published version has a history.
+				63 container word-count
+					64 text 774 characters · About 3 min read
+				65 text Markdown source preserved
+				66 button Download
+			67 container
+				68 heading Article details, Value: 2
+					69 text Article details
+				70 text Content ownership
+				71 text ChronoAI Organization
+				72 text Author
+				73 text SL Sarah Lin
+				74 text The byline does not change content ownership.
+				75 text Current language
+				76 text English Published independently
+				77 heading Version status, Value: 2
+					78 text Version status
+				79 text Current draft
+				80 text v4
+				81 text Not published
+				82 text —
+				83 text Saving updates the draft only. The live version changes after publication is confirmed.
+				84 button View version history
+		85 container Prototype controls
+			86 button B Full-site prototype · Sample data
+				87 text B
+				88 text Full-site prototype · Sample data
+			89 button Page map
+			90 button Scenarios
+
+The focused UI element is 0 AXWebArea Edit article · ChronoAI, URL: 127.0.0.1:4173/#editor?id=permissions&lang=en&owner=org

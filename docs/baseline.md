@@ -45,6 +45,20 @@ Non-goal／暂不选择的可选项：定时发布、自助工作区和站点开
 | 所有者、署名作者、操作者分别建模 | R3 要求个人／组织权属与署名分离 |
 | 官方扩展路线优于 fork Ghost | fork 初期可复用后台但升级耦合高；官方 API 外置平台开发量较大但边界更稳定 |
 
+### 2026-11-02 阶段决策：按当前需求交付
+
+继续按 v0.7 实现 D1–D9，保留统一 CMS／NyxID 入口、平台统一运维和每 publication × language 独立 Ghost 的方案。当前阶段不开展百万站点架构改造，不因远期规模讨论改为共享多租户发布引擎。
+
+Continue delivering D1–D9 against v0.7, retaining the unified CMS/NyxID entry, centralized operations and one Ghost per publication and language. A million-site redesign or shared multitenant publishing engine is not part of this stage.
+
+用户量达到 1 万、10 万时安排容量与成本复评。这两个数字是后续评审节点，不是已验证的承载能力；注册用户数、已开通 publication 数、语言实例数分别统计。沿用初期运维协助开通的范围，不增加“注册即自动创建实例”的要求。
+
+Review capacity and cost at 10,000 and 100,000 users. These are review milestones, not verified capacity claims. Track registered users, provisioned publications and language instances separately. Initial provisioning remains operator-assisted rather than automatic on signup.
+
+实施时记录单站资源与运行成本、已开通站点数、流量及故障情况；若成本或稳定性先出现瓶颈，提前进行针对性优化。扩展方案以届时的实际负载和验证证据决定，调整现有部署约束时另行更新需求基线。
+
+Record per-site resource and operating cost, provisioned sites, traffic and incidents. Address cost or reliability limits earlier when observed. Decide scaling changes from measured load and evidence, updating the requirements baseline separately when deployment constraints change.
+
 ## 5. 合理默认与尚待验证的事项
 
 以下为设计候选，不是新增的已确认业务承诺。涉及权限开放的默认采用最小授权，测试前不扩权。

@@ -1,0 +1,17 @@
+Browser tab: 4, Title: "Connections & channels · ChronoAI", URL: "http://127.0.0.1:4173/#connections?owner=org".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
++	143 container Hashnode · Organization publishing
++		144 heading Hashnode · Organization publishing, Value: 2, ID: modal-title
++			145 text Hashnode · Organization publishing
++		146 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
++			147 menu
++				148 (selected) English
++				149 简体中文
++		150 button Close dialog
++		151 text Publish through the organization’s Pro publication. Connection, account permissions and specific approval must all be valid.
++		152 text Workspace ChronoAI Designated account ChronoAI Engineering · Pro
++		153 text Requires an organization Pro publication and correct account permissions. Personal Hashnode is outside the current scope.
++		154 text The buttons simulate NyxID connection states. They do not establish connections or publish content.
++		155 button Close
++		156 button Simulate designated account configured
+The focused UI element is 146 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand

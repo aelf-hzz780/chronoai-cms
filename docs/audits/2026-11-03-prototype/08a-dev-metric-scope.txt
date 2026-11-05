@@ -1,0 +1,19 @@
+Browser tab: 4, Title: "Analytics · ChronoAI", URL: "http://127.0.0.1:4173/#analytics?owner=org".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				146 pop up button (collapsed, settable) Data source, Value: DEV copy, ID: analytics-source, Secondary Actions: Expand
+~						148 Ghost original
+~						149 (selected) DEV copy
+~				153 text Sample period · Last 30 days · As of 2026-11-03 14:00 Source: DEV
+~					155 text DEV Views 5,521 Page views · Current filters
+~					157 text Average daily estimated visitors — Unavailable · Not provided by this channel
+~					166 container Views over the last 30 days; 5521 sample views
+~					175 text Sample metrics · DEV
+~					176 button 01 From identity to action: a safer way for AI to work 2,208 views
+~						179 text 2,208 
+~					181 button 02 让权限跟上团队的变化 1,656 views
+~						184 text 1,656 
+~					186 button 03 Designing for trust, one interaction at a time 1,104 views
+~						189 text 1,104 
+~					191 button 04 OAuth, explained through real workflows 552 views
+~						194 text 552 
+The focused UI element is 0 AXWebArea Analytics · ChronoAI, URL: 127.0.0.1:4173/#analytics?owner=org

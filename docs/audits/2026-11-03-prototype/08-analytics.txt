@@ -1,0 +1,116 @@
+Browser tab: 4, Title: "Analytics · ChronoAI", URL: "http://127.0.0.1:4173/#analytics?owner=org".
+0 AXWebArea Analytics · ChronoAI, URL: 127.0.0.1:4173/#analytics?owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Analytics UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 text UNDERSTAND YOUR IMPACT
+			27 heading Analytics, Value: 1
+				28 text Analytics
+			29 text Understand your content’s performance, then decide what to write next.
+			30 button Export current data
+			31 container
+				32 text Date range
+				33 pop up button (collapsed, settable) Date range, Value: Last 30 days, ID: analytics-period, Secondary Actions: Expand
+					34 menu
+						35 Last 7 days
+						36 (selected) Last 30 days
+						37 Last 90 days
+			38 container
+				39 text Articles
+				40 pop up button (collapsed, settable) Articles, Value: All published articles, ID: analytics-article, Secondary Actions: Expand
+					41 menu
+						42 (selected) All published articles
+						43 From identity to action: a safer way for AI to work
+						44 让权限跟上团队的变化
+						45 Designing for trust, one interaction at a time
+						46 OAuth, explained through real workflows
+			47 container
+				48 text Language
+				49 pop up button (collapsed, settable) Language, Value: All languages, ID: analytics-lang, Secondary Actions: Expand
+					50 menu
+						51 (selected) All languages
+						52 English
+						53 Simplified Chinese
+			54 container
+				55 text Data source
+				56 pop up button (collapsed, settable) Data source, Value: Ghost original, ID: analytics-source, Secondary Actions: Expand
+					57 menu
+						58 (selected) Ghost original
+						59 DEV copy
+						60 Medium
+						61 HackerNoon
+			62 container analytics-result
+				63 text Sample period · Last 30 days · As of 2026-11-03 14:00 Source: Ghost original
+				64 container
+					65 text Ghost original Views 12,840 Page views · Current filters
+				66 container
+					67 text Average daily estimated visitors 308 Daily average of estimated unique visitors
+				68 container
+					69 text Published articles 4 Current workspace and language only
+				70 container
+					71 text Reading time — Unavailable · Not yet provided
+				72 container
+					73 heading Readership trend, Value: 2
+						74 text Readership trend
+					75 text  Views
+					76 container Views over the last 30 days; 12840 sample views
+					77 text 30-day sample trend · Daily estimated UV is not deduplicated across days or added into a total readership count
+				78 container
+					79 heading Traffic sources, Value: 2
+						80 text Traffic sources
+					81 text Traffic source shares within the same site Direct 46% Search engines 28% Developer communities 18% Other sources 8%
+				82 container
+					83 heading Published article performance, Value: 2
+						84 text Published article performance
+					85 text Sample metrics · Ghost original
+					86 button 01 From identity to action: a safer way for AI to work 5,136 views
+						87 text 01
+						88 text From identity to action: a safer way for AI to work
+						89 text 5,136 
+						90 text views
+					91 button 02 让权限跟上团队的变化 3,852 views
+						92 text 02
+						93 text 让权限跟上团队的变化
+						94 text 3,852 
+						95 text views
+					96 button 03 Designing for trust, one interaction at a time 2,568 views
+						97 text 03
+						98 text Designing for trust, one interaction at a time
+						99 text 2,568 
+						100 text views
+					101 button 04 OAuth, explained through real workflows 1,284 views
+						102 text 04
+						103 text OAuth, explained through real workflows
+						104 text 1,284 
+						105 text views
+				106 text Readers may overlap across platforms, so no cross-platform unique-reader total is shown. All numbers are sample data.
+		107 container Prototype controls
+			108 button B Full-site prototype · Sample data
+				109 text B
+				110 text Full-site prototype · Sample data
+			111 button Page map
+			112 button Scenarios
+
+The focused UI element is 0 AXWebArea Analytics · ChronoAI, URL: 127.0.0.1:4173/#analytics?owner=org

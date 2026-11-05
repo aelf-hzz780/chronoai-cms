@@ -1,0 +1,63 @@
+Browser tab: 4, Title: "Confirm publication · ChronoAI", URL: "http://127.0.0.1:4173/#publish?id=identity&lang=zh&owner=org".
+0 AXWebArea Confirm publication · ChronoAI, URL: 127.0.0.1:4173/#publish?id=identity&lang=zh&owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Confirm publication UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 button Back to editor
+			27 text READY TO SHARE
+			28 heading Confirm publication, Value: 1
+				29 text Confirm publication
+			30 text Check the content, identity and destination for this publication.
+			31 container
+				32 text  Content preview Saved version v4 · Simplified Chinese ChronoAI Journal IDEAS. PEOPLE. POSSIBILITIES. PRODUCT INSIGHTS · SIMPLIFIED CHINESE
+				33 heading 从身份到行动：让 AI 安全地完成工作, Value: 2
+					34 text 从身份到行动：让 AI 安全地完成工作
+				35 text JC Jing Chen · Nov 2, 2026 · 3 min read 每一次有价值的 AI 行动，都始于一个关于信任的问题：谁在执行，可以访问什么，以及什么时候需要人来确认？
+				36 heading 身份，是行动的起点, Value: 3
+					37 text 身份，是行动的起点
+				38 text 当 Agent 从回答问题走向完成工作，身份就成为工作流的一部分，而不仅仅是登录页面。
+			39 container
+				40 heading Publication summary, Value: 3
+					41 text Publication summary
+				42 text Content owner ChronoAI  Organization Author Jing Chen Publication language Simplified Chinese Confirmed version v4
+				43 text Current live v4 will be updated
+				44 text This action Update original
+				45 text Publish to original site
+				46 text ChronoAI Journal
+				47 text zh.chronoai.example
+				48 text This publishes only the selected language. Arrange external distribution once the original is live.
+				49 checkbox (settable, integer) Description: I have checked this version and confirm my rights to publish its text and images., Value: 0, ID: rights-confirm
+				50 button (disabled) Confirm original update
+				51 text Publish with your current permissions. No additional editorial review is required.
+				52 text This confirms the Ghost original only. Automatic external organization writes still require NyxID Admin approval for the specific content and action.
+				53 button Download current Markdown source
+		54 container Prototype controls
+			55 button B Full-site prototype · Sample data
+				56 text B
+				57 text Full-site prototype · Sample data
+			58 button Page map
+			59 button Scenarios
+
+The focused UI element is 0 AXWebArea Confirm publication · ChronoAI, URL: 127.0.0.1:4173/#publish?id=identity&lang=zh&owner=org

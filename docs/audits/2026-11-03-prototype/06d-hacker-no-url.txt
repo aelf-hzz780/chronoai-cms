@@ -1,0 +1,14 @@
+Browser tab: 4, Title: "Article distribution · ChronoAI", URL: "http://127.0.0.1:4173/#distribution?id=identity&lang=en&owner=org".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
++	89 container Verify HackerNoon publication
++		90 heading Verify HackerNoon publication, Value: 2, ID: modal-title
++			91 text Verify HackerNoon publication
++		92 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
++			93 menu
++				94 (selected) English
++				95 简体中文
++		96 button Close dialog
++		97 text Production requires checking the public article and source. This simulates publication after editorial review.
++		98 button Close
++		99 button Simulate verified publication
+The focused UI element is 92 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand

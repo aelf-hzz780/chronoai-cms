@@ -1,0 +1,14 @@
+Browser tab: 4, Title: "Article distribution · ChronoAI", URL: "http://127.0.0.1:4173/#distribution?id=identity&lang=en&owner=org".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
++	87 container Record HackerNoon submission
++		88 heading Record HackerNoon submission, Value: 2, ID: modal-title
++			89 text Record HackerNoon submission
++		90 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
++			91 menu
++				92 (selected) English
++				93 简体中文
++		94 button Close dialog
++		95 text Confirm manual submission of version v7. This record does not mean the article is published.
++		96 button Cancel
++		97 button Mark as submitted
+The focused UI element is 90 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand

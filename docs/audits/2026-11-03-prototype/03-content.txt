@@ -1,0 +1,149 @@
+Browser tab: 4, Title: "Content · ChronoAI", URL: "http://127.0.0.1:4173/#content?owner=org".
+0 AXWebArea Content · ChronoAI, URL: 127.0.0.1:4173/#content?owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Content UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 text YOUR PUBLISHING SPACE
+			27 heading Content, Value: 1
+				28 text Content
+			29 text Bring great content to readers with the right identity.
+			30 button Import Markdown
+			31 button New article
+			32 button Drafts in progress 3
+				33 text Drafts in progress
+				34 text 3
+			35 button Ready to publish 2
+				36 text Ready to publish
+				37 text 2
+			38 button Published articles 3
+				39 text Published articles
+				40 text 3
+			41 container Filter by content status
+				42 checkbox All content 8, Value: 1
+				43 checkbox My drafts 3, Value: 0
+				44 checkbox Awaiting publication 2, Value: 0
+				45 checkbox Published 3, Value: 0
+			46 search text field (settable) Description: Search content, ID: search-input
+			47 button Filter
+			48 container Article list
+				49 table
+					50 row
+						51 cell
+							52 checkbox (settable, integer) Description: Select all articles on this page, Value: 0, ID: select-all
+						53 cell
+							54 text Article title
+						55 cell
+							56 text Publication status
+						57 cell
+							58 text Language
+					59 row
+						60 cell
+							61 checkbox (settable, integer) Description: Select article: From identity to action: a safer way for AI to work, Value: 0
+						62 cell
+							63 button From identity to action: a safer way for AI to work
+							64 text Product insights Chinese translation needs review
+						65 cell
+							66 text Unpublished changes
+						67 cell
+							68 text EN ZH ·
+						69 cell
+							70 button Article actions: From identity to action: a safer way for AI to work
+					71 row
+						72 cell
+							73 checkbox (settable, integer) Description: Select article: Building your first identity-aware agent, Value: 0
+						74 cell
+							75 button Building your first identity-aware agent
+							76 text Developer guides · Created by me
+						77 cell
+							78 text Draft
+						79 cell
+							80 text EN ZH
+						81 cell
+							82 button Article actions: Building your first identity-aware agent
+					83 row
+						84 cell
+							85 checkbox (settable, integer) Description: Select article: A new chapter for connected work, Value: 0
+						86 cell
+							87 button A new chapter for connected work
+							88 text Product updates · A fixed version has been submitted
+						89 cell
+							90 text Awaiting publication
+						91 cell
+							92 text EN
+						93 cell
+							94 button Article actions: A new chapter for connected work
+					95 row
+						96 cell
+							97 checkbox (settable, integer) Description: Select article: Permissions that move with your team, Value: 0
+						98 cell
+							99 button Permissions that move with your team
+							100 text Engineering · A fixed version has been submitted
+						101 cell
+							102 text Awaiting publication
+						103 cell
+							104 text EN ZH
+						105 cell
+							106 button Article actions: Permissions that move with your team
+					107 row
+						108 cell
+							109 checkbox (settable, integer) Description: Select article: Context is the new interface, Value: 0
+						110 cell
+							111 button Context is the new interface
+							112 text Product insights · Created by me
+						113 cell
+							114 text Draft
+						115 cell
+							116 text EN
+						117 cell
+							118 button Article actions: Context is the new interface
+					119 row
+						120 cell
+							121 checkbox (settable, integer) Description: Select article: Designing for trust, one interaction at a time, Value: 0
+						122 cell
+							123 button Designing for trust, one interaction at a time
+							124 text Design notes · Organization content
+						125 cell
+							126 text Published
+						127 cell
+							128 text EN ZH
+						129 cell
+							130 button Article actions: Designing for trust, one interaction at a time
+				131 text 8 articles · Showing 1–6
+				132 button (disabled) Previous page
+				133 button Page 1
+				134 button Page 2
+				135 button Next page
+			136 text Managing content as 
+			137 text ChronoAI
+			138 text  . Authorship and ownership are recorded separately.
+			139 button About content ownership 
+		140 container Prototype controls
+			141 button B Full-site prototype · Sample data
+				142 text B
+				143 text Full-site prototype · Sample data
+			144 button Page map
+			145 button Scenarios
+
+The focused UI element is 0 AXWebArea Content · ChronoAI, URL: 127.0.0.1:4173/#content?owner=org

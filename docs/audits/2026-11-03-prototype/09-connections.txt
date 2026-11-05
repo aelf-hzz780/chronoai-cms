@@ -1,0 +1,56 @@
+Browser tab: 4, Title: "Connections & channels · ChronoAI", URL: "http://127.0.0.1:4173/#connections?owner=org".
+0 AXWebArea Connections & channels · ChronoAI, URL: 127.0.0.1:4173/#connections?owner=org
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container
+			4 link Description: ChronoAI content home, Value: 127.0.0.1:4173/#content
+			5 button Switch workspace
+			6 container Workspace navigation
+				7 button Content
+				8 button Publishing & distribution
+				9 button Analytics
+			10 container Workspace management
+				11 button Connections & channels
+				12 button Workspace settings
+				13 button Members & permissions
+			14 button Getting started
+			15 button JC
+		16 container
+			17 text ChronoAI Connections & channels UI
+			18 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+				19 menu
+					20 (selected) English
+					21 简体中文
+			22 button Switch to dark theme
+			23 button Task notifications
+			24 button Account menu
+		25 container main-content
+			26 text CONNECTED, WITH INTENT
+			27 heading Connections & channels, Value: 1
+				28 text Connections & channels
+			29 text One workspace, clearly defined publishing identities.
+			30 button Connections & permissions
+			31 text NyxID connects accounts. Workspace permissions govern actions.
+			32 text Connections and capabilities appear here. Automatic organization writes require approval for the specific content, destination and action.
+			33 container
+				34 text DEV DEV Automatic publishing Connected Share technical stories through the designated developer account, with attribution to the original. Current organization account @chronoai-team Write an exact version Preserve source attribution Specific approval for each write
+				35 button View connection
+			36 container
+				37 text Hashnode Organization publishing Not configured Publish through the organization’s Pro publication. Connection, account permissions and specific approval must all be valid. Current organization account ChronoAI Engineering · Pro Write an exact version Pro publication Specific approval for each write
+				38 button Configure connection
+			39 container
+				40 text M Medium Assisted submission Manual workflow Prepare Markdown and source details, then submit manually. Verify publication separately once a public link is available. Current organization account ChronoAI · Manual action Generate submission materials Manually verify publication Does not submit or publish automatically
+				41 button View submission workflow
+			42 container
+				43 text H HackerNoon Assisted submission Manual workflow Prepare the article and source details for manual editorial submission. Submission and publication are tracked separately. Current organization account ChronoAI · Company account Generate submission materials Manually verify publication Does not submit or publish automatically
+				44 button View submission workflow
+			45 text A working connection still requires a check of this action.
+			46 text If the content version, publishing account, language or action changes, previous approval no longer applies. A platform failure affects only that channel.
+		47 container Prototype controls
+			48 button B Full-site prototype · Sample data
+				49 text B
+				50 text Full-site prototype · Sample data
+			51 button Page map
+			52 button Scenarios
+
+The focused UI element is 0 AXWebArea Connections & channels · ChronoAI, URL: 127.0.0.1:4173/#connections?owner=org

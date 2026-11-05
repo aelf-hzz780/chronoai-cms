@@ -20,6 +20,20 @@ docker compose -p blogsystem-phase0 up -d --wait --wait-timeout 180
 
 `.env` 使用随机独立凭证、权限 0600，已被 `.gitignore` 排除。prepare.py 不覆盖既有配置，避免重置已初始化数据库的连接密码。不要打印完整 `docker compose config`、容器环境或 `.env`，使用 `config --quiet` 验证。
 
+## 本地后台登录
+
+英文后台为 `http://localhost:2468/ghost/`，中文后台为 `http://localhost:2469/ghost/`。已执行自动初始化的环境，其登录邮箱与密码保存在项目 `.runtime/ghost-experiment.json` 的对应 `sites.en`／`sites.zh` 中。
+
+The local Admin entries use ports 2468 (EN) and 2469 (ZH). For an automatically initialized experiment, the matching operator credentials remain in the ignored local state file, under `sites.en` and `sites.zh`.
+
+本地预览默认通过 `security.staffDeviceVerification=false` 关闭新设备邮件验证，仍需正确的邮箱和密码。这一设置仅适用于本配置中绑定 `127.0.0.1` 的测试站点，不能复用于公网部署。它不关闭 Staff 设置中单独强制启用的 2FA；密码重置、邀请和会员邮件登录仍需要邮件服务。
+
+This loopback-only preview disables new-device email verification while retaining password authentication. It is not a public-deployment setting and does not disable separately enforced Staff 2FA. Password resets, invitations and member email sign-in still require mail delivery. This historical two-site experiment does not configure the separate six-site LAN acceptance environment.
+
+需要恢复新设备邮件验证时，先配置可用 SMTP，再在 `.env` 中设置 `GHOST_STAFF_DEVICE_VERIFICATION=true`，执行 `docker compose -p blogsystem-phase0 up -d --wait --wait-timeout 180` 应用配置。单独执行 `restart` 不会加载新的环境变量。该设置变更保留账号、文章和持久卷。
+
+To restore device verification, configure SMTP, set `GHOST_STAFF_DEVICE_VERIFICATION=true` and recreate the Compose services with the command above. A plain restart does not reload environment variables. Accounts, posts and persistent volumes are retained.
+
 ## 初始化与验证
 
 可以选择下面的自动本地实验，或后面的手工初始化，两者择一。自动初始化仅用于尚未设置 owner 的本机测试站点。
@@ -34,7 +48,7 @@ python3 experiment.py --verify
 
 实验会创建两个本地测试运维账号和两篇合成文章；凭证保存在项目 `.runtime/ghost-experiment.json`（0600、忽略提交），输出仅包含脱敏验证结果。脚本限制为 loopback HTTP 地址并拒绝重定向。它通过该版本的 Ghost Admin 初始化／设置接口完成一次运维准备，再通过 Integration Admin API 发布；初始化接口不是生产业务 Adapter 的契约。
 
-`--verify` 只读，可在重启后执行。中断后的 `--resume` 使用已有状态；若帖子请求结果不确定，先查远端，无法证明结果时停止而不盲重试。实验未配置 SMTP；首次初始化后的再次运维登录可能需要邮件设备验证，应配置邮件后处理，不关闭认证校验。正常的 Integration API 验证不依赖重新登录。
+`--verify` 只读，可在重启后执行。中断后的 `--resume` 使用已有状态；若帖子请求结果不确定，先查远端，无法证明结果时停止而不盲重试。实验未配置 SMTP；本地后台使用上节说明的账号密码登录。正常的 Integration API 验证不依赖重新登录。
 
 本实验验证 HTML card 的代码／表格呈现、署名、站点 locale、sitemap 可达及两站文章分离；它不证明平台 Markdown 保真、图片保护、翻译互链、业务权限或 NyxID 已完成。
 

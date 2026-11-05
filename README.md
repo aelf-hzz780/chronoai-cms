@@ -1,5 +1,9 @@
 # BlogSystem
 
+最新 CMS B 交付、原型归档及真实 NyxID／Ghost 验收摘要：[2026-11-05 更新](docs/cms-delivery-update-2026-11-05.md)。
+
+Latest CMS B delivery, prototype archive and real NyxID/Ghost acceptance summary: [2026-11-05 update](docs/cms-delivery-update-2026-11-05.md).
+
 个人与组织的双语内容发布平台，正式范围为 Gist v0.7 的两份原文及 D1–D9／适用 A01–A52。
 
 已实现 CMS 与共享 NyxID service API、Markdown／私有素材／修订、个人与组织 EN/ZH 四个独立官方 Ghost、外部分发与生命周期、指标及加密备份恢复。**完整 D1–D9 尚未正式签收**；Document、Local 与真实目标 Live 分别记录，缺少外部输入的必需项保持 BLOCKED。

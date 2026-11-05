@@ -1,0 +1,40 @@
+Browser tab: 4, Title: "Start writing · ChronoAI", URL: "http://127.0.0.1:4173/#onboarding".
+0 AXWebArea Start writing · ChronoAI, URL: 127.0.0.1:4173/#onboarding
+	1 link Description: Skip to content, Value: 127.0.0.1:4173/#main-content
+	2 container app
+		3 container main-content
+			4 container
+				5 link 127.0.0.1:4173/#blog
+				6 text UI
+				7 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
+					8 menu
+						9 (selected) English
+						10 简体中文
+				11 button Set up later
+			12 container Getting started steps
+				13 text 1 Choose a workspace 2 Confirm publishing sites 3 Start writing
+			14 text MAKE ROOM FOR YOUR IDEAS
+			15 heading Choose a workspace, Value: 1
+				16 text Choose a workspace
+			17 text Choose the identity you will write under. Ownership stays clear from the moment content is created.
+			18 button C ChronoAI Organization workspace · Publisher The organization owns the content; the author keeps the byline.
+				19 text C
+				20 text ChronoAI
+				21 container
+					22 text Organization workspace · Publisher
+					23 text The organization owns the content; the author keeps the byline.
+			24 button JC Jing’s workspace Personal content · Independent publishing Use your own sites and external connections.
+				25 text JC
+				26 text Jing’s workspace
+				27 container
+					28 text Personal content · Independent publishing
+					29 text Use your own sites and external connections.
+			30 button Continue
+		31 container Prototype controls
+			32 button B Full-site prototype · Sample data
+				33 text B
+				34 text Full-site prototype · Sample data
+			35 button Page map
+			36 button Scenarios
+
+The focused UI element is 0 AXWebArea Start writing · ChronoAI, URL: 127.0.0.1:4173/#onboarding

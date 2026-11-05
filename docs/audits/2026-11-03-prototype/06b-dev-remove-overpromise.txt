@@ -1,0 +1,15 @@
+Browser tab: 4, Title: "Article distribution · ChronoAI", URL: "http://127.0.0.1:4173/#distribution?id=identity&lang=en&owner=org".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
++	93 container Remove known DEV copy
++		94 heading Remove known DEV copy, Value: 2, ID: modal-title
++			95 text Remove known DEV copy
++		96 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
++			97 menu
++				98 (selected) English
++				99 简体中文
++		100 button Close dialog
++		101 text Request removal of the known DEV copy, even if the original is unpublished. Current permissions, account and applicable approval are still checked.
++		102 text This simulates removal after approval is verified.
++		103 button Cancel
++		104 button Simulate approval & removal
+The focused UI element is 96 pop up button (collapsed, settable) Description: Interface language, Value: English, Secondary Actions: Expand
