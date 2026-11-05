@@ -1,0 +1,20 @@
+✔ Owner/Admin can apply; publishing role alone cannot (5.293167ms)
+✔ repeat application preserves request identity and fields (0.187292ms)
+✔ application fields and language scope remain separated by workspace (0.805666ms)
+✔ supplement resumes the original request, ordinary member cannot submit (0.193167ms)
+✔ a URL alone is not readiness; only the registered language is verified (0.196083ms)
+✔ failure recovery never resets the ready language or identity (0.27ms)
+✔ verification requires registration; real or unsafe addresses are rejected (0.113ms)
+✔ switching UI locale and JSON persistence retain form drafts and request state (0.183875ms)
+✔ partial demo and waiting-info demo keep honest readiness (0.377791ms)
+✔ claiming an information-blocked request preserves the block (0.315ms)
+✔ registering a changed address clears only that language’s old evidence (0.256875ms)
+✔ verification is tied to the registered address and rejects an old response (0.130584ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 56.266875

@@ -1,0 +1,84 @@
+✔ Owner/Admin can apply; publishing role alone cannot (2.134167ms)
+✔ repeat application preserves request identity and fields (0.110459ms)
+✔ application fields and language scope remain separated by workspace (0.413833ms)
+✔ supplement resumes the original request, ordinary member cannot submit (0.129833ms)
+✔ a URL alone is not readiness; only the registered language is verified (0.183625ms)
+✔ failure recovery never resets the ready language or identity (0.150875ms)
+✔ verification requires registration; real or unsafe addresses are rejected (0.095333ms)
+✔ switching UI locale and JSON persistence retain form drafts and request state (0.105458ms)
+✔ partial demo and waiting-info demo keep honest readiness (0.139666ms)
+✖ claiming an information-blocked request preserves the block (0.511791ms)
+✖ registering a changed address clears only that language’s old evidence (0.180917ms)
+✖ verification is tied to the registered address and rejects an old response (0.125291ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 9
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.50675
+
+✖ failing tests:
+
+test at prototypes/site-provisioning/model.test.mjs:37:1
+✖ claiming an information-blocked request preserves the block (0.511791ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'working' !== 'info'
+
+      at TestContext.<anonymous> (file:///Users/huangzongzhe/.codex/worktrees/site-provisioning-prototype/chronoai-cms-review-20261103/prototypes/site-provisioning/model.test.mjs:38:144)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'working',
+    expected: 'info',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at prototypes/site-provisioning/model.test.mjs:40:1
+✖ registering a changed address clears only that language’s old evidence (0.180917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + '2026-11-05T06:40:23.327Z'
+  - null
+
+      at TestContext.<anonymous> (file:///Users/huangzongzhe/.codex/worktrees/site-provisioning-prototype/chronoai-cms-review-20261103/prototypes/site-provisioning/model.test.mjs:41:289)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '2026-11-05T06:40:23.327Z',
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at prototypes/site-provisioning/model.test.mjs:43:1
+✖ verification is tied to the registered address and rejects an old response (0.125291ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///Users/huangzongzhe/.codex/worktrees/site-provisioning-prototype/chronoai-cms-review-20261103/prototypes/site-provisioning/model.test.mjs:44:169)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /URL_CHANGED/,
+    operator: 'throws',
+    diff: 'simple'
+  }
