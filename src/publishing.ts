@@ -25,7 +25,7 @@ export interface OriginalAdapter {
   recordVerifiedMedia?(input:OriginalInput):Promise<boolean>;
 }
 const mediaFingerprint=(row:Record<string,any>)=>digest(JSON.stringify([row.id,row.article_id,row.revision_id,row.owner_id,row.action,row.remote_id,row.url]));
-const mediaCommand=(request:Record<string,any>,row:Record<string,any>)=>({kind:'release-media',resourceId:request.id,digest:mediaFingerprint(row)});
+const mediaCommand=(request:Record<string,any>,row:Record<string,any>,store:ContentService['store'])=>({kind:'release-media',resourceId:request.id,digest:digest(JSON.stringify([mediaFingerprint(row),releaseCommand(row,store).digest]))});
 export class PublishingService {
   content: ContentService; vault: Vault;
   constructor(content: ContentService, vault: Vault) { this.content = content; this.vault = vault; }
@@ -37,7 +37,7 @@ export class PublishingService {
     const revisionId = text(input.revisionId, 'revisionId');
     const fingerprint = digest(JSON.stringify({ articleId, revisionId, owner: input.ownerId, author: input.creditedAuthor, action: input.action, rights: input.rightsConfirmed }));
     const previous = this.content.store.get('SELECT * FROM idempotency WHERE actor=? AND operation=? AND key=?', actorKey, 'original', key);
-    if (previous) { requireValue(previous.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key already used for different content'); const row=this.content.store.get('SELECT * FROM releases WHERE id=?', previous.resource_id)!;this.content.store.transaction(()=>bindActorCommand(this.content.store,actor,releaseCommand(row)));return this.safe(row); }
+    if (previous) { requireValue(previous.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key already used for different content'); const row=this.content.store.get('SELECT * FROM releases WHERE id=?', previous.resource_id)!;return this.safe(row); }
     const revision = await this.content.visibleRevision(actor, article, revisionId);
     requireValue(input.creditedAuthor === revision.credited_author && input.rightsConfirmed === true, 400, 'CONFIRMATION_REQUIRED', 'Confirm exact credited author and text/image publication rights');
     requireValue(['publish', 'update', 'unpublish'].includes(String(input.action)), 400, 'INVALID_INPUT', 'Invalid publication action');
@@ -48,7 +48,7 @@ export class PublishingService {
     const id = randomUUID(), now = new Date().toISOString();
     this.content.store.transaction(() => {
       requireValue(!this.content.store.get("SELECT 1 FROM releases WHERE article_id=? AND state IN ('queued','publishing','verifying','uncertain')", articleId), 409, 'PENDING_RELEASE', 'Resolve the pending original before another release');
-      const bound=bindActorCommand(this.content.store,actor,releaseCommand({id,article_id:articleId,revision_id:revisionId,owner_id:article.owner_id,action:input.action}));
+      const bound=bindActorCommand(this.content.store,actor,releaseCommand({id,article_id:articleId,revision_id:revisionId,owner_id:article.owner_id,action:input.action,remote_id:live?.remote_id??null,url:live?.url??null},this.content.store));
       this.content.store.run('INSERT INTO releases VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', id, articleId, revisionId, article.owner_id, this.vault.seal(bound), input.action as string, 'queued', live?.remote_id ?? null, live?.url ?? null, null, trace, now, now);
       const translation=this.content.store.get('SELECT * FROM translations WHERE article_id=?',articleId);
       if(translation) this.content.store.run('INSERT INTO release_links VALUES (?,?,?)',id,translation.source_article,translation.source_revision);
@@ -70,7 +70,7 @@ export class PublishingService {
     requireValue(row.action!=='unpublish'&&row.remote_id&&row.url,409,'REMOTE_ID_REQUIRED','请先只读复核，认回已存在的 Ghost 原文。');
     const key=text(input.idempotencyKey,'idempotencyKey',200),actorKey=`${actor.issuer}|${actor.subject}`,fingerprint=mediaFingerprint(row);
     const prior=store.get('SELECT * FROM idempotency WHERE actor=? AND operation=? AND key=?',actorKey,'release-media',key);
-    if(prior){requireValue(prior.digest===fingerprint,409,'CONFLICT','Idempotency key belongs to another media confirmation');const request=store.get('SELECT * FROM release_media_requests WHERE id=?',prior.resource_id)!;store.transaction(()=>bindActorCommand(store,actor,mediaCommand(request,row)));return this.safeMedia(request);}
+    if(prior){requireValue(prior.digest===fingerprint,409,'CONFLICT','Idempotency key belongs to another media confirmation');const request=store.get('SELECT * FROM release_media_requests WHERE id=?',prior.resource_id)!;return this.safeMedia(request);}
     requireValue(['uncertain','verifying'].includes(row.state),409,'PUBLICATION_STATE','仅可补齐已发送但尚未完成核验的原文图片。');
     new Queue(store).assertWritable();const requestId=randomUUID(),now=new Date().toISOString();
     store.transaction(()=>{
@@ -79,7 +79,7 @@ export class PublishingService {
       requireValue(!store.get("SELECT 1 FROM release_media_requests WHERE release_id=? AND state IN ('queued','running')",id),409,'IN_PROGRESS','已有公开图片补齐任务，请先刷新状态。');
       const changed=store.run("UPDATE jobs SET state='queued',lease_until=NULL WHERE kind='release' AND resource_id=? AND state<>'running'",id);
       requireValue(Number(changed.changes)===1,409,'IN_PROGRESS','当前 Worker 仍在处理此原文。');
-      const bound=bindActorCommand(store,actor,{kind:'release-media',resourceId:requestId,digest:fingerprint});
+      const bound=bindActorCommand(store,actor,mediaCommand({id:requestId},row,store));
       store.run('INSERT INTO release_media_requests VALUES (?,?,?,?,?,?,?,?,?,?,?)',requestId,id,row.revision_id,fingerprint,this.vault.seal(bound),trace,'queued',0,null,now,now);
       store.run('INSERT INTO idempotency VALUES (?,?,?,?,?)',actorKey,'release-media',key,fingerprint,requestId);
       store.audit(actor.subject,row.owner_id,'original.media.confirm',id,trace,{requestId,revisionId:row.revision_id,rightsConfirmed:true});
@@ -141,7 +141,7 @@ export class ReleaseWorker {
       const media=recovering?store.get("SELECT * FROM release_media_requests WHERE release_id=? AND state='queued' ORDER BY rowid DESC LIMIT 1",row.id):undefined;
       const recovery = recovering&&!media ? store.get("SELECT * FROM recovery_actors WHERE kind='release' AND resource_id=?", row.id) : undefined;
       const actor = this.service.vault.open<Actor>(media?.actor_json??recovery?.actor_json ?? row.actor_json);
-      if(!recovering)assertCommandBinding(store,actor,releaseCommand(row));
+      if(!recovering)assertCommandBinding(store,actor,releaseCommand(row,store));
       // Recovery uses current caller authority to inspect the saved result.
       // Original confirmation remains audit evidence; beforeWrite forbids resend.
       const purpose=recovering&&!media?'access':'queued-write';
@@ -156,17 +156,20 @@ export class ReleaseWorker {
       input.guard = () => this.queue.guard(lease);
       input.beforeWrite = async () => {
         requireValue(!recovering, 409, 'RECOVERY_READ_ONLY', 'Recovery may inspect existing results but cannot resend');
-        assertCommandBinding(store,actor,releaseCommand(store.get('SELECT * FROM releases WHERE id=?',row.id)!));
-        await this.service.content.policy.publish(actor, row.owner_id); this.queue.guard(lease);this.queue.assertWritable();
+        assertCommandBinding(store,actor,releaseCommand(store.get('SELECT * FROM releases WHERE id=?',row.id)!,store));
+        await this.service.content.policy.publish(actor, row.owner_id,'queued-write');
+        assertCommandBinding(store,actor,releaseCommand(store.get('SELECT * FROM releases WHERE id=?',row.id)!,store));
+        this.queue.guard(lease);this.queue.assertWritable();
       };
       input.beforeMaterialize=async()=>{
         requireValue(!recovering||media,409,'RECOVERY_READ_ONLY','只读复核不会公开新图片；请另行确认“补齐公开图片”。');
         const current=store.get('SELECT * FROM releases WHERE id=?',row.id)!;
-        if(media){requireValue(media.confirmation_digest===mediaFingerprint(current)&&['uncertain','verifying'].includes(current.state),409,'PUBLICATION_STATE','Media confirmation changed');assertCommandBinding(store,actor,mediaCommand(media,current));}
-        else assertCommandBinding(store,actor,releaseCommand(current));
-        await this.service.content.policy.publish(actor,row.owner_id);
+        if(media){requireValue(media.confirmation_digest===mediaFingerprint(current)&&['uncertain','verifying'].includes(current.state),409,'PUBLICATION_STATE','Media confirmation changed');assertCommandBinding(store,actor,mediaCommand(media,current,store));}
+        else assertCommandBinding(store,actor,releaseCommand(current,store));
+        await this.service.content.policy.publish(actor,row.owner_id,'queued-write');
         this.queue.guard(lease);this.queue.assertWritable();
         const final=store.get('SELECT * FROM releases WHERE id=?',row.id)!;
+        assertCommandBinding(store,actor,media?mediaCommand(media,final,store):releaseCommand(final,store));
         requireValue(mediaFingerprint(final)===expectedMediaFingerprint&&materializationContext()===expectedContext&&(media?['uncertain','verifying'].includes(final.state):final.state==='publishing'),409,'PUBLICATION_STATE','Original mapping, state or version changed before exposing media');
       };
       input.beforeRecordMedia=async()=>{await this.service.content.policy.publish(actor,row.owner_id,purpose);this.queue.guard(lease);requireValue(materializationContext()===expectedContext,409,'PUBLICATION_STATE','Original media mapping changed');};
@@ -231,7 +234,7 @@ export class ReleaseWorker {
       if(!enqueueProjection)return;
       const projection=randomUUID();
       store.run('INSERT INTO projections VALUES (?,?,?,?,?,?,?)',projection,row.article_id,row.owner_id,row.actor_json,'queued',null,row.trace_id);
-      deriveCommand(store,this.service.vault.open<Actor>(row.actor_json),releaseCommand(row),projectionCommand({id:projection,article_id:row.article_id,owner_id:row.owner_id}));
+      deriveCommand(store,this.service.vault.open<Actor>(row.actor_json),releaseCommand(row,store),projectionCommand({id:projection,article_id:row.article_id,owner_id:row.owner_id},store,true));
       store.run('INSERT INTO jobs VALUES (?,?,?,?,?,?)',randomUUID(),'projection',projection,'queued',null,now);
     }, true);
   }

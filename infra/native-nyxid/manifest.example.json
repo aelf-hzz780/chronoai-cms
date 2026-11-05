@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "cmsCommit": "REPLACE_WITH_INDEPENDENTLY_REVIEWED_COMMIT",
+  "dockerContext": "colima-blogsystem",
+  "project": "cms-native-nyxid-cutover",
+  "issuer": "http://localhost:3001",
+  "backendImage": "ghcr.io/chronoaiproject/nyxid/backend@sha256:989c2af8e68d843ca2f1e65ab99323d44190f87d16285db49778de37aa59e5f2",
+  "frontendImage": "ghcr.io/chronoaiproject/nyxid/frontend@sha256:d211a8ca3db156966ea6a2ed2542322ee99c28673a315f19ad1e21d5b20f97c4",
+  "backendPort": 33003,
+  "frontendPort": 33000,
+  "backendEnvFile": "/ABSOLUTE/PRIVATE/container-backend.env",
+  "frontendEnvFile": "/ABSOLUTE/PRIVATE/container-frontend.env",
+  "keysDirectory": "/ABSOLUTE/PRIVATE/keys",
+  "tufDirectory": "/ABSOLUTE/PRIVATE/tuf",
+  "network": "REQUIRED_EXISTING_NETWORK",
+  "stateDirectory": "/ABSOLUTE/PRIVATE/native-cutover-state",
+  "independentAcceptancePath": "/ABSOLUTE/independent-acceptance.json",
+  "cmsDatabases": ["/ABSOLUTE/CMS3457/platform.sqlite", "/ABSOLUTE/CMS3458/platform.sqlite"],
+  "workerContainerIds": [],
+  "preservedContainerIds": ["REQUIRED_FOUR_GHOST_AND_BASELINE_CONTAINER_IDS"],
+  "mongo": {
+    "containerId": "REQUIRED_CURRENT_MONGO_CONTAINER_ID",
+    "dumpConfigPathInContainer": "/run/private/mongodump.yml"
+  },
+  "backupInputs": [
+    {"category": "configuration", "path": "/ABSOLUTE/PRIVATE/current-native-backend.json"},
+    {"category": "configuration", "path": "/ABSOLUTE/PRIVATE/current-portal-and-lan-config"},
+    {"category": "configuration", "path": "/ABSOLUTE/PRIVATE/cms3457-and-3458-config"},
+    {"category": "registration", "path": "/ABSOLUTE/PRIVATE/service-and-oauth-registration-export.json"}
+  ],
+  "checks": [
+    {"name": "CMS-3457", "url": "http://host.docker.internal:3457/health"},
+    {"name": "CMS-3458", "url": "http://host.docker.internal:3458/health"},
+    {"name": "NyxAgent-8088", "url": "http://host.docker.internal:8088/REPLACE_WITH_VERIFIED_READ_ONLY_PATH"}
+  ],
+  "hooks": {
+    "quiescence": {"file": "/ABSOLUTE/REVIEWED/assert-quiescence", "sha256": "REQUIRED", "args": []},
+    "stopPrevious": {"file": "/ABSOLUTE/REVIEWED/stop-previous-backend-and-portal", "sha256": "REQUIRED", "args": []},
+    "verifyPreviousStopped": {"file": "/ABSOLUTE/REVIEWED/assert-previous-stopped", "sha256": "REQUIRED", "args": []},
+    "switchToOfficial": {"file": "/ABSOLUTE/REVIEWED/switch-official", "sha256": "REQUIRED", "args": []},
+    "switchToPrevious": {"file": "/ABSOLUTE/REVIEWED/switch-previous", "sha256": "REQUIRED", "args": []}
+  }
+}

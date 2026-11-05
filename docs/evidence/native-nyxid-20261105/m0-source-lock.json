@@ -1,0 +1,43 @@
+{
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "source": "git archive of fixed official commit; no source modifications",
+  "files": [
+    {
+      "path": "backend/src/services/approval_service.rs",
+      "sha256": "be607c6b38e90c50a5dfdf6cffd822953149b8689651e9af3572b29f6d672241"
+    },
+    {
+      "path": "backend/src/handlers/proxy.rs",
+      "sha256": "919c97143a0d69f54fe056b06c0d2b37890a666f0dfb82923cbc4bb2a35c7deb"
+    },
+    {
+      "path": "backend/src/mw/auth.rs",
+      "sha256": "8a23630774eeb657462a5a917637e6e2f700fbff9ecf1962f333ec5918e50e28"
+    },
+    {
+      "path": "backend/src/services/assistant_service_execution/http.rs",
+      "sha256": "6755f56e2fb0b2ed43674b4bf5a18049cc4368100b0fcdbdb9e1d4a38eaacb9c"
+    },
+    {
+      "path": "backend/src/services/assistant_service_execution/egress.rs",
+      "sha256": "fedd6e5edff26955fa3861a97ce7fcbdb0903d1ebf9fb1d043c4b16d58625485"
+    },
+    {
+      "path": "backend/src/routes.rs",
+      "sha256": "5530c0590f9cab5366c586eabffb8150b472f5c69e3d36ee47d7c7e320ad53a0"
+    },
+    {
+      "path": "backend/src/downstream_disconnect.rs",
+      "sha256": "9267e770868e22fadf02225d9637a8e1df794cbcd4610f490350026e2ccf8c14"
+    },
+    {
+      "path": "backend/src/crypto/jwt.rs",
+      "sha256": "caa5d50dc7490a4178a299b9613a23c6981d92b0a03f4ad19fd3c2de0e9b3a24"
+    },
+    {
+      "path": "backend/src/handlers/oauth.rs",
+      "sha256": "8e2864b3a0af89e3c2f70860e927648cce1f9ccc3cebee284bdf4dd1ef8f5cac"
+    }
+  ],
+  "scriptSha256": "71c9450e8fca493c4195c212bd9d768ba9982141298970973ff319b71510a869"
+}

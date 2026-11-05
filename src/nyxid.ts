@@ -1,21 +1,21 @@
 import { readFile } from 'node:fs/promises';
+import {readFileSync} from 'node:fs';
 import type { Actor, Authority, AuthorizationPurpose, OrganizationMember } from './policy.ts';
 import type { Config } from './config.ts';
 import type { Store } from './store.ts';
-import type { RemoteRequest } from './targets.ts';
+import {isRead,type RemoteRequest} from './targets.ts';
 import { remoteJson, RemoteError } from './http-client.ts';
-import { requireValue } from './errors.ts';
+import {AppError,requireValue} from './errors.ts';
 import { digest } from './content.ts';
-import {connectionFingerprint,requiresExactApproval} from './connection-proof.ts';
+import {connectionFingerprint,requiresExactApproval,type ExecutionApproval} from './connection-proof.ts';
 import {CallerAuthorization} from './caller-authorization.ts';
-import {validateCommandAuthority} from './command-authority.ts';
 
 type Owner = { kind:string; issuer:string; subject:string };
 export interface ConnectionBinding {
   id:string; target:string; owner:Owner; slug:string; remoteBaseUrl:string;
   accountId:string; organizationId?:string; publicationId?:string;
   label?:string;
-  executionApproval?:'exact';
+  executionApproval?:ExecutionApproval;
   pro?:boolean; canPublish?:boolean; canUpdate?:boolean; canRemove?:boolean;
 }
 export function canonicalJson(value:any):string {
@@ -26,10 +26,16 @@ export function canonicalJson(value:any):string {
 export function operationDigest(id:string,endpointId:string,contractDigest:string,args:any) {
   return `sha256:${digest(canonicalJson({contract_version:'nyxid-exact-operation.v1',user_service_id:id,endpoint_id:endpointId,endpoint_contract_digest:contractDigest,arguments:args}))}`;
 }
-function tokenClaims(actor:Actor) {
-  // Only used to choose the upstream route. Authentication and online introspection
-  // establish the claims; this decode never grants local authority.
-  try { return JSON.parse(Buffer.from(actor.credential.split('.')[1], 'base64url').toString()); } catch { return {}; }
+function exactCatalogIsDelegated(actor:Actor) {
+  // CallerAuthorization derives and restores this source from signed claims.
+  // A service-origin token has no receiving OAuth client or live catalog grant;
+  // adding a scope or a locally decoded token cannot supply those capabilities.
+  requireValue(actor.credentialSource,401,'CREDENTIAL_SOURCE_REQUIRED','Verified native credential source required; authenticate and confirm again');
+  requireValue(actor.credentialSource!=='service-delegation',409,'NATIVE_EXACT_UNSUPPORTED','Native service delegation cannot authorize exact execution; the confirmed task remains blocked without changing its actor or approval policy');
+  const delegated=actor.credentialSource==='oauth-delegation';
+  requireValue(delegated||actor.credentialSource==='direct-oauth',401,'CREDENTIAL_SOURCE_REQUIRED','Unknown native credential source');
+  if(delegated)requireValue(actor.sourceScopes?.includes('mcp:catalog:read'),403,'INSUFFICIENT_SCOPE','OAuth exact execution requires the native delegated catalog scope and live grant');
+  return delegated;
 }
 function endpointDigest(endpoint:any) {
   const fields=['endpoint_id','method','path','parameters','request_body_schema','request_content_type','request_body_required','response'];
@@ -66,14 +72,13 @@ export class NyxAuthority implements Authority {
   config:Config; store?:Store; callers:CallerAuthorization;
   constructor(config:Config,store?:Store) { this.config=config;this.store=store;this.callers=new CallerAuthorization(config); }
   async validate(actor:Actor,purpose:AuthorizationPurpose='access') {
-    const {current,command}=await this.callers.restore(actor,purpose);
+    const {current}=await this.callers.restore(actor,purpose);
     const body=new URLSearchParams({token:actor.credential,client_id:this.config.clientId});
     if(this.config.clientSecret) body.set('client_secret',this.config.clientSecret);
     const result=await remoteJson(this.config.introspectionUrl,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body});
     const scopes=typeof result.scope==='string'?result.scope.split(' '):[];
     requireValue(result.active===true && result.sub===actor.subject && (!result.iss || result.iss===actor.issuer) && (actor.sourceScopes??actor.scopes).every(s=>scopes.includes(s)),401,'REVOKED','Current authorization is invalid');
     requireValue(current.sourceScopes!.every(scope=>scopes.includes(scope)),401,'REVOKED','Current scopes no longer authorize the saved caller');
-    if(command)await validateCommandAuthority(this.config,actor.commandAuthority!,command);
   }
   async call(actor:Actor,path:string,method='GET',body?:unknown) {
     requireValue(path.startsWith('/api/v1/') && !path.includes('..'),500,'NYXID_ROUTE','Invalid upstream route');
@@ -108,7 +113,7 @@ export class NyxAuthority implements Authority {
   async bindings():Promise<ConnectionBinding[]> {
     requireValue(this.config.connectionsFile,409,'CONNECTION_CONFIGURATION_REQUIRED','Operator must bind exact NyxID connections to owners and destinations');
     const result=JSON.parse(await readFile(this.config.connectionsFile,'utf8'));
-    requireValue(Array.isArray(result) && result.every(b=>b && typeof b.id==='string' && b.owner && ['personal','organization'].includes(b.owner.kind) && typeof b.accountId==='string' && typeof b.slug==='string' && /^[a-zA-Z0-9_-]+$/.test(b.slug) && typeof b.remoteBaseUrl==='string' && (b.executionApproval===undefined||b.executionApproval==='exact')) && new Set(result.map(b=>b.id)).size===result.length,500,'CONNECTION_CONFIGURATION','Invalid or ambiguous operator connection bindings');
+    requireValue(Array.isArray(result) && result.every(b=>b && typeof b.id==='string' && b.owner && ['personal','organization'].includes(b.owner.kind) && typeof b.accountId==='string' && typeof b.slug==='string' && /^[a-zA-Z0-9_-]+$/.test(b.slug) && typeof b.remoteBaseUrl==='string' && (b.executionApproval===undefined||b.executionApproval==='exact'||b.executionApproval==='native')) && new Set(result.map(b=>b.id)).size===result.length,500,'CONNECTION_CONFIGURATION','Invalid or ambiguous operator connection bindings');
     return result;
   }
   async connection(actor:Actor,owner:Owner,connectionId:string,target:string) {
@@ -117,10 +122,13 @@ export class NyxAuthority implements Authority {
     requireValue(binding,403,'CONNECTION_MISMATCH','Exact owner destination binding required');
     const inventory=await this.call(actor,'/api/v1/user-services');
     requireValue(Array.isArray(inventory.services),502,'NYXID_CONTRACT','Invalid connection inventory');
-    const service=inventory.services.find((s:any)=>s.id===connectionId);
+    const matches=inventory.services.filter((s:any)=>s?.id===connectionId);
+    requireValue(matches.length<=1,502,'NYXID_CONTRACT','Ambiguous connection inventory');
+    const service=matches[0];
     const source=service?.credential_source;
     requireValue(service?.is_active===true && service.slug===binding.slug,409,'CONNECTION_DISABLED','Reconnect the selected NyxID service; no account fallback is allowed');
     requireValue(owner.kind==='personal'?source?.type==='personal':source?.type==='org'&&source.org_id===owner.subject&&source.allowed===true,403,'CONNECTION_MISMATCH','NyxID credential provenance differs from the selected owner');
+    requireValue(Number.isSafeInteger(service.state_version)&&service.state_version>=0&&(service.state_version>0||typeof service.updated_at==='string'&&Number.isFinite(Date.parse(service.updated_at))),502,'NYXID_CONTRACT','Native connection version is required; legacy version zero also requires its update timestamp');
     return {...binding,active:true,generation:digest(canonicalJson({binding,stateVersion:service.state_version,updatedAt:service.updated_at}))};
   }
   async listConnections(actor:Actor,owner:Owner) {
@@ -142,7 +150,7 @@ export class NyxAuthority implements Authority {
     requireValue(this.store,409,'APPROVAL_CONFIGURATION','Persistent exact approval storage required');
     const connection=await this.connection(actor,owner,id,target),path=this.path(connection,request);
     requireValue(requiresExactApproval(owner.kind,connection),409,'APPROVAL_CONFIGURATION','This personal connection has not enabled exact execution approval');
-    const delegated=tokenClaims(actor).delegated===true;
+    const delegated=exactCatalogIsDelegated(actor);
     const catalog=await this.call(actor,delegated?'/api/v1/delegation/operation-catalog':'/api/v1/mcp/config');
     const service=catalog.services?.find((s:any)=>(delegated?s.user_service_id:s.service_id)===id && (delegated||s.is_user_service===true));
     const personalGeneric=owner.kind==='personal'&&connection.executionApproval==='exact'&&!delegated&&service?.is_generic_proxy===true;
@@ -168,6 +176,15 @@ export class NyxAuthority implements Authority {
     requireValue(result.request_id===reference && result.user_service_id===connectionId && ['endpoint_id','operation_digest','operation_id','operation_generation','idempotency_key','catalog_digest','endpoint_contract_digest','exact_view_digest'].every(key=>result[key]===fence[key]) && ['approved','redeemed'].includes(result.state) && (result.state==='redeemed'||Date.parse(result.expires_at)>Date.now()),409,'APPROVAL_NEEDED','NyxID exact execution authorization is pending, expired, revoked or drifted');
     return result;
   }
+  private assertLocalConnection(connection:ConnectionBinding&{active?:boolean;generation?:string}){
+    if(!this.config.connectionsFile)return; // Production connection() requires this configuration.
+    let bindings:any;
+    try{bindings=JSON.parse(readFileSync(this.config.connectionsFile,'utf8'));}
+    catch{throw new AppError(409,'CONNECTION_CHANGED','Current operator connection binding is unavailable');}
+    const {active,generation,...bound}=connection;
+    const matches=Array.isArray(bindings)?bindings.filter((value:any)=>value?.id===connection.id):[];
+    requireValue(matches.length===1&&canonicalJson(matches[0])===canonicalJson(bound),409,'CONNECTION_CHANGED','Operator connection changed during final authority validation');
+  }
   async execute(actor:Actor,input:Record<string,any>) {
     const connection=await this.connection(actor,input.owner,input.connectionId,input.target),request=input.request as RemoteRequest,path=this.path(connection,request);
     requireValue(typeof input.connectionFingerprint==='string' && input.connectionFingerprint===connectionFingerprint(connection),409,'CONNECTION_CHANGED','Resolved connection differs from the confirmed account or route');
@@ -175,18 +192,24 @@ export class NyxAuthority implements Authority {
     const beforeDispatch=async()=>{
       if(!input.readOnly){
         if(input.beforeWrite)await input.beforeWrite();
-        else if(actor.commandAuthority)await this.validate(actor,'queued-write');
+        else await this.validate(actor,'queued-write');
+        const finalConnection=await this.connection(actor,input.owner,input.connectionId,input.target);
+        requireValue(input.connectionFingerprint===connectionFingerprint(finalConnection),409,'CONNECTION_CHANGED','Exact account changed during final authority verification');
+        // No upstream preflight follows this role check. Native exact redemption
+        // independently validates its frozen connection/approval at execution.
+        if(input.beforeWrite)await input.beforeWrite();
+        else await this.validate(actor,'queued-write');
+        this.assertLocalConnection(finalConnection);
       }
       guard();
     };
     if(requiresExactApproval(input.owner.kind,connection) && !input.readOnly) {
+      exactCatalogIsDelegated(actor);
       const status=await this.approval(actor,input.owner,input.approvalRef,input.digest,input.connectionId,input.action);
       const binding=this.store!.get('SELECT * FROM nyx_approvals WHERE reference=?',input.approvalRef)!;
       requireValue(binding.request_digest===digest(canonicalJson(request)),409,'APPROVAL_NEEDED','Exact approved request differs from the outgoing content');
       const stored=JSON.parse(binding.fence_json),fence:any={};
       for(const key of ['catalog_digest','exact_view_digest','operation_digest','operation_id','operation_generation','idempotency_key']) if(stored[key]!==undefined) fence[key]=stored[key];
-      const finalConnection=await this.connection(actor,input.owner,input.connectionId,input.target);
-      requireValue(input.connectionFingerprint===connectionFingerprint(finalConnection),409,'CONNECTION_CHANGED','Exact account changed during approval verification');
       await beforeDispatch();
       const result=status.state==='redeemed'?status:await this.call(actor,`/api/v1/approvals/exact-service/requests/${encodeURIComponent(input.approvalRef)}/redeem`,'POST',fence);
       if(result.state==='failed' || result.state==='redeeming') throw new RemoteError('REMOTE_UNCERTAIN','NyxID effect outcome requires read-only reconciliation',true);
@@ -196,6 +219,10 @@ export class NyxAuthority implements Authority {
       let body;try{body=JSON.parse(receipt.response_body);}catch{throw new RemoteError('REMOTE_UNCERTAIN','Provider receipt is not readable JSON; reconcile',true);}
       return {accountId:connection.accountId,status:receipt.http_status,body};
     }
+    // Official proxy may wait for a native approval and then dispatch the held
+    // request without a CMS cancellation/Publisher callback. Until an official
+    // phased dispatch contract exists, never start that uninterruptible write.
+    requireValue(input.readOnly===true&&isRead(request)&&(request.method==='GET'||connection.target==='hashnode'),409,'NATIVE_DISPATCH_UNSUPPORTED','Native proxy writes are blocked: pending approval cannot recheck CMS cancellation and publishing authority before provider dispatch');
     const query=new URLSearchParams(path.split('?')[1]??'');
     query.set('_nyxid_via',connection.id);
     const suffix=path.split('?')[0].replace(/^\//,'');

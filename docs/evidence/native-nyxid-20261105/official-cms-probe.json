@@ -1,0 +1,66 @@
+{
+  "at": "2026-11-05T03:53:36.976Z",
+  "level": "OFFICIAL_NATIVE_AUTH_WITH_ISOLATED_CMS",
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "providerWrites": 0,
+  "realNyxBotApplication": false,
+  "realGhost": false,
+  "cases": [
+    {
+      "name": "official signed service delegation and online queued validation without patched proof",
+      "status": "PASS"
+    },
+    {
+      "name": "service workspaces",
+      "http": 200,
+      "expected": 200,
+      "status": "PASS"
+    },
+    {
+      "name": "service owner connections (empty isolated bindings)",
+      "http": 200,
+      "expected": 200,
+      "status": "PASS"
+    },
+    {
+      "name": "wrong owner denied",
+      "http": 403,
+      "expected": 403,
+      "status": "PASS",
+      "code": "FORBIDDEN"
+    },
+    {
+      "name": "service draft create",
+      "http": 201,
+      "expected": 201,
+      "status": "PASS"
+    },
+    {
+      "name": "service confirmation without patched proof",
+      "http": 202,
+      "expected": 202,
+      "status": "PASS"
+    },
+    {
+      "name": "cancel before any worker dispatch",
+      "http": 200,
+      "expected": 200,
+      "status": "PASS"
+    },
+    {
+      "name": "retired proof rejected",
+      "http": 409,
+      "expected": 409,
+      "status": "PASS",
+      "code": "LEGACY_COMMAND_RECONFIRMATION_REQUIRED"
+    },
+    {
+      "name": "invalid native signature rejected",
+      "http": 401,
+      "expected": 401,
+      "status": "PASS",
+      "code": "INVALID_TOKEN"
+    }
+  ],
+  "status": "PASS"
+}

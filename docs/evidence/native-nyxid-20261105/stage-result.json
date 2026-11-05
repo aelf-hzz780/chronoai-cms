@@ -1,0 +1,47 @@
+{
+  "stage": "CMS_NATIVE_ADAPTATION_REVIEW_CANDIDATE",
+  "baseline": "ec3f0ef8c504923c08aa408f8f1a696564620bc5",
+  "formalAcceptance": false,
+  "productionChanged": false,
+  "tests": {
+    "npm run check": {
+      "pass": 454,
+      "fail": 0,
+      "skipped": 0
+    },
+    "npm run test:local-publishing": {
+      "pass": 4,
+      "fail": 0,
+      "scope": "local HTTP protocol simulation, not real DEV"
+    },
+    "node --test scripts/native-nyxid-migration.test.ts": {
+      "pass": 11,
+      "fail": 0
+    }
+  },
+  "officialNativeCmsProbe": {
+    "pass": 9,
+    "scope": "official JWT/JWKS/introspection plus isolated CMS API; no Worker or real Ghost in this probe",
+    "evidence": "official-cms-probe.json"
+  },
+  "officialM0": {
+    "result": "BLOCKED_NATIVE_PROXY_WRITE",
+    "evidence": "m0-result.json"
+  },
+  "pending": [
+    "Official NyxID to candidate CMS to isolated real Ghost role matrix is running separately",
+    "Independent review of this fixed commit",
+    "Real NyxBot application/UI and real external DEV not verified",
+    "Formal official frontend/backend cutover not performed"
+  ],
+  "historicalTests": {
+    "retired": "test/deprecated-auth-command.historical.ts",
+    "reason": "Preserved patched command-authority R031 scenarios are historical evidence, not native acceptance. Current auth-command tests verify retirement and audit isolation."
+  },
+  "logSha256": {
+    "stage-check.log": "4d17c71a2a02076f832264c329174af8370c5220565af1f6bf58a4ba4b42fd8a",
+    "stage-local-publishing.log": "355a8d299af854162455bf53a82fca3f80aa7e50a6fa13ae965b392469e9d506",
+    "stage-migration-tests.log": "f7518dff9d8a43645aa57e961629558d1034116814e8ed2e4212d695a8305413",
+    "official-cms-probe.json": "a28bb793d66b968f70bd525d50fd66730d25412f5eaf4b01e6b672bb91394f32"
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "initialProbe": {
+    "network": "nyxid-m0-native-20261105",
+    "containers": [
+      {
+        "name": "nyxid-m0-backend",
+        "image": "ghcr.io/chronoaiproject/nyxid/backend@sha256:989c2af8e68d843ca2f1e65ab99323d44190f87d16285db49778de37aa59e5f2",
+        "running": true,
+        "ports": {}
+      },
+      {
+        "name": "nyxid-m0-mongo",
+        "image": "mongo:8.0",
+        "running": true,
+        "ports": {}
+      },
+      {
+        "name": "nyxid-m0-provider",
+        "image": "blogsystem-review-runtime:node24-chromium-20261029",
+        "running": true,
+        "ports": {
+          "8080/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "33014"
+            }
+          ]
+        }
+      },
+      {
+        "name": "nyxid-m0-relay",
+        "image": "blogsystem-review-runtime:node24-chromium-20261029",
+        "running": true,
+        "ports": {
+          "33013/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "33013"
+            }
+          ]
+        }
+      }
+    ],
+    "relay": "http://localhost:33013",
+    "pairRefreshHelper": "/Users/richardhuang/workspace/ChronoAI/BlogSystem/.runtime/cms-native-nyxid-20261105/m0/refresh-pair.py",
+    "keptRunningReason": "Root CMS signed-ingress probe and independent review use this isolated fixture"
+  },
+  "repeatProbe": {
+    "network": "nyxid-m0-9cd6fe3269-network",
+    "containers": [
+      "nyxid-m0-9cd6fe3269-backend",
+      "nyxid-m0-9cd6fe3269-mongo",
+      "nyxid-m0-9cd6fe3269-provider"
+    ],
+    "ports": [],
+    "onScriptExit": "stops only own three containers; retains volumes and network for review"
+  },
+  "liveInstancesChanged": false,
+  "cleanupAfterEvidenceReview": [
+    "docker --context colima-blogsystem stop nyxid-m0-relay nyxid-m0-backend nyxid-m0-provider nyxid-m0-mongo",
+    "docker --context colima-blogsystem rm -v nyxid-m0-relay nyxid-m0-backend nyxid-m0-provider nyxid-m0-mongo",
+    "docker --context colima-blogsystem network rm nyxid-m0-native-20261105",
+    "docker --context colima-blogsystem rm -v nyxid-m0-9cd6fe3269-backend nyxid-m0-9cd6fe3269-provider nyxid-m0-9cd6fe3269-mongo",
+    "docker --context colima-blogsystem network rm nyxid-m0-9cd6fe3269-network"
+  ]
+}

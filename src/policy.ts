@@ -1,9 +1,9 @@
 import { AppError, requireValue, text } from './errors.ts';
 import { Store, type Row } from './store.ts';
-import type {CommandEnvelope} from './command-authority.ts';
+import type {CommandBinding,CommandEnvelope} from './command-authority.ts';
 
 export type CallerBinding = { kind:'cms'|'direct-service'; clientId:string; audience:string } | { kind:'propagated'; serviceId:string; serviceSlug:string; identityAudience:string; delegationAudience:string };
-export interface Actor { issuer: string; subject: string; scopes: string[]; credential: string; sourceScopes?: string[]; entry?:'cms'|'service'; binding?:CallerBinding; commandAuthority?:CommandEnvelope; }
+export interface Actor { issuer: string; subject: string; scopes: string[]; credential: string; sourceScopes?: string[]; entry?:'cms'|'service'; binding?:CallerBinding; commandAuthority?:CommandEnvelope; credentialSource?:'direct-oauth'|'service-delegation'|'oauth-delegation'; confirmedCommand?:{version:1;id:string;binding:CommandBinding;}; }
 export type AuthorizationPurpose = 'access'|'queued-write';
 export interface OrganizationMember {identity:string;displayName:string;role:'admin'|'member'|'viewer';active:boolean;}
 export interface Authority {
@@ -18,7 +18,7 @@ export class Policy {
   async scope(actor: Actor, scope: string, purpose:AuthorizationPurpose='access') {
     requireValue(actor.scopes.includes(scope), 403, 'INSUFFICIENT_SCOPE', `Requires ${scope}`);
     try { await this.authority.validate(actor,purpose); }
-    catch (error) { if(error instanceof AppError && error.code==='SOURCE_AUTHORITY_UNPROVEN')throw error; throw new AppError(401, 'IDENTITY_UNAVAILABLE', 'Current identity or delegated authority could not be verified'); }
+    catch (error) { if(error instanceof AppError && ['SOURCE_AUTHORITY_UNPROVEN','LEGACY_COMMAND_RECONFIRMATION_REQUIRED'].includes(error.code))throw error; throw new AppError(401, 'IDENTITY_UNAVAILABLE', 'Current identity or delegated authority could not be verified'); }
   }
   async owner(actor: Actor, ownerId: string, scope = 'content:read', purpose:AuthorizationPurpose='access'): Promise<Row> {
     await this.scope(actor, scope,purpose);
@@ -37,10 +37,20 @@ export class Policy {
     const role = await this.membership(actor, owner);
     return !!role && (role === 'admin' || !!this.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?', owner.id, actor.subject));
   }
-  async publish(actor: Actor, ownerId: string, purpose:AuthorizationPurpose='queued-write') {
+  async publish(actor: Actor, ownerId: string, purpose:AuthorizationPurpose='access') {
     const owner = await this.owner(actor, ownerId, 'publish',purpose);
     requireValue(await this.canPublish(actor, owner), 403, 'FORBIDDEN', 'Publishing authority required');
     return owner;
+  }
+  async executionGuard(actor:Actor,ownerId:string):Promise<()=>void> {
+    const owner=await this.owner(actor,ownerId,'publish','queued-write');
+    const role=owner.kind==='organization'?await this.membership(actor,owner):null;
+    const guard=()=>{
+      const current=this.store.get('SELECT * FROM owners WHERE id=?',ownerId);
+      requireValue(current&&current.kind===owner.kind&&current.issuer===owner.issuer&&current.subject===owner.subject,403,'FORBIDDEN','Confirmed owner changed before dispatch');
+      requireValue(owner.kind==='personal'?owner.subject===actor.subject:!!role&&(role==='admin'||!!this.store.get('SELECT 1 FROM publishers WHERE owner_id=? AND subject=?',ownerId,actor.subject)),403,'FORBIDDEN','Current publishing authority required before dispatch');
+    };
+    guard();return guard;
   }
   async setPublisher(actor: Actor, ownerId: string, subject: string, enabled: boolean, trace: string) {
     text(subject, 'subject'); requireValue(typeof enabled === 'boolean', 400, 'INVALID_INPUT', 'enabled must be boolean');

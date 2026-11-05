@@ -4,19 +4,7 @@ import {safeUrl} from './config.ts';
 import {requireValue} from './errors.ts';
 import {remoteJson} from './http-client.ts';
 import type {Actor,CallerBinding,AuthorizationPurpose} from './policy.ts';
-import {verifyCommandAuthority,type CommandClaims} from './command-authority.ts';
-
-// Only signed JWT claims enter this check. Actor metadata and ingress headers
-// cannot establish source authority. Official introspection still checks each
-// retained consent/session/delegation reference online, including revocation.
-function hasSourceLineage(value:unknown):boolean {
-  if(!value || typeof value!=='object' || Array.isArray(value))return false;
-  const lineage=value as Record<string,any>,nonempty=(s:unknown)=>typeof s==='string'&&s.trim().length>0;
-  if(!Array.isArray(lineage.consents)||lineage.consents.length>3)return false;
-  if(![lineage.source_session_id,lineage.delegation_jti].every(v=>v==null||nonempty(v)))return false;
-  if(!lineage.consents.every((b:any)=>b&&nonempty(b.client_id)&&typeof b.scopes==='string'&&b.scopes.split(' ').includes('openid')&&nonempty(b.reference?.consent_id)&&nonempty(b.reference?.consent_revision)))return false;
-  return lineage.consents.length>0||nonempty(lineage.source_session_id)||nonempty(lineage.delegation_jti);
-}
+import {type CommandClaims} from './command-authority.ts';
 
 // Shared by initial authentication and online revalidation of encrypted snapshots.
 export class CallerAuthorization {
@@ -39,13 +27,26 @@ export class CallerAuthorization {
   async access(token:string,audience:string){
     await this.discover();
     const {payload}=await jwtVerify(token,this.keys!,{issuer:this.config.issuer,audience,algorithms:['RS256','ES256'],requiredClaims:['sub','exp','iat']});
-    requireValue(payload.token_type==='access'&&payload.sa!==true&&payload.relay!==true&&typeof payload.scope==='string',401,'INVALID_TOKEN','Human access token required');
+    requireValue(Number.isSafeInteger(payload.iat)&&payload.iat!<=Date.now()/1000+5&&payload.token_type==='access'&&payload.sa!==true&&payload.relay!==true&&typeof payload.scope==='string',401,'INVALID_TOKEN','Human access token required');
     return payload;
   }
   actor(payload:JWTPayload,credential:string,binding:CallerBinding):Actor{
-    requireValue(payload.iss===this.config.issuer&&typeof payload.sub==='string'&&typeof payload.exp==='number'&&payload.exp*1000>Date.now()&&typeof payload.scope==='string',401,'INVALID_TOKEN','Invalid caller token');
+    requireValue(payload.iss===this.config.issuer&&typeof payload.sub==='string'&&payload.sub.trim().length>0&&typeof payload.exp==='number'&&payload.exp*1000>Date.now()&&typeof payload.scope==='string',401,'INVALID_TOKEN','Invalid caller token');
     const entry=binding.kind==='cms'?'cms':'service',sourceScopes=payload.scope.split(' ').filter(Boolean);
-    return {issuer:payload.iss,subject:payload.sub,scopes:this.capabilities(entry,sourceScopes),sourceScopes,credential,entry,binding};
+    // Classification uses verified JWT claims, never ingress labels or an unverified decode.
+    let credentialSource:Actor['credentialSource']='direct-oauth';
+    if(payload.delegated===true){
+      const origin=payload.delegation_origin;
+      requireValue(origin==='service'||origin==='oauth',401,'INVALID_TOKEN','Unsupported signed delegation origin');
+      if(origin==='oauth'){
+        requireValue(typeof payload.client_id==='string'&&payload.client_id.length>0,401,'INVALID_TOKEN','OAuth delegation requires its receiving client');
+        credentialSource='oauth-delegation';
+      }else{
+        requireValue(payload.client_id==null,401,'INVALID_TOKEN','Service delegation cannot impersonate a receiving OAuth client');
+        credentialSource='service-delegation';
+      }
+    }
+    return {issuer:payload.iss,subject:payload.sub,scopes:this.capabilities(entry,sourceScopes),sourceScopes,credential,entry,binding,credentialSource};
   }
   directBinding(payload:JWTPayload,entry:'cms'|'service',audience:string):CallerBinding{
     requireValue(typeof payload.client_id==='string'&&payload.delegated!==true,401,'INVALID_TOKEN','Direct caller client binding required');
@@ -70,12 +71,10 @@ export class CallerAuthorization {
     requireValue(payload.sub===actor.subject,401,'REVOKED','Saved caller subject changed');
     if(b.kind==='propagated')requireValue(payload.delegated===true&&(payload.act as {sub?:string})?.sub===b.serviceSlug,401,'REVOKED','Delegation actor binding changed');
     else {const current=this.directBinding(payload,b.kind==='cms'?'cms':'service',audience);requireValue(current.kind!=='propagated'&&current.clientId===b.clientId,401,'REVOKED','Saved client differs from signed client');}
-    let command:CommandClaims|undefined;
-    if(purpose==='queued-write'&&b.kind==='propagated'){
-      if(actor.commandAuthority)command=await verifyCommandAuthority(actor,this.config,this.keys!,payload.exp!);
-      else requireValue(hasSourceLineage(payload.oauth_lineage),403,'SOURCE_AUTHORITY_UNPROVEN','当前代理授权无法持续核验，待发操作已阻止。请使用支持持续授权的服务登录后重新确认；原稿保留。');
-    }
+    const command:CommandClaims|undefined=undefined;
+    if(purpose==='queued-write')requireValue(!actor.commandAuthority,409,'LEGACY_COMMAND_RECONFIRMATION_REQUIRED','Historical command-proof tasks require a new explicit native confirmation; reconcile uncertain results first');
     const current=this.actor(payload,actor.credential,b);
+    requireValue(actor.credentialSource===undefined||actor.credentialSource===current.credentialSource,401,'REVOKED','Saved credential origin differs from the verified token');
     requireValue(actor.scopes.every(scope=>current.scopes.includes(scope)),401,'REVOKED','Current configuration no longer authorizes the saved action');
     return {current,command};
   }

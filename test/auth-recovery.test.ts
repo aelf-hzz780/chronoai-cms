@@ -43,12 +43,12 @@ test('R033: current caller recovers uncertain results after source expiry/revoca
   const store=new Store(':memory:'),vault=new Vault(config.encryptionKey),authority=new NyxAuthority(config,store),policy=new Policy(store,authority),auth=new AuthManager(config,store,vault,policy),content=new ContentService(store,policy),pub=new PublishingService(content,vault);
   try{
    roles.set('publisher','member');roles.set('admin','admin');
-   const sourceToken=await sign({token_type:'access',scope:'account:read proxy:*',delegated:true,act:{sub:'blog'},oauth_lineage:{consents:[],source_session_id:'original-session',delegation_jti:null}},'publisher','delegation',withdrawal==='expiry'?'3s':'10m');
+   const sourceToken=await sign({token_type:'access',scope:'account:read proxy:*',delegated:true,delegation_origin:'service',act:{sub:'blog'},oauth_lineage:{consents:[],source_session_id:'original-session',delegation_jti:null}},'publisher','delegation',withdrawal==='expiry'?'3s':'10m');
    const identity=await sign({nyx_service_id:'registered'},'publisher','service','60s');
    const source=await auth.propagated(identity,sourceToken);
    // A valid current delegated caller without queued-write lineage can still
    // inspect the exact result. It must never inherit permission to resend.
-   const currentToken=entry==='cms'?await sign({token_type:'access',scope:'openid profile proxy',client_id:'cms'},'admin','cms'):await sign({token_type:'access',scope:'account:read proxy:*',delegated:true,act:{sub:'blog'},...(entry==='oauth'?{oauth_lineage:{consents:[],source_session_id:'current-session',delegation_jti:null}}:{})},'admin','delegation');
+   const currentToken=entry==='cms'?await sign({token_type:'access',scope:'openid profile proxy',client_id:'cms'},'admin','cms'):await sign({token_type:'access',scope:'account:read proxy:*',delegated:true,delegation_origin:'service',act:{sub:'blog'},...(entry==='oauth'?{oauth_lineage:{consents:[],source_session_id:'current-session',delegation_jti:null}}:{})},'admin','delegation');
    const current=entry==='cms'?await auth.accessToken(currentToken,'cms','cms'):await auth.propagated(await sign({nyx_service_id:'registered'},'admin','service','60s'),currentToken);
    store.createOwner('org','organization',base,'organization');store.run('INSERT INTO publishers VALUES (?,?)','org','publisher');store.run('INSERT INTO sites VALUES (?,?,?,?,?)','site','org','en','http://localhost:3498','NO_KEY');
    const article=await content.create(source,{ownerId:'org',language:'en',title:'R033 read-only recovery',markdown:'Local only',creditedAuthor:'publisher'},'create');
@@ -74,7 +74,7 @@ test('R033: current caller recovers uncertain results after source expiry/revoca
    if(withdrawal==='expiry')await new Promise(resolve=>setTimeout(resolve,Math.max(0,decodeJwt(sourceToken).exp!*1000-Date.now()+30)));else revoked.add(decodeJwt(sourceToken).jti!);
    await policy.publish(current,'org','access');
    await assert.rejects(policy.publish(source,'org'));
-   if(entry==='key')await assert.rejects(policy.publish(current,'org'),{code:'SOURCE_AUTHORITY_UNPROVEN'});
+   if(entry==='key')await policy.publish(current,'org'); // Current native caller may confirm a fresh command without patched lineage.
    readOnly=true;store.run("UPDATE settings SET value='true' WHERE key='outbound_paused'");
    // Both the request and already-persisted recovery Actor use current authority.
    await reconcile();revoked.add(decodeJwt(currentToken).jti!);

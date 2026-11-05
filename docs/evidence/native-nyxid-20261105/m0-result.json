@@ -1,0 +1,1066 @@
+{
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "backendImage": "ghcr.io/chronoaiproject/nyxid/backend@sha256:989c2af8e68d843ca2f1e65ab99323d44190f87d16285db49778de37aa59e5f2",
+  "frontendImageIdentityOnly": "ghcr.io/chronoaiproject/nyxid/frontend@sha256:d211a8ca3db156966ea6a2ed2542322ee99c28673a315f19ad1e21d5b20f97c4",
+  "level": "LIVE_OFFICIAL_ISOLATED_LOCAL_PROVIDER",
+  "formalAcceptance": false,
+  "productionChanged": false,
+  "thirdPartyWrites": 0,
+  "cases": [
+    {
+      "name": "approved_baseline",
+      "approvalId": "5bda46a3-199c-4845-8368-609c25406e85",
+      "providerCountBefore": 0,
+      "providerCountAtBarrier": 0,
+      "providerCountAfter": 1,
+      "decision": {
+        "http": 200,
+        "body": {
+          "id": "5bda46a3-199c-4845-8368-609c25406e85",
+          "status": "approved",
+          "decided_at": "2026-11-05T03:59:58.577+00:00"
+        }
+      },
+      "response": {
+        "http": 200,
+        "body": {
+          "id": 1,
+          "ok": true
+        }
+      },
+      "mutation": null,
+      "approvalPublic": {
+        "id": "5bda46a3-199c-4845-8368-609c25406e85",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T03:59:57.552+00:00",
+        "expires_at": "2026-11-05T04:04:57.552+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "663274494987aed001cb1f0724d6d1b40eb40e8999fdce4dff61f0427267bc10",
+      "providerRecord": {
+        "at": "2026-11-05T03:59:59.565Z",
+        "method": "POST",
+        "path": "/articles",
+        "body": "{\"article\": {\"title\": \"M0 approved_baseline\", \"body_markdown\": \"FULL_ARTICLE_SENTINEL_approved_baseline_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"published\": false}, \"case\": \"approved_baseline\"}"
+      },
+      "retryWrites": 0
+    },
+    {
+      "name": "membership_revoked_while_pending",
+      "approvalId": "36d2b11c-e902-40fa-b3cc-741c3ef76146",
+      "providerCountBefore": 1,
+      "providerCountAtBarrier": 1,
+      "providerCountAfter": 2,
+      "decision": {
+        "http": 200,
+        "body": {
+          "id": "36d2b11c-e902-40fa-b3cc-741c3ef76146",
+          "status": "approved",
+          "decided_at": "2026-11-05T04:00:02.487+00:00"
+        }
+      },
+      "response": {
+        "http": 200,
+        "body": {
+          "id": 2,
+          "ok": true
+        }
+      },
+      "mutation": {
+        "http": 204,
+        "body": null
+      },
+      "approvalPublic": {
+        "id": "36d2b11c-e902-40fa-b3cc-741c3ef76146",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T04:00:01.581+00:00",
+        "expires_at": "2026-11-05T04:00:09.581+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "bb2b4feb5c4bbc06958cdd6dabfb1de1cb241a3a2c57478201628396dd5b015c",
+      "providerRecord": {
+        "at": "2026-11-05T04:00:02.586Z",
+        "method": "POST",
+        "path": "/articles",
+        "body": "{\"article\": {\"title\": \"M0 membership_revoked_while_pending\", \"body_markdown\": \"FULL_ARTICLE_SENTINEL_membership_revoked_while_pending_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"published\": false}, \"case\": \"membership_revoked_while_pending\"}"
+      },
+      "retryWrites": 0
+    },
+    {
+      "name": "connection_disabled_while_pending",
+      "approvalId": "af2fc6d7-885d-4129-96e0-fe8459164440",
+      "providerCountBefore": 2,
+      "providerCountAtBarrier": 2,
+      "providerCountAfter": 3,
+      "decision": {
+        "http": 200,
+        "body": {
+          "id": "af2fc6d7-885d-4129-96e0-fe8459164440",
+          "status": "approved",
+          "decided_at": "2026-11-05T04:00:05.463+00:00"
+        }
+      },
+      "response": {
+        "http": 200,
+        "body": {
+          "id": 3,
+          "ok": true
+        }
+      },
+      "mutation": {
+        "http": 200,
+        "body": {
+          "id": "643740c2-bf64-4b2f-af11-8715ed50e988",
+          "slug": "m0-provider",
+          "resource_uri": "http://localhost:33013/api/v1/proxy/s/m0-provider",
+          "endpoint_id": "05d49e98-dd3b-4e20-9ce9-b82f43f95e88",
+          "auth_method": "none",
+          "auth_key_name": "Authorization",
+          "node_priority": 0,
+          "ssh_auth_mode": "proxy_only",
+          "ssh_node_keys_stale": false,
+          "admin_only": false,
+          "is_active": false,
+          "identity_propagation_mode": "none",
+          "identity_include_user_id": false,
+          "identity_include_email": false,
+          "identity_include_name": false,
+          "forward_access_token": false,
+          "inject_delegation_token": false,
+          "delegation_token_scope": "llm:proxy",
+          "ws_frame_injections": [],
+          "created_at": "2026-11-05T03:59:55.483+00:00",
+          "updated_at": "2026-11-05T04:00:05.199+00:00",
+          "state_version": 2,
+          "credential_source": {
+            "type": "personal"
+          }
+        }
+      },
+      "approvalPublic": {
+        "id": "af2fc6d7-885d-4129-96e0-fe8459164440",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T04:00:04.558+00:00",
+        "expires_at": "2026-11-05T04:00:12.558+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "aeccf72a5264da5c06cb01e335773b2fed3a1be72e41723ec2dece5a9ebf687a",
+      "providerRecord": {
+        "at": "2026-11-05T04:00:05.563Z",
+        "method": "POST",
+        "path": "/articles",
+        "body": "{\"article\": {\"title\": \"M0 connection_disabled_while_pending\", \"body_markdown\": \"FULL_ARTICLE_SENTINEL_connection_disabled_while_pending_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"published\": false}, \"case\": \"connection_disabled_while_pending\"}"
+      },
+      "retryWrites": 0
+    },
+    {
+      "name": "connection_rebound_while_pending",
+      "approvalId": "2c673613-b8e3-452b-be1f-da68116e50d9",
+      "providerCountBefore": 3,
+      "providerCountAtBarrier": 3,
+      "providerCountAfter": 4,
+      "decision": {
+        "http": 200,
+        "body": {
+          "id": "2c673613-b8e3-452b-be1f-da68116e50d9",
+          "status": "approved",
+          "decided_at": "2026-11-05T04:00:08.244+00:00"
+        }
+      },
+      "response": {
+        "http": 200,
+        "body": {
+          "id": 4,
+          "ok": true
+        }
+      },
+      "mutation": {
+        "http": 200,
+        "body": {
+          "offering_kind": "ai_service",
+          "can_edit_configuration": true,
+          "preference_rank": null,
+          "preference_position": null,
+          "authorship": {
+            "created_by": {
+              "actor": {
+                "kind": "person",
+                "id": "4634f234-e8c7-4559-a5c8-f71b03d098e9",
+                "name": "M0 admin",
+                "person_id": "4634f234-e8c7-4559-a5c8-f71b03d098e9",
+                "api_key_id": null,
+                "app_id": null
+              },
+              "at": "2026-11-05T03:59:55.485+00:00",
+              "action": "service.created",
+              "action_label": "Service created",
+              "change_group_id": "f2718a47-cf3b-4001-a713-9c0d33af3180"
+            },
+            "last_change": {
+              "actor": {
+                "kind": "person",
+                "id": "4634f234-e8c7-4559-a5c8-f71b03d098e9",
+                "name": "M0 admin",
+                "person_id": "4634f234-e8c7-4559-a5c8-f71b03d098e9",
+                "api_key_id": null,
+                "app_id": null
+              },
+              "at": "2026-11-05T04:00:08.180+00:00",
+              "action": "service.updated",
+              "action_label": "Service updated",
+              "change_group_id": "2f6412de-e3c4-4d49-94c7-d14b4cafa3c3"
+            }
+          },
+          "id": "643740c2-bf64-4b2f-af11-8715ed50e988",
+          "name": "M0 provider",
+          "label": "M0 provider",
+          "slug": "m0-provider",
+          "service_category": "custom",
+          "endpoint_url": "http://nyxid-m0-9cd6fe3269-provider:8080/rebound",
+          "endpoint_id": "05d49e98-dd3b-4e20-9ce9-b82f43f95e88",
+          "credential_missing": false,
+          "credential_binding": "user",
+          "platform_key_available": false,
+          "platform_key_pricing": null,
+          "byok_pricing": null,
+          "inference": null,
+          "capabilities": null,
+          "credential_type": "none",
+          "auth_method": "none",
+          "auth_key_name": "Authorization",
+          "status": "active",
+          "connection_status": null,
+          "node_priority": 0,
+          "connected": true,
+          "requires_connection": false,
+          "has_node_binding": false,
+          "proxy_url": "http://localhost:33013/api/v1/proxy/643740c2-bf64-4b2f-af11-8715ed50e988/{path}",
+          "proxy_url_slug": "http://localhost:33013/api/v1/proxy/s/m0-provider/{path}",
+          "streaming_supported": false,
+          "websocket_supported": false,
+          "source": "custom",
+          "service_type": "http",
+          "ssh_auth_mode": "proxy_only",
+          "ssh_node_keys_stale": false,
+          "admin_only": false,
+          "is_active": true,
+          "identity_propagation_mode": "none",
+          "identity_include_user_id": false,
+          "identity_include_email": false,
+          "identity_include_name": false,
+          "forward_access_token": false,
+          "inject_delegation_token": false,
+          "delegation_token_scope": "llm:proxy",
+          "oauth_app_source": null,
+          "granted_scopes": null,
+          "last_authorized_at": null,
+          "ws_frame_injections": [],
+          "auto_connected": false,
+          "created_at": "2026-11-05T03:59:55.483+00:00",
+          "updated_at": "2026-11-05T04:00:07.070+00:00",
+          "state_version": 3,
+          "recommended_skill_refs": null,
+          "skills_revision": null,
+          "skills_manifest_digest": "v1:443da5e27e816a8df4f4e357d30320e5b23d8cdc7db45c89397a698960159a4f",
+          "credential_source": {
+            "type": "personal"
+          }
+        }
+      },
+      "approvalPublic": {
+        "id": "2c673613-b8e3-452b-be1f-da68116e50d9",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T04:00:07.539+00:00",
+        "expires_at": "2026-11-05T04:00:15.539+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "37a120a001dcfbfdfdc33811e4ecbd8a3f05cc8d47ccc4aa2c6c63e15e35b99a",
+      "providerRecord": {
+        "at": "2026-11-05T04:00:08.545Z",
+        "method": "POST",
+        "path": "/articles",
+        "body": "{\"article\": {\"title\": \"M0 connection_rebound_while_pending\", \"body_markdown\": \"FULL_ARTICLE_SENTINEL_connection_rebound_while_pending_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"published\": false}, \"case\": \"connection_rebound_while_pending\"}"
+      },
+      "retryWrites": 0
+    },
+    {
+      "name": "rejected",
+      "approvalId": "4f19f86c-c3f2-4b82-ab03-c7a9653c9a94",
+      "providerCountBefore": 4,
+      "providerCountAtBarrier": 4,
+      "providerCountAfter": 4,
+      "decision": {
+        "http": 200,
+        "body": {
+          "id": "4f19f86c-c3f2-4b82-ab03-c7a9653c9a94",
+          "status": "rejected",
+          "decided_at": "2026-11-05T04:00:11.193+00:00"
+        }
+      },
+      "response": {
+        "http": 403,
+        "body": {
+          "error": "approval_failed",
+          "error_code": 7001,
+          "message": "Approval failed: Approval request was rejected. Review pending approvals at http://localhost:33010/approvals/history",
+          "request_id": "4f19f86c-c3f2-4b82-ab03-c7a9653c9a94",
+          "approve_url": "http://localhost:33010/approvals/history"
+        }
+      },
+      "mutation": null,
+      "approvalPublic": {
+        "id": "4f19f86c-c3f2-4b82-ab03-c7a9653c9a94",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T04:00:10.534+00:00",
+        "expires_at": "2026-11-05T04:00:18.534+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "c53a148ba06447c0b7b57f539b24c3dc1f5e599df58625e485ac8bb00b263414",
+      "providerRecord": null,
+      "retryWrites": 0
+    },
+    {
+      "name": "expired_native_timeout",
+      "approvalId": "474406a9-59ac-44f0-906b-97f322065b3f",
+      "providerCountBefore": 4,
+      "providerCountAtBarrier": 4,
+      "providerCountAfter": 4,
+      "decision": null,
+      "response": {
+        "http": 403,
+        "body": {
+          "error": "approval_failed",
+          "error_code": 7001,
+          "message": "Approval failed: Approval request timed out. Review pending approvals at http://localhost:33010/approvals/history",
+          "request_id": "474406a9-59ac-44f0-906b-97f322065b3f",
+          "approve_url": "http://localhost:33010/approvals/history"
+        }
+      },
+      "mutation": null,
+      "approvalPublic": {
+        "id": "474406a9-59ac-44f0-906b-97f322065b3f",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T04:00:13.380+00:00",
+        "expires_at": "2026-11-05T04:00:21.380+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "60c54be60b0a77630a9c3fb168bf9bc60e648e8ff55101970e73e9568039d0c7",
+      "providerRecord": null,
+      "retryWrites": 0
+    },
+    {
+      "name": "unsupported_request_cancel_then_approve",
+      "approvalId": "f913b175-2b96-4489-92f8-ee2e026b8a27",
+      "providerCountBefore": 4,
+      "providerCountAtBarrier": 4,
+      "providerCountAfter": 5,
+      "decision": {
+        "http": 200,
+        "body": {
+          "id": "f913b175-2b96-4489-92f8-ee2e026b8a27",
+          "status": "approved",
+          "decided_at": "2026-11-05T04:00:24.192+00:00"
+        }
+      },
+      "response": {
+        "http": 200,
+        "body": {
+          "id": 5,
+          "ok": true
+        }
+      },
+      "mutation": {
+        "http": 405,
+        "body": null
+      },
+      "approvalPublic": {
+        "id": "f913b175-2b96-4489-92f8-ee2e026b8a27",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T04:00:23.185+00:00",
+        "expires_at": "2026-11-05T04:00:31.185+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "c88f566565ca767c322966644f8645f74da534158295bcec390b72cc283375c7",
+      "providerRecord": {
+        "at": "2026-11-05T04:00:25.191Z",
+        "method": "POST",
+        "path": "/articles",
+        "body": "{\"article\": {\"title\": \"M0 unsupported_request_cancel_then_approve\", \"body_markdown\": \"FULL_ARTICLE_SENTINEL_unsupported_request_cancel_then_approve_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"published\": false}, \"case\": \"unsupported_request_cancel_then_approve\"}"
+      },
+      "retryWrites": 0
+    },
+    {
+      "name": "client_disconnect_before_admin_approval",
+      "approvalId": "9021dccc-18ac-4544-a5f9-d930e3f30145",
+      "providerCountBefore": 5,
+      "providerCountAtBarrier": 5,
+      "providerCountAfter": 5,
+      "decision": {
+        "http": 200,
+        "body": {
+          "id": "9021dccc-18ac-4544-a5f9-d930e3f30145",
+          "status": "approved",
+          "decided_at": "2026-11-05T04:00:29.574+00:00"
+        }
+      },
+      "response": {
+        "http": 0,
+        "transportExit": 28,
+        "body": null
+      },
+      "mutation": null,
+      "approvalPublic": {
+        "id": "9021dccc-18ac-4544-a5f9-d930e3f30145",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T04:00:27.021+00:00",
+        "expires_at": "2026-11-05T04:00:35.021+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "dc0adbdc2ecf3a97c90d2ababee340799d84513698a656a88c4548f79a868e96",
+      "providerRecord": null,
+      "retryWrites": 0
+    },
+    {
+      "name": "response_lost_after_provider_received",
+      "approvalId": "50e117bc-ebec-46db-ba51-e9c32ce2ef65",
+      "providerCountBefore": 5,
+      "providerCountAtBarrier": 5,
+      "providerCountAfter": 6,
+      "decision": {
+        "http": 200,
+        "body": {
+          "id": "50e117bc-ebec-46db-ba51-e9c32ce2ef65",
+          "status": "approved",
+          "decided_at": "2026-11-05T04:00:32.081+00:00"
+        }
+      },
+      "response": {
+        "http": 0,
+        "transportExit": 28,
+        "body": null
+      },
+      "mutation": null,
+      "approvalPublic": {
+        "id": "50e117bc-ebec-46db-ba51-e9c32ce2ef65",
+        "service_name": "M0 provider",
+        "service_slug": "m0-provider",
+        "requester_type": "delegated",
+        "requester_label": null,
+        "operation_summary": "proxy:POST /articles",
+        "action_description": "POST /articles",
+        "http_method": "POST",
+        "resource": "/articles",
+        "verb": "write",
+        "approval_mode": "per_request",
+        "status": "pending",
+        "created_at": "2026-11-05T04:00:31.429+00:00",
+        "expires_at": "2026-11-05T04:00:39.429+00:00",
+        "decided_at": null,
+        "decision_channel": null,
+        "from_org_policy": true,
+        "org_id": "7051a572-b047-405e-a352-24940dff0d19",
+        "org_name": "M0 Native Approval"
+      },
+      "approvalStoredFields": [
+        "_id",
+        "action_description",
+        "approval_mode",
+        "assistant_group",
+        "created_at",
+        "decided_at",
+        "decision_channel",
+        "decision_idempotency_key",
+        "expires_at",
+        "from_org_policy",
+        "grant_scope",
+        "http_method",
+        "idempotency_key",
+        "is_destructive",
+        "notification_channel",
+        "notify_user_ids",
+        "operation_summary",
+        "requester_id",
+        "requester_label",
+        "requester_type",
+        "resource",
+        "service_id",
+        "service_name",
+        "service_slug",
+        "status",
+        "telegram_chat_id",
+        "telegram_message_id",
+        "tool_arguments",
+        "tool_call_id",
+        "tool_name",
+        "user_id",
+        "verb"
+      ],
+      "fullBodyPersisted": false,
+      "exactService": null,
+      "bodySha256": "4b79ae817f789f5cf971183a629311022cf598dba0a2032a40b0914f9e5c2ddb",
+      "providerRecord": {
+        "at": "2026-11-05T04:00:32.435Z",
+        "method": "POST",
+        "path": "/articles",
+        "body": "{\"article\": {\"title\": \"M0 response_lost_after_provider_received\", \"body_markdown\": \"FULL_ARTICLE_SENTINEL_response_lost_after_provider_received_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", \"published\": false}, \"case\": \"response_lost_after_provider_received\"}"
+      },
+      "retryWrites": 0
+    }
+  ],
+  "notExercised": [
+    "real NyxBot conversation",
+    "official frontend approval UI",
+    "real CMS Publisher revocation during pending approval",
+    "real CMS cancellation during pending approval",
+    "real CMS original article update during pending approval",
+    "real DEV or organization provider account"
+  ],
+  "health": {
+    "status": "ok",
+    "version": "0.75.0",
+    "commit": "38bae2f7825b",
+    "encryption": {
+      "previous_key_configured": false,
+      "decrypt_stats": {
+        "v2_current": 0,
+        "v2_previous": 0,
+        "v2_fallback": 0,
+        "v1_current": 0,
+        "v1_previous": 0,
+        "v0_current": 0,
+        "v0_previous": 0,
+        "unknown_key_id_failures": 0,
+        "decrypt_failures": 0
+      }
+    }
+  },
+  "runtime": {
+    "network": "nyxid-m0-9cd6fe3269-network",
+    "subnet": "10.203.10.0/24",
+    "internal": true,
+    "containers": [
+      "nyxid-m0-9cd6fe3269-backend",
+      "nyxid-m0-9cd6fe3269-mongo",
+      "nyxid-m0-9cd6fe3269-provider"
+    ],
+    "publishedPorts": [],
+    "database": "nyxid_m0",
+    "sharedDatabaseAccess": false,
+    "issuer": "http://localhost:3001",
+    "audience": "http://localhost:33013"
+  },
+  "signedOriginClaims": {
+    "iss": "http://localhost:3001",
+    "aud": "http://localhost:33013",
+    "sub": "dc452573-d480-4acb-98c5-44bdf3a44e3d",
+    "iat": 1793851196,
+    "exp": 1793851496,
+    "scope": "account:read proxy:*",
+    "delegation_origin": "service",
+    "act": {
+      "sub": "m0-cms"
+    },
+    "delegated": true
+  },
+  "operationCatalogForServiceOrigin": {
+    "http": 403,
+    "body": {
+      "error": "forbidden",
+      "error_code": 1002,
+      "message": "Forbidden: Delegated token lacks mcp:catalog:read"
+    }
+  },
+  "sourceKeyDelete": {
+    "before": {
+      "http": 200,
+      "body": {
+        "active": true,
+        "scope": "account:read proxy:*",
+        "username": "m0-member@example.test",
+        "token_type": "access",
+        "exp": 1793851534,
+        "iat": 1793851234,
+        "sub": "dc452573-d480-4acb-98c5-44bdf3a44e3d",
+        "iss": "http://localhost:3001",
+        "jti": "1d21ee04-f44c-4674-b8fc-da8dea80def8",
+        "roles": [
+          "user"
+        ],
+        "groups": [],
+        "permissions": []
+      }
+    },
+    "delete": {
+      "http": 200,
+      "body": {
+        "message": "API key deleted"
+      }
+    },
+    "after": {
+      "http": 200,
+      "body": {
+        "active": true,
+        "scope": "account:read proxy:*",
+        "username": "m0-member@example.test",
+        "token_type": "access",
+        "exp": 1793851534,
+        "iat": 1793851234,
+        "sub": "dc452573-d480-4acb-98c5-44bdf3a44e3d",
+        "iss": "http://localhost:3001",
+        "jti": "1d21ee04-f44c-4674-b8fc-da8dea80def8",
+        "roles": [
+          "user"
+        ],
+        "groups": [],
+        "permissions": []
+      }
+    },
+    "newRequest": {
+      "http": 401,
+      "body": {
+        "error": "unauthorized",
+        "error_code": 1001,
+        "message": "Unauthorized: Invalid token",
+        "details": {
+          "reason": "authentication_failed"
+        }
+      }
+    }
+  },
+  "serviceTokenRevocationEndpoint": {
+    "revoke": {
+      "http": 200,
+      "body": null
+    },
+    "after": {
+      "http": 200,
+      "body": {
+        "active": true,
+        "scope": "account:read proxy:*",
+        "username": "m0-member@example.test",
+        "token_type": "access",
+        "exp": 1793851534,
+        "iat": 1793851234,
+        "sub": "dc452573-d480-4acb-98c5-44bdf3a44e3d",
+        "iss": "http://localhost:3001",
+        "jti": "1d21ee04-f44c-4674-b8fc-da8dea80def8",
+        "roles": [
+          "user"
+        ],
+        "groups": [],
+        "permissions": []
+      }
+    },
+    "note": "HTTP 200 is not evidence of service-token revocation"
+  },
+  "credentialExpired": {
+    "secondsAfterExp": 62.006876945495605,
+    "result": {
+      "http": 200,
+      "body": {
+        "active": false
+      }
+    }
+  },
+  "verdict": "BLOCKED_NATIVE_ORGANIZATION_EGRESS_AND_FULL_CONTENT_APPROVAL"
+}

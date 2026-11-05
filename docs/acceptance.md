@@ -17,6 +17,14 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 
 历史 [I13](review-i13.md)、[I15](review-i15.md)、[I17](review-i17.md)、[I18](review-i18.md)、[I19](review-i19.md)、[I20](review-i20.md)、[I21](review-i21.md)、[I22](review-i22.md)保留其 SHA、失败、修复、临时保护与统计。旧 R031 OPEN 与门户缺口是历史状态；当前有界闭合不回填历史 modeled 统计，也不改变下列原文通过条件。原组织中文首次 INTERNAL 原因未定，后续同 ID 只读认回证据不抹去该失败。不以重发替代对账，不以测试数量推断完整场景签收。
 
+2026-11-05 原生适配新增说明：上面 `049ee1c`／`c65dc4be` 是补丁方案的历史证据，不代表官方 `38bae2f7` 已通过。本次退出后端和门户全部源码补丁，包括 Open app；保留 OIDC 直接登录。D1 原文仍包含 NyxID 入口；官方等价入口若未证明，记录为明确需求差异，不能以直接登录或历史 Launch 证据判 D1 完整通过。迁移门禁、当前限制与 A15 语义映射见 [007 原生适配](native-nyxid-migration.md)。
+
+Native adaptation note, 2026-11-05: the `049ee1c`/`c65dc4be` evidence above belongs to the historical patched implementation and does not establish acceptance of official `38bae2f7`. This migration retires all backend/portal source patches, including Open app, while preserving direct OIDC sign-in. D1 still specifies a NyxID entry point; an unproven official equivalent remains an explicit requirement gap. Direct login and historical Launch evidence cannot establish complete D1 acceptance. The migration document records gates, limits, and the A15 semantic mapping.
+
+本次普通 proxy 写因原生审批等待后的出站安全尚未证明而被 `NATIVE_DISPATCH_UNSUPPORTED` 阻断；service-origin delegation 的 exact 请求被 `NATIVE_EXACT_UNSUPPORTED` 阻断。只读代理和合法 direct OAuth 原生 exact 路径的验证结果分别记录，不能据此宣称 A30/A31 或全部两入口自动分发通过。M0、真实账号或独立验收阻塞时，正式切换保持未执行。
+
+Ordinary proxy writes are blocked by `NATIVE_DISPATCH_UNSUPPORTED` because safety after native approval waiting is unproven; exact requests from service-origin delegation are blocked by `NATIVE_EXACT_UNSUPPORTED`. Read-only proxy and legitimate direct OAuth exact results are recorded separately and cannot establish A30/A31 or complete automatic distribution through both entry points. Production cutover remains unexecuted while M0, real account inputs, or independent acceptance are blocked.
+
 ## 1. 交付追踪
 
 | 交付 | 需求 | 模块 | 必需验收场景 |
@@ -49,8 +57,12 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 | A12 | Admin 授予／撤销 Publisher；普通成员或 Publisher 尝试自提权；跨组织授予；Publisher／Admin 发布自己或已提交稿 | 仅当前有权 Admin 可管理本组织发布权限；非 Admin 不能自提权或跨组织授予；无额外 Editor、无强制第二人；确认版本、owner、作者、目标 |
 | A13 | Admin 尝试读取成员私人草稿、图片、Markdown 或指标 | 两个入口均拒绝，无搜索摘要／缓存侧漏 |
 | A14 | 多组织成员更改 owner/channel/post/revision/connection ID | 每次以真实归属授权，不能跨空间访问或写入 |
-| A15 | 入队后退组、撤销 Publisher、撤销委托或禁用连接 | 执行前重新检查并阻止未发送的写入；个人内容保留 |
+| A15 | 入队后退组、撤销 Publisher、原生授权失效、取消或连接停用/换绑 | 执行前复查当前成员、Publisher、原生凭据、取消和精确连接，阻止未发送写入；个人内容保留。删除 Agent Key 不额外解释为取消旧确认，原生 introspection 判定实际凭据失效仍停止；等待 NyxID 审批后的真正出站点须另证 |
 | A16 | 离组后查询组织历史稿和个人稿 | 组织稿仍归组织；离组者失去访问；个人稿仍归个人 |
+
+A15 的“撤销委托”以实际原生凭据有效性解释，不指定 command-authority/oauth_lineage 协议，也不要求 CMS 为删除原 Agent Key 额外撤销已确认命令。原文 R4 §45／D3 §23 明确要求撤销成员和发布权限阻止待发组织任务；R10 §100 要求每次调用和委托范围合法。现有 command-proof/exact 任务不自动改协议、换 actor 或复活，历史审计保留。组织外部分发仍需 R7 的准确内容、目标和动作 Admin 授权，不能用本项语义调整绕过 A28/A29。
+
+A15 interprets delegation revocation through actual native credential validity; it does not prescribe command-authority/oauth_lineage or add CMS cancellation of previously confirmed work solely because its originating Agent Key was deleted. R4 §45/D3 §23 require current membership/publishing authority and stop pending organization actions on removal; R10 §100 requires valid caller scope. Existing command-proof/exact tasks cannot silently change protocol, actor, or execution state, and their audit history remains intact. R7's exact content, destination and action approval still applies to organization external writes; this clarification does not bypass A28/A29.
 
 ## 3. Markdown、双语与原创发布
 

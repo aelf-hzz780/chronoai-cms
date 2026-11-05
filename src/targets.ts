@@ -1,13 +1,20 @@
 import { AppError, requireValue } from './errors.ts';
 import { RemoteError } from './http-client.ts';
 import { safeUrl } from './config.ts';
+import type {ExecutionApproval} from './connection-proof.ts';
 
 export interface RemoteRequest { method: string; url: string; body?: Record<string, any>; }
 export type Send = (request: RemoteRequest) => Promise<any>;
+export const HASHNODE_READ_QUERIES=Object.freeze({
+  post:'query ChronoPost($id:ID!){post(id:$id){id url title canonicalUrl publishedAt content{markdown} publication{id} author{id}}}',
+  find:'query ChronoFind($publication:ObjectId!,$slug:String!){publication(id:$publication){post(slug:$slug){id url title canonicalUrl publishedAt content{markdown} publication{id} author{id}}}}',
+  metrics:'query ChronoMetrics($id:ID!){post(id:$id){id views reactionCount responseCount publication{id} author{id}}}',
+});
+const hashnodeReads=new Set<string>(Object.values(HASHNODE_READ_QUERIES));
 export interface CopyPayload {
   deliveryId: string; ownerKind: string; title: string; markdown: string; sourceUrl: string; sourceDigest: string;
   creditedAuthor: string; language: string; format: string; action: string; remoteId?: string; remoteUrl?: string;
-  accountId: string; connectionFingerprint: string; executionApproval?:'exact';
+  accountId: string; connectionFingerprint: string; executionApproval?:ExecutionApproval;
 }
 export interface CopyResult { state: 'published' | 'removed' | 'submitted'; remoteId: string; url: string; sourceVerified: boolean; }
 export interface Engagement {views:number|null;reactions:number|null;comments:number|null;source:string;}
@@ -106,8 +113,8 @@ export class HashnodeAdapter implements Target {
   async reconcile(payload: CopyPayload, connection: any, send: Send): Promise<CopyResult | null> {
     this.check(payload, connection);
     const result = payload.remoteId
-      ? await this.gql(send, 'query ChronoPost($id:ID!){post(id:$id){id url title canonicalUrl publishedAt content{markdown} publication{id} author{id}}}', { id: payload.remoteId })
-      : await this.gql(send, 'query ChronoFind($publication:ObjectId!,$slug:String!){publication(id:$publication){post(slug:$slug){id url title canonicalUrl publishedAt content{markdown} publication{id} author{id}}}}', { publication: connection.publicationId, slug: `chrono-${payload.deliveryId}` });
+      ? await this.gql(send, HASHNODE_READ_QUERIES.post, { id: payload.remoteId })
+      : await this.gql(send, HASHNODE_READ_QUERIES.find, { publication: connection.publicationId, slug: `chrono-${payload.deliveryId}` });
     const post = payload.remoteId ? result.post : result.publication?.post;
     if (payload.action === 'remove' && !post && payload.remoteId) return { state: 'removed', remoteId: payload.remoteId, url: payload.remoteUrl ?? '', sourceVerified: true };
     if (!post || payload.remoteId && post.id!==payload.remoteId || post.publication?.id !== connection.publicationId || post.author?.id!==connection.accountId || post.title!==payload.title || post.canonicalUrl!==payload.sourceUrl || !post.publishedAt || Date.parse(post.publishedAt)>Date.now() || !sameBody(post.content?.markdown,payload)) return null;
@@ -115,7 +122,7 @@ export class HashnodeAdapter implements Target {
   }
   async metrics(payload:CopyPayload,connection:any,send:Send):Promise<Engagement> {
     this.check(payload,connection);
-    const data=await this.gql(send,'query ChronoMetrics($id:ID!){post(id:$id){id views reactionCount responseCount publication{id} author{id}}}',{id:payload.remoteId});const post=data.post;
+    const data=await this.gql(send,HASHNODE_READ_QUERIES.metrics,{id:payload.remoteId});const post=data.post;
     requireValue(post?.id===payload.remoteId && post.publication?.id===connection.publicationId && post.author?.id===connection.accountId,403,'COPY_MISMATCH','Hashnode metrics must match the exact author and publication');
     return {views:count(post.views),reactions:count(post.reactionCount),comments:count(post.responseCount),source:'Hashnode authorized GraphQL Post; lifetime counters'};
   }
@@ -130,5 +137,9 @@ export function createTargets(env: NodeJS.ProcessEnv = process.env) {
   const targets: Target[] = [new DevAdapter(env.DEV_API_URL ?? 'https://dev.to/api'), new HashnodeAdapter(env.HASHNODE_API_URL ?? 'https://gql-beta.hashnode.com'), new AssistedAdapter('medium'), new AssistedAdapter('hackernoon')];
   return new TargetRegistry(targets,targets.filter(t=>env[`${t.name.toUpperCase()}_ENABLED`]==='false').map(t=>t.name));
 }
-export function isRead(request: RemoteRequest) { return request.method === 'GET' || (request.method === 'POST' && typeof request.body?.query === 'string' && /^query\b/.test(request.body.query)); }
+export function isRead(request: RemoteRequest) {
+  // Only CMS-owned GraphQL read documents qualify. A prefix such as "query"
+  // cannot prove safety when another operation or operationName is appended.
+  return request.method==='GET'||request.method==='POST'&&!!request.body&&hashnodeReads.has(request.body.query)&&Object.keys(request.body).every(key=>key==='query'||key==='variables');
+}
 function count(value:unknown):number|null {return typeof value==='number' && Number.isSafeInteger(value) && value>=0?value:null;}

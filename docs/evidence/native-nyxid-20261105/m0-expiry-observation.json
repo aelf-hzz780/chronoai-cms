@@ -1,0 +1,11 @@
+{
+  "checkedAt": 1793851047.2748458,
+  "exp": 1793850929,
+  "secondsAfterExpiry": 118.27485013008118,
+  "introspection": [
+    200,
+    {
+      "active": false
+    }
+  ]
+}

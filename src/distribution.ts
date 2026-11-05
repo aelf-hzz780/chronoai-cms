@@ -31,12 +31,19 @@ export class DistributionService {
     requireValue(this.connections.listConnections,503,'CONNECTION_CONFIGURATION_REQUIRED','NyxID connection discovery is not configured');
     return this.connections.listConnections(actor,{kind:owner.kind,issuer:owner.issuer,subject:owner.subject});
   }
-  async context(actor: Actor, id: string, purpose:AuthorizationPurpose='queued-write') {
+  async context(actor: Actor, id: string, purpose:AuthorizationPurpose='access') {
     const delivery = this.store.get('SELECT * FROM deliveries WHERE id=?', id); requireValue(delivery, 404, 'NOT_FOUND', 'Delivery not found');
     const owner = await this.originals.content.policy.publish(actor, delivery.owner_id,purpose);
     const snapshot = this.store.get('SELECT * FROM delivery_payloads WHERE delivery_id=?', id)!;
     const payload = JSON.parse(snapshot.payload_json) as CopyPayload;
     return { delivery, owner: { kind: owner.kind, issuer: owner.issuer, subject: owner.subject }, payload: { ...payload, remoteId: delivery.remote_id ?? payload.remoteId, remoteUrl: delivery.url ?? payload.remoteUrl }, actor: this.originals.vault.open<Actor>(snapshot.actor_json) };
+  }
+  assertFrozenCommand(actor:Actor,id:string){
+    const delivery=this.store.get('SELECT * FROM deliveries WHERE id=?',id)!;
+    assertCommandBinding(this.store,actor,deliveryCommand(delivery));
+    const payload=JSON.parse(this.store.get('SELECT payload_json FROM delivery_payloads WHERE delivery_id=?',id)!.payload_json);
+    requireValue(delivery.digest===digest(JSON.stringify({...payload,connectionId:delivery.connection_id,target:delivery.target,accountId:payload.accountId})),409,'CONFIRMED_COMMAND_CHANGED','Saved delivery content differs from its confirmed digest');
+    if(delivery.action!=='create')requireValue(delivery.remote_id===payload.remoteId&&delivery.url===payload.remoteUrl,409,'CONFIRMED_COMMAND_CHANGED','Existing remote target differs from its confirmation');
   }
   event(id: string, state: string, trace: string, code: string | null = null) {
     const now = new Date().toISOString();
@@ -96,7 +103,7 @@ export class DistributionService {
     const fingerprint = digest(JSON.stringify({ releaseId, target: target.name, connectionId, action: input.action, format: input.format, excerpt: input.excerpt, copyId: input.copyId,planId }));
     const actorKey = `${actor.issuer}|${actor.subject}`;
     const prior = this.store.get('SELECT * FROM idempotency WHERE actor=? AND operation=? AND key=?', actorKey, 'delivery', key);
-    if (prior) { requireValue(prior.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key reused for different delivery');const row=this.store.get('SELECT * FROM deliveries WHERE id=?', prior.resource_id)!;this.store.transaction(()=>bindActorCommand(this.store,actor,deliveryCommand(row)));return row; }
+    if (prior) { requireValue(prior.digest === fingerprint, 409, 'CONFLICT', 'Idempotency key reused for different delivery');const row=this.store.get('SELECT * FROM deliveries WHERE id=?', prior.resource_id)!;return row; }
     const id=randomUUID(),prepared=await this.prepareIntent(actor,owner,release,target,connectionId,input,id,!!planId);
     const {copy,connectionLost,payload,contentDigest,state}=prepared,now=new Date().toISOString();
     if(planId){
@@ -311,13 +318,16 @@ export class DeliveryWorker {
     let sent = false, knownWrite = false, acceptedWrite = false;
     try {
       const actor = this.service.originals.vault.open<Actor>(recovery?.actor_json ?? snapshot.actor_json);
-      if(!recovering)assertCommandBinding(store,actor,deliveryCommand(store.get('SELECT * FROM deliveries WHERE id=?',lease.resourceId)!));
+      if(!recovering)this.service.assertFrozenCommand(actor,lease.resourceId);
       const purpose = recovering?'access':'queued-write';
       const { delivery, payload, owner } = await this.service.context(actor, lease.resourceId,purpose);
       const target = this.service.targets.get(delivery.target);
       const connection = await this.service.connections.connection(actor, owner, delivery.connection_id, delivery.target);
       requireValue(connectionFingerprint(connection) === payload.connectionFingerprint, 409, 'CONNECTION_CHANGED', 'Selected account or publication configuration changed; exact confirmation and authorization must be renewed');
+      let currentAuthority: (()=>void)|undefined;
       const assertDispatch = () => {
+        currentAuthority?.();
+        this.service.assertFrozenCommand(actor,delivery.id);
         this.queue.guard(lease);this.queue.assertWritable();
         if (payload.action !== 'remove') {
           const source=store.get("SELECT r.*,v.digest FROM releases r JOIN revisions v ON v.id=r.revision_id WHERE r.id=?",delivery.release_id);
@@ -341,8 +351,8 @@ export class DeliveryWorker {
           }
           const freshConnection = await this.service.connections.connection(actor,owner,delivery.connection_id,delivery.target);
           requireValue(connectionFingerprint(freshConnection) === payload.connectionFingerprint,409,'CONNECTION_CHANGED','Connection configuration drifted before execution');
-          await this.service.originals.content.policy.publish(actor, delivery.owner_id);
-          assertCommandBinding(store,actor,deliveryCommand(store.get('SELECT * FROM deliveries WHERE id=?',delivery.id)!));
+          currentAuthority=await this.service.originals.content.policy.executionGuard(actor,delivery.owner_id);
+          this.service.assertFrozenCommand(actor,delivery.id);
           this.queue.guard(lease);
           if (!this.queue.mutate(lease,() => this.service.event(delivery.id, 'sending', delivery.trace_id))) this.queue.guard(lease);
           assertDispatch();
@@ -350,7 +360,7 @@ export class DeliveryWorker {
         }
         this.queue.guard(lease);
         const result = await this.service.connections.execute(actor, { owner, connectionId: delivery.connection_id, target: delivery.target, digest: delivery.digest, action: delivery.action, approvalRef: delivery.approval_ref, request, connectionFingerprint:payload.connectionFingerprint,
-          beforeWrite:async()=>{await this.service.originals.content.policy.publish(actor,delivery.owner_id);assertCommandBinding(store,actor,deliveryCommand(store.get('SELECT * FROM deliveries WHERE id=?',delivery.id)!));},
+          beforeWrite:async()=>{currentAuthority=await this.service.originals.content.policy.executionGuard(actor,delivery.owner_id);this.service.assertFrozenCommand(actor,delivery.id);},
           beforeDispatch:()=>{if(!isRead(request))assertDispatch();else this.queue.guard(lease);}, readOnly: isRead(request) });
         if(!isRead(request) && result.status>=200 && result.status<300)acceptedWrite=true;
         requireValue(result.accountId === connection.accountId, 502, 'REMOTE_ACCOUNT_MISMATCH', 'Execution account does not match the selected connection');

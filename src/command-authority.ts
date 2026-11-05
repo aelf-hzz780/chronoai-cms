@@ -1,3 +1,4 @@
+import {randomUUID} from 'node:crypto';
 import {decodeJwt,jwtVerify,type JWTVerifyGetKey,type JWTPayload} from 'jose';
 import type {Config} from './config.ts';
 import type {Actor} from './policy.ts';
@@ -5,6 +6,7 @@ import type {Store} from './store.ts';
 import {digest} from './content.ts';
 import {requireValue} from './errors.ts';
 import {remoteJson} from './http-client.ts';
+import {projectionSnapshot} from './projection-proof.ts';
 
 export interface CommandRequest {
   version:1; method:string; path_and_query:string; content_type:string|null;
@@ -52,10 +54,15 @@ export function assertCommandRequest(actor:Actor,method:string,path:string) {
   if(!actor.commandAuthority)return;
   requireValue(actor.commandAuthority.request.method===method&&actor.commandAuthority.request.path_and_query.split('?')[0]===path,403,'SOURCE_AUTHORITY_UNPROVEN','The command authority belongs to another operation');
 }
-// Only bookkeeping decodes are allowed here: services call this after Policy's
-// signature and online checks, within the same transaction that queues the job.
+// This confirmation fence is audit bookkeeping, not new authority. Every worker
+// must still verify the retained credential and current business permissions.
+// Deprecated proof decoding is retained only for historical rows/tests.
 export function bindActorCommand(store:Store,actor:Actor,target:CommandBinding):Actor {
-  if(!actor.commandAuthority)return actor;
+  if(!actor.commandAuthority){
+    const id=`native:${randomUUID()}`;
+    store.run('INSERT INTO command_authorities VALUES (?,?,?,?,?,?)',actor.issuer,id,digest(actor.credential),target.kind,target.resourceId,target.digest);
+    return {...actor,confirmedCommand:{version:1,id,binding:{...target}}};
+  }
   return bindCommand(store,actor,decodeJwt(actor.commandAuthority.token) as CommandClaims,target);
 }
 // Caller must verify the proof and online authority before entering the command's
@@ -69,7 +76,17 @@ export function bindCommand(store:Store,actor:Actor,claims:CommandClaims,target:
   return {...actor,commandAuthority:{...actor.commandAuthority,binding:{...target}}};
 }
 export function assertCommandBinding(store:Store,actor:Actor,target:CommandBinding) {
-  const saved=actor.commandAuthority;if(!saved)return;
+  const saved=actor.commandAuthority;
+  if(!saved){
+    const confirmed=actor.confirmedCommand;
+    // Unauthenticated adapter fixtures do not represent persisted production callers.
+    if(!confirmed&&!actor.binding)return;
+    requireValue(confirmed?.version===1,409,'LEGACY_COMMAND_RECONFIRMATION_REQUIRED','Saved task has no native confirmation; explicitly confirm a new command');
+    const binding=confirmed.binding,row=store.get('SELECT * FROM command_authorities WHERE issuer=? AND jti=?',actor.issuer,confirmed.id);
+    const child=store.get('SELECT * FROM command_derivations WHERE kind=? AND resource_id=?',target.kind,target.resourceId);
+    requireValue(row&&row.token_digest===digest(actor.credential)&&row.kind===binding.kind&&row.resource_id===binding.resourceId&&row.command_digest===binding.digest&&((binding.kind===target.kind&&binding.resourceId===target.resourceId&&binding.digest===target.digest)||(child&&child.issuer===actor.issuer&&child.jti===confirmed.id&&child.task_digest===target.digest)),409,'CONFIRMED_COMMAND_CHANGED','Frozen command or credential differs; confirm a new command without rewriting this audit');
+    return;
+  }
   // The signed jti is used only as a database index; the validation path must
   // reverify this exact token before each write, including after a DB restart.
   const jti=decodeJwt(saved.token).jti;
@@ -78,12 +95,21 @@ export function assertCommandBinding(store:Store,actor:Actor,target:CommandBindi
   requireValue(binding&&row&&row.token_digest===digest(saved.token)&&row.kind===binding.kind&&row.resource_id===binding.resourceId&&row.command_digest===binding.digest&&((binding.kind===target.kind&&binding.resourceId===target.resourceId&&binding.digest===target.digest)||(child&&child.issuer===actor.issuer&&child.jti===jti&&child.task_digest===target.digest)),409,'COMMAND_AUTHORITY_REUSED','Saved command authority does not match this task');
 }
 export function deriveCommand(store:Store,actor:Actor,parent:CommandBinding,child:CommandBinding) {
-  if(!actor.commandAuthority)return;
+  if(!actor.commandAuthority&&!actor.confirmedCommand)return;
   requireValue(child.kind==='projection'&&['release','projection'].includes(parent.kind),409,'COMMAND_AUTHORITY_REUSED','Only an explicit metadata continuation may inherit command authority');
   assertCommandBinding(store,actor,parent);
-  const jti=decodeJwt(actor.commandAuthority.token).jti!;
+  const jti=actor.confirmedCommand?.id??decodeJwt(actor.commandAuthority!.token).jti!;
   store.run('INSERT INTO command_derivations VALUES (?,?,?,?,?)',child.kind,child.resourceId,actor.issuer,jti,child.digest);
 }
-export const releaseCommand=(row:Record<string,any>):CommandBinding=>({kind:'release',resourceId:row.id,digest:digest(JSON.stringify([row.article_id,row.revision_id,row.owner_id,row.action]))});
+export function releaseCommand(row:Record<string,any>,store?:Store):CommandBinding {
+  const revision=store?.get('SELECT title,markdown,digest,credited_author FROM revisions WHERE id=?',row.revision_id);
+  const article=store?.get('SELECT language FROM articles WHERE id=?',row.article_id);
+  const site=article?store?.get('SELECT * FROM sites WHERE owner_id=? AND language=?',row.owner_id,article.language):undefined;
+  const route=site?store?.get('SELECT base_url FROM site_admin_routes WHERE site_id=?',site.id):undefined;
+  const author=site&&revision?store?.get('SELECT ghost_author_id FROM author_mappings WHERE site_id=? AND credited_author=?',site.id,revision.credited_author):undefined;
+  return {kind:'release',resourceId:row.id,digest:digest(JSON.stringify([row.article_id,row.revision_id,row.owner_id,row.action,...(row.action==='publish'?[]:[row.remote_id??null,row.url??null]),...(store?[revision,article,site,route,author]:[])]))};
+}
 export const deliveryCommand=(row:Record<string,any>):CommandBinding=>({kind:'delivery',resourceId:row.id,digest:digest(JSON.stringify([row.release_id,row.owner_id,row.connection_id,row.target,row.action,row.digest]))});
-export const projectionCommand=(row:Record<string,any>):CommandBinding=>({kind:'projection',resourceId:row.id,digest:digest(JSON.stringify([row.article_id,row.owner_id]))});
+export function projectionCommand(row:Record<string,any>,store?:Store,capture=false):CommandBinding {
+  return {kind:'projection',resourceId:row.id,digest:digest(JSON.stringify([row.article_id,row.owner_id,...(store?[projectionSnapshot(store,row,capture)]:[])]))};
+}

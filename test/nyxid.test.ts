@@ -9,6 +9,7 @@ import {digest} from '../src/content.ts';
 import {connectionFingerprint} from '../src/connection-proof.ts';
 import {fixture} from './helpers.ts';
 import type {Config} from '../src/config.ts';
+import {HASHNODE_READ_QUERIES} from '../src/targets.ts';
 
 test('NyxID native operation digest agrees with the official Unicode cross-language fixture',()=>{
   assert.equal(operationDigest('us-alpha','message.create','sha256:contract',{message:'你好 <team>'}),'sha256:1bcaa1b49841edd6af5c6787659938cfe47196f3c6d2e38b460d955c4ccad4e3');
@@ -31,6 +32,7 @@ test('R029: online authority rejects saved capabilities removed from the current
 
 test('native NyxID inventory, exact approval and redemption never use a fallback account or a second proxy write',async t=>{
   const f=fixture(); const directory=await mkdtemp(join(tmpdir(),'chrono-nyx-contract-'));t.after(async()=>{f.store.close();await rm(directory,{recursive:true,force:true});});
+  f.actors.admin.credentialSource='direct-oauth';
   const owner={kind:'organization',issuer:f.actors.admin.issuer,subject:'org'};
   const binding={id:'org-dev',target:'dev',slug:'dev-org',owner,remoteBaseUrl:'https://dev.to/api',accountId:'author',organizationId:'dev-org-id',canPublish:true,canUpdate:true};
   const file=join(directory,'connections.json');await writeFile(file,JSON.stringify([binding]));
@@ -56,7 +58,7 @@ test('native NyxID inventory, exact approval and redemption never use a fallback
   await assert.rejects(authority.approval(f.actors.admin,owner,'native-ref','confirmed-digest','org-dev','create'),{code:'APPROVAL_NEEDED'});
   approvalState='approved';
   const {connectionFingerprint}=await import('../src/connection-proof.ts');
-  const input={connectionFingerprint:connectionFingerprint(await authority.connection(f.actors.admin,owner,'org-dev','dev')),owner,connectionId:'org-dev',target:'dev',request,digest:'confirmed-digest',action:'create',approvalRef:'native-ref',readOnly:false};
+  const input={connectionFingerprint:connectionFingerprint(await authority.connection(f.actors.admin,owner,'org-dev','dev')),owner,connectionId:'org-dev',target:'dev',request,digest:'confirmed-digest',action:'create',approvalRef:'native-ref',readOnly:false,beforeWrite:async()=>{}};
   await assert.rejects(authority.execute(f.actors.admin,{...input,request:{...request,body:{article:{title:'Changed'}}}}),{code:'APPROVAL_NEEDED'});
   await assert.rejects(authority.execute(f.actors.admin,{...input,beforeWrite:async()=>{await Promise.resolve();throw new Error('Authority revoked during final upstream checks');}}),/Authority revoked during final upstream checks/);
   assert.equal(calls.filter(c=>c.path.endsWith('/redeem')).length,0,'Async authority rejection must precede exact redemption');
@@ -74,7 +76,7 @@ test('R007: native execute rejects a resolved binding different from the frozen 
   authority.connection=async()=>({...base,accountId:'B',generation:'2',active:true});authority.call=async()=>{writes++;return{};};
   await assert.rejects(authority.execute(f.actors.solo,{owner,connectionId:base.id,target:'dev',request:{method:'POST',url:'https://dev.to/api/articles'},connectionFingerprint:connectionFingerprint(base),beforeDispatch:()=>{},readOnly:false}),{code:'CONNECTION_CHANGED'});assert.equal(writes,0);
   authority.connection=async()=>({...base,active:true});
-  await assert.rejects(authority.execute(f.actors.solo,{owner,connectionId:base.id,target:'dev',request:{method:'POST',url:'https://dev.to/api/articles'},connectionFingerprint:connectionFingerprint(base),beforeWrite:async()=>{await Promise.resolve();throw new Error('Source revoked before proxy dispatch');},beforeDispatch:()=>{},readOnly:false}),/Source revoked before proxy dispatch/);assert.equal(writes,0);
+  await assert.rejects(authority.execute(f.actors.solo,{owner,connectionId:base.id,target:'dev',request:{method:'POST',url:'https://dev.to/api/articles'},connectionFingerprint:connectionFingerprint(base),beforeWrite:async()=>assert.fail('Unsupported write must not dispatch'),beforeDispatch:()=>{},readOnly:false}),{code:'NATIVE_DISPATCH_UNSUPPORTED'});assert.equal(writes,0);
 });
 
 test('NyxID proxy uses the exact slug root route and preserves nested paths and queries',async t=>{
@@ -90,7 +92,7 @@ test('NyxID proxy uses the exact slug root route and preserves nested paths and 
   ];
   for(const scenario of cases){
     const binding={id:'exact-org-connection',target:scenario.target,slug:'provider-org',owner,remoteBaseUrl:scenario.base,accountId:'author',generation:'1',active:true};
-    const request={method:'POST',url:scenario.url,body:{query:'query Account { me { id } }',variables:{}}};
+    const request=scenario.target==='hashnode'?{method:'POST',url:scenario.url,body:{query:HASHNODE_READ_QUERIES.post,variables:{id:'article'}}}:{method:'GET',url:scenario.url};
     let dispatched=false,calls=0;
     authority.connection=async()=>binding;
     authority.call=async(_actor,path,method,body)=>{

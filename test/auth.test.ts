@@ -61,12 +61,12 @@ test('NyxID propagated signed identity requires matching service, person, actor 
   auth.discovery={};auth.keys=createLocalJWKSet({keys:[{...await exportJWK(publicKey),kid:'test'}]}) as typeof auth.keys;
   const sign=(claims:any,aud:string,seconds:number)=>new SignJWT(claims).setProtectedHeader({alg:'RS256',kid:'test'}).setIssuer(f.actors.solo.issuer).setSubject(claims.sub??'solo').setAudience(aud).setIssuedAt().setExpirationTime(`${seconds}s`).setJti('unique-test').sign(privateKey);
   const identity=await sign({nyx_service_id:'registered-service'},'chrono-publication',60);
-  const delegation=await sign({scope:'proxy:chrono-cms',token_type:'access',delegated:true,act:{sub:'chrono-cms'}},'nyxid',300);
+  const delegation=await sign({scope:'proxy:chrono-cms',token_type:'access',delegated:true,delegation_origin:'service',act:{sub:'chrono-cms'}},'nyxid',300);
   const actor=await auth.propagated(identity,delegation);assert.deepEqual(actor.scopes,['content:read']);
   const futureIdentity=(seconds:number)=>new SignJWT({nyx_service_id:'registered-service'}).setProtectedHeader({alg:'RS256',kid:'test'}).setIssuer(f.actors.solo.issuer).setSubject('solo').setAudience('chrono-publication').setIssuedAt(Math.floor(Date.now()/1000)+seconds).setExpirationTime(Math.floor(Date.now()/1000)+seconds+60).setJti('clock-test').sign(privateKey);
   assert.deepEqual((await auth.propagated(await futureIdentity(3),delegation)).scopes,['content:read']);
   await assert.rejects(auth.propagated(await futureIdentity(30),delegation),{code:'INVALID_TOKEN'});
-  for(const [id,del] of [[await sign({nyx_service_id:'other'},'chrono-publication',60),delegation],[await sign({nyx_service_id:'registered-service',sub:'other'},'chrono-publication',60),delegation],[identity,await sign({scope:'proxy:chrono-cms',token_type:'access',delegated:true,act:{sub:'wrong'}},'nyxid',300)],[await sign({nyx_service_id:'registered-service'},'chrono-publication',300),delegation]])await assert.rejects(auth.propagated(id,del),{code:'INVALID_TOKEN'});
+  for(const [id,del] of [[await sign({nyx_service_id:'other'},'chrono-publication',60),delegation],[await sign({nyx_service_id:'registered-service',sub:'other'},'chrono-publication',60),delegation],[identity,await sign({scope:'proxy:chrono-cms',token_type:'access',delegated:true,delegation_origin:'service',act:{sub:'wrong'}},'nyxid',300)],[await sign({nyx_service_id:'registered-service'},'chrono-publication',300),delegation]])await assert.rejects(auth.propagated(id,del),{code:'INVALID_TOKEN'});
 });
 
 test('OIDC callback binds PKCE/state/nonce/access hash and yields the same caller on CMS and service; logout revokes the cookie',async t=>{

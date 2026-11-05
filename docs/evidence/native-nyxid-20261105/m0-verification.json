@@ -1,0 +1,19 @@
+{
+  "observationsChecked": true,
+  "providerDeltas": [
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    1,
+    0,
+    1
+  ],
+  "sourceKeyDeletionSemanticsChecked": true,
+  "retainedServiceTokenRevocation": "NOT_SUPPORTED",
+  "naturalExpiryActive": false,
+  "noSecretsInEvidence": true,
+  "scope": "Observed official isolated runtime; not final product acceptance"
+}

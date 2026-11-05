@@ -1,5 +1,9 @@
 # NyxID 注册与连接交接
 
+> **2026-11-05 范围提示：** 本文下面保留的是 `049ee1c` 后端／`c65dc4be` 门户补丁方案的历史运行与注册材料，其中“当前”均属于当时版本。新的官方 NyxID `38bae2f7` 适配、A15 语义和 Open app 退出计划见 [007 原生适配与迁移](native-nyxid-migration.md)。正式环境尚未完成本次切换；不能根据本文的 command authority、Launch 或历史 exact 证据宣称官方版已经通过。新实现阻止普通 proxy 写（个人/组织），合法 direct OAuth 原生 exact 与 service-origin 的能力边界须按新交接分别验证。历史内容保留用于审计和受控回滚参考，不直接执行旧切换脚本。
+>
+> **Scope note, 2026-11-05:** The content below preserves historical runtime and registration material for patched backend `049ee1c` and portal `c65dc4be`; references to “current” apply to those versions. See the native adaptation/migration document for official `38bae2f7`, the A15 clarification, and retirement of Open app. Production cutover is not complete. Historical command authority, Launch and exact evidence does not establish official-version acceptance. The new implementation blocks ordinary proxy writes for personal and organization connections; legitimate direct OAuth exact and service-origin capability must be verified separately. Retain this history for audit and controlled rollback review; do not execute its older switch scripts directly.
+
 当前本地集成使用后端 `049ee1c2ca811a002590dc8330ce646078bb1158`、门户 `c65dc4bedb7da79cf0fb477e6f5bd809f03aec9b`，均为保留的官方 `38bae2f7825bfa70d8a9e4e837118d7d9658e6a5` 之上的本地补丁，未向 upstream push／merge。目标实例需要明确部署这些依赖，不能按上游原版宣称具有同等能力。
 
 W1 在固定 `0b0e9d1`＋`049ee1c` 的所选真实 proxy／逐请求批准／在线来源核验路径有界关闭 R031，见 [W1](acceptance-w1-20261102.md)。整合 `83b4b8e` 后的 pending-media／恢复补验、最终 OpenAPI 注册发现及可复现配置见 [2026-11-02 交接](handoff-20261102.md)。普通 delegation active 仍不能单独证明原来源有效；签名 command authority、当前权限、绑定、精确批准及最终写入守卫继续共同约束，未支持来源保持拒绝。

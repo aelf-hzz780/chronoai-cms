@@ -21,7 +21,7 @@ const cmsMap={'content:read':['profile'],'content:write':['proxy'],publish:['pro
 const lineage={consents:[],source_session_id:'original-session',delegation_jti:null};
 const serviceMap={'content:read':['account:read'],'content:write':['account:read','proxy:*'],publish:['account:read','proxy:*']};
 type OnlineFailure='inactive'|'scope reduced'|'subject mismatch'|'issuer mismatch'|'nonboolean active'|'server failure'|'malformed response'|'connection closed';
-test('R030/R031: persisted callers and workers enforce current bindings and signed source lineage',async t=>{
+test('R030/R031: native persisted callers enforce current bindings; legacy task snapshots remain isolated',async t=>{
  const {privateKey,publicKey}=await generateKeyPair('RS256'),jwk={...await exportJWK(publicKey),kid:'local-r030'};
  const revokedTokens=new Set<string>();
  let base='',onlineFailure:OnlineFailure|undefined;
@@ -91,7 +91,7 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
   const connections={async connection(){return {id:'local',accountId:'person',active:true};},async approval(){return {};},async execute(_actor:any,input:any){input.beforeDispatch();writes++;return {accountId:'person',status:201,body:{}};}};
   const distribution=()=>new DistributionService(f.pub,connections,new TargetRegistry([target]));
   const scope=scenario.entry==='cms'?'openid profile proxy':scenario.raw?'content:read content:write publish':'account:read proxy:*';
-  const credential=await sign({scope,token_type:'access',...(scenario.entry==='propagated'?{delegated:true,act:{sub:'blog'},oauth_lineage:lineage}:{client_id:scenario.entry==='cms'?'cms':'direct'})},scenario.entry==='cms'?'shared':scenario.entry==='propagated'?'delegation':'service');
+  const credential=await sign({scope,token_type:'access',...(scenario.entry==='propagated'?{delegated:true,delegation_origin:'service',act:{sub:'blog'},oauth_lineage:lineage}:{client_id:scenario.entry==='cms'?'cms':'direct'})},scenario.entry==='cms'?'shared':scenario.entry==='propagated'?'delegation':'service');
   const identity=scenario.entry==='propagated'?await sign({nyx_service_id:'registered'},'service',2):undefined;
   const actor=identity?await f.auth.propagated(identity,credential):await f.auth.accessToken(credential,scenario.entry==='cms'?'shared':'service',scenario.entry==='cms'?'cms':'service');
   f.store.createOwner('owner','personal',base,'person');f.store.run('INSERT INTO sites VALUES (?,?,?,?,?)','site','owner','en','http://localhost:3198','NO_KEY');
@@ -100,10 +100,10 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
   let id=release.id;
   if(kind==='delivery'){await new ReleaseWorker(f.pub,original).once();assert.equal(writes,1);const delivery=await distribution().request(actor,release.id,{target:'local',connectionId:'local',format:'full',action:'create',rightsConfirmed:true,idempotencyKey:'delivery'},'r030-'+scenario.name);id=delivery.id;}
   if('legacyLineage' in scenario){
-   const legacy=await sign({scope,token_type:'access',delegated:true,act:{sub:'blog'},oauth_lineage:scenario.legacyLineage},'delegation');
+   const legacy=await sign({scope,token_type:'access',delegated:true,delegation_origin:'service',act:{sub:'blog'},oauth_lineage:scenario.legacyLineage},'delegation');
    const legacyActor={...actor,credential:legacy,oauth_lineage:lineage,sourceKeyId:'untrusted-self-report'};
    await f.policy.scope(legacyActor,'content:read');
-   await assert.rejects(f.pub.confirm(legacyActor,article.id,{...release,idempotencyKey:'forged'},'r031'),{code:'SOURCE_AUTHORITY_UNPROVEN'});
+   await f.policy.publish(legacyActor,'owner'); // Native service authorization does not require patched OAuth lineage.
    const forged=await f.content.create(legacyActor,{ownerId:'owner',language:'en',title:'Draft remains available',markdown:'No command authority from read proof',creditedAuthor:'person'},'r031');
    assert.ok(forged.id);
    if(kind==='release')f.store.run('UPDATE releases SET actor_json=? WHERE id=?',vault.seal(legacyActor),id);
@@ -125,7 +125,7 @@ test('R030/R031: persisted callers and workers enforce current bindings and sign
    if(kind==='release')await new ReleaseWorker(f.pub,original).once();else await new DeliveryWorker(distribution(),original).once();
    assert.equal(writes,scenario.allowed&&!scenario.recovery?1:0,'outbound writes after current authorization check');
    assert.equal(f.store.get(`SELECT state FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.state,scenario.recovery?(kind==='release'?'uncertain':(scenario.allowed?'published':'uncertain')):scenario.allowed?'published':'blocked');
-   if('legacyLineage' in scenario&&!scenario.recovery)assert.equal(f.store.get(`SELECT error_code FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.error_code,'SOURCE_AUTHORITY_UNPROVEN');
+   if('legacyLineage' in scenario&&!scenario.recovery)assert.equal(f.store.get(`SELECT error_code FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.error_code,'LEGACY_COMMAND_RECONFIRMATION_REQUIRED');
    if(scenario.onlineFailure)assert.equal(f.store.get(`SELECT error_code FROM ${kind==='release'?'releases':'deliveries'} WHERE id=?`,id)!.error_code,'IDENTITY_UNAVAILABLE');
   }finally{f.store.close();}
  });

@@ -16,7 +16,7 @@ import type {Config} from '../src/config.ts';
 
 async function setup(t:any,mode:string|undefined='exact',kind='personal') {
   const f=fixture(),directory=await mkdtemp(join(tmpdir(),'chrono-personal-exact-'));
-  const ownerId=kind==='personal'?'solo':'org',actor=kind==='personal'?f.actors.solo:f.actors.admin;
+  const ownerId=kind==='personal'?'solo':'org',actor={...(kind==='personal'?f.actors.solo:f.actors.admin),credentialSource:'direct-oauth' as const};
   const owner={kind,issuer:actor.issuer,subject:ownerId};
   const binding:any={id:'selected-connection',target:'dev',owner,slug:'selected-provider',remoteBaseUrl:'https://dev.to/api',accountId:'author',canPublish:true,...(mode===undefined?{}:{executionApproval:mode})};
   const file=join(directory,'connections.json');await writeFile(file,JSON.stringify([binding]));
@@ -98,14 +98,14 @@ test('personal exact generic requests preserve raw queries and reject wrong owne
   assert.deepEqual(f.state.fence.arguments,{method:'POST',path:'/articles?tag=a&tag=b%2Fc',body:request.body});
   await assert.rejects(f.authority.prepareApproval(f.actors.outsider,f.owner,f.binding.id,'dev',request,'other','content','create'),{code:'CONNECTION_MISMATCH'});
   await assert.rejects(f.authority.approval(f.actors.outsider,f.owner,'exact-request','content',f.binding.id,'create'),{code:'CONNECTION_MISMATCH'});
-  const delegated={...f.actor,credential:`header.${Buffer.from(JSON.stringify({delegated:true})).toString('base64url')}.signature`};
+  const delegated={...f.actor,credentialSource:'oauth-delegation' as const,sourceScopes:['proxy','mcp:catalog:read']};
   await assert.rejects(f.authority.prepareApproval(delegated,f.owner,f.binding.id,'dev',request,'delegated','content','create'),{code:'EXACT_OPERATION_REQUIRED'});
   const org=await setup(t,'exact','organization');
   await assert.rejects(org.authority.prepareApproval(org.actor,org.owner,org.binding.id,'dev',request,'organization','content','create'),{code:'EXACT_OPERATION_REQUIRED'});
   assert.equal(f.calls.filter(call=>call.path==='/api/v1/approvals/exact-service/requests').length,1);
 });
 
-test('personal legacy keeps proxy execution, cannot request exact approval and rejects client-controlled mode',async t=>{
+test('personal legacy cannot silently switch to exact approval or send through an unsupported waiting proxy',async t=>{
   const f=await setup(t);await f.mode();
   await assert.rejects(f.service.request(f.actor,f.release.id,{...f.input,executionApproval:'exact'},'client-mode'),{code:'INVALID_INPUT'});
   const delivery=await f.confirm();assert.equal(delivery.state,'queued');
@@ -118,7 +118,8 @@ test('personal legacy keeps proxy execution, cannot request exact approval and r
   f.store.run("UPDATE deliveries SET state='queued' WHERE id=?",delivery.id);
   const request={method:'POST',url:'https://dev.to/api/articles',body:{article:{title:'Legacy'}}};
   await assert.rejects(f.authority.prepareApproval(f.actor,f.owner,f.binding.id,'dev',request,delivery.id,delivery.digest,'create'),{code:'APPROVAL_CONFIGURATION'});
-  assert.equal(await f.worker.once(),true);assert.equal(f.calls.filter(call=>call.path.startsWith('/api/v1/proxy/')&&call.method==='POST').length,1);
+  assert.equal(await f.worker.once(),true);assert.equal(f.calls.filter(call=>call.path.startsWith('/api/v1/proxy/')&&call.method==='POST').length,0);
+  assert.equal(f.store.get('SELECT state,error_code FROM deliveries WHERE id=?',delivery.id)!.error_code,'NATIVE_DISPATCH_UNSUPPORTED');
   assert.equal(f.calls.filter(call=>call.path.endsWith('/redeem')).length,0);
 });
 
@@ -164,7 +165,7 @@ test('exact creation rejects a changed declared operation generation and preserv
 
 test('delegated declared catalogs may omit their generation with null and retain the authoritative create generation',async t=>{
   const f=await setup(t);f.state.generic=false;f.state.operationGeneration=null;f.state.resultGeneration=0;
-  const delegated={...f.actor,credential:`header.${Buffer.from(JSON.stringify({delegated:true})).toString('base64url')}.signature`};
+  const delegated={...f.actor,credentialSource:'oauth-delegation' as const,sourceScopes:['proxy','mcp:catalog:read']};
   const request={method:'POST',url:'https://dev.to/api/articles',body:{article:{title:'Confirmed'}}};
   assert.equal((await f.authority.prepareApproval(delegated,f.owner,f.binding.id,'dev',request,'delivery','content','create')).reference,'exact-request');
   const sent=f.calls.find(call=>call.path==='/api/v1/approvals/exact-service/requests').body;
@@ -181,4 +182,33 @@ test('personal exact failed or in-progress redemption stays uncertain without a 
     assert.equal(f.calls.filter(call=>call.path.startsWith('/api/v1/proxy/')&&call.method!=='GET').length,0);
     assert.equal(await f.worker.once(),false);
   }
+});
+
+test('explicit native policy cannot convert a previously approved exact delivery or replace its actor',async t=>{
+  const f=await setup(t),delivery=await f.confirm();await f.service.requestApproval(f.actor,delivery.id,'request');f.state.approval='approved';
+  await f.service.authorize(f.actor,delivery.id,'exact-request','authorize');
+  const saved=f.store.get('SELECT actor_json,payload_json FROM delivery_payloads WHERE delivery_id=?',delivery.id)!;
+  await f.mode('native');await f.worker.once();
+  assert.equal(f.store.get('SELECT error_code FROM deliveries WHERE id=?',delivery.id)!.error_code,'CONNECTION_CHANGED');
+  assert.deepEqual(f.store.get('SELECT actor_json,payload_json FROM delivery_payloads WHERE delivery_id=?',delivery.id),saved);
+  assert.equal(f.calls.filter(call=>call.path.endsWith('/redeem')||call.path.startsWith('/api/v1/proxy/')&&call.method!=='GET').length,0);
+});
+
+test('exact dispatch rechecks an Admin demotion occurring during final connection lookup',async t=>{
+ const f=await setup(t,'exact','organization');f.state.generic=false;
+ const request={method:'POST',url:'https://dev.to/api/articles',body:{article:{title:'Frozen'}}};
+ await f.authority.prepareApproval(f.actor,f.owner,f.binding.id,'dev',request,'fixed-command','digest','create');f.state.approval='approved';
+ const frozen=await f.authority.connection(f.actor,f.owner,f.binding.id,'dev'),originalConnection=f.authority.connection.bind(f.authority);
+ let calls=0,guard:(()=>void)|undefined;
+ f.authority.connection=async(...args)=>{const value=await originalConnection(...args);if(++calls===2)f.memberships.set('admin:org','member');return value;};
+ await assert.rejects(f.authority.execute(f.actor,{owner:f.owner,connectionId:f.binding.id,target:'dev',request,digest:'digest',action:'create',approvalRef:'exact-request',connectionFingerprint:connectionFingerprint(frozen),readOnly:false,beforeWrite:async()=>{guard=await f.policy.executionGuard(f.actor,'org');},beforeDispatch:()=>guard?.()}),{code:'FORBIDDEN'});
+ assert.equal(f.calls.filter(call=>call.path.endsWith('/redeem')).length,0);
+});
+
+test('exact dispatch synchronously rejects local binding drift during the final role check',async t=>{
+ const f=await setup(t),request={method:'POST',url:'https://dev.to/api/articles',body:{article:{title:'Frozen'}}};
+ await f.authority.prepareApproval(f.actor,f.owner,f.binding.id,'dev',request,'fixed-command','digest','create');f.state.approval='approved';
+ const frozen=await f.authority.connection(f.actor,f.owner,f.binding.id,'dev');let checks=0;
+ await assert.rejects(f.authority.execute(f.actor,{owner:f.owner,connectionId:f.binding.id,target:'dev',request,digest:'digest',action:'create',approvalRef:'exact-request',connectionFingerprint:connectionFingerprint(frozen),readOnly:false,beforeWrite:async()=>{if(++checks===2)await f.mode('native');},beforeDispatch:()=>{}}),{code:'CONNECTION_CHANGED'});
+ assert.equal(f.calls.filter(call=>call.path.endsWith('/redeem')).length,0);
 });
