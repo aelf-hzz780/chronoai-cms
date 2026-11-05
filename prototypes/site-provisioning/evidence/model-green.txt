@@ -1,21 +1,25 @@
-✔ Owner/Admin can apply; publishing role alone cannot (5.382875ms)
-✔ repeat application preserves request identity and fields (0.153833ms)
-✔ application fields and language scope remain separated by workspace (0.580875ms)
-✔ supplement resumes the original request, ordinary member cannot submit (0.179875ms)
-✔ a URL alone is not readiness; only the registered language is verified (0.195833ms)
-✔ failure recovery never resets the ready language or identity (0.347ms)
-✔ verification requires registration; real or unsafe addresses are rejected (0.135791ms)
-✔ switching UI locale and JSON persistence retain form drafts and request state (0.388334ms)
-✔ partial demo and waiting-info demo keep honest readiness (0.39725ms)
-✔ claiming an information-blocked request preserves the block (0.320667ms)
-✔ registering a changed address clears only that language’s old evidence (0.280083ms)
-✔ verification is tied to the registered address and rejects an old response (0.129333ms)
-✔ retiring domain preferences preserves existing requests and drafts (0.173917ms)
-ℹ tests 13
+✔ Owner/Admin can apply; publishing role alone cannot (5.31575ms)
+✔ repeat application preserves request identity and fields (0.160625ms)
+✔ application fields and language scope remain separated by workspace (0.576875ms)
+✔ supplement resumes the original request, ordinary member cannot submit (0.182209ms)
+✔ a URL alone is not readiness; only the registered language is verified (0.21475ms)
+✔ failure recovery never resets the ready language or identity (0.346083ms)
+✔ verification requires registration; real or unsafe addresses are rejected (0.100125ms)
+✔ switching UI locale and JSON persistence retain form drafts and request state (0.365375ms)
+✔ partial demo and waiting-info demo keep honest readiness (0.365292ms)
+✔ claiming an information-blocked request preserves the block (0.283208ms)
+✔ changing the shared root invalidates both languages and the root check (0.157167ms)
+✔ stale language and root verification responses cannot apply to a new root (0.145792ms)
+✔ root URL derives language paths and only accepts the demo platform domain (0.156958ms)
+✔ root verification is separate, fixed to English and required for completion (0.470042ms)
+✔ registering the same root preserves successful checks (0.284708ms)
+✔ retiring domain preferences preserves existing requests and drafts (0.201084ms)
+✔ legacy split-domain migration preserves drafts and ownership but clears old proofs once (0.31675ms)
+ℹ tests 17
 ℹ suites 0
-ℹ pass 13
+ℹ pass 17
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 57.92475
+ℹ duration_ms 59.704625

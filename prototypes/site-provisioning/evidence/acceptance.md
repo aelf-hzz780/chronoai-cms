@@ -1,34 +1,32 @@
 # 原型验收 / Prototype acceptance
 
-日期：2026-11-05。范围：本地静态交互原型，不代表真实部署或后端权限验收。
+日期：2026-11-05。当前范围：同一博客域名下 /en/、/zh/，根路径默认跳英文。B 方案视觉、人工开通流程与真实服务外发暂停保持。
 
-Date: 2026-11-05. Scope: local static interactive prototype, not production provisioning or backend authorization acceptance.
+Date: 2026-11-05. Current scope: /en/ and /zh/ under one blog domain, with the root defaulting to English. The B visual direction, manual operations workflow and live publishing pause remain.
 
-- 模型测试 13/13：角色、重复申请、工作区隔离、补充资料、逐语言核验、失败重试、地址校验及旧结果拒绝。 / Model tests 13/13: roles, duplicate application, workspace isolation, information requests, per-language verification, retries, URL validation and stale-result rejection.
-- 浏览器走通申请 → 请求补充 → 接单仍等待资料 → Admin 补充 → EN 通过 → ZH 失败 → ZH 重试通过。 / Browser walkthrough covers application, information request, claim while blocked, Admin supplement, EN success, ZH failure and ZH retry success.
-- Member/Publisher 没有组织开通与补充按钮，存在明确的管理员引导；这是 UI/模型演示。 / Member/Publisher views omit organization provisioning controls and explain the Admin handoff; this is a UI/model demonstration.
-- 已注册 URL 被编辑但未重新登记时，核验按钮禁用；换址清空该语言旧核验证据。 / Dirty address drafts disable verification; re-registration clears only that language's old evidence.
-- 核验过程中切换演示场景不会留下禁用控件；旧结果不写入新申请。 / Switching scenarios during verification releases busy controls and does not apply stale results to a new request.
-- 刷新保留同一申请及部分开通状态；中英文 UI 切换保留输入；个人表单草稿与组织状态隔离。 / Reload preserves request identity and partial state; UI language switches preserve input; personal form drafts are isolated from organization state.
-- Escape 关闭弹窗并返回触发按钮。 / Escape closes the dialog and restores trigger focus.
-- 桌面请求视口 1440×1000，实际 DOM 宽 1384；移动请求视口 375×812，实际 DOM 宽 360，均未发现横向溢出。 / Requested desktop viewport: 1440×1000, observed DOM width: 1384. Requested mobile viewport: 375×812, observed DOM width: 360. No horizontal overflow observed.
-- 最终浏览器 warning/error 日志为空。 / Final browser warning/error log query returned no entries.
-- 博客入口已核对为本地效果页，不跳转 .example 外部域名。 / Blog links were confirmed to open a local sample rather than an external .example domain.
+## 自动验证 / Automated validation
 
-两轮只读复核完成，已修复补充资料被接单跳过、旧 URL 核验证据残留以及异步切换后控件未解锁的问题。Python design_lint 因未安装 Playwright 而跳过；视觉检查采用实际 CUA 浏览器截图，不将跳过记为通过。
+- 模型测试 17/17 通过；所有原型 JavaScript 文件语法检查通过。 / All 17 model tests and JavaScript syntax checks passed.
+- 角色权限、重复申请、工作区隔离、补充资料阻塞、URL 输入校验、逐语言失败重试与旧结果拒绝。 / Role rules, duplicate requests, workspace isolation, information-request blocking, URL validation, isolated retries and stale-result rejection.
+- 根地址登记保留完整路径派生结果；根入口必须单独核验且英文先就绪；两语言和根入口全部通过才完成。 / Root registration derives full paths; root verification is separate and requires English readiness; completion requires both languages and the root check.
+- 修改根地址使两语言和根入口证据同时失效；相同根地址重复登记保留结果。 / Changing the root invalidates both languages and the root evidence; re-registering the same root preserves results.
+- 旧数据迁移保留申请编号、备注、负责人、待补充状态和草稿，清理旧 URL 通过记录且幂等；旧完成历史标为旧地址，不虚构当时已做根入口核验。 / Idempotent migration preserves request IDs, notes, assignees, information blocking and drafts while invalidating old URL evidence. Legacy completion history stays labeled as old-address evidence, without inventing past root checks.
 
-Two read-only review rounds completed. Fixes cover claiming an information-blocked request, stale URL evidence and asynchronous control cleanup. Python design_lint was skipped because Python Playwright is unavailable. Actual CUA browser screenshots provide visual evidence; the skipped lint is not recorded as a pass.
+## 浏览器实测 / Browser checks
 
-未验收真实资源创建、DNS/TLS、Ghost 连接、服务端 RBAC、通知或生产持久化。真实服务配置与暂停状态未改动。
+- 以 Richard 提交申请 REQ-2026-0420，运维接单，登记 https://richard.chronoai.example/，自动生成 /en/ 和 /zh/。 / Submitted Richard request REQ-2026-0420, claimed it and registered one root that generated both language paths.
+- 根入口在英文未核验前禁用；英文通过后单独核验根入口，再模拟中文失败。英文及根入口结果保留。 / Root verification was disabled before English readiness, passed separately after English, and remained valid when Chinese failed.
+- 刷新保留同一申请、部分成功状态和完整路径。中文单独重试成功后完成，未触发发布。 / Reload retained request identity, partial state and full paths. Chinese retry completed setup without publishing.
+- 根地址输入修改时禁核验，点击更新会先说明两语言和根入口均需重核验；取消并恢复原地址可继续原有流程。 / Dirty root input disabled checks; updating showed a confirmation explaining all evidence would be invalidated. Canceling and restoring the root allowed the original flow to continue.
+- CMS 界面为中文时，根入口预览仍进入英文 /en/；点击博客语言切换进入同域 /zh/。两种语言通过前不开放未就绪语言切换。最终浏览器 warning/error 日志为空，运维说明页面已打开核对。 / With Chinese CMS UI, root preview still opened English /en/. The blog language switch opened same-domain /zh/; unready language switches remained disabled. Final browser warning/error logs were empty, and the operations guide was opened and checked.
+- 桌面与 375×812 窄屏检查，窄屏文档宽度等于 375，无横向溢出，提交操作可达。 / Desktop and 375×812 narrow viewport checked; narrow document width was 375 with no horizontal overflow and reachable submit actions.
 
-Real resource creation, DNS/TLS, Ghost connectivity, server-side RBAC, notifications and production persistence are outside this prototype. Live service configuration and paused publishing state were not changed.
+本轮复核修正了旧 complete 历史被错误升级为“根入口也曾通过”的表述。截图为 CUA 实际浏览器输出。此前 Python design_lint 因缺少 Python Playwright 跳过，未记录为通过。
 
-## 首发子域名范围修正 / Platform subdomain scope correction
+Read-only review identified and corrected overstated legacy completion history. Screenshots are actual CUA browser output. Python design_lint was previously skipped because Python Playwright is unavailable; it is not recorded as a pass.
 
-移除申请域名偏好，申请人只确认归属与名称；运维分配平台子域名。中英文申请弹窗、申请摘要、运维详情及页面截图同步更新。原型示例统一从同一平台演示根域名生成。
+## 实施边界 / Implementation boundary
 
-Domain preferences were removed. Applicants confirm ownership and name; operations assigns platform subdomains. Both UI languages, request summaries, operator details and screenshots are updated. New sample addresses share one platform demo base domain.
+所有 URL 与核验是本地演示数据。根入口预览仅模拟效果，没有配置真实 HTTP 重定向。没有调用 CMS、NyxID、Ghost 或 DEV，没有修改真实业务代码、部署配置或发布 Worker。完整运维流程与后续实施项见 ../operations.md。
 
-新增兼容测试确认旧 domain 字段和已知旧 seed 域名询问被移除，申请编号、已核验站点、备注与写作草稿保留。浏览器已验证无域名输入也能提交，并检查桌面与 375px 窄屏的提交按钮可达；warning/error 日志为空。本轮浏览器提交使用 localhost 独立原型存储，127.0.0.1 的现有申请保留。
-
-The added compatibility test removes legacy domain fields and the known seeded domain question while preserving request identity, verified sites, notes and writing drafts. Browser checks confirmed submission without domain input and reachable actions on desktop and a 375px narrow viewport; warning/error logs were empty. Submission checks used separate localhost prototype storage, preserving the existing 127.0.0.1 request.
+URLs and verification results are local demo data. Root preview simulates behavior without configuring a live HTTP redirect. No CMS, NyxID, Ghost or DEV calls, production business-code edits, deployment configuration changes or publishing Worker actions occurred. See ../operations.md for the operations flow and future integration work.

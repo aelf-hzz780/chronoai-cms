@@ -27,9 +27,9 @@ Core views: site overview, application dialog, request progress, operations queu
 1. 申请开通博客，填写名称，提交申请。 / Apply for a blog and submit its name.
 2. 底部切换运维视角，打开申请并领取。 / Switch to operations, open and claim the request.
 3. 可先请求补充资料；回到用户侧以 Admin 身份补充。 / Optionally request information and answer as Admin.
-4. 分别登记中英文 HTTPS .example 地址，核验当前语言。 / Register an HTTPS .example URL for each language and verify it.
-5. 演示核验结果可选择失败；再次核验仅处理当前语言。 / Simulate a failure and retry only the affected language.
-6. 返回站点页查看独立语言进度与本地博客效果。 / Return to view per-language readiness and the local blog sample.
+4. 登记一个博客根地址（示例：https://richard.chronoai.example/），自动生成 /en/、/zh/。 / Register one blog root; /en/ and /zh/ are generated automatically.
+5. 分别核验两种语言，再单独核验根路径跳转 /en/；原址重试只影响当前检查。 / Verify each language, then separately verify the root redirect to /en/. Retries at the same address affect only the selected check.
+6. 返回站点页查看统一博客入口与两语言进度；预览根入口进入英文，可切换中文。 / Preview the shared root opening English, then switch to Chinese.
 
 底部工具栏可直接切换首次申请、待处理、补充资料、处理中、部分开通、完成和状态不可读。组织角色可切换 Admin、Member、Publisher；个人与组织数据相互独立。
 
@@ -41,9 +41,9 @@ The demo toolbar exposes new, queued, information-requested, in-progress, partia
 
 Data is stored in localStorage and can be reset with the demo toolbar. Role selection is a demonstration, not server-side authorization. Verification is simulated. No CMS, NyxID, Ghost or DEV integration, resource deployment, article submission or publishing Worker is involved.
 
-公开地址仅接受 HTTPS .example 样例，访问博客进入本地效果页。页面使用本地资源，并以 CSP connect-src 'none' 禁止脚本联网。站点已就绪与发布可执行始终分开表达。
+根地址仅接受 HTTPS 的 chronoai.example 子域名样例，访问博客进入本地效果页。页面使用本地资源，并以 CSP connect-src 'none' 禁止脚本联网。站点已就绪与发布可执行始终分开表达。
 
-Addresses accept only HTTPS .example samples; blog links lead to local previews. Assets are local and CSP connect-src 'none' blocks script connections. Site readiness and publishing availability are always distinct.
+Root addresses accept only HTTPS subdomain samples under chronoai.example; blog links lead to local previews. Assets are local and CSP connect-src 'none' blocks script connections. Site readiness and publishing availability are always distinct.
 
 ## 验证 / Validation
 
@@ -57,10 +57,14 @@ Run from the repository root. See evidence/acceptance.md for verification and re
 
 ## 首发地址范围 / Initial address scope
 
-申请人只需确认博客归属与名称。中英文站点默认使用平台自有域名下的子域名，由运维分配并回填；首版不提供自定义域名申请。原型中的 chronoai.example 仅用于展示，不代表已确定真实平台根域名。
+申请人只确认博客归属与名称。运维分配一个平台子域名；英文使用 /en/，中文使用 /zh/，根路径固定跳转 /en/，不随 CMS 界面语言变化。两套 Ghost 及各自的数据仍然独立。首版不提供自定义域名申请。
 
-Applicants confirm ownership and the blog name. Operations assigns and records platform-owned subdomains for the two language sites. Custom-domain requests are excluded from the initial release. The prototype uses chronoai.example as a sample, not a confirmed production base domain.
+Applicants confirm ownership and the blog name. Operations assigns one platform subdomain. English uses /en/, Chinese uses /zh/, and the root always redirects to /en/, independently of the CMS interface language. The two Ghost instances and their data remain separate. Custom-domain requests are excluded.
 
-旧版原型的域名偏好字段会在读取本机状态时移除，既有申请编号、进度、备注、草稿和已登记地址保留。
+原型中的 chronoai.example 仅用于展示，实际平台根域名由部署配置决定。运维流程与后续实施边界见 [operations.md](operations.md)，也可在 [页面总览](http://127.0.0.1:4182/review.html#operations) 中阅读。
 
-Legacy domain-preference fields are removed when loading local state. Existing request IDs, progress, notes, writing drafts and registered addresses are preserved.
+chronoai.example is a sample only. The production base domain is deployment configuration. See [operations.md](operations.md) or the [review gallery](http://127.0.0.1:4182/review.html#operations) for the operator flow and implementation boundary.
+
+旧原型的语言子域名记录会转换为新的路径示例，保留申请编号、草稿、备注及负责人；旧地址的核验结果失效，必须重新核验。该迁移只处理本浏览器原型数据，刷新后不会重复重置。新格式下修改根地址也会同时清空两语言和根入口的证据，界面会先确认；同址单语言重试保留另一语言结果。
+
+Legacy split-domain demo records are converted to path examples. Request IDs, drafts, notes and assignees are retained, but old verification evidence is invalidated. The migration affects only local prototype data and runs once. Changing a shared root requires confirmation and invalidates both languages and the root check; retrying one language at the unchanged root preserves the other language.
