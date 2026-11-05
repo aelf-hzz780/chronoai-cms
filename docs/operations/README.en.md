@@ -21,6 +21,21 @@ Commands below use the repository's **single Linux host, host Node, systemd, and
 
 Do not run `infra/ghost/experiment.py --initialize` or `--resume`: they publish test articles. Its `--verify` requires the original experiment state and is not a generic new-site check.
 
+## Environment boundary: production and local integration are separate
+
+Use production addresses, credentials, and certificates for steps 1–9. Local/LAN differences are listed separately at the end and must not be copied into production unchanged.
+
+| Setting | Production | Local/LAN integration |
+|---|---|---|
+| Public addresses and TLS | Real domain names, certificates issued by a CA trusted by browsers and runtimes, a complete certificate chain, and renewal configuration. | May use localhost, LAN IPs, and dedicated test ports; HTTPS may use a local CA. |
+| CA trust | Normal publicly trusted certificates do not require importing our integration CA or configuring `NODE_EXTRA_CA_CERTS` for it. | Configure browser and Node trust only when the target service uses the authorized local CA. |
+| Ghost operator Admin | “Private” means restricted access through VPN/allowlists; it can still use a real domain and publicly trusted certificate. It does not mean self-signed. | Use the integration environment's existing controlled Admin and certificate configuration. |
+| Internal CMS → Ghost address | A same-host, loopback-only Admin API may use HTTP; external entries remain HTTPS. Do not copy `127.0.0.1` for a different host. | Set ports according to actual process locations; another machine is not localhost. |
+| NyxID and credentials | Use the production environment's issuer, Discovery, client, callbacks, and separate credentials, based on its actual configuration. | The historical `http://localhost:3001` issuer preserves identity in this integration environment; it is not a production default. |
+| Data and runtime settings | Obtain production env, database, volumes, site IDs, and ports from the production deployment inventory. Do not copy test data/secrets. | Keep separate test configuration, databases, and volumes. |
+
+Stop to resolve environment mismatches. Do not change an existing issuer or migrate identities as a side effect of site configuration. This document does not automatically change any environment; operators execute its configuration/deployment commands only within the corresponding ticket's authorization.
+
 ## 1. Accept the ticket and prepare parameters
 
 Confirm the platform owner has supplied a working CMS and existing database, Node 24.18.x, an accepted release with dependencies installed and Studio built, Docker Compose, Python 3.9+, nginx, certificates, and a controlled Ghost Admin entry. Public deployment also requires working SMTP, capacity ownership, and backup ownership. Do not upgrade images, CMS, or NyxID as part of site configuration.
@@ -216,7 +231,7 @@ for site in "$OPS_EN_URL" "$OPS_ZH_URL"; do
 done
 ```
 
-**Expected:** each group returns `200 / 404 / 404`, certificates are trusted, and no request redirects to localhost or the other site. Fix failures rather than hiding them with `curl -k`. For a LAN private CA, use the authorized CA with a verified fingerprint; configure trust for curl and Node separately, using `NODE_EXTRA_CA_CERTS` for Node, never disabling verification.
+**Expected:** each group returns `200 / 404 / 404`, the production domain's certificate and complete chain are trusted, and no request redirects to localhost or the other site. Fix failures rather than hiding them with `curl -k`. Publicly trusted production certificates require no integration CA import. See “Local / LAN integration notes” at the end only for the local-CA exception.
 
 ## 5. Initialize both sites and prepare theme, keys, and authors
 
@@ -394,5 +409,11 @@ Check each item in the ticket. Keep missing items pending rather than declaring 
 Keep outbound paused during rollback. Stop a newly created project with its original `ops_compose stop`; **preserve volumes and never run `down -v`**. Revert only this ticket's proxy changes, validating with `nginx -t` first. If CMS env/bindings have been used, do not simply delete records or restore the entire database. The platform owner must check concurrent changes, schema compatibility, and backups, restore into isolation, then decide whether to switch. Preserve existing sites' data, entries, and accounts.
 
 The first publication requires separate confirmation. Same-domain path support, automatic provisioning, NyxID connection migration, and external publishing are not performed as side effects of this procedure.
+
+## Local / LAN integration notes (not production configuration)
+
+Only when an integration service uses a local CA, configure client trust using the authorized CA with its fingerprint verified. Check browser/system, curl, and Node trust separately; the Node process may use `NODE_EXTRA_CA_CERTS` to point to that integration CA file. Never disable certificate verification. Do not automatically copy this CA, integration IPs/ports, test credentials, or local env into production.
+
+For production certificate errors, check hostname matching, certificate validity, the complete chain, and runtime trust stores. Importing the integration CA is not a production fix. If production separately uses an enterprise internal CA, approve and configure it for that environment; do not reuse local integration certificates.
 
 Related documents: [Deployment/backup/recovery reference](../operations.md) · [NyxID configuration](../nyxid-registration.md) · [Development guide](../development.md) · [Historical two-Ghost experiment](../../infra/ghost/README.md) (includes publication steps; do not use it as this procedure's execution sequence).
