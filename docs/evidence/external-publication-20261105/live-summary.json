@@ -17,10 +17,11 @@
     "serverScript": "scripts/external-publication-live-server.ts",
     "sourceCmsUrl": "http://localhost:3458",
     "sourceTrackerExcluded": "http://localhost:3458/tracker.js",
-    "reason": "Historical original includes this exact CMS-owned tracker; the existing renderer constructor excludes it while preserving all real visible-content proof. Normal src/main.ts separately passed real /me auth and schema discovery.",
+    "reason": "This fixture uses the real CMS application/authentication stack and Ghost verifier. The historical original contains the exact http://localhost:3458/tracker.js URL; the existing BrowserRenderProof constructor excludes only that known CMS tracker while retaining the remaining render checks. The authenticated /me and publication validation claims apply to this fixture server; a separate authenticated normal src/main.ts run is not claimed.",
     "workersStarted": false,
     "jobs": 0,
-    "outboundPaused": true
+    "outboundPaused": true,
+    "verifiedRunningAt": "2026-11-05T07:25:03.988320+00:00"
   },
   "catalog": {
     "serviceId": "60fefbc7-0944-4f81-b9de-c8fccc37731c",
@@ -75,28 +76,54 @@
     "singleTurnActivityCount": 4,
     "singleTurnAuditedBusinessToolOrder": [
       {
-        "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
-        "response_status": 200,
-        "tool": "blog-external-008-20261105__getexternalpublication"
+        "eventType": "mcp_tool_call",
+        "at": "2026-11-05T07:09:27.801+00:00",
+        "data": {
+          "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+          "response_status": 200,
+          "tool": "blog-external-008-20261105__getexternalpublication"
+        }
       },
       {
-        "service_id": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
-        "response_status": 200,
-        "tool": "devto-blogsystem__request"
+        "eventType": "mcp_tool_call",
+        "at": "2026-11-05T07:09:35.583+00:00",
+        "data": {
+          "service_id": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+          "response_status": 200,
+          "tool": "devto-blogsystem__request"
+        }
       },
       {
-        "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
-        "response_status": 502,
-        "tool": "blog-external-008-20261105__registerexternalpublication"
+        "eventType": "mcp_tool_call",
+        "at": "2026-11-05T07:09:42.918+00:00",
+        "data": {
+          "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+          "response_status": 502,
+          "tool": "blog-external-008-20261105__registerexternalpublication"
+        }
       },
       {
-        "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
-        "response_status": 200,
-        "tool": "blog-external-008-20261105__getexternalpublication"
+        "eventType": "mcp_tool_call",
+        "at": "2026-11-05T07:09:53.147+00:00",
+        "data": {
+          "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+          "response_status": 200,
+          "tool": "blog-external-008-20261105__getexternalpublication"
+        }
       }
     ],
     "singleTurnPositivePublishedChain": false,
-    "auditMethodVisibility": "NyxID mcp_tool_call audit exposes generic tool name and status but omits HTTP method/arguments; zero-write claim is bounded by explicit GET-only model instructions, responses, unchanged DEV approval policy, zero DEV approval decisions, CMS GET-only enforcement, and unchanged draft readback."
+    "auditMethodVisibility": "Official NyxID mcp_tool_call records independently establish tool names, order, timestamps and response status. The generic DEV tool audit omits HTTP method and arguments, so its total actual write count cannot be independently calculated from this export. GET-only instructions/model reports are corroborated by unchanged draft readback and zero observed DEV approval decisions, but do not remove this method-visibility limitation.",
+    "firstTimeoutRecovered": {
+      "firstTurnLimitSeconds": 120,
+      "firstOutcome": "outcome_unknown",
+      "firstCompletedBusinessToolCalls": 0,
+      "firstCompletedTool": "nyx__search_tools",
+      "recovery": "Three short turns completed, followed by one completed four-business-tool negative-chain turn in the same conversation.",
+      "singleTurnSeconds": 47,
+      "currentPlatformBlocker": false
+    },
+    "publicPositivePublication": false
   },
   "results": {
     "ghostReadVerified": true,
@@ -239,7 +266,25 @@
           "code": null
         }
       ]
-    }
+    },
+    "actualDevWriteCount": null,
+    "observedDevWriteCount": 0,
+    "devWriteEvidence": {
+      "directValidationScriptDevWriteCount": 0,
+      "cmsProviderWriteCount": 0,
+      "genericModelDevCalls": 3,
+      "genericModelMethodVisible": false,
+      "draftReadbackEvidence": "dev-after-model-read.json",
+      "devApprovalDecisions": 0,
+      "pendingDevApprovals": 0,
+      "currentGlobalPolicy": "writes_only",
+      "currentDevOverrideCount": 0,
+      "currentPolicyReadAt": "2026-11-05T07:23:37.269235+00:00",
+      "currentPolicySnapshotIsHistoricalProof": false,
+      "limitation": "Official NyxID mcp_tool_call records independently establish tool names, order, timestamps and response status. The generic DEV tool audit omits HTTP method and arguments, so its total actual write count cannot be independently calculated from this export. GET-only instructions/model reports are corroborated by unchanged draft readback and zero observed DEV approval decisions, but do not remove this method-visibility limitation."
+    },
+    "resendAllowed": false,
+    "resendReason": "The existing intent is uncertain and same-key prepare returns executionAllowed=false. Reconcile the existing intent; do not automatically send or prepare a new public write."
   },
   "blockers": [
     {
@@ -290,6 +335,9 @@
     "runtime-source-manifest.json",
     "dev-after-model-read.json"
   ],
+  "updatedAt": "2026-11-05T07:25:03.988320+00:00",
+  "singleTurnNegativeChain": true,
+  "publicPositivePublication": false,
   "fullEvidenceLocation": ".runtime/cms-external-publication-20261105/live (local handoff, outside repository)",
   "archivedFiles": [
     "live-summary.json",
@@ -298,6 +346,8 @@
     "model-audit-summary.json",
     "cms-api-consistency.json",
     "protected-environment.json",
-    "runtime-source-manifest.json"
+    "runtime-source-manifest.json",
+    "dev-after-model-read.json",
+    "same-key-prepare-after-negative.json"
   ]
 }

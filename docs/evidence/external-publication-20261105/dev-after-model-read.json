@@ -1,0 +1,45 @@
+{
+  "at": "2026-11-05T07:16:22.754316+00:00",
+  "draftId": 4969744,
+  "bodySha256": "ec2107df7d1bc25f42f027024998ca1b12a65553963f94c025ca11ca2763c48e",
+  "bodyUnchangedAfterModel": true,
+  "published": false,
+  "publishedAt": null,
+  "exactTitleUnchanged": true,
+  "sameTitleCount": 1,
+  "pendingDevApprovalCount": 0,
+  "http": [
+    {
+      "at": "2026-11-05T07:16:21.426535+00:00",
+      "trace_id": "faa2cf03f1724cb5ba5017f32a73b60c",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-05T07:16:21.651443+00:00",
+      "trace_id": "faa2cf03f1724cb5ba5017f32a73b60c",
+      "method": "GET",
+      "path": "/api/v1/users/me",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-05T07:16:22.609813+00:00",
+      "trace_id": "faa2cf03f1724cb5ba5017f32a73b60c",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/devto-blogsystem/articles/me/unpublished?_nyxid_via=fd39d48d-01a5-4fa0-b540-36f06597e2f7&per_page=100&page=1",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-05T07:16:22.754292+00:00",
+      "trace_id": "faa2cf03f1724cb5ba5017f32a73b60c",
+      "method": "GET",
+      "path": "/api/v1/approvals/requests?status=pending&per_page=100",
+      "status": 200,
+      "code": null
+    }
+  ]
+}

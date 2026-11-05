@@ -1127,8 +1127,26 @@
     }
   ],
   "formalPublicPublication": false,
-  "methodVisibility": "NyxID mcp_tool_call audit exposes generic tool name and status but omits HTTP method/arguments; zero-write claim is bounded by explicit GET-only model instructions, responses, unchanged DEV approval policy, zero DEV approval decisions, CMS GET-only enforcement, and unchanged draft readback.",
+  "methodVisibility": "Official NyxID mcp_tool_call records independently establish tool names, order, timestamps and response status. The generic DEV tool audit omits HTTP method and arguments, so its total actual write count cannot be independently calculated from this export. GET-only instructions/model reports are corroborated by unchanged draft readback and zero observed DEV approval decisions, but do not remove this method-visibility limitation.",
   "observedGenericDevToolCalls": 3,
   "requestedDevWrites": 0,
-  "devApprovalDecisions": 0
+  "devApprovalDecisions": 0,
+  "singleTurnNegativeChain": true,
+  "publicPositivePublication": false,
+  "actualDevWriteCount": null,
+  "observedDevWriteCount": 0,
+  "updatedAt": "2026-11-05T07:25:03.988320+00:00",
+  "writeEvidence": {
+    "directValidationScriptDevWriteCount": 0,
+    "cmsProviderWriteCount": 0,
+    "genericModelDevCalls": 3,
+    "genericModelMethodVisible": false,
+    "draftReadbackEvidence": "dev-after-model-read.json",
+    "devApprovalDecisions": 0,
+    "pendingDevApprovals": 0,
+    "currentGlobalPolicy": "writes_only",
+    "currentDevOverrideCount": 0,
+    "currentPolicyReadAt": "2026-11-05T07:23:37.269235+00:00",
+    "currentPolicySnapshotIsHistoricalProof": false
+  }
 }
