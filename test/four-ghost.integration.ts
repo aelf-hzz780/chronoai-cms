@@ -28,7 +28,7 @@ store.createOwner('personal','personal',actors.solo.issuer,'solo'); store.create
 const vaultKey=randomBytes(32).toString('hex');
 const policy = new Policy(store,authority), content = new ContentService(store,policy), vault = new Vault(vaultKey);
 await policy.setPublisher(actors.admin,'organization','publisher',true,'integration-role');
-const environment: NodeJS.ProcessEnv = {RENDER_BROWSER_EXECUTABLE:process.env.RENDER_BROWSER_EXECUTABLE,RENDER_BROWSER_SANDBOX:process.env.RENDER_BROWSER_SANDBOX,RENDER_ASSET_ORIGINS:process.env.RENDER_ASSET_ORIGINS};
+const environment: NodeJS.ProcessEnv = {GHOST_MEDIA_STAGING_JSON:process.env.GHOST_MEDIA_STAGING_JSON,RENDER_BROWSER_EXECUTABLE:process.env.RENDER_BROWSER_EXECUTABLE,RENDER_BROWSER_SANDBOX:process.env.RENDER_BROWSER_SANDBOX,RENDER_ASSET_ORIGINS:process.env.RENDER_ASSET_ORIGINS};
 const sites: Array<{id:string;owner:string;language:string;url:string;author:string}> = [];
 for(const [owner,statePath,ports] of [['personal','.runtime/dev-personal-state.json',[2568,2569]],['organization','.runtime/dev-organization-state.json',[2578,2579]]] as const) {
   const state=JSON.parse(await readFile(statePath,'utf8'));
@@ -43,6 +43,7 @@ for(const [owner,statePath,ports] of [['personal','.runtime/dev-personal-state.j
 }
 const metrics=new MetricsService(content,{enabled:true,requireConsent:true,secret:randomBytes(32).toString('hex')});
 const service=new PublishingService(content,vault), ghost=new GhostAdapter(store,process.env.INTEGRATION_MEDIA_ROOT??join(directory,'public-media'),true,environment,{metrics,publicUrl:'http://localhost:3100',requireConsent:true}), worker=new ReleaseWorker(service,ghost);
+const linkWorker=new AlternateWorker(new AlternateService(service),ghost);
 const app=await createApp({store,policy,content,vault,metrics,publicUrl:'http://localhost:3100',authenticate:async request=>actors[request.headers.authorization?.slice(7) ?? ''] ?? null});
 await app.listen({host:'127.0.0.1',port:3100});
 const runId=randomUUID(), results:any[]=[];
@@ -73,6 +74,8 @@ try {
     assert.equal(await worker.once(),true);
     const stored=store.get('SELECT * FROM releases WHERE id=?',release.id)!;
     assert.equal(stored.state,'published',JSON.stringify({state:stored.state,code:stored.error_code,site:site.id}));
+    while(await linkWorker.once()){}
+    assert.equal(store.get("SELECT count(*) AS n FROM projections WHERE state<>'complete'")!.n,0,'Drain each frozen projection before later publication or translation changes');
     const before=await (await fetch(stored.url)).text(); assert.ok(before.includes('const original'));assert.ok(before.includes('<table>'));
     if(imageUrl) {assert.equal((await fetch(imageUrl)).status,200);assert.ok(before.includes(imageUrl));}
     const tracking=/data-endpoint="([^"]+)"/.exec(before)?.[1];assert.ok(tracking);
@@ -89,7 +92,7 @@ try {
     assert.equal((await fetch(`${other.url}/chrono-${article.id}/`,{redirect:'manual'})).status,404);
     results.push({entry,owner:site.owner,language:site.language,articleId:article.id,releaseId:release.id,revisionId:article.revision.id,sourceSha256:digest(source),downloadMatches:true,confirmedBodyVerified:true,privateImageUntilConfirmed:!!imageUrl,mediaStorage:process.env.INTEGRATION_MEDIA_ROOT?'shared Ghost content volumes':'not tested',collectorAndBothMetricsRoutesAgree:true,consentAndGpcRespected:true,draftEditLeavesLiveUnchanged:true,crossOwner404:true,url:stored.url,traceId:response.headers['x-trace-id']});
   }
-  const linkWorker=new AlternateWorker(new AlternateService(service),ghost),translationResults=[];
+  const translationResults=[];
   for(const owner of ['personal','organization']) {
     const en=results.find(r=>r.owner===owner&&r.language==='en'&&r.entry==='cms'),zh=results.find(r=>r.owner===owner&&r.language==='zh'&&r.entry==='cms');
     const author=owner==='personal'?actors.solo:actors.member,publisher=owner==='personal'?actors.solo:actors.publisher;

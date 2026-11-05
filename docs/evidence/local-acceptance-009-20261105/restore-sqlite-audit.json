@@ -1,0 +1,324 @@
+{
+  "classification": "ROOT_INDEPENDENT_READ_ONLY_SQLITE_COMPARISON",
+  "method": "Read-only immutable snapshots; no WAL present; file hashes checked unchanged after audit",
+  "tables": [
+    {
+      "table": "articles",
+      "sourceRows": 10,
+      "restoredRows": 10,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "asset_publications",
+      "sourceRows": 10,
+      "restoredRows": 10,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "assets",
+      "sourceRows": 10,
+      "restoredRows": 10,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "audit",
+      "sourceRows": 93,
+      "restoredRows": 94,
+      "allFieldsEqual": false
+    },
+    {
+      "table": "author_mappings",
+      "sourceRows": 4,
+      "restoredRows": 4,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "collection_attempts",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "collection_gaps",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "command_authorities",
+      "sourceRows": 14,
+      "restoredRows": 14,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "command_derivations",
+      "sourceRows": 12,
+      "restoredRows": 12,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "connection_attempts",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "deliveries",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "delivery_events",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "delivery_notes",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "delivery_observations",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "delivery_payloads",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "distribution_plans",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "external_metrics",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "external_publication_observations",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "external_publications",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "idempotency",
+      "sourceRows": 14,
+      "restoredRows": 14,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "job_leases",
+      "sourceRows": 25,
+      "restoredRows": 25,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "jobs",
+      "sourceRows": 26,
+      "restoredRows": 26,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "migrations",
+      "sourceRows": 5,
+      "restoredRows": 5,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "nyx_approvals",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "observations",
+      "sourceRows": 8,
+      "restoredRows": 8,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "oidc_states",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "owner_profiles",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "owners",
+      "sourceRows": 2,
+      "restoredRows": 2,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "projection_retries",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "projection_snapshots",
+      "sourceRows": 12,
+      "restoredRows": 12,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "projections",
+      "sourceRows": 12,
+      "restoredRows": 12,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "publishers",
+      "sourceRows": 1,
+      "restoredRows": 1,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "recovery_actors",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "release_links",
+      "sourceRows": 4,
+      "restoredRows": 4,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "release_media_requests",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "releases",
+      "sourceRows": 14,
+      "restoredRows": 14,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "revisions",
+      "sourceRows": 28,
+      "restoredRows": 28,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "sessions",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "settings",
+      "sourceRows": 1,
+      "restoredRows": 1,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "site_admin_routes",
+      "sourceRows": 0,
+      "restoredRows": 0,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "sites",
+      "sourceRows": 4,
+      "restoredRows": 4,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "submission_fulfillments",
+      "sourceRows": 8,
+      "restoredRows": 8,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "submission_history",
+      "sourceRows": 4,
+      "restoredRows": 4,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "submissions",
+      "sourceRows": 4,
+      "restoredRows": 4,
+      "allFieldsEqual": true
+    },
+    {
+      "table": "translations",
+      "sourceRows": 2,
+      "restoredRows": 2,
+      "allFieldsEqual": true
+    }
+  ],
+  "integrity": {
+    "source": {
+      "integrityCheck": "ok",
+      "foreignKeyViolations": 0
+    },
+    "restored": {
+      "integrityCheck": "ok",
+      "foreignKeyViolations": 0
+    }
+  },
+  "differences": [
+    {
+      "table": "audit",
+      "sourceRows": 93,
+      "restoredRows": 94,
+      "columns": [
+        "id",
+        "actor",
+        "owner_id",
+        "action",
+        "resource_id",
+        "trace_id",
+        "detail_json",
+        "created_at"
+      ],
+      "allSourceRowsPreserved": true
+    }
+  ],
+  "totalTables": 45,
+  "equalTables": 44,
+  "sourceFileSha256": "52437bf9d4891c6e7e22f12447c810137964c5ed61a61076e4045cf2a9cbbeb0",
+  "restoredFileSha256": "4f486cea7019ecb9d56d3b783ca1937ffe52077bbc01cc0af82b2d67814eaa85",
+  "inputFilesUnchanged": true,
+  "expectedAddedAudit": {
+    "actor": "operator",
+    "action": "recovery.isolated",
+    "detail": {
+      "outboundPaused": true,
+      "sessionsInvalidated": true,
+      "interruptedMediaRequests": 0,
+      "connectionAttemptsRequiringRecheck": 0
+    }
+  },
+  "status": "PASS",
+  "_provenance": {
+    "source": "runtime/009-dd244dc8/root-sqlite-audit.json",
+    "sourceSha256": "ef9252f0d13f14e36a29bbf18973b64d86ad13813477dba2ad67d8936bd0a8c7"
+  }
+}

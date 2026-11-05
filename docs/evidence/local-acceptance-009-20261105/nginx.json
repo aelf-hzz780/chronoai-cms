@@ -1,0 +1,66 @@
+{
+  "observedAt": "2026-11-05T13:27:31.472394+00:00",
+  "status": "PASS",
+  "sourceFile": "infra/platform/nginx.conf.example",
+  "sourceSha256": "56a00d983d7fcb939af94a9bd9755f59b3cd52d1bcd1fd22c8fe558b9a73c285",
+  "fix": "Explicit access_log off in HTTP redirect server prevents inherited access logging of signed tracker URLs. HTTPS blocks already disable it. Redirect and /ghost denial return directives are unchanged.",
+  "image": {
+    "source": "docker.io/library/nginx:stable-alpine",
+    "pulledForIsolatedCheck": true,
+    "pinnedReference": "nginx@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949",
+    "id": "sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949",
+    "digests": [
+      "nginx@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949"
+    ],
+    "architecture": "arm64"
+  },
+  "isolation": {
+    "dockerContext": "colima-blogsystem",
+    "network": "none",
+    "memoryBytes": 67108864,
+    "memorySwapBytes": 67108864,
+    "readOnlyRootFilesystem": true,
+    "testFilesTransport": "stdin tar to private 8 MiB /tmp tmpfs",
+    "hostMounts": false,
+    "temporaryPrefixRemoved": true,
+    "temporaryPrivateKeyRemoved": true,
+    "temporaryContainersRemaining": false,
+    "nginxDaemonStarted": false,
+    "serviceReloaded": false,
+    "liveLanOr9443Modified": false,
+    "privateTmpfs": [
+      "/tmp: 8 MiB",
+      "/var/cache/nginx: 8 MiB"
+    ]
+  },
+  "systemd": {
+    "status": "NOT_APPLICABLE_LOCAL_DARWIN",
+    "runtimeValidation": "NOT_RUN",
+    "installAttempted": false
+  },
+  "limits": [
+    "Syntax checks cover the actual HTTP fragment and the runbook-expanded two-site public configuration using only temporary certificate paths.",
+    "This does not verify production DNS, browser/Node trust, renewal, private Admin ingress ACLs, live routes, target upstream reachability or systemd runtime sandbox behavior.",
+    "No publication or provider mutation was performed."
+  ],
+  "checks": [
+    {
+      "variant": "template",
+      "status": "PASS",
+      "exitCode": 0,
+      "certificatePathSubstitutions": 2,
+      "keyPathSubstitutions": 2
+    },
+    {
+      "variant": "runbook-two-sites",
+      "status": "PASS",
+      "exitCode": 0,
+      "certificatePathSubstitutions": 3,
+      "keyPathSubstitutions": 3
+    }
+  ],
+  "_provenance": {
+    "source": "operations/nginx-container-syntax.json",
+    "sourceSha256": "98a5976d3383e59bfee57ba24c41b20284d38d5ed014111286cf01794530e203"
+  }
+}

@@ -62,12 +62,17 @@ python3 -m http.server 4182 --bind 127.0.0.1 --directory prototypes
 
 ## 验证与实现边界
 
+以下命令从仓库根目录运行。 / Run these commands from the repository root.
+
 ```sh
-node checks.cjs
-node workflow-checks.cjs
+node prototypes/nyx-cms-b/checks.cjs
+node prototypes/nyx-cms-b/workflow-checks.cjs
+node --test prototypes/site-provisioning/model.test.mjs
 ```
 
-17 项原有状态回归、42 项工作流检查。真实浏览器另外检查 14 页渲染、中英界面、发布后离页、自动副本／人工移除、连接回程、图片插入、补图、统计和 consent；测试范围与结果见 `DELIVERY.md`。
+当前包含 17 项原有状态回归、54 项工作流检查和 17 项开通模型测试。真实浏览器另外检查 14 页渲染、中英界面、发布后离页、自动副本／人工移除、连接回程、图片插入、补图、统计和 consent；历史测试范围见 `DELIVERY.md`，开通增量见 `INCREMENT-20261105.md`。
+
+The current checks comprise 17 state regressions, 54 workflow checks, and 17 setup-model tests. Historical browser coverage is recorded in `DELIVERY.md`; the setup increment is recorded separately in `INCREMENT-20261105.md`.
 
 - **演示 ≠ 已交付接口**：动态连接绑定与可信回程、成员目录与管理 capability、延迟待办、来源过期后独立认回人工副本均要与服务端合同对齐。这里只交付可审阅的 UI/UX 行为。
 - 延迟仅记录计划时间，由人到期继续；不承诺后台自动调度。

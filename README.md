@@ -1,5 +1,9 @@
 # BlogSystem
 
+009 最新运维文档合并与本地验收见 [009 验收报告](docs/009-local-acceptance.md)。该报告区分当前实现、真实本地联调、协议模拟、尚未闭合的功能，以及线上／生产验证；下方旧记录保留各自日期和版本，不代表当前全部状态。
+
+See the [009 acceptance report](docs/009-local-acceptance.md) for the latest operations merge and local verification. It separates implementation, real local integration, protocol fixtures, remaining functional gaps, and online/production validation. Older entries below retain their own dates and revisions.
+
 008 个人 DEV 外部执行、CMS 独立登记及只读同步的设计和操作顺序：[008 外部发布](docs/008-cms-external-publication.md)。NyxBot 使用自身顶层 NyxID DEV 工具授权；CMS 页面提供材料、登记和只读刷新。公开发布与组织路径须按各自范围独立验收。
 
 Design and operation order for 008 personal DEV execution, independent CMS registration and read-only synchronization: [008 external publication](docs/008-cms-external-publication.md). NyxBot uses its own top-level NyxID DEV tool authorization; CMS provides material, registration and read-only refresh. Public publication and organization flows require their own scoped acceptance.

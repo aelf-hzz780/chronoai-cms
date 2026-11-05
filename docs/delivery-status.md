@@ -1,6 +1,14 @@
 # 交付状态（开发台账，不是正式签收）
 
-当前入口为 [2026-11-03 可靠性跟进](continuation-20261103.md)、[本轮证据 manifest](evidence/continuation-20261103/manifest.json)与[外部验收执行清单](continuation-external-handoff-20261103.md)。固定修复源码 `c16cde700963959d3fd7fc226853b71f5551573a`；smooth-scroll 的定位时序缺陷已有失败先行、54 项目标回归和独立复验，历史单图首次核验失败原因仍未定。当前实现、本地实测、本地部署、远端 push、PR 五种状态独立记录，正式 D1–D9 仍为 **NOT_ACCEPTED**。
+当前入口为 [009 运维合并与本地验收](009-local-acceptance.md)，个人 DEV 真实发布证据另见 [008 公开正向验证](evidence/external-publication-20261105/public-positive/README.md)。当前实现、本地实测、本地部署、远端 push、PR 五种状态独立记录；正式 D1–D9 仍为 **NOT_ACCEPTED**。新运维文档已经合并，开站原型仍是原型，不代表自动开站已实现。新本地结果不回填下方历史 A 表或累计成完成百分比。
+
+The current entry point is the [009 operations merge and local acceptance](009-local-acceptance.md); real personal DEV publication evidence is linked separately above. Implementation, local verification, deployment, push and PR status are distinct. D1–D9 remain **NOT_ACCEPTED**. The setup prototype is not an implemented provisioning service; new evidence does not rewrite historical case counts.
+
+以下首部及 I2–I22 为历史快照；“当前”只指各记录当时。最新范围采用官方 NyxID 原生适配与 008 外部执行方案；按用户决定不再保留定制门户 Open app，也不重新要求定制来源授权协议。
+
+The following introduction and I2–I22 entries are historical snapshots. Current work follows the official native NyxID integration and 008 external-execution flow. The user explicitly chose not to retain the custom portal Open app or require the custom source-authority protocol again.
+
+2026-11-03 历史入口为 [可靠性跟进](continuation-20261103.md)、[该轮证据 manifest](evidence/continuation-20261103/manifest.json)与[当时的外部验收执行清单](continuation-external-handoff-20261103.md)。固定修复源码 `c16cde700963959d3fd7fc226853b71f5551573a`；smooth-scroll 的定位时序缺陷已有失败先行、54 项目标回归和独立复验，历史单图首次核验失败原因仍未定。
 
 [2026-11-02 W1/W2 整合交接](handoff-20261102.md)及[历史证据 manifest](evidence/followup-20261102/manifest.json)继续绑定 `386b9652dc431bb83e4864d5b046b378110ee88d`，W2 修复为 `83b4b8e`。其 303 项测试与各自历史矩阵不冒称在新 SHA 全量重跑。
 

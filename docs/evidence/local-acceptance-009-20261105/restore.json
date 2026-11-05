@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "performedAt": "2026-11-05T14:39:00.360Z",
+  "authority": "synthetic; real official Ghost and MySQL",
+  "results": [
+    {
+      "owner": "personal",
+      "language": "en",
+      "entry": "cms",
+      "state": "published",
+      "status": "PASS"
+    },
+    {
+      "owner": "personal",
+      "language": "en",
+      "entry": "service",
+      "state": "published",
+      "status": "PASS"
+    },
+    {
+      "owner": "personal",
+      "language": "zh",
+      "entry": "cms",
+      "state": "unpublished",
+      "status": "PASS"
+    },
+    {
+      "owner": "personal",
+      "language": "zh",
+      "entry": "service",
+      "state": "published",
+      "status": "PASS"
+    },
+    {
+      "owner": "organization",
+      "language": "en",
+      "entry": "cms",
+      "state": "published",
+      "status": "PASS"
+    },
+    {
+      "owner": "organization",
+      "language": "en",
+      "entry": "service",
+      "state": "published",
+      "status": "PASS"
+    },
+    {
+      "owner": "organization",
+      "language": "zh",
+      "entry": "cms",
+      "state": "unpublished",
+      "status": "PASS"
+    },
+    {
+      "owner": "organization",
+      "language": "zh",
+      "entry": "service",
+      "state": "published",
+      "status": "PASS"
+    }
+  ],
+  "sourceReleaseStates": [
+    {
+      "state": "cancelled",
+      "count": 1
+    },
+    {
+      "state": "published",
+      "count": 6
+    },
+    {
+      "state": "superseded",
+      "count": 4
+    },
+    {
+      "state": "uncertain",
+      "count": 1
+    },
+    {
+      "state": "unpublished",
+      "count": 2
+    }
+  ],
+  "assetCount": 10,
+  "sourceDeliveryCount": 0,
+  "allRevisionBytesMatch": true,
+  "allPrivateAssetBytesMatch": true,
+  "publicImagesSha256Match": true,
+  "outboundPaused": true,
+  "encryptedArchiveChecksumsVerified": true,
+  "newRestoreVolumes": true,
+  "sourceVolumesPreserved": true,
+  "notVerified": [
+    "production RPO/RTO",
+    "live NyxID recovery",
+    "external provider state recovery",
+    "outbound resume"
+  ],
+  "_provenance": {
+    "source": "runtime/009-dd244dc8/restore-verification.json",
+    "sourceSha256": "9ca8afe2322a90a6c0ea0b760495f6cd3d023b25b348d01288e213677e1f0712"
+  }
+}

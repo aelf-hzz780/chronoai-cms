@@ -1,0 +1,294 @@
+{
+  "status": "PASS",
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "cmsCommit": "1767a4336fc4216d50dd4d5b5f19943a9841a79b",
+  "sourceOpenapiSha256": "09a197744e1e19217b9d9cce60276e92ffc3e00933e1058e2ce4d92999b6fe93",
+  "providerWrites": 0,
+  "existingServiceModified": false,
+  "approvalPolicyModified": false,
+  "registrationMethod": "official catalog operation API",
+  "importedOperationCount": 56,
+  "generatedToolCount": 56,
+  "scopedAgentKey": {
+    "allowAllServices": false,
+    "allowAutoConnectedServices": false,
+    "allowedServiceCount": 1
+  },
+  "disposableKeyDeleted": true,
+  "finishedAt": "2026-11-05T14:14:36.411Z",
+  "classification": "REAL_OFFICIAL_LOCAL_NYXID_GENERATED_PROTOCOL_WITH_DISPOSABLE_TEST_ADMIN",
+  "cases": [
+    {
+      "operation": "cancelConnectionAttempt",
+      "status": "PASS",
+      "cmsHttpStatus": 403,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "d275ffea-717a-4d73-9aad-cb1d5878c5ad",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    },
+    {
+      "operation": "cancelOriginal",
+      "status": "PASS",
+      "cmsHttpStatus": 404,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "5b91a45d-9fcf-48a4-a009-b4e550025ce9",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    },
+    {
+      "operation": "reconcileOriginal",
+      "status": "PASS",
+      "cmsHttpStatus": 404,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "99cda828-7a75-44f0-9f38-29c2f2c77bdf",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    },
+    {
+      "operation": "cancelDistributionPlan",
+      "status": "PASS",
+      "cmsHttpStatus": 404,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "e54f0d4d-7f26-4eea-b009-cf2604e52fa0",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    },
+    {
+      "operation": "requestExactApproval",
+      "status": "PASS",
+      "cmsHttpStatus": 404,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "114ae9d6-4077-4254-bee0-2be706d24b0c",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    },
+    {
+      "operation": "cancelDistribution",
+      "status": "PASS",
+      "cmsHttpStatus": 404,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "c362fff5-0d78-4abd-85b5-5efa633c94f8",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    },
+    {
+      "operation": "reconcileDistribution",
+      "status": "PASS",
+      "cmsHttpStatus": 404,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "b393200c-1875-40bd-ad8a-17a834a89355",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    },
+    {
+      "operation": "refreshExternalMetrics",
+      "status": "PASS",
+      "cmsHttpStatus": 404,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "8bbdb138-07ef-4e6b-9e9c-01ebfb4198f4",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    },
+    {
+      "operation": "syncPublishedAlternates",
+      "status": "PASS",
+      "cmsHttpStatus": 404,
+      "bodyAbsent": true,
+      "genericToolUsed": false,
+      "providerWrites": 0,
+      "approval": {
+        "requestId": "cdfe8066-03ca-46ad-aed0-5955e91e4cea",
+        "mode": "per_request",
+        "decisionStatus": "approved"
+      }
+    }
+  ],
+  "identityChecks": [
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    },
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    },
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    },
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    },
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    },
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    },
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    },
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    },
+    {
+      "identityPresent": true,
+      "delegationPresent": true,
+      "identityAudienceMatches": true,
+      "serviceIdMatches": true,
+      "identityIssuerMatches": true,
+      "delegationAudienceMatches": true,
+      "delegationIssuerMatches": true,
+      "subjectMatches": true,
+      "actorMatches": true,
+      "delegationOrigin": "service",
+      "tokenType": "access",
+      "delegated": true,
+      "sourceScopes": "account:read proxy:*",
+      "identityLifetime": 60
+    }
+  ],
+  "_provenance": {
+    "source": "runtime/generated-bodyless/isolated/final/result.json",
+    "sourceSha256": "ce974b3e3a16f63af41836b743ee86e099c59dd5dc7f930fbd0ac1382bc25e02"
+  },
+  "limits": [
+    "Unknown resource IDs test transport and body handling, not successful business operations.",
+    "Normal official catalog API registration; private URL OpenAPI fetch was rejected and not bypassed.",
+    "No NyxBot model call, external provider write or shared catalog update."
+  ]
+}

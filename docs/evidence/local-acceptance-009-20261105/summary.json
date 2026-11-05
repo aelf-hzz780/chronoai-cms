@@ -1,0 +1,114 @@
+{
+  "status": "PASS_COMPLETED_FEASIBLE_LOCAL_ACCEPTANCE",
+  "formalAcceptance": "NOT_ACCEPTED",
+  "scope": "009 latest operations merge and feasible local verification",
+  "baseDelivery": "b0873e636e4822c355a69465313ff21d1b70bf2b",
+  "incoming": "cb124b5",
+  "mergedCommit": "96e1f64a4ae4fa66abaeac8f37ab4c5500b2ec87",
+  "contractAndHashnodeFix": "1767a4336fc4216d50dd4d5b5f19943a9841a79b",
+  "renderFix": "9c03c403d0fe7bad41785e49b68bab2a7a6f35a4",
+  "tests": {
+    "standard": {
+      "pass": 554,
+      "fail": 0,
+      "skipped": 0,
+      "commit": "9c03c403d0fe7bad41785e49b68bab2a7a6f35a4"
+    },
+    "initialUiProtocol": {
+      "pass": 12,
+      "fail": 0,
+      "commit": "96e1f64a4ae4fa66abaeac8f37ab4c5500b2ec87"
+    },
+    "migration": {
+      "pass": 14,
+      "fail": 0
+    },
+    "newExternalRecovery": {
+      "pass": 3,
+      "fail": 0,
+      "alsoIncludedInFinalStandard": true
+    },
+    "officialLocalNyxRoles": {
+      "pass": 8,
+      "fail": 0,
+      "commit": "96e1f64a4ae4fa66abaeac8f37ab4c5500b2ec87"
+    },
+    "officialGeneratedTools": {
+      "pass": 9,
+      "fail": 0,
+      "catalogCount": 56,
+      "generatedCount": 56,
+      "commit": "1767a4336fc4216d50dd4d5b5f19943a9841a79b"
+    },
+    "mediaMounts": {
+      "pass": 10,
+      "fail": 0
+    },
+    "operations": {
+      "pass": 84,
+      "fail": 0
+    },
+    "prototype": {
+      "pass": 88,
+      "fail": 0
+    },
+    "ghostOffline": {
+      "pass": 10,
+      "fail": 0
+    },
+    "nginxSyntax": {
+      "pass": 2,
+      "fail": 0
+    },
+    "finalPublishingProtocol": {
+      "pass": 4,
+      "fail": 0,
+      "commit": "9c03c403d0fe7bad41785e49b68bab2a7a6f35a4"
+    },
+    "fourGhost": {
+      "pass": 8,
+      "fail": 0,
+      "commit": "9c03c403d0fe7bad41785e49b68bab2a7a6f35a4",
+      "realGhost": true,
+      "syntheticAuthority": true
+    },
+    "fourGhostRestore": {
+      "pass": 8,
+      "fail": 0,
+      "public200": 6,
+      "unpublished404": 2,
+      "encryptedFiles": 14,
+      "privateAssets": 10,
+      "sourceDeliveries": 0
+    },
+    "sqliteAudit": {
+      "tables": 45,
+      "allFieldsEqual": 44,
+      "onlyDifference": "One expected recovery.isolated audit row; all prior 93 rows retained",
+      "integrity": "ok",
+      "foreignKeyViolations": 0
+    }
+  },
+  "boundaries": {
+    "nyxidOrNyxbotSourceChanged": false,
+    "sharedServiceCutover": false,
+    "newRealExternalProviderWrites": 0,
+    "productionDeployment": false,
+    "heartbeatResumed": false
+  },
+  "priorRealPersonalDevEvidence": "../external-publication-20261105/public-positive/README.md",
+  "pending": [],
+  "completedAt": "2026-11-05T14:44:28.643074+00:00",
+  "remainingFunctionality": [
+    "Studio still pauses new Medium/HackerNoon assisted flows",
+    "Organization DEV/Hashnode automatic flow retains native exact/dispatch capability gaps; personal 008 path is separately accepted"
+  ],
+  "separateDeploymentAndOnlineWork": [
+    "Shared LAN rollout/configuration",
+    "Real Hashnode/organization DEV and assisted account/lifecycle checks",
+    "Target Linux deployment, public DNS/TLS/SMTP, monitoring/retention, maintenance ownership and agreed recovery targets"
+  ],
+  "deliveryBranch": "codex/009-local-acceptance",
+  "deliveryRemote": "git@github.com:aelf-hzz780/chronoai-cms.git",
+  "evidenceManifest": "manifest.json"
+}

@@ -1,0 +1,219 @@
+{
+  "status": "PASS",
+  "authority": "synthetic local authority; separate native NyxID replay",
+  "protectedServicesModified": false,
+  "thirdPartyWrites": 0,
+  "commit": "9c03c403d0fe7bad41785e49b68bab2a7a6f35a4",
+  "packagedCommit": "9c03c403d0fe7bad41785e49b68bab2a7a6f35a4",
+  "restoreMemoryLimitsVerified": true,
+  "cleanup": [
+    {
+      "project": "blogsystem-local-009-dd244dc8-personal",
+      "createdContainerCount": 4,
+      "stopped": true,
+      "states": [
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:20:39.283348415Z",
+            "FinishedAt": "2026-11-05T14:23:20.680563699Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:20:33.958970559Z",
+            "FinishedAt": "2026-11-05T14:23:21.411201783Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:20:24.915494833Z",
+            "FinishedAt": "2026-11-05T14:23:20.683131366Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:20:21.741939615Z",
+            "FinishedAt": "2026-11-05T14:23:22.270207908Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        }
+      ]
+    },
+    {
+      "project": "blogsystem-restore-009-dd244dc8-personal",
+      "createdContainerCount": 4,
+      "stopped": true,
+      "states": [
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:38:47.516025584Z",
+            "FinishedAt": "2026-11-05T14:39:02.481372313Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:38:47.607152417Z",
+            "FinishedAt": "2026-11-05T14:39:02.479078104Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:38:47.419041834Z",
+            "FinishedAt": "2026-11-05T14:39:05.741246689Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:38:47.353351125Z",
+            "FinishedAt": "2026-11-05T14:39:05.460786731Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        }
+      ]
+    },
+    {
+      "project": "blogsystem-local-009-dd244dc8-organization",
+      "createdContainerCount": 4,
+      "stopped": true,
+      "states": [
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:21:01.758546211Z",
+            "FinishedAt": "2026-11-05T14:23:22.425270408Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:20:56.160566375Z",
+            "FinishedAt": "2026-11-05T14:23:24.010168034Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:20:51.312733678Z",
+            "FinishedAt": "2026-11-05T14:23:22.425614783Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:20:46.18512271Z",
+            "FinishedAt": "2026-11-05T14:23:23.831862992Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        }
+      ]
+    },
+    {
+      "project": "blogsystem-restore-009-dd244dc8-organization",
+      "createdContainerCount": 4,
+      "stopped": true,
+      "states": [
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:38:48.276334751Z",
+            "FinishedAt": "2026-11-05T14:39:04.07559675Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:38:48.094706584Z",
+            "FinishedAt": "2026-11-05T14:39:04.076717333Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:38:47.931948376Z",
+            "FinishedAt": "2026-11-05T14:39:09.494676879Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        },
+        {
+          "state": {
+            "Status": "exited",
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "StartedAt": "2026-11-05T14:38:47.764585834Z",
+            "FinishedAt": "2026-11-05T14:39:09.494269546Z"
+          },
+          "restartCount": 0,
+          "memoryLimit": 268435456
+        }
+      ]
+    }
+  ],
+  "_provenance": {
+    "source": "runtime/009-dd244dc8/result.json",
+    "sourceSha256": "518a157e0a80d67c6f95f336d47ff266bebcdde0822d5b83e5ebf5389b167ac5"
+  }
+}

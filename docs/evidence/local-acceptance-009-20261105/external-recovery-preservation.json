@@ -1,0 +1,57 @@
+{
+  "status": "PASS",
+  "classification": "LOCAL_ENCRYPTED_SQLITE_RESTORE_WITH_HTTP_PROVIDER_FIXTURE",
+  "at": "2026-11-05T13:27:16.933Z",
+  "requirements": [
+    "D9",
+    "A49",
+    "A50"
+  ],
+  "realComponents": [
+    "Store",
+    "AES-GCM snapshot/restore",
+    "Policy",
+    "CMS HTTP routes",
+    "ExternalPublicationService",
+    "DevAdapter",
+    "Workers"
+  ],
+  "fixtureComponents": [
+    "identity authority",
+    "Ghost original adapter",
+    "loopback DEV HTTP responses"
+  ],
+  "realNyxId": false,
+  "realDev": false,
+  "externalProviderWrites": 0,
+  "productionRpoRtoVerified": false,
+  "tableCounts": {
+    "external_publications": 5,
+    "external_publication_observations": 4,
+    "external_metrics": 1,
+    "delivery_payloads": 5,
+    "deliveries": 5,
+    "delivery_events": 10,
+    "delivery_notes": 1,
+    "idempotency": 12,
+    "releases": 5,
+    "revisions": 5,
+    "assets": 1
+  },
+  "states": [
+    "superseded",
+    "published",
+    "awaiting_external",
+    "uncertain",
+    "cancelled"
+  ],
+  "sessionsInvalidated": true,
+  "queuedOriginalPaused": true,
+  "frozenRowsAndAuditPreserved": true,
+  "wrongBackupKeyRejected": true,
+  "providerRequestsDuringRestore": 0,
+  "_provenance": {
+    "source": "external-recovery-independent/preservation.json",
+    "sourceSha256": "276ceed992bdeb229e45cf0448b4c58259471433da2b555958e834c6fc990a50"
+  }
+}

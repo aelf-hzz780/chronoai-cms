@@ -1,0 +1,87 @@
+{
+  "status": "PASS",
+  "classification": "LOCAL_ENCRYPTED_SQLITE_RESTORE_WITH_HTTP_PROVIDER_FIXTURE",
+  "at": "2026-11-05T13:27:16.995Z",
+  "requirements": [
+    "D9",
+    "A49",
+    "A50"
+  ],
+  "realComponents": [
+    "Store",
+    "AES-GCM snapshot/restore",
+    "Policy",
+    "CMS HTTP routes",
+    "ExternalPublicationService",
+    "DevAdapter",
+    "Workers"
+  ],
+  "fixtureComponents": [
+    "identity authority",
+    "Ghost original adapter",
+    "loopback DEV HTTP responses"
+  ],
+  "realNyxId": false,
+  "realDev": false,
+  "externalProviderWrites": 0,
+  "productionRpoRtoVerified": false,
+  "readRequests": [
+    {
+      "method": "GET",
+      "path": "/api/articles/100"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/100"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/me/published"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/me/all"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/200"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/me/all"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/300"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/300"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/300"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/me/published"
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/100"
+    }
+  ],
+  "providerWrites": 0,
+  "confirmationActorUnchanged": true,
+  "frozenPayloadUnchanged": true,
+  "lostReceiptRecovered": true,
+  "cancelledNeverRepublished": true,
+  "supersededNeverRepublished": true,
+  "duplicateCreateRejected": true,
+  "idempotencyPreserved": true,
+  "restoredOutboundPaused": true,
+  "_provenance": {
+    "source": "external-recovery-independent/fresh-caller.json",
+    "sourceSha256": "75b3e394fb90c7971db78db2c9087400042dfc5ae46db258ee7e1e2d4674be94"
+  }
+}

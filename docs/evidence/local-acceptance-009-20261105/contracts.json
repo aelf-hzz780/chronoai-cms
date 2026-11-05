@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-11-05T13:15:54.664839+00:00",
+  "baseCommit": "96e1f64a4ae4fa66abaeac8f37ab4c5500b2ec87",
+  "branch": "codex/009-local-acceptance",
+  "status": {
+    "Document": "PASS",
+    "Local": "PASS",
+    "Live": "NOT_RUN"
+  },
+  "scope": "Two bounded CMS fixes only; no NyxID/NyxBot source modification, shared service changes, real third-party deletion, commit or push.",
+  "files": {
+    "src/openapi.ts": "09a197744e1e19217b9d9cce60276e92ffc3e00933e1058e2ce4d92999b6fe93",
+    "src/targets.ts": "c6a6f0192b6c2edae00bb20910ce69a046d36d029978ca8b38483184005f7211",
+    "test/legacy-bodyless-contracts.test.ts": "932debcdcb34394a6c593d649831fc2ea69d7add9e16b0eced44181b7a27dee9",
+    "test/hashnode-removal-reconciliation.test.ts": "d1c2b972a970f1e1dc5239058760d74f67763b0aa3403cf1562003334f769f3f"
+  },
+  "findings": [
+    {
+      "id": "LEGACY_REQUIRED_EMPTY_BODY",
+      "requirements": [
+        "D2"
+      ],
+      "priority": "P1",
+      "status": "FIXED_LOCAL_VERIFIED",
+      "operations": [
+        "cancelConnectionAttempt",
+        "cancelOriginal",
+        "reconcileOriginal",
+        "cancelDistributionPlan",
+        "requestExactApproval",
+        "cancelDistribution",
+        "reconcileDistribution",
+        "refreshExternalMetrics",
+        "syncPublishedAlternates"
+      ],
+      "before": "POST catalog advertised required JSON with no properties; official NyxID generated call rejects this before CMS dispatch. Actual bodyless HTTP routes already work.",
+      "after": "No requestBody is advertised for these nine no-input POST operations. Methods, path parameters, security schemes, actual body-bearing operations and response schemas are preserved.",
+      "verification": "Nine independent schema assertions; 18 explicit bodyless POST route tests across CMS/service. Anonymous and current non-publisher requests are denied without ledger/provider/approval changes; authorized calls preserve lifecycle and read-only metrics."
+    },
+    {
+      "id": "HASHNODE_SOFT_DELETE_RECONCILIATION",
+      "requirements": [
+        "D7",
+        "A39"
+      ],
+      "priority": "P1",
+      "status": "FIXED_LOCAL_VERIFIED_LIVE_NOT_RUN",
+      "before": "Retained post after removePost could fall through to published; missing/malformed post was incorrectly treated as absence.",
+      "after": "Removal reconciliation handles its own branch. Retained/malformed data returns unproven and Worker remains uncertain; only explicit post:null for the known ID confirms removal.",
+      "verification": "Worker fixture sends one remove mutation. Immediate retained read and explicit subsequent recovery preserve uncertainty, history and confirmation Trace. Retry is read-only. Later explicit absence marks both removal and prior copy removed, without a second mutation.",
+      "officialContract": "hashnode-official-contract.json"
+    }
+  ],
+  "tests": {
+    "red": {
+      "command": [
+        "node",
+        "--test",
+        "test/legacy-bodyless-contracts.test.ts",
+        "test/hashnode-removal-reconciliation.test.ts"
+      ],
+      "exitCode": 1,
+      "total": 31,
+      "pass": 19,
+      "fail": 12,
+      "log": "red.log"
+    },
+    "greenRelated": {
+      "command": [
+        "node",
+        "--test",
+        "test/legacy-bodyless-contracts.test.ts",
+        "test/hashnode-removal-reconciliation.test.ts",
+        "test/targets.test.ts",
+        "test/openapi.test.ts",
+        "test/openapi-contracts.test.ts",
+        "test/distribution.test.ts",
+        "test/distribution-followup.test.ts",
+        "test/connection-attempts.test.ts"
+      ],
+      "exitCode": 0,
+      "total": 87,
+      "pass": 87,
+      "fail": 0,
+      "log": "green.log"
+    },
+    "finalFocused": {
+      "command": [
+        "node",
+        "--test",
+        "test/legacy-bodyless-contracts.test.ts",
+        "test/hashnode-removal-reconciliation.test.ts"
+      ],
+      "exitCode": 0,
+      "total": 31,
+      "pass": 31,
+      "fail": 0,
+      "log": "final-focused.log"
+    },
+    "typecheck": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    "whitespace": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0
+    }
+  },
+  "limits": [
+    "Tests use isolated in-memory ledgers, fixture actors and stubbed provider responses; no claim of fresh real-platform or real NyxID execution.",
+    "Root must re-import this final OpenAPI into the selected local native NyxID service and verify generated operations before marking live contract accepted.",
+    "Hashnode retained soft-delete results intentionally remain uncertain/manual follow-up; removal is not proven by the mutation receipt or retained post.",
+    "Real Hashnode removal still requires concrete authorized account/content/action and authoritative verification.",
+    "Full suite and consolidated implementation commit/push remain root responsibilities."
+  ],
+  "_provenance": {
+    "source": "contracts/result.json",
+    "sourceSha256": "2eb55e69ba48c98c18d218ca5cf34a186094bdd157ded9ddd2c1f2f0f5a20d93"
+  }
+}

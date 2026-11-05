@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "classification": "LOCAL_ENCRYPTED_SQLITE_RESTORE_WITH_HTTP_PROVIDER_FIXTURE",
+  "at": "2026-11-05T13:27:17.089Z",
+  "requirements": [
+    "D9",
+    "A49",
+    "A50"
+  ],
+  "realComponents": [
+    "Store",
+    "AES-GCM snapshot/restore",
+    "Policy",
+    "CMS HTTP routes",
+    "ExternalPublicationService",
+    "DevAdapter",
+    "Workers"
+  ],
+  "fixtureComponents": [
+    "identity authority",
+    "Ghost original adapter",
+    "loopback DEV HTTP responses"
+  ],
+  "realNyxId": false,
+  "realDev": false,
+  "externalProviderWrites": 0,
+  "productionRpoRtoVerified": false,
+  "deniedCases": [
+    "anonymous",
+    "other owner",
+    "read only",
+    "no connection access",
+    "expired credential"
+  ],
+  "entries": [
+    "cms",
+    "service"
+  ],
+  "deniedRequests": 10,
+  "changedConnectionNoFallback": true,
+  "expiredBackgroundReads": 0,
+  "freshCallerSyncPassedBothEntries": true,
+  "historyAndConfirmationPreserved": true,
+  "providerWrites": 0,
+  "_provenance": {
+    "source": "external-recovery-independent/authorization.json",
+    "sourceSha256": "d9ec4dc54b5b55c25beb8938fad2231ed9e655101b5f62b0aa1964b11ddc7cef"
+  }
+}

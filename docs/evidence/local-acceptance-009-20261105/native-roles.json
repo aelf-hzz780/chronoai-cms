@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-05T13:10:36.170Z",
+  "officialCommit": "38bae2f7825bfa70d8a9e4e837118d7d9658e6a5",
+  "cmsCommit": "96e1f64a4ae4fa66abaeac8f37ab4c5500b2ec87",
+  "level": "OFFICIAL_NYXID_AND_REAL_CMS_WORKER_AND_LOCAL_GHOST",
+  "formalAcceptance": false,
+  "productionChanged": false,
+  "ingress": "official-proxy",
+  "authority": "real signature/JWKS/introspection and native organization membership",
+  "fakeAuthority": false,
+  "fakeGhost": false,
+  "renderer": "real BrowserRenderProof",
+  "cases": [
+    {
+      "name": "official-native-identities-and-current-roles",
+      "status": "PASS",
+      "writesBefore": 0,
+      "writesAfter": 0,
+      "personalHasNoCmsPublisher": true,
+      "adminGrantedPublisher": true,
+      "memberCannotSelfGrant": true
+    },
+    {
+      "name": "official-proxy-connections-authorization-with-empty-bindings",
+      "status": "PASS",
+      "writesBefore": 0,
+      "writesAfter": 0,
+      "personalAllowed": true,
+      "adminAllowed": true,
+      "publisherAllowed": true,
+      "memberDenied": true,
+      "bindingsEmpty": true,
+      "externalInventoryExercised": false
+    },
+    {
+      "name": "personal-without-organization-publisher-publishes",
+      "status": "PASS",
+      "writesBefore": 0,
+      "writesAfter": 1,
+      "workerState": "published",
+      "readback": true,
+      "cmsApiReadback": {
+        "status": "PASS",
+        "state": "published",
+        "errorCode": null,
+        "confirmedRevisionMatched": true,
+        "databaseMatchedFields": [
+          "id",
+          "kind",
+          "ownerId",
+          "articleId",
+          "revisionId",
+          "state",
+          "errorCode",
+          "url",
+          "traceId"
+        ]
+      }
+    },
+    {
+      "name": "organization-admin-publishes-without-external-exact-approval",
+      "status": "PASS",
+      "writesBefore": 1,
+      "writesAfter": 2,
+      "workerState": "published",
+      "readback": true,
+      "cmsApiReadback": {
+        "status": "PASS",
+        "state": "published",
+        "errorCode": null,
+        "confirmedRevisionMatched": true,
+        "databaseMatchedFields": [
+          "id",
+          "kind",
+          "ownerId",
+          "articleId",
+          "revisionId",
+          "state",
+          "errorCode",
+          "url",
+          "traceId"
+        ]
+      }
+    },
+    {
+      "name": "organization-member-submits-publisher-publishes",
+      "status": "PASS",
+      "writesBefore": 2,
+      "writesAfter": 3,
+      "workerState": "published",
+      "readback": true,
+      "memberPublicationDenied": true,
+      "cmsApiReadback": {
+        "status": "PASS",
+        "state": "published",
+        "errorCode": null,
+        "confirmedRevisionMatched": true,
+        "databaseMatchedFields": [
+          "id",
+          "kind",
+          "ownerId",
+          "articleId",
+          "revisionId",
+          "state",
+          "errorCode",
+          "url",
+          "traceId"
+        ]
+      }
+    },
+    {
+      "name": "queued-publisher-revocation-blocks-real-worker",
+      "status": "PASS",
+      "writesBefore": 3,
+      "writesAfter": 3,
+      "workerState": "blocked",
+      "errorCode": "FORBIDDEN",
+      "ghostPostAbsent": true,
+      "actorAuditUnchanged": true,
+      "roleRestorationDoesNotRevive": true,
+      "cmsApiReadback": {
+        "status": "PASS",
+        "state": "blocked",
+        "errorCode": "FORBIDDEN",
+        "confirmedRevisionMatched": true,
+        "databaseMatchedFields": [
+          "id",
+          "kind",
+          "ownerId",
+          "articleId",
+          "revisionId",
+          "state",
+          "errorCode",
+          "url",
+          "traceId"
+        ]
+      }
+    },
+    {
+      "name": "queued-cancellation-blocks-real-worker",
+      "status": "PASS",
+      "writesBefore": 3,
+      "writesAfter": 3,
+      "workerState": "cancelled",
+      "errorCode": null,
+      "ghostPostAbsent": true,
+      "actorAuditUnchanged": true,
+      "cmsApiReadback": {
+        "status": "PASS",
+        "state": "cancelled",
+        "errorCode": null,
+        "confirmedRevisionMatched": true,
+        "databaseMatchedFields": [
+          "id",
+          "kind",
+          "ownerId",
+          "articleId",
+          "revisionId",
+          "state",
+          "errorCode",
+          "url",
+          "traceId"
+        ]
+      }
+    },
+    {
+      "name": "queued-native-membership-removal-blocks-real-worker",
+      "status": "PASS",
+      "writesBefore": 3,
+      "writesAfter": 3,
+      "workerState": "blocked",
+      "errorCode": "FORBIDDEN",
+      "ghostPostAbsent": true,
+      "actorAuditUnchanged": true,
+      "nativeMembershipRestorationDoesNotRevive": true,
+      "cmsApiReadback": {
+        "status": "PASS",
+        "state": "blocked",
+        "errorCode": "FORBIDDEN",
+        "confirmedRevisionMatched": true,
+        "databaseMatchedFields": [
+          "id",
+          "kind",
+          "ownerId",
+          "articleId",
+          "revisionId",
+          "state",
+          "errorCode",
+          "url",
+          "traceId"
+        ]
+      }
+    }
+  ],
+  "casesPassed": 8,
+  "_provenance": {
+    "source": "runtime/native-roles-result.json",
+    "sourceSha256": "9e079d8ab3d41baf5b0053f0822cff0a194a0c2b82772145c35640475648e91a"
+  }
+}

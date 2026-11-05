@@ -1,0 +1,133 @@
+{
+  "algorithm": "SHA256",
+  "excludes": [
+    "manifest.json"
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 7422,
+      "sha256": "28d612d69e4f2fa9f7d0f2c58ae8062440320a1c0b55e94da4d920651db8c1c8"
+    },
+    {
+      "path": "contracts.json",
+      "bytes": 5131,
+      "sha256": "41b1f874d0c3f2891435d6fc6acb5128db26d4858a9b2bfce6462cdc488fc04e"
+    },
+    {
+      "path": "external-recovery-authorization.json",
+      "bytes": 1157,
+      "sha256": "32d2b5ecec3cbb616d21b69e499aade07b25f0a61f3f5b3e8d195926600bee6b"
+    },
+    {
+      "path": "external-recovery-fresh-caller.json",
+      "bytes": 1898,
+      "sha256": "411803e8e6fa6ecc7a7688db42f7d7cd7ba787ce45b81f47813ff8c9c426f862"
+    },
+    {
+      "path": "external-recovery-preservation.json",
+      "bytes": 1369,
+      "sha256": "b7738f10d28cfabb885a7df0803ceb6ced405048ab706d4374c56d5e696d8550"
+    },
+    {
+      "path": "four-ghost-attempts.json",
+      "bytes": 11215,
+      "sha256": "469360195c25e6978d10ed0a4f165a152ab07b49a98801262dc17e562aabb335"
+    },
+    {
+      "path": "four-ghost-cleanup.json",
+      "bytes": 6373,
+      "sha256": "e5a140bb24dca0951f81c1fb7f886f88d9bcd3558cd2223ef02536405cf266f4"
+    },
+    {
+      "path": "four-ghost.json",
+      "bytes": 5903,
+      "sha256": "95c9b524a39b69a0f8af19d63634d7307efe5fa31f371c48f6d0dba3720c3f06"
+    },
+    {
+      "path": "generated-tools-cleanup.json",
+      "bytes": 869,
+      "sha256": "afb60ad86465d1ba877ead86ac7a729f7b7c1de3bd4c2c966b5e2aa38e6a347b"
+    },
+    {
+      "path": "generated-tools.json",
+      "bytes": 8827,
+      "sha256": "a28b7a0a7c5f876700d6a54cd0f74609298b27d6a73d3a3fc977d5561a645ca2"
+    },
+    {
+      "path": "native-roles.json",
+      "bytes": 5262,
+      "sha256": "edd5ddd4245ed41159cf4cdbe6955e7c49615eb24cf04ee267e3ee39062252e9"
+    },
+    {
+      "path": "nginx.json",
+      "bytes": 2485,
+      "sha256": "74d89f2c59e784f54ea44394842639e43ddd76eaeb6ac7a237b3710143470181"
+    },
+    {
+      "path": "operations-checks.json",
+      "bytes": 8659,
+      "sha256": "e0ecea5f382095065cede3e7cf11abe3c567639852a5907bca3d1c0f4ea68b75"
+    },
+    {
+      "path": "operations.json",
+      "bytes": 2534,
+      "sha256": "7ce96ca5796873d0e33979d95fa4cd771d4dc9cb3e9246864333cde3b65daaec"
+    },
+    {
+      "path": "render-readonly.json",
+      "bytes": 918,
+      "sha256": "fe70b55d1834e4ee04cd5f0b1220566a9781c43e3bdce2ff7aabd01f18107533"
+    },
+    {
+      "path": "render-review.json",
+      "bytes": 4395,
+      "sha256": "078d3b095df6e54ce813cd5704ca17533713c4836bb74be1ddfcf113f04b9f0d"
+    },
+    {
+      "path": "restore-browser.json",
+      "bytes": 5963,
+      "sha256": "125a05d7e7247d25402dd8551e9093235dc6f14b3ae735cb0816489aeb63367e"
+    },
+    {
+      "path": "restore-sqlite-audit.json",
+      "bytes": 6984,
+      "sha256": "17c87bb0e83fed0fa3a536b39b2a9a8df3bf43a9b48dca82b0e238a63819de93"
+    },
+    {
+      "path": "restore.json",
+      "bytes": 2203,
+      "sha256": "6ff2f43dd50ba3090c29bf646e74b09a26b6de22d0cb7c7b6e61b6b555e1dfda"
+    },
+    {
+      "path": "studio-analytics.png",
+      "bytes": 123325,
+      "sha256": "e233cdd023cfa9204c5f4a6748617753375f3b981e40fdeeaeda93f17de69ff3"
+    },
+    {
+      "path": "studio-editor.png",
+      "bytes": 158403,
+      "sha256": "170f94542fe966079718d17f315c91ff381d3134930dda6c819352fda0e65cd0"
+    },
+    {
+      "path": "studio-tasks-mobile.png",
+      "bytes": 56364,
+      "sha256": "c48b8fc45abff169d9e10290c7eff501351c7c057b82f5276b2260249e2c313e"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 3315,
+      "sha256": "878119920bba55f33765d6ee2600db9ee2e2da29092289a42c60b06e8b073a5c"
+    },
+    {
+      "path": "test-summaries.json",
+      "bytes": 104719,
+      "sha256": "9451239da73d6ae99a3a6fecb539af58b8e79ce56fe9db1bbe58281f456aa3cf"
+    },
+    {
+      "path": "verified-source-fingerprints.json",
+      "bytes": 1027,
+      "sha256": "c512c2fb989d12a074cb04922278144a89660af29480d7e8ccabbc1df9a26e1f"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "keysCreated": 7,
+  "remainingDisposableKeys": 0,
+  "allRecordedContainersStopped": true,
+  "existingResourcesModified": false,
+  "harnessSha256": "ad479e0ee0c60417f25af3977707be668c96eb8ac596f04187bdb6f35fb0ee23",
+  "recordedAt": "2026-11-05T14:14:46.793454+00:00",
+  "containers": [
+    {
+      "image": "ghcr.io/chronoaiproject/nyxid/backend@sha256:989c2af8e68d843ca2f1e65ab99323d44190f87d16285db49778de37aa59e5f2",
+      "memoryBytes": 201326592,
+      "runningBeforeStop": true
+    },
+    {
+      "image": "mongo@sha256:b9924c330a8bbc5800fe9c69f04a84e221eca7b28fd049a0354147d9908fa142",
+      "memoryBytes": 335544320,
+      "runningBeforeStop": true
+    }
+  ],
+  "_provenance": {
+    "source": "runtime/generated-bodyless/isolated/cleanup.json",
+    "sourceSha256": "78e5a68a79cd4a2018858821d7778f13f4d88de6e64ee3784560abf2c3669114"
+  }
+}

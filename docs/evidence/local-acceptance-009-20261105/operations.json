@@ -1,0 +1,63 @@
+{
+  "at": "2026-11-05T13:13:37.867134+00:00",
+  "commit": "96e1f64a4ae4fa66abaeac8f37ab4c5500b2ec87",
+  "documentVerdict": "PASS_LOCAL_EXECUTABLE_DOCUMENTATION",
+  "prototypeVerdict": "PASS_EXISTING_MODEL_STATE_WORKFLOW_CHECKS",
+  "tests": {
+    "documentChecks": {
+      "passed": 84,
+      "failed": 0
+    },
+    "prototypeModel": {
+      "passed": 17,
+      "failed": 0
+    },
+    "prototypeState": {
+      "passed": 17,
+      "failed": 0
+    },
+    "prototypeWorkflow": {
+      "passed": 54,
+      "failed": 0
+    },
+    "ghostOffline": {
+      "passed": 5,
+      "failed": 0
+    },
+    "ghostOfflineOptimized": {
+      "passed": 5,
+      "failed": 0
+    }
+  },
+  "changes": [
+    {
+      "file": "prototypes/nyx-cms-b/README.md",
+      "detail": "Use repository-root commands and current 17+54+17 counts; separate historical and setup-increment evidence."
+    }
+  ],
+  "limits": [
+    "No actual target Linux systemd or nginx deployment was executed.",
+    "Compose config parsing only; no image pulls or running container changes.",
+    "Ghost reads used temporary loopback protocol fixtures with dummy keys; no live Ghost or provider call.",
+    "Prototype is static demonstration; no real provisioning/API integration or /en /zh production support proven.",
+    "No DNS/TLS/signing, production deployment, notification, service stop/start, or publication occurred."
+  ],
+  "productionPending": [
+    "Approved domains and reachable public/private ingress, valid certificate chain and renewal.",
+    "Actual Linux service-unit and nginx validation; exact runtime UID/mount/filesystem staging.",
+    "SMTP/device verification; per-site actual Admin key and author binding.",
+    "Actual Ghost healthy/authenticated GET, CMS login and configured-site readback.",
+    "Persistence/encrypted backup/recovery, monitoring, capacity/cost and named handover."
+  ],
+  "evidenceFiles": {
+    "prototype-workflow.log": "572e1edbb202c17b4df3a16b41dfea4ddcafdde0f2f7eada251e75133da53912",
+    "prototype-checks.log": "51cd83b9b6be30e13601447b327b4401fac64ac5c4f1b16e3a6ed0053bf6f5c5",
+    "ghost-offline-optimized.log": "5726a2032a30cc86645417729077c07aa0b4cb98f36a4bdd096a5d01e2b9231c",
+    "prototype-model.log": "8ca5718c48e6dbffb1de2f594b0dd38523a8d8fa77d4eca04dfe1ea5733ebcdc",
+    "ghost-offline.log": "5726a2032a30cc86645417729077c07aa0b4cb98f36a4bdd096a5d01e2b9231c"
+  },
+  "_provenance": {
+    "source": "operations/review-summary.json",
+    "sourceSha256": "b6a13593d5b1322ebf514be8ef0a3cbf324a4edbef4016713dc9e8cac12f415b"
+  }
+}

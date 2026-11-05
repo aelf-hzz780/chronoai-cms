@@ -4,6 +4,10 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 
 ## 当前证据与交接入口
 
+最新本地证据见 [009 运维合并与本地验收](009-local-acceptance.md)，个人 DEV 真实 create/update/register/sync 见 [008 公开正向验证](evidence/external-publication-20261105/public-positive/README.md)。下方历史记录与矩阵保留原版本，不以测试数量替代当前逐项验收。
+
+Current local evidence is recorded in the [009 report](009-local-acceptance.md); bounded real personal DEV create/update/register/sync evidence is linked separately above. Historical entries retain their original revisions and do not establish current whole-deliverable acceptance.
+
 | 入口 | 内容与证据边界 |
 | --- | --- |
 | [开发运行](development.md)、[API 指南](api-guide.md)、[NyxID 注册](nyxid-registration.md)、[部署运维](operations.md) | 当前运行与维护路径；目标 NyxID／provider／生产配置需真实输入，文档与模板不是 Live 证据 |
@@ -17,9 +21,9 @@ R1–R10 对应 [requirements.md](source/requirements.md) 的十节；D1–D9 �
 
 历史 [I13](review-i13.md)、[I15](review-i15.md)、[I17](review-i17.md)、[I18](review-i18.md)、[I19](review-i19.md)、[I20](review-i20.md)、[I21](review-i21.md)、[I22](review-i22.md)保留其 SHA、失败、修复、临时保护与统计。旧 R031 OPEN 与门户缺口是历史状态；当前有界闭合不回填历史 modeled 统计，也不改变下列原文通过条件。原组织中文首次 INTERNAL 原因未定，后续同 ID 只读认回证据不抹去该失败。不以重发替代对账，不以测试数量推断完整场景签收。
 
-2026-11-05 原生适配新增说明：上面 `049ee1c`／`c65dc4be` 是补丁方案的历史证据，不代表官方 `38bae2f7` 已通过。本次退出后端和门户全部源码补丁，包括 Open app；保留 OIDC 直接登录。D1 原文仍包含 NyxID 入口；官方等价入口若未证明，记录为明确需求差异，不能以直接登录或历史 Launch 证据判 D1 完整通过。迁移门禁、当前限制与 A15 语义映射见 [007 原生适配](native-nyxid-migration.md)。
+2026-11-05 原生适配新增说明：上面 `049ee1c`／`c65dc4be` 是补丁方案的历史证据，不代表官方 `38bae2f7` 已通过。本次退出后端和门户全部源码补丁，保留 OIDC 直接登录。用户明确决定“门户 Open app 也可以不用保留”，因此不再把恢复该定制入口列为本地整改门禁；D1 原文保留作追溯，不用历史 Launch 证据判定当前 D1 完整通过。迁移门禁、当前限制与 A15 语义映射见 [007 原生适配](native-nyxid-migration.md)。
 
-Native adaptation note, 2026-11-05: the `049ee1c`/`c65dc4be` evidence above belongs to the historical patched implementation and does not establish acceptance of official `38bae2f7`. This migration retires all backend/portal source patches, including Open app, while preserving direct OIDC sign-in. D1 still specifies a NyxID entry point; an unproven official equivalent remains an explicit requirement gap. Direct login and historical Launch evidence cannot establish complete D1 acceptance. The migration document records gates, limits, and the A15 semantic mapping.
+Native adaptation note, 2026-11-05: the `049ee1c`/`c65dc4be` evidence above belongs to the historical patched implementation and does not establish acceptance of official `38bae2f7`. This migration retires backend/portal source patches while preserving direct OIDC sign-in. The user explicitly chose not to retain the custom Open app entry, so reinstating it is no longer a local remediation gate. Original D1 wording remains for traceability, and historical Launch evidence cannot establish current complete D1 acceptance. The migration document records gates, limits, and the A15 semantic mapping.
 
 本次普通 proxy 写因原生审批等待后的出站安全尚未证明而被 `NATIVE_DISPATCH_UNSUPPORTED` 阻断；service-origin delegation 的 exact 请求被 `NATIVE_EXACT_UNSUPPORTED` 阻断。只读代理和合法 direct OAuth 原生 exact 路径的验证结果分别记录，不能据此宣称 A30/A31 或全部两入口自动分发通过。M0、真实账号或独立验收阻塞时，正式切换保持未执行。
 

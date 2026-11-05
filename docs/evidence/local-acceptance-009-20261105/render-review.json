@@ -1,0 +1,82 @@
+{
+  "at": "2026-11-05T14:17:54.160973+00:00",
+  "baseCommit": "1767a4336fc4216d50dd4d5b5f19943a9841a79b",
+  "verdict": "CANDIDATE_FOR_ROOT_INDEPENDENT_REVIEW",
+  "files": {
+    "src/render-proof.ts": "9f4d5784b6c76e3406281dd726689826f5237885a8a992f70ffa988ea977b81a",
+    "src/render-integrity.ts": "7a15ffcea84c1dc4f1a20ab549f6a65f1886ab823f414baa74d5886846a1ded8",
+    "src/paint-proof.ts": "1514aaa2f31f4e7d56efb729a8bb95e5523798f1e6c70dce9d0aa9170e2d3412",
+    "test/render-raster.test.ts": "085c6a9b6d2ef4506856335352f48113fb2b3197817017f118461c8a4d5d69ea"
+  },
+  "changes": [
+    "Use --disable-gpu only for the verification Chromium process; no changed thresholds or proof retries.",
+    "Hide only text fill/stroke/shadow using one style mutation; retain original inline wrapping, underline/color/background, exact baseline/restored equality, per-grapheme positive pixel evidence, and original node/content observer."
+  ],
+  "findings": [
+    {
+      "id": "009-PAINT-01",
+      "priority": "P1",
+      "requirements": [
+        "A17",
+        "A25",
+        "D4",
+        "D5"
+      ],
+      "roleAndPrecondition": "Any authorized author; Ghost page has exact confirmed body but CSS makes letters transparent or white on white while the link underline remains visibly pink.",
+      "reproduction": "Run the transparent glyph fill and glyphs matching the background cases in test/render-raster.test.ts against the prior opacity hide implementation.",
+      "expected": "A page with invisible confirmed letters is not verified.",
+      "actualBefore": "Both returned true because hiding wrapper opacity removed underline pixels and treated them as glyph paint.",
+      "after": "Both return false; normal underlined text, stroke, shadow, bilingual and color/ZWJ emoji pass.",
+      "status": "FIXED_LOCAL_PENDING_INDEPENDENT_REVIEW"
+    },
+    {
+      "id": "009-PAINT-02",
+      "priority": "P2",
+      "requirements": [
+        "A25",
+        "D5"
+      ],
+      "reproduction": "Read the same saved real local Ghost HTML and marker with Host Chrome; compare the exact original/wrapped captures.",
+      "actualBefore": "Intermittent false on two edge pixels of the Source underline; unchanged-DOM captures also varied. Hardware mode was not deterministically failing every run.",
+      "candidate": "Software raster keeps all proof predicates unchanged. Initial software control 3/3 and final instrumented software+ink control 5/5 passed; one direct uninstrumented candidate run returned false with no captured stage and is retained for root follow-up. Runtime agent then independently read the same remote/saved HTML with the final candidate and recorded 3/3 PASS in final-readonly-render.json.",
+      "status": "CANDIDATE_REAL_PAGE_REVIEW_PENDING"
+    }
+  ],
+  "tests": {
+    "newRegression": {
+      "passed": 6,
+      "failed": 0,
+      "log": "render-raster-final.log"
+    },
+    "existingRelated": {
+      "passed": 28,
+      "failed": 0,
+      "log": "render-green.log",
+      "note": "That earlier combined run also included a new positive fixture missing UTF-8 metadata; its initial-integrity failure was corrected in the final regression file."
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    }
+  },
+  "controls": {
+    "hardwareRealPage": "readonly-render-diagnostic.json",
+    "stability": "paint-stability-control.json",
+    "rasterFlags": "raster-option-controls.json",
+    "softwareCandidateFivePass": "software-ink-control.json",
+    "unstagedUnknownFailure": "render-fixed-cold-launches.json",
+    "linuxComparison": "linux-render-comparison.json",
+    "securityRed": "render-raster-red.log",
+    "runtimeFinalCandidate": "final-readonly-render.json"
+  },
+  "limits": [
+    "All Ghost access was read-only against an existing local test publication; no new Ghost or third-party writes.",
+    "Linux default and software each passed 6/6 in the runtime agent control, so that control establishes compatibility, not Linux defect reproduction.",
+    "Cold launch controls are finite evidence, not a guarantee of every runtime or network environment.",
+    "No commit/push by this agent; root must review and independently accept the candidate."
+  ],
+  "_provenance": {
+    "source": "runtime/009-dd244dc8/render-fix-review-summary.json",
+    "sourceSha256": "5649626a49b90b1a715413e69de62fa3d741c9394dd829db7d122abb8d2ab583"
+  }
+}

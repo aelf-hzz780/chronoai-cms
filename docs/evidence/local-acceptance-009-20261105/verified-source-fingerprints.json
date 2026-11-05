@@ -1,0 +1,14 @@
+{
+  "scripts/local-acceptance-009-four-ghost.py": "fa2c93de1a25d9e86f70b8200b6d6f2cad30c74f6e4187d22c8c5100263b6ae4",
+  "scripts/local-acceptance-009-restore-verify.ts": "4d0f4692ae50034f8d0c005c5f0ec4105e7c37394fb3925437d17c01e1fbc67e",
+  "scripts/local-acceptance-009-restore-browser.ts": "1ca091e381823f38b42285d2c1ac4fb547c4b5d3fb6ab4d703c8cf1f1333268e",
+  "test/four-ghost.integration.ts": "7c43a995cb054008009810c8dc192170e08cab88aa64c87deca5245cf4c5c2b8",
+  "src/render-proof.ts": "9f4d5784b6c76e3406281dd726689826f5237885a8a992f70ffa988ea977b81a",
+  "src/render-integrity.ts": "7a15ffcea84c1dc4f1a20ab549f6a65f1886ab823f414baa74d5886846a1ded8",
+  "src/paint-proof.ts": "1514aaa2f31f4e7d56efb729a8bb95e5523798f1e6c70dce9d0aa9170e2d3412",
+  "scripts/recovery.ts": "bfc3085e65d5d940f3030523edbe3c581809c51df0b7b8f2645b994a288a678e",
+  "_provenance": {
+    "source": "runtime/009-dd244dc8/final-verified-input-fingerprints.json",
+    "sourceSha256": "fa46673b1893b8fb1e8440469c0dc6f6f1f646461b0be0d95aace63c333d728b"
+  }
+}

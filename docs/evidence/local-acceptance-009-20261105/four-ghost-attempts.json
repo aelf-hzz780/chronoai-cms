@@ -1,0 +1,339 @@
+{
+  "updatedAt": "2026-11-05T14:41:29.561988+00:00",
+  "scope": "Preserved isolated four-Ghost and restore reports. Multiple continuation reports share one publication run; they are not distinct publication reruns.",
+  "preservedReportCount": 10,
+  "attempts": [
+    {
+      "runId": "009-5ac6b783",
+      "report": "009-5ac6b783/result.json",
+      "sha256": "f3e3297ffdffee60fe8de8b3b3024817a4828d644c7f3e0f2b3353b2b6df502a",
+      "status": "FAIL",
+      "stage": "start-personal",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: docker exit 1"
+      },
+      "startedAt": 1793884519.716995,
+      "finishedAt": 1793884520.145557,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-5ac6b783-personal",
+        "organization": "blogsystem-local-009-5ac6b783-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-5ac6b783-personal",
+          "stopped": true,
+          "createdContainerCount": null
+        },
+        {
+          "project": "blogsystem-local-009-5ac6b783-organization",
+          "stopped": false,
+          "createdContainerCount": null
+        }
+      ]
+    },
+    {
+      "runId": "009-05987568",
+      "report": "009-05987568/result.json",
+      "sha256": "70e12f83153289beee282ba4a4869eae64485f3e338fb245ac27098991880b2b",
+      "status": "FAIL",
+      "stage": "four-ghost-http-media",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: docker exit 1"
+      },
+      "startedAt": 1793884607.808033,
+      "finishedAt": 1793884712.522975,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-05987568-personal",
+        "organization": "blogsystem-local-009-05987568-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-05987568-personal",
+          "stopped": true,
+          "createdContainerCount": null
+        },
+        {
+          "project": "blogsystem-local-009-05987568-organization",
+          "stopped": true,
+          "createdContainerCount": null
+        }
+      ]
+    },
+    {
+      "runId": "009-dd244dc8",
+      "report": "009-dd244dc8/result-failed-1793885058041752000.json",
+      "sha256": "fb50e603b4131181135c83e31934742a50814a0cc9bff988684d9d6c0ffd51bb",
+      "status": "FAIL",
+      "stage": "four-ghost-http-media",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: docker exit 1; sanitized diagnostic in commands.log"
+      },
+      "startedAt": 1793884876.699085,
+      "finishedAt": 1793884980.5427158,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-dd244dc8-personal",
+        "organization": "blogsystem-local-009-dd244dc8-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": null
+        },
+        {
+          "project": "blogsystem-local-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": null
+        }
+      ]
+    },
+    {
+      "runId": "009-dd244dc8",
+      "report": "009-dd244dc8/result-failed-1793885188461621000.json",
+      "sha256": "9037e32ae0c3697847044bdb679982af8a2d885a89d3cc0ebe3271f5217f4913",
+      "status": "FAIL",
+      "stage": "four-ghost-http-media",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: docker exit 1; sanitized diagnostic in commands.log"
+      },
+      "startedAt": 1793885058.042249,
+      "finishedAt": 1793885114.4569201,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-dd244dc8-personal",
+        "organization": "blogsystem-local-009-dd244dc8-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": null
+        },
+        {
+          "project": "blogsystem-local-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": null
+        }
+      ]
+    },
+    {
+      "runId": "009-dd244dc8",
+      "report": "009-dd244dc8/result-failed-1793885440705816000.json",
+      "sha256": "dfe032d5d4b0b5e1c5bb94e9d07431f04fa31ee39b47038d3b5e57e44c2c4490",
+      "status": "FAIL",
+      "stage": "four-ghost-http-media",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: docker exit 1; sanitized diagnostic in commands.log"
+      },
+      "startedAt": 1793885188.462124,
+      "finishedAt": 1793885325.828016,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-dd244dc8-personal",
+        "organization": "blogsystem-local-009-dd244dc8-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": null
+        },
+        {
+          "project": "blogsystem-local-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": null
+        }
+      ]
+    },
+    {
+      "runId": "009-dd244dc8",
+      "report": "009-dd244dc8/result-failed-1793888418787260000.json",
+      "sha256": "9ba5aafec49a170b6e91260443cba4cf22f1073855d16d00de61b6d2968e61d3",
+      "status": "FAIL",
+      "stage": "four-ghost-http-media",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: docker exit 1; sanitized diagnostic in commands.log"
+      },
+      "startedAt": 1793885440.706421,
+      "finishedAt": 1793885551.1654541,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-dd244dc8-personal",
+        "organization": "blogsystem-local-009-dd244dc8-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": null
+        },
+        {
+          "project": "blogsystem-local-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": null
+        }
+      ]
+    },
+    {
+      "runId": "009-dd244dc8",
+      "report": "009-dd244dc8/result-failed-1793888910843540000.json",
+      "sha256": "43ed2c4219be0712c66df1ab734ffe7af2cd04fd1f0337b5122c6426d10fe4ac",
+      "status": "FAIL",
+      "stage": "restore-fresh-volumes",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: node exit 1; sanitized diagnostic in commands.log"
+      },
+      "startedAt": 1793888418.78805,
+      "finishedAt": 1793888603.260328,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-dd244dc8-personal",
+        "organization": "blogsystem-local-009-dd244dc8-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-restore-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": 0
+        },
+        {
+          "project": "blogsystem-local-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-restore-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": 0
+        }
+      ]
+    },
+    {
+      "runId": "009-dd244dc8",
+      "report": "009-dd244dc8/result-failed-1793889287141689000.json",
+      "sha256": "fe7e68548489b5bf2b236dc731f6a6b7c271e7269445c838963acdf668b2ad71",
+      "status": "FAIL",
+      "stage": "verify-restored-content",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: node 1"
+      },
+      "startedAt": 1793888418.78805,
+      "finishedAt": 1793888960.3155289,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-dd244dc8-personal",
+        "organization": "blogsystem-local-009-dd244dc8-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-restore-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-local-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-restore-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": 4
+        }
+      ]
+    },
+    {
+      "runId": "009-dd244dc8",
+      "report": "009-dd244dc8/result-failed-1793889525130445000.json",
+      "sha256": "aa036962ab589d08f6a9580d1b663973f9c2470a10f2138dc4f4bb5d773b7d2b",
+      "status": "FAIL",
+      "stage": "verify-restored-content",
+      "error": {
+        "type": "RuntimeError",
+        "message": "Command failed: node 1"
+      },
+      "startedAt": 1793888418.78805,
+      "finishedAt": 1793889304.3132532,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-dd244dc8-personal",
+        "organization": "blogsystem-local-009-dd244dc8-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-restore-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-local-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-restore-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": 4
+        }
+      ]
+    },
+    {
+      "runId": "009-dd244dc8",
+      "report": "009-dd244dc8/result.json",
+      "sha256": "518a157e0a80d67c6f95f336d47ff266bebcdde0822d5b83e5ebf5389b167ac5",
+      "status": "PASS",
+      "stage": "verify-restored-content-pass",
+      "error": null,
+      "startedAt": 1793888418.78805,
+      "finishedAt": 1793889547.597095,
+      "sourceProjects": {
+        "personal": "blogsystem-local-009-dd244dc8-personal",
+        "organization": "blogsystem-local-009-dd244dc8-organization"
+      },
+      "cleanupSummary": [
+        {
+          "project": "blogsystem-local-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-restore-009-dd244dc8-personal",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-local-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": 4
+        },
+        {
+          "project": "blogsystem-restore-009-dd244dc8-organization",
+          "stopped": true,
+          "createdContainerCount": 4
+        }
+      ]
+    }
+  ],
+  "finalPass": "009-dd244dc8/result.json",
+  "_provenance": {
+    "source": "runtime/four-ghost-attempts.json",
+    "sourceSha256": "7bf80989f2ad29f34319d06ae838b22d8732df466a6061af0c86fc99e9ed9d10"
+  }
+}

@@ -1,0 +1,372 @@
+{
+  "scope": "Offline syntax, bilingual snippets, isolated SQLite CLI, local simulated Ghost GET and Compose config only",
+  "checks": [
+    {
+      "name": "Chinese and English executable snippets match",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 0",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 1",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 2",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 3",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 6",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 7",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 8",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 9",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 11",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 12",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 13",
+      "pass": true
+    },
+    {
+      "name": "Bash snippet syntax 14",
+      "pass": true
+    },
+    {
+      "name": "Three embedded Node checks found",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md README.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md ../operations.md#备份与隔离恢复",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md ../../infra/platform/nginx.conf.example",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md ../operations.md#图片私有-staging-配置",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md ../operations.md#公开正文渲染证明",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md ../operations.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md ../nyxid-registration.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md ../development.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.en.md ../../infra/ghost/README.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md README.en.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md ../operations.md#备份与隔离恢复",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md ../../infra/platform/nginx.conf.example",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md ../operations.md#图片私有-staging-配置",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md ../operations.md#公开正文渲染证明",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md ../operations.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md ../nyxid-registration.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md ../development.md",
+      "pass": true
+    },
+    {
+      "name": "Relative link README.md ../../infra/ghost/README.md",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/workflow-model.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/checks.cjs",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/site-messages.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/provisioning-domain.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/insights-privacy.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/editor-messages.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/workflow-init.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/workspace-model.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/workspace-experience.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/workflow-checks.cjs",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/provisioning-views.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/content-workflow.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/provisioning.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/distribution-workflow.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/site.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/connection-experience.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/i18n.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/messages.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/nyx-cms-b/app.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/site-provisioning/ui.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/site-provisioning/model.test.mjs",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/site-provisioning/views.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/site-provisioning/model.js",
+      "pass": true
+    },
+    {
+      "name": "JavaScript syntax prototypes/site-provisioning/app.js",
+      "pass": true
+    },
+    {
+      "name": "Create isolated Store",
+      "pass": true
+    },
+    {
+      "name": "Document inventory executes read-only",
+      "pass": true
+    },
+    {
+      "name": "Inventory rejects nonexistent owner",
+      "pass": true
+    },
+    {
+      "name": "Pause CLI matches documentation",
+      "pass": true
+    },
+    {
+      "name": "Fresh bindings report ADD",
+      "pass": true
+    },
+    {
+      "name": "Reject path URL",
+      "pass": true
+    },
+    {
+      "name": "Reject same public URL",
+      "pass": true
+    },
+    {
+      "name": "Reject same Admin route",
+      "pass": true
+    },
+    {
+      "name": "Reject placeholder",
+      "pass": true
+    },
+    {
+      "name": "Reject missing integration key",
+      "pass": true
+    },
+    {
+      "name": "Reject missing pause",
+      "pass": true
+    },
+    {
+      "name": "Pause restored only in isolated DB",
+      "pass": true
+    },
+    {
+      "name": "CLI site ops-en",
+      "pass": true
+    },
+    {
+      "name": "CLI admin-site ops-en",
+      "pass": true
+    },
+    {
+      "name": "CLI author ops-en",
+      "pass": true
+    },
+    {
+      "name": "CLI site ops-zh",
+      "pass": true
+    },
+    {
+      "name": "CLI admin-site ops-zh",
+      "pass": true
+    },
+    {
+      "name": "CLI author ops-zh",
+      "pass": true
+    },
+    {
+      "name": "Existing exact bindings report KEEP",
+      "pass": true
+    },
+    {
+      "name": "Reject existing binding change",
+      "pass": true
+    },
+    {
+      "name": "Document authenticated Ghost GET and media validation",
+      "pass": true
+    },
+    {
+      "name": "Read validation keeps SQLite unchanged",
+      "pass": true
+    },
+    {
+      "name": "Only two exact simulated Ghost GET requests",
+      "pass": true
+    },
+    {
+      "name": "Invalid staging produces safe error without key",
+      "pass": true
+    },
+    {
+      "name": "Document Compose configuration parses without daemon actions",
+      "pass": true
+    },
+    {
+      "name": "Ghost only binds loopback and media readonly",
+      "pass": true
+    },
+    {
+      "name": "MySQL has no host ports",
+      "pass": true
+    },
+    {
+      "name": "Mail private Admin and device verification merged",
+      "pass": true
+    }
+  ],
+  "productionActions": 0,
+  "providerWrites": 0,
+  "simulatedGhostReads": [
+    {
+      "method": "GET",
+      "path": "/ghost/api/admin/posts/?limit=1&fields=id",
+      "authorizationPresent": true
+    },
+    {
+      "method": "GET",
+      "path": "/ghost/api/admin/posts/?limit=1&fields=id",
+      "authorizationPresent": true
+    },
+    {
+      "method": "GET",
+      "path": "/ghost/api/admin/posts/?limit=1&fields=id",
+      "authorizationPresent": true
+    },
+    {
+      "method": "GET",
+      "path": "/ghost/api/admin/posts/?limit=1&fields=id",
+      "authorizationPresent": true
+    }
+  ],
+  "status": "PASS_LOCAL_DOCUMENT_EXECUTION",
+  "passed": 84,
+  "failed": 0,
+  "_provenance": {
+    "source": "operations/document-runtime-checks.json",
+    "sourceSha256": "d8535bb6e269919065bef19ab6a166bbac103bac3658323ddb631075ae3446ae"
+  }
+}

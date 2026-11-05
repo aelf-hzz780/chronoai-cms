@@ -4,6 +4,7 @@
 server {
     listen 80;
     server_name cms.example en.example zh.example;
+    access_log off;
     return 308 https://$host$request_uri;
 }
 server {

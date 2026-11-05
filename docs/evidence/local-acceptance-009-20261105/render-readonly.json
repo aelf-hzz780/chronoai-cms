@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "performedAt": "2026-11-05T14:14:23.046Z",
+  "commit": "1767a4336fc4216d50dd4d5b5f19943a9841a79b",
+  "sourceSha256": {
+    "render-proof.ts": "82b6906eb5afdfd75649ecb44799815cf5ce8100e654106716569a653c232076",
+    "render-integrity.ts": "7a15ffcea84c1dc4f1a20ab549f6a65f1886ab823f414baa74d5886846a1ded8",
+    "paint-proof.ts": "1514aaa2f31f4e7d56efb729a8bb95e5523798f1e6c70dce9d0aa9170e2d3412"
+  },
+  "htmlSha256": "e36ba9d1a078ff93b072efb2ed6e2b03aead5a86526d18399dd752b7dc877e69",
+  "releaseId": "cb78ed99-35b2-40c4-ae28-ea7965241010",
+  "remoteId": "6aec8561af8f1600018bb544",
+  "providerWrites": 0,
+  "passes": [
+    true,
+    true,
+    true
+  ],
+  "usesActualCurrentRenderer": true,
+  "renderer": "Host Chrome",
+  "_provenance": {
+    "source": "runtime/009-dd244dc8/final-readonly-render.json",
+    "sourceSha256": "7521f585a8058b05ac2b93e2079af6cb0bfc8836e32713e54df12dd0ce37610a"
+  }
+}

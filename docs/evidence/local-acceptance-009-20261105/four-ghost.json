@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "performed_at": "2026-11-05T14:23:15.207Z",
+  "evidence_level": "local",
+  "claim": "Current platform HTTP content/confirmation and real Ghost Adapter across two owners, two languages and two entries",
+  "build_revision": "9c03c403d0fe7bad41785e49b68bab2a7a6f35a4",
+  "worktree_dirty": true,
+  "runtime": "v24.18.0",
+  "authority": "synthetic injected local authority; NOT NyxID Live",
+  "cases": [
+    "A07",
+    "A10",
+    "A11",
+    "A17",
+    "A20",
+    "A23",
+    "A24",
+    "A25",
+    "A26",
+    "A41",
+    "A42",
+    "A43",
+    "A44",
+    "A45"
+  ],
+  "not_verified": [
+    "real NyxID",
+    "external platforms",
+    "backup/restore",
+    "production RPO/RTO"
+  ],
+  "translations": [
+    {
+      "owner": "personal",
+      "bidirectionalPublishedOnlyLinks": true,
+      "hreflang": true,
+      "unpublishRemovesOtherSideLink": true
+    },
+    {
+      "owner": "organization",
+      "bidirectionalPublishedOnlyLinks": true,
+      "hreflang": true,
+      "unpublishRemovesOtherSideLink": true
+    }
+  ],
+  "privateFailureCases": [
+    {
+      "action": "cancelled",
+      "publicImage404": true,
+      "noPromotionRecord": true
+    },
+    {
+      "action": "uncertain",
+      "publicImage404": true,
+      "noPromotionRecord": true
+    }
+  ],
+  "results": [
+    {
+      "entry": "cms",
+      "owner": "personal",
+      "language": "en",
+      "sourceSha256": "399f8260094116ddab1be95208e483ed5764b8ae9d447a72354baa35a1edf824",
+      "downloadMatches": true,
+      "confirmedBodyVerified": true,
+      "privateImageUntilConfirmed": true,
+      "mediaStorage": "shared Ghost content volumes",
+      "collectorAndBothMetricsRoutesAgree": true,
+      "consentAndGpcRespected": true,
+      "draftEditLeavesLiveUnchanged": true,
+      "crossOwner404": true,
+      "publicPageIndependentOfClosedApi": true
+    },
+    {
+      "entry": "service",
+      "owner": "personal",
+      "language": "en",
+      "sourceSha256": "5ad9b4d40fc76194ccd7781c36519d1dc446bb3540cabb3370a168a012854031",
+      "downloadMatches": true,
+      "confirmedBodyVerified": true,
+      "privateImageUntilConfirmed": true,
+      "mediaStorage": "shared Ghost content volumes",
+      "collectorAndBothMetricsRoutesAgree": true,
+      "consentAndGpcRespected": true,
+      "draftEditLeavesLiveUnchanged": true,
+      "crossOwner404": true,
+      "publicPageIndependentOfClosedApi": true
+    },
+    {
+      "entry": "cms",
+      "owner": "personal",
+      "language": "zh",
+      "sourceSha256": "de63d0c0cb3a2c5bd6f1f363d3648496fd7093d0a246bc6864a9229e81b8ece4",
+      "downloadMatches": true,
+      "confirmedBodyVerified": true,
+      "privateImageUntilConfirmed": true,
+      "mediaStorage": "shared Ghost content volumes",
+      "collectorAndBothMetricsRoutesAgree": true,
+      "consentAndGpcRespected": true,
+      "draftEditLeavesLiveUnchanged": true,
+      "crossOwner404": true,
+      "publicPageIndependentOfClosedApi": true
+    },
+    {
+      "entry": "service",
+      "owner": "personal",
+      "language": "zh",
+      "sourceSha256": "5915200c214c11c95cb715e1d01551cd5679231c7e033b4eaec809b56eff4af7",
+      "downloadMatches": true,
+      "confirmedBodyVerified": true,
+      "privateImageUntilConfirmed": true,
+      "mediaStorage": "shared Ghost content volumes",
+      "collectorAndBothMetricsRoutesAgree": true,
+      "consentAndGpcRespected": true,
+      "draftEditLeavesLiveUnchanged": true,
+      "crossOwner404": true,
+      "publicPageIndependentOfClosedApi": true
+    },
+    {
+      "entry": "cms",
+      "owner": "organization",
+      "language": "en",
+      "sourceSha256": "767c6078caf295997a483790fc7eb1f716365682c1c2393e142e75048836e7db",
+      "downloadMatches": true,
+      "confirmedBodyVerified": true,
+      "privateImageUntilConfirmed": true,
+      "mediaStorage": "shared Ghost content volumes",
+      "collectorAndBothMetricsRoutesAgree": true,
+      "consentAndGpcRespected": true,
+      "draftEditLeavesLiveUnchanged": true,
+      "crossOwner404": true,
+      "publicPageIndependentOfClosedApi": true
+    },
+    {
+      "entry": "service",
+      "owner": "organization",
+      "language": "en",
+      "sourceSha256": "cde5e3b30851b62857a8f6003dfd16584bea082ba48a5a00d42a6126e73fa5b5",
+      "downloadMatches": true,
+      "confirmedBodyVerified": true,
+      "privateImageUntilConfirmed": true,
+      "mediaStorage": "shared Ghost content volumes",
+      "collectorAndBothMetricsRoutesAgree": true,
+      "consentAndGpcRespected": true,
+      "draftEditLeavesLiveUnchanged": true,
+      "crossOwner404": true,
+      "publicPageIndependentOfClosedApi": true
+    },
+    {
+      "entry": "cms",
+      "owner": "organization",
+      "language": "zh",
+      "sourceSha256": "0b2a08c0ba81d1de520f19a05b5fe4ee1a826b83183f1e205ba17b9d93332a8e",
+      "downloadMatches": true,
+      "confirmedBodyVerified": true,
+      "privateImageUntilConfirmed": true,
+      "mediaStorage": "shared Ghost content volumes",
+      "collectorAndBothMetricsRoutesAgree": true,
+      "consentAndGpcRespected": true,
+      "draftEditLeavesLiveUnchanged": true,
+      "crossOwner404": true,
+      "publicPageIndependentOfClosedApi": true
+    },
+    {
+      "entry": "service",
+      "owner": "organization",
+      "language": "zh",
+      "sourceSha256": "1259607a8abd6a9f8b7d90e57ab023f02e3616c2fc0ee45555000ecb270df382",
+      "downloadMatches": true,
+      "confirmedBodyVerified": true,
+      "privateImageUntilConfirmed": true,
+      "mediaStorage": "shared Ghost content volumes",
+      "collectorAndBothMetricsRoutesAgree": true,
+      "consentAndGpcRespected": true,
+      "draftEditLeavesLiveUnchanged": true,
+      "crossOwner404": true,
+      "publicPageIndependentOfClosedApi": true
+    }
+  ],
+  "status": "PASS",
+  "_provenance": {
+    "source": "runtime/009-dd244dc8/source/evidence.json",
+    "sourceSha256": "75adc7a30700a8fe9ac1aa6ec981a96a0702c4095d9ae7f38d6bacc8aa090cf8"
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "status": "PASS",
+  "performedAt": "2026-11-05T14:39:00.308Z",
+  "model": "Original public URLs mapped through temporary GET/HEAD-only loopback relays to fresh restored volumes; frozen HTML unchanged",
+  "sourceContainersStopped": true,
+  "sourceVolumesUsedAsFallback": false,
+  "sourceContainerCount": 8,
+  "privateCancelledAndUncertainImagesRemain404": true,
+  "relaysClosedAfterVerification": true,
+  "results": [
+    {
+      "owner": "personal",
+      "language": "en",
+      "entry": "cms",
+      "status": 200,
+      "state": "published",
+      "markerPreserved": true,
+      "codeVisible": true,
+      "images": [
+        {
+          "src": "http://localhost:33668/content/images/chrono/c70a50c0eff39e6f933671f1073ea1b4870d60209cde6d7c2760deb44246af4e.png",
+          "currentSrc": "http://localhost:33668/content/images/chrono/c70a50c0eff39e6f933671f1073ea1b4870d60209cde6d7c2760deb44246af4e.png",
+          "complete": true,
+          "naturalWidth": 1,
+          "naturalHeight": 1,
+          "status": 200,
+          "sha256": "c70a50c0eff39e6f933671f1073ea1b4870d60209cde6d7c2760deb44246af4e",
+          "targetOrigin": "http://localhost:33668",
+          "route": "ghost-rendered-restored-url"
+        }
+      ]
+    },
+    {
+      "owner": "personal",
+      "language": "en",
+      "entry": "service",
+      "status": 200,
+      "state": "published",
+      "markerPreserved": true,
+      "codeVisible": true,
+      "images": [
+        {
+          "src": "http://localhost:33668/content/images/chrono/87608168582ca7004036a44ebc3289468780acdc4bc511cd3e62f9e445889410.png",
+          "currentSrc": "http://localhost:33668/content/images/chrono/87608168582ca7004036a44ebc3289468780acdc4bc511cd3e62f9e445889410.png",
+          "complete": true,
+          "naturalWidth": 1,
+          "naturalHeight": 1,
+          "status": 200,
+          "sha256": "87608168582ca7004036a44ebc3289468780acdc4bc511cd3e62f9e445889410",
+          "targetOrigin": "http://localhost:33668",
+          "route": "ghost-rendered-restored-url"
+        }
+      ]
+    },
+    {
+      "owner": "personal",
+      "language": "zh",
+      "entry": "cms",
+      "status": 404,
+      "state": "unpublished",
+      "assertion": "Original URL remains unavailable after restore"
+    },
+    {
+      "owner": "personal",
+      "language": "zh",
+      "entry": "service",
+      "status": 200,
+      "state": "published",
+      "markerPreserved": true,
+      "codeVisible": true,
+      "images": [
+        {
+          "src": "http://localhost:33669/content/images/chrono/5945b00bf8b92865ca9232086a09b1c788c7a9396956be9d876b789c4a136310.png",
+          "currentSrc": "http://localhost:33669/content/images/chrono/5945b00bf8b92865ca9232086a09b1c788c7a9396956be9d876b789c4a136310.png",
+          "complete": true,
+          "naturalWidth": 1,
+          "naturalHeight": 1,
+          "status": 200,
+          "sha256": "5945b00bf8b92865ca9232086a09b1c788c7a9396956be9d876b789c4a136310",
+          "targetOrigin": "http://localhost:33669",
+          "route": "ghost-rendered-restored-url"
+        }
+      ]
+    },
+    {
+      "owner": "organization",
+      "language": "en",
+      "entry": "cms",
+      "status": 200,
+      "state": "published",
+      "markerPreserved": true,
+      "codeVisible": true,
+      "images": [
+        {
+          "src": "http://localhost:33678/content/images/chrono/5fbc05d1d86038c7ff25c7eb52ebc20eb7bdd86ddedba94ee033c25f901e6832.png",
+          "currentSrc": "http://localhost:33678/content/images/chrono/5fbc05d1d86038c7ff25c7eb52ebc20eb7bdd86ddedba94ee033c25f901e6832.png",
+          "complete": true,
+          "naturalWidth": 1,
+          "naturalHeight": 1,
+          "status": 200,
+          "sha256": "5fbc05d1d86038c7ff25c7eb52ebc20eb7bdd86ddedba94ee033c25f901e6832",
+          "targetOrigin": "http://localhost:33678",
+          "route": "ghost-rendered-restored-url"
+        }
+      ]
+    },
+    {
+      "owner": "organization",
+      "language": "en",
+      "entry": "service",
+      "status": 200,
+      "state": "published",
+      "markerPreserved": true,
+      "codeVisible": true,
+      "images": [
+        {
+          "src": "http://localhost:33678/content/images/chrono/94d4ad818674657452ec5da0eb05cce7f89dfe3243d48df6ad5a3be018325880.png",
+          "currentSrc": "http://localhost:33678/content/images/chrono/94d4ad818674657452ec5da0eb05cce7f89dfe3243d48df6ad5a3be018325880.png",
+          "complete": true,
+          "naturalWidth": 1,
+          "naturalHeight": 1,
+          "status": 200,
+          "sha256": "94d4ad818674657452ec5da0eb05cce7f89dfe3243d48df6ad5a3be018325880",
+          "targetOrigin": "http://localhost:33678",
+          "route": "ghost-rendered-restored-url"
+        }
+      ]
+    },
+    {
+      "owner": "organization",
+      "language": "zh",
+      "entry": "cms",
+      "status": 404,
+      "state": "unpublished",
+      "assertion": "Original URL remains unavailable after restore"
+    },
+    {
+      "owner": "organization",
+      "language": "zh",
+      "entry": "service",
+      "status": 200,
+      "state": "published",
+      "markerPreserved": true,
+      "codeVisible": true,
+      "images": [
+        {
+          "src": "http://localhost:33679/content/images/chrono/b3e189d594a21c95407e4a2bba3772a2c12368c913dcd04bbfee455096497bb0.png",
+          "currentSrc": "http://localhost:33679/content/images/chrono/b3e189d594a21c95407e4a2bba3772a2c12368c913dcd04bbfee455096497bb0.png",
+          "complete": true,
+          "naturalWidth": 1,
+          "naturalHeight": 1,
+          "status": 200,
+          "sha256": "b3e189d594a21c95407e4a2bba3772a2c12368c913dcd04bbfee455096497bb0",
+          "targetOrigin": "http://localhost:33679",
+          "route": "ghost-rendered-restored-url"
+        }
+      ]
+    }
+  ],
+  "requestCount": 54,
+  "_provenance": {
+    "source": "runtime/009-dd244dc8/restore-browser-verification.json",
+    "sourceSha256": "340444598c0a4c49b9aebb63cfd8a65d5674aa09dc4748f3586c5ebd6522c166"
+  }
+}
