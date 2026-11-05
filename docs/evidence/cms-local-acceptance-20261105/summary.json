@@ -1,0 +1,214 @@
+{
+  "baseCommit": "ec3f0ef8c504923c08aa408f8f1a696564620bc5",
+  "applicationSourceChanged": false,
+  "testHarnessChanged": true,
+  "standardTests": {
+    "pass": 455,
+    "fail": 0,
+    "skip": 0
+  },
+  "isolatedPublishing": {
+    "pass": 4,
+    "fail": 0,
+    "providers": "local protocol simulations"
+  },
+  "studioBrowser": {
+    "beforePatch": {
+      "pass": 5,
+      "fail": 2,
+      "reason": "obsolete Saved label wait"
+    },
+    "afterPatch": {
+      "pass": 7,
+      "fail": 0
+    }
+  },
+  "realNyxReadOnly": {
+    "accounts": 4,
+    "pass": 65,
+    "fail": 0,
+    "requests": 56,
+    "maxRequestMs": 2367,
+    "coverage": [
+      "fresh PKCE login",
+      "identity/workspace roles",
+      "personal owner isolation",
+      "original Markdown bytes",
+      "private previews",
+      "published release readback",
+      "logout replay denied"
+    ],
+    "firstAttempt": {
+      "pass": 35,
+      "fail": 1,
+      "phase": "admin identity read",
+      "diagnostic": "Nyx introspection TimeoutError; failure retained locally; fresh-session rerun passed"
+    }
+  },
+  "dataIntegrity": {
+    "integrity": "ok",
+    "foreignKeyErrors": 0,
+    "outboundPaused": "true",
+    "businessTables": {
+      "articles": {
+        "count": 6,
+        "unchanged": true
+      },
+      "revisions": {
+        "count": 9,
+        "unchanged": true
+      },
+      "submissions": {
+        "count": 4,
+        "unchanged": true
+      },
+      "releases": {
+        "count": 1,
+        "unchanged": true
+      },
+      "jobs": {
+        "count": 2,
+        "unchanged": true
+      },
+      "deliveries": {
+        "count": 0,
+        "unchanged": true
+      },
+      "sites": {
+        "count": 6,
+        "unchanged": true
+      },
+      "publishers": {
+        "count": 1,
+        "unchanged": true
+      }
+    }
+  },
+  "ghostSites": {
+    "count": 6,
+    "healthy": 6,
+    "privateMediaPromotionConfigured": false,
+    "privateMediaPromotionVerified": false
+  },
+  "callbackIncident": {
+    "reproducedBeforeRestart": true,
+    "freshLoginAfterRestart": true,
+    "rootCause": "Old process transport failure; underlying original cause unavailable from historical logs",
+    "safeOperationalDiagnosticAdded": true,
+    "issuerTlsPkceRulesChanged": false
+  },
+  "providerWrites": 0,
+  "articleWrites": 0,
+  "workerStarted": false,
+  "serviceRegistered": false,
+  "serviceEntryEnabled": false,
+  "analyticsEnabled": false,
+  "testHarnessSha256": "9b0ee32c348142542902870added4a35debe095c387f754ba16a63f123c41946",
+  "applicationSourceHashes": {
+    "src/alternates.ts": "cd12a785cccc8b2abfee6f34d32f3f8dc3dfae67bac8cbaed26d21c4d9066f30",
+    "src/app.ts": "0b65fb4534548e7f124b6ededd6c4b1001f5dd5b9c21455e86fd7c9ff2441a7a",
+    "src/assisted-proof.ts": "719f757e21680a8dd883d3334e42cb5c323ca41df31e70c30f4ae9052a7daa42",
+    "src/auth.ts": "875ae0d38f0e1df0047b1562e9a983cbabf5c3c4e0872490c6e077bda18d6246",
+    "src/caller-authorization.ts": "c1f5a7d6e2ac5d064d319b2e7b4cfd219dae8e0df07f0b974bbfe32be11a0a75",
+    "src/collection-coverage.ts": "eed4332a58a25dcd20204e073b87391e26a45c01a47ec934c90349a5d300301e",
+    "src/command-authority.ts": "aef4e76b2af2a62e31dbd29bf379daddcddb9fbe23507733d2f153c3922f359a",
+    "src/config.ts": "e5c53f30cfe0579b06ed50c8d495a31c7419eceb6671a544406554440b346e57",
+    "src/connection-attempts.ts": "7066b6e7a5615819699d5bcf890390021b499d07542aa34a0f85e2b969b84119",
+    "src/connection-proof.ts": "685f6ae25c5c604c8067d4425b3cd58b870de7903b1bed1f54eae47fa2a1ce1f",
+    "src/content-read.ts": "dd4806b085d58bb3d9bcebb62901533a86560480d270bdc77357b3d224a8115e",
+    "src/content.ts": "d445371fe0a6a1d5ee9b6ba3e285e43c3e9f736c082ba631e2ed4d20ec15c853",
+    "src/distribution.ts": "1e027f639995774567ce729f020c60e0d7b89754439770db5ee80f866746e4e3",
+    "src/errors.ts": "25a7e72cd5965491badb84684ec266f8125057014d3afb5c57dd4e1fd6cf8c3a",
+    "src/ghost.ts": "19f4deec11617d80ebc2de2cb3643fd0da1d754ed28e17355f3301ce183c4ac6",
+    "src/html-proof.ts": "48144c8d8986687638140f111de8fd8dbcc94dede2e9b2024e07daa132cf244c",
+    "src/http-client.ts": "ae21dce428b6e3aaada5f00e8146769acf17bfa9506d76b58c330df23a6bd0a6",
+    "src/main.ts": "c1b0940db56547856a56f444f9c9bcbb3baea88628d3ec2b311102f9dcc849c7",
+    "src/media-staging.ts": "15c953dcfb3c9ed812687308dd272a7c91d2fc4e0d5e96f7770709a554467572",
+    "src/media.ts": "7d479a8911836e8a5009ff954d263e4f5d82368e863e549fb555f335944e3663",
+    "src/metrics.ts": "9ea6355e5b4b5b334e400484720316cc3ca6cf15888a35fe4dc32aa6bc6c4c46",
+    "src/nyxid.ts": "a36d7d7b60a7a807f1c636e87cf956fba7f042cfc28f1773ed4340cb28dda29c",
+    "src/openapi.ts": "7023f5027a8bae6a8cfb44cfe3205228a357eb0e6e24e250052b037b66638bac",
+    "src/paint-proof.ts": "1514aaa2f31f4e7d56efb729a8bb95e5523798f1e6c70dce9d0aa9170e2d3412",
+    "src/policy.ts": "22b66beaf27d9c0b8bcee32814ffdbc01da81c198cc4ee4c67db6c5650175f13",
+    "src/publishing.ts": "900e2e40213417a41c2373f9f83a4f1237e99ba85e6dd661afad2f2aa100f961",
+    "src/queue.ts": "8562e95cf6a51b861e5d5ea19e175c5a51bbe4d721511bd5039162d92aa27a7d",
+    "src/recovery.ts": "9f02b0419075222bade4532c30a39607ddbfbe708b3025206d21164d53a670db",
+    "src/render-budget.ts": "c16192cba051ed5384ad4c6c654f79527f0d0a7704b419f0a7e78face84cb08a",
+    "src/render-integrity.ts": "23802625fcabd1db7163a57041d0574bfde1004995777bb1cd840eb8eda1d6a4",
+    "src/render-proof.ts": "d04ef5fb6782e677a58b175014dab7d3f63e2759281892bdeba31c2c6dda91f0",
+    "src/render.ts": "222daca460fca8885e62ac1526e1bd9028c381bc14ef939831c0d54f8eed26c1",
+    "src/store.ts": "9c5127065a195df2ff172b3b998c40b5671af2c423460b222fbf353c7901d131",
+    "src/studio-assets.ts": "5b09abf3437ed41870fff2139f8c7930c30ecbd8beaefcd80ce78fbb3b787a6b",
+    "src/targets.ts": "3d82d890b9a4c6c7f71fe039611fdf5b952de5d7fc916dc97454e2c05247870a",
+    "src/task-read.ts": "9b1377362e9276106eef9c86e0a2338eb22edac83727f6e34af3f3c34d9a14c9",
+    "src/vault.ts": "48ca0b3054077b797643dc1e1d6f20d5f597c364d72c07a68d9a2b6cfa4c9206",
+    "src/worker-main.ts": "4dba1439f94dcd037a8598565524c6c8ef0b98abd361418ef15dbf259a5370a0",
+    "src/workspace-read.ts": "a9d3db584a66e05aa22f8f3864bda4e4b33eaa2a1647a18bc715b976265672b5",
+    "web/studio/src/analytics-model.ts": "5edf2556fddf55491573f0787aadca0066042a3f8e4d2c1681ddb022a3bc826e",
+    "web/studio/src/analytics.ts": "33b87b7bf247c019889742a7b2ff6b21cbd35047f7a11d0c8efb52cec498b806",
+    "web/studio/src/bytes.ts": "4dafcad740a9f0a5c6cfc018b99578d6d3e886d62dfc448e5cd7824d496e3e04",
+    "web/studio/src/channel-policy.ts": "8320277459e4edc16290d926bc7416bea38e4d594479a51feeb4ba282c1c79c0",
+    "web/studio/src/components.ts": "b9fe7ea63169973f38ee55728478d47148aec83b305027b8f37fff64cee02c79",
+    "web/studio/src/connection-controller.ts": "cb73b67c0c175c675184a33cc2a7474d366db6507933899f891877377822db71",
+    "web/studio/src/connection-view.ts": "df4bbaf0302a8eb827e21bf8c5a93eb1ba86fc32287110a1c18dbe45d7a83083",
+    "web/studio/src/dialogs.ts": "2e27920998fe8dcca5b3292e16328aceabec34f76d0361a0715e5dc5d78581ba",
+    "web/studio/src/distribution-controller.ts": "0b9553f524ca1bbd760dce14f9cfefc2441b980adb83c43a8d0258dca1a5aa45",
+    "web/studio/src/distribution-model.ts": "f48e55d8af776e6bfabbef99841bd4d97ffd0468ce367fad0bd62ba7e5e5e2e9",
+    "web/studio/src/distribution-view.ts": "560620efd64aa19af3530601339761af30ea073155edf492e4b12bf7b4acda15",
+    "web/studio/src/editor-guidance.ts": "cd37929998389d037ebb9b040c43f42fbf4d2be077862a1690e14cab9ef5bba9",
+    "web/studio/src/editor.ts": "32fc69c76d447ce8bde509d8ed2374b6ca75eb5eb8cd9a4118da00ab2476869f",
+    "web/studio/src/i18n.ts": "90e03628e29518f4870b85e33e3faf914aaf3aea9d2646c12ad4f820fc1abb84",
+    "web/studio/src/library.ts": "2bf412787eea380e2a6514be0e37be3a1d8cbd34bb2bb65a5f5abee1bbe23f30",
+    "web/studio/src/main.ts": "17be70bca8a4976b062a64532a8b3814eacb480a79dc2e85465ac20a0d735c95",
+    "web/studio/src/members-model.ts": "f1ab505b69ad6042c460cc407d750c13837c8a9e5b1fc159d21f352a05f8796e",
+    "web/studio/src/members.ts": "c0c2903f303aa354a9a7ed76448244d4bfd6b0b09640908f3800a7e349aa69ad",
+    "web/studio/src/pickers.ts": "7b7fee866760bc0fd9bdc6b46719e95e3cd1e76e994c7b92be249042784b3f33",
+    "web/studio/src/polling.ts": "b68d1a834511327aae0eaefdadad066a01902b953afb8e2d8424f6536d3bc58d",
+    "web/studio/src/publication-model.ts": "a097e5c5b6e0a4d01620bd66ec9f30599e83484e1da2027a3f8125cd1e805409",
+    "web/studio/src/publication.ts": "cd5f02f1ded783e547259cbdf07bb2ee07ff3f3562fe95ca86bbf9413f11dc0b",
+    "web/studio/src/state.ts": "f1b6129de4b166f828b0c0e25525556bfcd004b0100382b38af3d5c2a9e7e650",
+    "web/studio/src/task-model.ts": "07bf42709bd69207a82dfbd588919ce4ed4cdd45dc692585f9de3041614bd136",
+    "web/studio/src/tasks.ts": "783c388143e90a76843eb40d47271de45c7f72677e1bac4f4b31ebee395a33c6",
+    "web/studio/src/translations.ts": "b074c9cf6230f95b1ddae4933281ae7823a899f410976cfe826d23641c96697a",
+    "web/studio/src/transport.ts": "1b3a94da874d0552c2b225aa9c0c94944393d7c6e932af3381841cba759c92e9",
+    "web/studio/src/types.ts": "2b935d4089a5bc0781626f6a1f8b03b20824eac118753651adb3be24a7461382",
+    "web/studio/src/ui.ts": "4dd090742d4c90f36b36af9331d4ac49cd8ab7f97887bd06812faa8b1e197e33",
+    "web/studio/src/workflow-i18n.ts": "ff02fb98f6d45898ffca860ae46a965a194bf74477aca0808fdfb150886049e1",
+    "web/studio/src/workflow-types.ts": "68c4a03471f4b83e814edef9c214a4f8d475e80ba4cc36dd79adc47400f11021",
+    "web/studio/src/workspace-views.ts": "6797a8df6b232588c75b9378c14d562b7944af68607cb4287f1512b8e2fecab1"
+  },
+  "studioBuildHashes": {
+    "web/studio/dist/analytics-model.js": "e2e6fa3f96b108e6197f2a1d6123b6c4f2b472c4129e000a9222e148ba76103c",
+    "web/studio/dist/analytics.js": "db05006b5d59a771fff60185c3ad6ca7f49b925b44ff43e2265de52af3759a54",
+    "web/studio/dist/bytes.js": "353b481d2559a2db92fe67272ce742fa8899ee52e3309cd8564e0cbf0bb544f6",
+    "web/studio/dist/channel-policy.js": "1f77a167a9326ebcf04ac003decf3285aca0348016cbbde71486037b04ad9a84",
+    "web/studio/dist/components.js": "552ec8dc51c6dd14d93bafc69eef0044b00c2de4a87c77f12d284ce90dc74c5b",
+    "web/studio/dist/connection-controller.js": "747e9ef67485f358024f7d669c85723b512783d666fdbc5ca2943d4750e963af",
+    "web/studio/dist/connection-view.js": "cfec25176a387985a8fa3dd7e693686906b9015383335ac622161f021bbaed5b",
+    "web/studio/dist/dialogs.js": "cac54b4e83982665c633d2808fba5860d721c4313394f385548195f9a8798ad8",
+    "web/studio/dist/distribution-controller.js": "8c49a847565ddae412c5739b316ee20c65df52b45d422b910ff5ce15d238638f",
+    "web/studio/dist/distribution-model.js": "bf26ed660cee416136ad7b0919fa8080d8d2c62f8220a01a8614697d17834440",
+    "web/studio/dist/distribution-view.js": "8cbd9bf011c03a722beaae7eec60e440100dc66f67f336ab350945f276a6f0fa",
+    "web/studio/dist/editor-guidance.js": "9989ef373c9f8604d71c82693b714552d2ff511dddb86b46de34df293f6c3163",
+    "web/studio/dist/editor.js": "2fe8f5f271214b9e50134e43cb593a0f90080af5c7746c46074175b09853dd7a",
+    "web/studio/dist/i18n.js": "cf07a17d4842cd079d14debf483778ff0075259accc6a26afff17dd97ca54ffd",
+    "web/studio/dist/library.js": "11ad93967e4b5b33a2c60be483ac4ab8ab8f2c1bf96f9ab8fb430c6105254533",
+    "web/studio/dist/main.js": "acdac23107a4db5457cb022909327fe6476009e2697a35ca4c25f4b23f9a7d72",
+    "web/studio/dist/members-model.js": "99781890198ac35a46e478ab46f083d84dd1cbf4ea84b15b3f6cf03341f05d5c",
+    "web/studio/dist/members.js": "a3e6ff4e0d4c24ea3a7ec10cf5b601f9beea4b19eb087672a03e465c7d50ae33",
+    "web/studio/dist/pickers.js": "1a25e0abfa2f05e01a749e048ca561487407be55d4c0e98c7f2301e4891b333c",
+    "web/studio/dist/polling.js": "02295d9697cdf8db6b8f2df6628b33e15f3ceb3c410a76aa8b87a4fe4aa2bf06",
+    "web/studio/dist/publication-model.js": "d2e6a7112c38f19932e9bfdd33c8f0d58e78a00c6c7fe2d4a78002bc14f7a609",
+    "web/studio/dist/publication.js": "0c5472efea234dfdec5bf98ae19bcb9ce1c78dd486e89aef1d40f29d95b2897f",
+    "web/studio/dist/state.js": "1b473ee9a010527f2975cef6bb2ff986d04e38741a749639c62eb424ad79ad6c",
+    "web/studio/dist/task-model.js": "a29ed0b3b66b7093f589b272b419e303e3d5a529d327cb08fbab3519257a518e",
+    "web/studio/dist/tasks.js": "3727d12f8899667db8785880cafbb2483953ec7c6ad48917bf4c28cb667b2276",
+    "web/studio/dist/translations.js": "11c0a433942cec5e23e5c582018645ca23b7b0c930e8f1d5d1a6915ea6a11e86",
+    "web/studio/dist/transport.js": "e76deeed4b77d99f1f762e5a9d276876b8861e365e4f7a924111042c127cfcc9",
+    "web/studio/dist/types.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+    "web/studio/dist/ui.js": "9f25ddb448b8f81ae47792312e25e9d92a81c506edb0e1d0a28d3be44df278a2",
+    "web/studio/dist/workflow-i18n.js": "a53b998a3c71deabe5d8fad33f8d83346bf460534403f363ec2bbf8877d0ab7c",
+    "web/studio/dist/workflow-types.js": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+    "web/studio/dist/workspace-views.js": "03563c1be8cfcc2d6631841cc394a4c1436fca0cec0d5d0278056fb8c1db90be"
+  }
+}

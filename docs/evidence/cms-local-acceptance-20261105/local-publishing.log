@@ -1,0 +1,23 @@
+
+> chronoai-cms@0.1.0 test:local-publishing
+> npm run build:studio && node --test --test-concurrency=1 test/personal-exact-local.integration.ts test/personal-exact-local-recovery.integration.ts
+
+
+> chronoai-cms@0.1.0 build:studio
+> tsc -p tsconfig.studio.json
+
+✔ local exact HTTP: pending, wrong-reference and expired authorization never reach provider writes (7814.690416ms)
+ℹ Local exact scenario http-approval-boundaries; runId=1b9effe5-036d-4bab-af0e-944de184f0ac
+✔ local exact HTTP: a committed provider write with a lost redemption response recovers read-only using a fresh caller (4327.855ms)
+ℹ Local exact scenario http-lost-response-readonly-recovery; runId=2c2057e3-aa8f-49d8-a581-c4547a727f17
+✔ local exact HTTP: the chosen worker leaves another approved task untouched and repetition cannot publish again (6891.593791ms)
+ℹ Local exact scenario http-selected-worker-no-repeat; runId=6ac0c551-b852-4223-af3d-cfbf44bbf208
+✔ local protocol simulation completes personal Studio publication and exact DEV delivery without external traffic or duplicate writes (8109.134375ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27965.363625

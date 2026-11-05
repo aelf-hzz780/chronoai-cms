@@ -78,12 +78,22 @@ async function acceptanceServer(port=0){
   const services=acceptanceServices(f,vault,config);
   const app=await createApp({...f,vault,...services,publicUrl:config.publicUrl,auth,authenticate:request=>auth.authenticate(request)});
   if(process.argv.includes('--serve')){
+    const revision=process.env.STUDIO_ACCEPTANCE_REVISION??'unversioned';
+    assert.ok(revision==='unversioned'||/^[a-f0-9]{7,40}$/.test(revision),'Preview revision must be a commit hash');
+    // Interactive preview identities are deliberately separate from real OIDC.
+    // This branch is never loaded by src/main.ts or by the production app.
+    app.addHook('onRequest',async(request,reply)=>{
+      if(request.url.split('?')[0]==='/auth/login')return reply.redirect('/__acceptance');
+    });
+    app.get('/__acceptance/environment',async()=>({environment:'isolated acceptance preview',revision,identity:'fixture',realProviderWrites:false}));
+    app.get('/__acceptance/chooser.css',async(_request,reply)=>reply.type('text/css').send('body{margin:0;background:#f7f7fb;color:#26232e;font:16px/1.7 system-ui,sans-serif}main{max-width:680px;margin:8vh auto;padding:32px}section{background:white;border:1px solid #e5e2ee;border-radius:20px;padding:32px}small{color:#7852ec}h1{font-size:32px;line-height:1.2}p{color:#737080}nav{display:grid;grid-template-columns:1fr 1fr;gap:12px}a{color:#5935c7;text-decoration:none;border:1px solid #ded6f4;border-radius:12px;padding:16px;background:#f5f0ff}a:hover{background:#ece3ff}footer{margin-top:20px;font-size:13px;color:#737080}@media(max-width:480px){main{padding:16px}section{padding:24px}nav{grid-template-columns:1fr}}'));
+    app.get('/__acceptance',async(_request,reply)=>reply.type('text/html').send(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ChronoAI · 本地验收身份</title><link rel="stylesheet" href="/__acceptance/chooser.css"><main><section><small>CHRONOAI · LOCAL ACCEPTANCE · ${revision.slice(0,7)}</small><h1>选择测试身份</h1><p>这里使用隔离样例数据，无需 NyxID 登录。可以体验界面和权限流程，不会向真实 Ghost 或外部平台发文；重启预览会重置样例。</p><nav><a href="/__acceptance/session/admin">组织管理员 · Admin</a><a href="/__acceptance/session/member">组织成员 · Member</a><a href="/__acceptance/session/publisher">发布者 · Publisher</a><a href="/__acceptance/session/solo">个人用户 · Solo</a></nav><footer>测试组织流程时，在工作区选择器中选择「ChronoAI · acceptance workspace」。真实账号联调请使用已提供的 HTTPS CMS 入口。</footer></section></main></html>`));
     app.get('/__acceptance/notice.css',async(_request,reply)=>reply.type('text/css').send('#acceptance-notice{position:fixed;z-index:100;bottom:0;left:0;right:0;margin:0;padding:10px 16px;background:#eee8ff;color:#3f2477;border-top:1px solid #d3c5ff;font:12px/1.6 system-ui,sans-serif}body{padding-bottom:58px}'));
     app.addHook('onSend',async(request,_reply,payload)=>{
       if(!['/studio','/studio/'].includes(request.url.split('?')[0]!))return payload;
       const html=Buffer.isBuffer(payload)?payload.toString('utf8'):typeof payload==='string'?payload:null;
       if(html===null)return payload;
-      return html.replace('</head>','<link rel="stylesheet" href="/__acceptance/notice.css"></head>').replace('<body>','<body><aside id="acceptance-notice" role="status">LOCAL ACCEPTANCE / 本地验收：真实 CMS API 与隔离数据库；身份、连接与外部发布结果为测试 fixture。不会向外部平台发文。</aside>');
+      return html.replace('</head>','<link rel="stylesheet" href="/__acceptance/notice.css"></head>').replace('<body>',`<body><aside id="acceptance-notice" role="status">LOCAL ACCEPTANCE · ${revision.slice(0,7)} / 本地验收：真实 CMS API 与隔离数据库；身份、连接与外部发布结果为测试 fixture。不会向外部平台发文。 <a href="/__acceptance">切换测试身份</a></aside>`);
     });
   }
   app.get('/__acceptance/session/:subject',async(request,reply)=>{
@@ -101,6 +111,8 @@ async function acceptanceServer(port=0){
 if(process.argv.includes('--serve')){
   const server=await acceptanceServer(Number(process.env.STUDIO_ACCEPTANCE_PORT??4174));
   assert.match((await server.app.inject('/studio')).body,/id="acceptance-notice"/,'The actual buffered HTML must clearly identify the local fixture preview');
+  const login=await server.app.inject('/auth/login?returnTo=%2Fstudio');assert.equal(login.statusCode,302);assert.equal(login.headers.location,'/__acceptance','Preview sign-in must not contact the fake remote issuer');
+  const chooser=await server.app.inject('/__acceptance');assert.equal(chooser.statusCode,200);for(const role of ['solo','member','admin','publisher'])assert.ok(chooser.body.includes('/__acceptance/session/'+role));
   const release=await server.publish(server.english);await server.publish(server.chinese);
   const manual=await server.distribution.request(server.f.actors.admin,release.id,{target:'medium',connectionId:'org-medium',action:'create',format:'full',rightsConfirmed:true,idempotencyKey:'preview-manual'},'preview-fixture');
   await server.distribution.report(server.f.actors.admin,manual.id,'reviewing',null,'preview-fixture','Local acceptance fixture: awaiting an editorial decision.');
@@ -132,18 +144,18 @@ if(process.argv.includes('--serve')){
     const raw='\uFEFF# Browser-imported source\r\n\r\n中文 UTF-8 stays intact.\r\n';
     await page.setInputFiles('#markdown-file',{name:'source.md',mimeType:'text/markdown',buffer:Buffer.from(raw)});
     await page.getByText('Original UTF-8 file loaded.',{exact:false}).waitFor();
-    await page.locator('[data-action="save"]').click();await page.waitForFunction(()=>document.querySelector('.editor-state')?.textContent?.includes('Saved'));
+    await page.locator('[data-action="save"]').click();await page.locator('.editor-state').getByText('Draft saved',{exact:true}).waitFor();
     let article=await server.f.content.get(server.f.actors.member,server.english.id);assert.equal(article.revision.markdown,raw);
     await page.reload();await page.locator('#article-title').waitFor();
     await page.locator('#article-title').fill('Metadata-only edit from Studio');await page.locator('[data-action="save"]').click();
-    await page.waitForFunction(()=>document.querySelector('.editor-state')?.textContent?.includes('Saved'));
+    await page.locator('.editor-state').getByText('Draft saved',{exact:true}).waitFor();
     article=await server.f.content.get(server.f.actors.member,server.english.id);assert.equal(article.revision.markdown,raw);
     const downloading=page.waitForEvent('download');await page.locator('[data-action="export-raw"]').click();const download=await downloading;
     assert.deepEqual(await readFile((await download.path())!),Buffer.from(raw));
     const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=','base64');
     await page.setInputFiles('#image-file',{name:'private.png',mimeType:'image/png',buffer:png});
     await page.waitForFunction(()=>document.querySelector<HTMLTextAreaElement>('#markdown')?.value.includes('asset:'));
-    await page.locator('[data-action="save"]').click();await page.waitForFunction(()=>document.querySelector('.editor-state')?.textContent?.includes('Saved'));
+    await page.locator('[data-action="save"]').click();await page.locator('.editor-state').getByText('Draft saved',{exact:true}).waitFor();
     article=await server.f.content.get(server.f.actors.member,server.english.id);
     const assetId=/asset:([a-f0-9-]{36})/.exec(article.revision.markdown)![1];
     await page.locator('[data-action="preview-saved"]').click();await page.locator('.saved-preview img').waitFor();
@@ -272,7 +284,7 @@ if(process.argv.includes('--serve')){
     await page.goto(`${server.url}/studio`);await selectStudioOption(page,'workspace','org');
     await page.getByRole('link',{name:'Legacy and Studio share this draft',exact:true}).click();await page.locator('#article-title').waitFor();
     await page.locator('#article-title').fill('Saved in Studio, read in legacy');await page.locator('[data-action="save"]').click();
-    await page.waitForFunction(()=>document.querySelector('.editor-state')?.textContent?.includes('Saved'));
+    await page.locator('.editor-state').getByText('Draft saved',{exact:true}).waitFor();
     const after=await server.f.content.get(server.f.actors.member,first.id);assert.notEqual(after.revision.id,first.current_revision);
     await page.goto(server.url);await page.locator('#owner').selectOption('org');
     await page.getByRole('button',{name:'EN · Saved in Studio, read in legacy',exact:true}).click();

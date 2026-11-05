@@ -1,0 +1,13 @@
+{
+  "baseCommit": "ec3f0ef8c504923c08aa408f8f1a696564620bc5",
+  "files": {
+    "local-publishing.log": "bceebc1700db237c89486f80264c906ca3310751526be7de06ee0a1477d9293b",
+    "npm-check.log": "6e7a9d0d302e2dad32913e55d39f646c5ad526260e72dd142de634a2b5b7c97c",
+    "openapi-006-registration-template.json": "cac6610825be78b7e294d6721cf9b24a5413c1df08401d860ee32bacc54216b0",
+    "preview-entry-test.json": "0eea6c927793a160a14af6052738828e4094c3519f6bd30cb03951d252854ec4",
+    "service-contract-diff.json": "ee136b0a3ed9176fc35e5449ba051d4a4d8a8ba3762a65a8c28f4d309516a6ca",
+    "studio-api-final.log": "b53deea62e8f8f3377cf979a19f9dc175429b57a25b625c69adc0d9a4a58fc98",
+    "studio-api-red.log": "dee99a7b98b5d34aeb01e2b5093f2377bc19a928b01839c876e88e6b15277f5b",
+    "summary.json": "f68011088cc9051d1627e46b85786da285e0596deac5a3e3a32ddf1708341caf"
+  }
+}

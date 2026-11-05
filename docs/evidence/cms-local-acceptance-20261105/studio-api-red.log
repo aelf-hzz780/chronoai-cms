@@ -1,0 +1,31 @@
+✖ M1 real API browser: session, bilingual navigation, UTF-8 save/refresh, conflict and role boundaries (38511.946875ms)
+✔ WP04 real API browser: connection intent survives refresh and binds only the selected organization account (1126.549916ms)
+✔ WP05 real API browser: manual notes and deferred human confirmation persist without outbound work (2326.207625ms)
+✔ WP04 real API browser: exact approval attachment alone queues the frozen organization copy (1342.12625ms)
+✖ WP08 real API browser: legacy and Studio share immutable revisions and permit UI-only rollback (35050.608417ms)
+✔ WP06 real API browser: current membership, grant/revoke, unavailable counters and read-only settings (1440.926333ms)
+✔ WP03 real API browser: frozen original confirmation, task readback and safe cancellation (1529.8365ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 5
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81658.78175
+
+✖ failing tests:
+
+test at test/studio-live-api.integration.ts:113:3
+✖ M1 real API browser: session, bilingual navigation, UTF-8 save/refresh, conflict and role boundaries (38511.946875ms)
+  page.waitForFunction: Timeout 30000ms exceeded.
+      at TestContext.<anonymous> (/private/tmp/cms006-acceptance-20261105/test/studio-live-api.integration.ts:135:67) {
+    name: 'TimeoutError'
+  }
+
+test at test/studio-live-api.integration.ts:262:3
+✖ WP08 real API browser: legacy and Studio share immutable revisions and permit UI-only rollback (35050.608417ms)
+  page.waitForFunction: Timeout 30000ms exceeded.
+      at TestContext.<anonymous> (/private/tmp/cms006-acceptance-20261105/test/studio-live-api.integration.ts:275:16) {
+    name: 'TimeoutError'
+  }
