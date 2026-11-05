@@ -1,8 +1,10 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,writeFile,rm} from 'node:fs/promises';
+import {mkdtemp,writeFile,readFile,mkdir,rm} from 'node:fs/promises';
+import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
 import {OFFICIAL_COMMIT,validatePlan,validateAcceptance,readPausedDatabase,composeDefinition,validateHook,migrationLock,stageExclusive,rollbackExclusive,type MigrationPlan,type ExclusiveRuntime,type ExclusiveState} from './native-nyxid-migration.ts';
@@ -89,4 +91,75 @@ test('failed previous restart leaves both backends stopped and rollback can resu
   const state:ExclusiveState={phase:'VERIFIED'};await assert.rejects(rollbackExclusive(state,f.runtime),/start:previous/);
   assert.equal(state.phase,'CANDIDATE_STOPPED');assert.equal(f.running.previous,false);assert.equal(f.running.candidate,false);assert.equal(f.running.outboundPaused,true);
   f.fail();await rollbackExclusive(state,f.runtime);assert.equal(state.phase,'ROLLED_BACK_PAUSED');assert.equal(f.running.previous,true);
+});
+
+// NR-MIGRATION-02: a new OS process sees the last durable STAGING state. No
+// stageExclusive finally block is run by this fixture before invoking the CLI.
+async function interruptedCliFixture(recorded:'empty'|'missing'|'partial'='empty',wrongLabel=false){
+  const root=await mkdtemp(join(tmpdir(),'native-migration-nr02-')),p=plan(),hash=(v:string)=>createHash('sha256').update(v).digest('hex');
+  const json=async(path:string,value:unknown)=>writeFile(path,JSON.stringify(value,null,2)+'\n',{mode:0o600});
+  p.stateDirectory=join(root,'state');await mkdir(p.stateDirectory,{mode:0o700});await mkdir(join(root,'bin'),{mode:0o700});
+  p.cmsDatabases=[join(root,'a.sqlite'),join(root,'b.sqlite')];
+  for(const path of p.cmsDatabases){const db=new DatabaseSync(path);db.exec("CREATE TABLE settings(key TEXT,value TEXT);CREATE TABLE jobs(state TEXT);INSERT INTO settings VALUES('outbound_paused','true')");db.close();}
+  const fakeState=join(root,'fake-docker.json');
+  const hookFile=join(root,'hook'),hookText=`#!${process.execPath}\nconst fs=require('node:fs');const file=process.env.NATIVE_MIGRATION_TEST_STATE;const d=JSON.parse(fs.readFileSync(file,'utf8'));const action=process.argv[2];d.events.push('hook:'+action);if(action==='switchToPrevious'){if(d.containers.some(c=>c.State.Running))process.exit(8);d.previousRunning=true;}fs.writeFileSync(file,JSON.stringify(d));process.stdout.write(JSON.stringify({status:'OK',outboundPaused:true,workersStopped:true,activeWrites:0,pendingNyxidRequests:0,previousBackendStopped:true,previousPortalStopped:true,previousAutoRestartDisabled:true}));\n`;
+  await writeFile(hookFile,hookText,{mode:0o700});
+  for(const name of Object.keys(p.hooks) as Array<keyof MigrationPlan['hooks']>)p.hooks[name]={file:hookFile,sha256:hash(hookText),args:[name]};
+  const manifest=join(root,'manifest.json');await json(manifest,p);const manifestHash=hash(await readFile(manifest,'utf8'));
+  const attempt={version:1,id:'5a263a52-03e7-4a42-8dc7-4bca35d979db',manifestHash,images:{backend:`sha256:${'a'.repeat(64)}`,frontend:`sha256:${'b'.repeat(64)}`}};
+  const containers=['backend','frontend'].map((service,index)=>({Id:String(index+7).repeat(64),Image:attempt.images[service as 'backend'|'frontend'],Config:{Image:service==='backend'?p.backendImage:p.frontendImage,Labels:{'com.docker.compose.project':p.project,'com.docker.compose.service':service,'com.docker.compose.project.config_files':join(p.stateDirectory,'compose.json'),'io.chronoai.cms-native-migration.attempt':wrongLabel?'another-run':attempt.id,'io.chronoai.cms-native-migration.manifest':manifestHash}},State:{Running:true}}));
+  const state:any={phase:'STAGING',manifestHash,backupSha256:hash('synthetic encrypted backup'),preserved:p.preservedContainerIds.map(id=>({id,image:'preserved-image'})),candidateAttempt:attempt};
+  if(recorded!=='missing')state.candidateContainers=recorded==='partial'?[{service:'backend',id:containers[0].Id,image:containers[0].Image}]:[];
+  await writeFile(join(p.stateDirectory,'backup.enc'),'synthetic encrypted backup',{mode:0o600});
+  await json(join(p.stateDirectory,'state.json'),state);
+  await json(join(p.stateDirectory,'compose.json'),(composeDefinition as (p:MigrationPlan,attempt:any)=>unknown)(p,attempt));
+  await json(fakeState,{events:[],containers,previousRunning:false,preservedIds:p.preservedContainerIds});
+  const dockerText=`#!${process.execPath}\nconst fs=require('node:fs');const file=process.env.NATIVE_MIGRATION_TEST_STATE;const d=JSON.parse(fs.readFileSync(file,'utf8'));const a=process.argv.slice(2);if(a[0]==='--context')a.splice(0,2);let out;
+if(a[0]==='inspect'){const id=a[1];const c=d.containers.find(c=>c.Id===id);d.events.push('inspect:'+id+':'+(c?c.State.Running:'preserved'));out=c?[c]:d.preservedIds.includes(id)?[{Id:id,Image:'preserved-image',State:{Running:true}}]:null;if(!out)process.exit(4);}
+else if(a[0]==='ps'){const f=a[a.indexOf('--filter')+1];const [key,...rest]=f.slice(6).split('=');out=d.containers.filter(c=>c.Config.Labels[key]===rest.join('=')).map(c=>c.Id).join('\\n');d.events.push('docker:ps');}
+else if(a[0]==='compose'&&a.includes('ps')){const service=a.at(-1);out=d.containers.filter(c=>c.Config.Labels['com.docker.compose.service']===service).map(c=>c.Id).join('\\n');}
+else if(a[0]==='stop'){const id=a.at(-1),c=d.containers.find(c=>c.Id===id);if(!c)process.exit(5);c.State.Running=false;d.events.push('stop:'+id);out=id;}
+else if(a[0]==='compose'&&a.includes('stop')){d.events.push('unsafe-compose-stop');process.exit(6);}
+else{d.events.push('unexpected:'+a.join(' '));fs.writeFileSync(file,JSON.stringify(d));process.exit(7);}
+fs.writeFileSync(file,JSON.stringify(d));process.stdout.write(typeof out==='string'?out:JSON.stringify(out));\n`;
+  await writeFile(join(root,'bin','docker'),dockerText,{mode:0o700});
+  return {root,p,containers,fakeState,manifest,run:()=>spawnSync(process.execPath,[fileURLToPath(new URL('./native-nyxid-migration.ts',import.meta.url)),'rollback',manifest,'--execute'],{encoding:'utf8',env:{...process.env,PATH:join(root,'bin')+':'+process.env.PATH,NATIVE_MIGRATION_TEST_STATE:fakeState},timeout:20_000}),read:async()=>JSON.parse(await readFile(fakeState,'utf8')),state:async()=>JSON.parse(await readFile(join(p.stateDirectory,'state.json'),'utf8'))};
+}
+test('NR-MIGRATION-02 restarted CLI recovers owned containers from durable STAGING without completed identity bookkeeping',async()=>{
+  for(const recorded of ['empty','missing','partial'] as const){
+    const f=await interruptedCliFixture(recorded);
+    try{
+      const result=f.run();assert.equal(result.status,0,result.stderr);const d=await f.read(),state=await f.state();
+      assert.equal(state.phase,'ROLLED_BACK_PAUSED');assert.equal(state.candidateContainers.length,2);assert.equal(state.identityRecovery.defect,'NR-MIGRATION-02');assert.equal(d.previousRunning,true);assert.equal(d.containers.some((c:any)=>c.State.Running),false);
+      const restart=d.events.indexOf('hook:switchToPrevious');assert.ok(restart>=0);
+      for(const c of f.containers){const stopped=d.events.indexOf('stop:'+c.Id),verified=d.events.lastIndexOf('inspect:'+c.Id+':false');assert.ok(stopped>=0&&stopped<restart);assert.ok(verified>stopped&&verified<restart);}
+      assert.equal(d.events.includes('unsafe-compose-stop'),false);
+    }finally{await rm(f.root,{recursive:true,force:true});}
+  }
+});
+test('NR-MIGRATION-02 restarted CLI refuses a same-project foreign run without stopping containers or restoring previous backend',async()=>{
+  const f=await interruptedCliFixture('empty',true);
+  try{
+    const result=f.run();assert.equal(result.status,1);assert.match(result.stderr,/CANDIDATE_IDENTITY_UNPROVEN_MANUAL_RECOVERY_REQUIRED/);const d=await f.read();
+    assert.equal(d.events.some((v:string)=>v.startsWith('stop:')||v==='unsafe-compose-stop'||v==='hook:switchToPrevious'),false);assert.equal(d.previousRunning,false);assert.equal(d.containers.every((c:any)=>c.State.Running),true);assert.equal((await f.state()).phase,'STAGING');
+  }finally{await rm(f.root,{recursive:true,force:true});}
+});
+test('NR-MIGRATION-02 restarted CLI requires all durable identity anchors, not project or image name alone',async()=>{
+  for(const field of ['manifest-label','image-id','compose-path','duplicate-service','legacy-attempt'] as const){
+    const f=await interruptedCliFixture();
+    try{
+      const d=await f.read();
+      if(field==='legacy-attempt'){const state=await f.state();delete state.candidateAttempt;await writeFile(join(f.p.stateDirectory,'state.json'),JSON.stringify(state));}
+      else{
+        const c=d.containers[1];
+        if(field==='manifest-label')c.Config.Labels['io.chronoai.cms-native-migration.manifest']='f'.repeat(64);
+        if(field==='image-id')c.Image='sha256:'+'f'.repeat(64);
+        if(field==='compose-path')c.Config.Labels['com.docker.compose.project.config_files']='/another/chat/compose.json';
+        if(field==='duplicate-service'){c.Config.Labels['com.docker.compose.service']='backend';c.Config.Image=f.p.backendImage;c.Image=d.containers[0].Image;}
+        await writeFile(f.fakeState,JSON.stringify(d));
+      }
+      const result=f.run();assert.equal(result.status,1,field);assert.match(result.stderr,/CANDIDATE_IDENTITY_UNPROVEN_MANUAL_RECOVERY_REQUIRED/,field);
+      const after=await f.read();assert.equal(after.events.some((v:string)=>v.startsWith('stop:')||v==='unsafe-compose-stop'||v==='hook:switchToPrevious'),false,field);assert.equal(after.previousRunning,false,field);assert.equal((await f.state()).phase,'STAGING',field);
+    }finally{await rm(f.root,{recursive:true,force:true});}
+  }
 });

@@ -21,6 +21,7 @@ export interface MigrationPlan {
   checks:Array<{name:string;url:string}>;hooks:{quiescence:Hook;stopPrevious:Hook;verifyPreviousStopped:Hook;switchToOfficial:Hook;switchToPrevious:Hook};
 }
 export interface CandidateContainer {service:string;id:string;image:string;}
+export interface CandidateAttempt {version:1;id:string;manifestHash:string;images:{backend:string;frontend:string};}
 export interface ExclusiveState {phase:string;candidateContainers?:CandidateContainer[];[key:string]:unknown;}
 export interface ExclusiveRuntime {
   persist(state:ExclusiveState):Promise<void>;
@@ -91,18 +92,34 @@ export function readPausedDatabase(path:string){
 export function validateAcceptance(value:any,p:MigrationPlan){
   requireState(value?.status==='ACCEPTED'&&value.cmsCommit===p.cmsCommit&&value.officialCommit===p.officialCommit&&value.backendImage===p.backendImage&&value.frontendImage===p.frontendImage&&value.reviewerThreadId&&value.reviewerThreadId!==value.developerThreadId&&value.organizationApproval==='PASSED'&&value.realInputsVerified===true&&value.blockers?.length===0,'INDEPENDENT_ACCEPTANCE_REQUIRED');
 }
-export function composeDefinition(p:MigrationPlan){
+export function composeDefinition(p:MigrationPlan,attempt?:CandidateAttempt){
+  const labels=attempt?{'io.chronoai.cms-native-migration.attempt':attempt.id,'io.chronoai.cms-native-migration.manifest':attempt.manifestHash}:{};
   return {services:{
-    backend:{image:p.backendImage,pull_policy:'never',restart:'no',env_file:[p.backendEnvFile],environment:{HTTP_BIND_ADDR:'0.0.0.0',PORT:'3001',INTERNAL_BIND_ADDR:'0.0.0.0:3002',JWT_ISSUER:p.issuer,BASE_URL:p.issuer,JWT_PRIVATE_KEY_PATH:'/app/keys/private.pem',JWT_PUBLIC_KEY_PATH:'/app/keys/public.pem',NYXID_SERVER_TUF_STATE_DIR:'/var/lib/nyxid/tuf'},ports:[`127.0.0.1:${p.backendPort}:3001`],volumes:[{type:'bind',source:p.keysDirectory,target:'/app/keys',read_only:true},{type:'bind',source:p.tufDirectory,target:'/var/lib/nyxid/tuf'}],networks:['existing'],mem_limit:'2g'},
-    frontend:{image:p.frontendImage,pull_policy:'never',restart:'no',env_file:[p.frontendEnvFile],environment:{BACKEND_URL:'http://backend:3001'},ports:[`127.0.0.1:${p.frontendPort}:8080`],networks:['existing'],mem_limit:'256m'}
+    backend:{image:p.backendImage,labels,pull_policy:'never',restart:'no',env_file:[p.backendEnvFile],environment:{HTTP_BIND_ADDR:'0.0.0.0',PORT:'3001',INTERNAL_BIND_ADDR:'0.0.0.0:3002',JWT_ISSUER:p.issuer,BASE_URL:p.issuer,JWT_PRIVATE_KEY_PATH:'/app/keys/private.pem',JWT_PUBLIC_KEY_PATH:'/app/keys/public.pem',NYXID_SERVER_TUF_STATE_DIR:'/var/lib/nyxid/tuf'},ports:[`127.0.0.1:${p.backendPort}:3001`],volumes:[{type:'bind',source:p.keysDirectory,target:'/app/keys',read_only:true},{type:'bind',source:p.tufDirectory,target:'/var/lib/nyxid/tuf'}],networks:['existing'],mem_limit:'2g'},
+    frontend:{image:p.frontendImage,labels,pull_policy:'never',restart:'no',env_file:[p.frontendEnvFile],environment:{BACKEND_URL:'http://backend:3001'},ports:[`127.0.0.1:${p.frontendPort}:8080`],networks:['existing'],mem_limit:'256m'}
   },networks:{existing:{external:true,name:p.network}}};
+}
+function validateAttempt(value:unknown,manifestHash:string):asserts value is CandidateAttempt{
+  const a=value as CandidateAttempt;
+  requireState(a?.version===1&&/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(a.id)&&a.manifestHash===manifestHash&&['backend','frontend'].every(service=>/^sha256:[a-f0-9]{64}$/.test(a.images?.[service as 'backend'|'frontend'])),'CANDIDATE_IDENTITY_UNPROVEN_MANUAL_RECOVERY_REQUIRED');
+}
+export function assertCandidateIdentity(d:any,p:MigrationPlan,attempt:CandidateAttempt,composePath:string):CandidateContainer{
+  const labels=d?.Config?.Labels,service=labels?.['com.docker.compose.service'];
+  requireState((service==='backend'||service==='frontend')&&hex(d.Id,64)&&d.Config.Image===(service==='backend'?p.backendImage:p.frontendImage)&&d.Image===attempt.images[service as 'backend'|'frontend']&&labels['com.docker.compose.project']===p.project&&labels['com.docker.compose.project.config_files']===composePath&&labels['io.chronoai.cms-native-migration.attempt']===attempt.id&&labels['io.chronoai.cms-native-migration.manifest']===attempt.manifestHash,'CANDIDATE_IDENTITY_UNPROVEN_MANUAL_RECOVERY_REQUIRED');
+  return {service,id:d.Id,image:d.Image};
+}
+function sameCandidates(a:CandidateContainer[],b:CandidateContainer[]){
+  const sorted=(value:CandidateContainer[])=>[...value].sort((x,y)=>x.service.localeCompare(y.service));
+  return JSON.stringify(sorted(a))===JSON.stringify(sorted(b));
 }
 async function privatePath(path:string,directory:boolean){
   const s=await lstat(path);requireState(!s.isSymbolicLink()&&(directory?s.isDirectory():s.isFile()),'PRIVATE_PATH_TYPE');
   requireState((s.mode&0o077)===0,'PRIVATE_PATH_PERMISSIONS');
 }
 async function writeJson(path:string,value:unknown){
-  const temporary=`${path}.${randomUUID()}.tmp`;await writeFile(temporary,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});await rename(temporary,path);
+  const temporary=`${path}.${randomUUID()}.tmp`,file=await open(temporary,'wx',0o600);
+  try{await file.writeFile(JSON.stringify(value,null,2)+'\n');await file.sync();}finally{await file.close();}
+  await rename(temporary,path);
 }
 async function copyTree(source:string,destination:string){
   const s=await lstat(source);requireState(!s.isSymbolicLink(),'BACKUP_SYMLINK_FORBIDDEN');
@@ -179,13 +196,13 @@ async function main(){
   }
   if(mode==='preflight'){await preflight();process.stdout.write(JSON.stringify({trace,status:'PREFLIGHT_PASSED',productionChanged:false})+'\n');return;}
   const compose=(...args:string[])=>docker('compose','-p',p.project,'-f',composePath,...args);
+  let candidateAttempt:CandidateAttempt|undefined,authorizedCandidates:CandidateContainer[]=[];
   function candidateContainers():CandidateContainer[]{
-    return ['backend','frontend'].flatMap(service=>{
-      const id=compose('ps','-a','-q',service).trim();if(!id)return [];
-      const d=inspect(id),image=service==='backend'?p.backendImage:p.frontendImage;
-      requireState(d.Config?.Image===image&&d.Config?.Labels?.['com.docker.compose.project']===p.project&&d.Config?.Labels?.['com.docker.compose.service']===service,'CANDIDATE_IDENTITY_CHANGED');
-      return [{service,id:d.Id,image:d.Image}];
-    });
+    validateAttempt(candidateAttempt,manifestHash);
+    const ids=docker('ps','--all','--no-trunc','--filter',`label=com.docker.compose.project=${p.project}`,'--format','{{.ID}}').trim().split('\n').filter(Boolean);
+    const candidates=ids.map(id=>{const d=inspect(id);requireState(d.Id===id,'CANDIDATE_IDENTITY_UNPROVEN_MANUAL_RECOVERY_REQUIRED');return assertCandidateIdentity(d,p,candidateAttempt!,composePath);});
+    requireState(candidates.length<=2&&new Set(candidates.map(c=>c.service)).size===candidates.length,'CANDIDATE_IDENTITY_UNPROVEN_MANUAL_RECOVERY_REQUIRED');
+    return candidates.sort((a,b)=>a.service.localeCompare(b.service));
   }
   const verifyPreviousStopped=()=>executeHook(p.hooks.verifyPreviousStopped,['previousBackendStopped','previousPortalStopped','previousAutoRestartDisabled']);
   const exclusiveRuntime:ExclusiveRuntime={
@@ -194,9 +211,16 @@ async function main(){
     verifyPreviousStopped,
     startCandidates:async()=>{compose('up','-d','--no-build','--pull','never','backend','frontend');},
     candidates:async()=>candidateContainers(),
-    stopCandidates:async()=>{compose('stop','backend','frontend');},
+    stopCandidates:async()=>{
+      requireState(sameCandidates(candidateContainers(),authorizedCandidates),'CANDIDATE_CONTAINER_CHANGED_MANUAL_RECOVERY_REQUIRED');
+      for(const candidate of authorizedCandidates){
+        assertCandidateIdentity(inspect(candidate.id),p,candidateAttempt!,composePath);
+        docker('stop','--time','10',candidate.id);
+      }
+    },
     verifyCandidatesStopped:async()=>{
-      for(const candidate of candidateContainers())requireState(inspect(candidate.id).State.Running===false,'CANDIDATE_BACKEND_STILL_RUNNING');
+      requireState(sameCandidates(candidateContainers(),authorizedCandidates),'CANDIDATE_CONTAINER_CHANGED_MANUAL_RECOVERY_REQUIRED');
+      for(const candidate of authorizedCandidates)requireState(inspect(candidate.id).State.Running===false,'CANDIDATE_BACKEND_STILL_RUNNING');
     },
     switchToPrevious:()=>executeHook(p.hooks.switchToPrevious)
   };
@@ -225,20 +249,34 @@ async function main(){
       await writeJson(join(payload,'manifest.json'),{trace,createdAt:new Date().toISOString(),manifestHash,officialCommit:OFFICIAL_COMMIT,cmsCommit:p.cmsCommit,inputs:inputFingerprints,databases:p.cmsDatabases,mongoOplogIncluded:true});
       const archive=join(temporary,'payload.tgz');execute(['tar','-czf',archive,'-C',payload,'.']);
       const encrypted=join(p.stateDirectory,'backup.enc');await encryptArchive(archive,encrypted,process.env.NATIVE_MIGRATION_BACKUP_KEY!);
-      await writeJson(composePath,composeDefinition(p));
-      await writeJson(statePath,{phase:'CAPTURED',trace,manifestHash,backupSha256:await shaFile(encrypted),inputFingerprints,preserved:before,createdAt:new Date().toISOString()});
+      candidateAttempt={version:1,id:randomUUID(),manifestHash,images:{backend:JSON.parse(docker('image','inspect',p.backendImage))[0].Id,frontend:JSON.parse(docker('image','inspect',p.frontendImage))[0].Id}};
+      validateAttempt(candidateAttempt,manifestHash);
+      await writeJson(composePath,composeDefinition(p,candidateAttempt));
+      await writeJson(statePath,{phase:'CAPTURED',trace,manifestHash,candidateAttempt,backupSha256:await shaFile(encrypted),inputFingerprints,preserved:before,createdAt:new Date().toISOString()});
     }finally{await rm(temporary,{recursive:true,force:true});}
   }else{
     await privatePath(p.stateDirectory,true);const state=JSON.parse(await readFile(statePath,'utf8'));
     requireState(state.manifestHash===manifestHash&&state.backupSha256===await shaFile(join(p.stateDirectory,'backup.enc')),'CAPTURE_PREIMAGE_CHANGED');
-    requireState(sha(await readFile(composePath))===sha(JSON.stringify(composeDefinition(p),null,2)+'\n'),'COMPOSE_PREIMAGE_CHANGED');
+    validateAttempt(state.candidateAttempt,manifestHash);candidateAttempt=state.candidateAttempt;
+    requireState(sha(await readFile(composePath))===sha(JSON.stringify(composeDefinition(p,candidateAttempt),null,2)+'\n'),'COMPOSE_PREIMAGE_CHANGED');
     const before=await paused();requireState(JSON.stringify(before)===JSON.stringify(state.preserved),'PRESERVED_SERVICE_CHANGED');
     if(mode==='stage'||mode==='activate')validateAcceptance(JSON.parse(await readFile(p.independentAcceptancePath,'utf8')),p);
-    if(mode!=='stage')requireState(Array.isArray(state.candidateContainers)&&JSON.stringify(candidateContainers())===JSON.stringify(state.candidateContainers),'CANDIDATE_CONTAINER_CHANGED');
+    if(mode!=='stage'){
+      const discovered=candidateContainers();
+      if(mode==='rollback'&&state.phase==='STAGING'){
+        const recorded=state.candidateContainers??[];
+        requireState(Array.isArray(recorded)&&recorded.every((c:CandidateContainer)=>discovered.some(found=>sameCandidates([c],[found]))),'CANDIDATE_CONTAINER_CHANGED_MANUAL_RECOVERY_REQUIRED');
+        state.candidateContainers=discovered;
+        state.identityRecovery={defect:'NR-MIGRATION-02',recoveredAt:new Date().toISOString(),discoveredContainerIds:discovered.map(c=>c.id)};
+        // Persist the safely rediscovered identity before any stop or old restart.
+        await writeJson(statePath,state);
+      }else requireState(Array.isArray(state.candidateContainers)&&sameCandidates(discovered,state.candidateContainers),'CANDIDATE_CONTAINER_CHANGED_MANUAL_RECOVERY_REQUIRED');
+      authorizedCandidates=discovered;
+    }
     if(mode==='stage'){
       requireState(state.phase==='CAPTURED','STAGE_STATE_REQUIRED');await preflight();
       for(const input of state.inputFingerprints)requireState(await treeFingerprint(input.path)===input.sha256,'CAPTURE_INPUT_CHANGED');
-      requireState(!compose('ps','-a','-q').trim(),'EXISTING_CANDIDATE_FORBIDDEN');
+      requireState(candidateContainers().length===0,'EXISTING_CANDIDATE_FORBIDDEN');
       await stageExclusive(state,exclusiveRuntime);
     }else if(mode==='verify'){
       requireState(['STAGED','VERIFIED','ACTIVATED'].includes(state.phase),'STAGED_CANDIDATE_REQUIRED');
