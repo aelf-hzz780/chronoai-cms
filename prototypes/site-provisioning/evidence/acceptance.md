@@ -30,3 +30,13 @@ Read-only review identified and corrected overstated legacy completion history. 
 所有 URL 与核验是本地演示数据。根入口预览仅模拟效果，没有配置真实 HTTP 重定向。没有调用 CMS、NyxID、Ghost 或 DEV，没有修改真实业务代码、部署配置或发布 Worker。完整运维流程与后续实施项见 ../operations.md。
 
 URLs and verification results are local demo data. Root preview simulates behavior without configuring a live HTTP redirect. No CMS, NyxID, Ghost or DEV calls, production business-code edits, deployment configuration changes or publishing Worker actions occurred. See ../operations.md for the operations flow and future integration work.
+
+## 范围精简复核 / Scope cleanup verification
+
+撤掉额外的写作演示页、侧栏和全部相关入口；文章创作继续使用现有 CMS 编辑器。旧 #draft 地址已在浏览器验证回到 #sites，既有申请与本机历史草稿数据未清空。页面无浏览器 warning/error，17 项模型测试及语法检查再次通过。
+
+Removed the redundant writing demo and all related navigation. Article creation remains in the existing CMS editor. Browser verification confirmed that the legacy #draft URL returns to #sites without clearing existing requests or historical local draft data. Browser warning/error logs were empty; all 17 model tests and syntax checks passed again.
+
+本轮刷新用户侧截图：01、02、03、06、07；截图包含个人申请、Richard 待处理申请及独立隔离的 ChronoAI 完成示例，均为模拟数据。运维截图 04、05 沿用前次验收，本轮未改变其界面。
+
+Refreshed user-side screenshots 01, 02, 03, 06 and 07 show a personal application, the pending Richard request and an isolated completed ChronoAI sample, all simulated. Operations screenshots 04 and 05 retain the previous acceptance evidence; their interface did not change in this cleanup.

@@ -18,9 +18,9 @@ python3 -m http.server 4182 --bind 127.0.0.1
 - English: http://127.0.0.1:4182/?lang=en#sites
 - 页面总览 / Review gallery: http://127.0.0.1:4182/review.html
 
-页面包括站点概览、申请弹窗、申请进度、运维列表与运维详情。附带最小写作草稿和博客效果页，让相关入口可体验。
+页面包括站点概览、申请弹窗、申请进度、运维列表与运维详情。附带博客效果页用于预览站点地址。文章创作继续使用现有 CMS 编辑器，不新增写作入口。
 
-Core views: site overview, application dialog, request progress, operations queue and operations detail. Small local writing and blog samples support the related links.
+Core views: site overview, application dialog, request progress, operations queue and operations detail. A local blog sample previews the site destination. Article creation remains in the existing CMS editor; this prototype adds no writing entry point.
 
 ## 推荐路径 / Suggested walkthrough
 

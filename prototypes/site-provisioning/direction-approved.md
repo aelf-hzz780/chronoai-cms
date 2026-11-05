@@ -7,3 +7,5 @@ Approved plan: manual operator provisioning for the initial launch; five user/op
 2026-11-05 scope correction approved: remove applicant domain preferences; operations assigns platform-owned subdomains for the first release.
 
 2026-11-05 follow-up approved: one domain per blog, /en/ and /zh/ language paths, exact root defaults to English. Update the prototype and operations guide only.
+
+2026-11-05 scope correction: remove the redundant writing demo and its navigation. Article creation stays in the existing CMS editor; the standalone prototype covers site setup only.
