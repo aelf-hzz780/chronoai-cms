@@ -58,9 +58,17 @@ Every operation is available under both `/api/cms` and `/api/service` with share
 
 Only a `prepare` response that has just verified the original and connection online may return `executionAllowed:true`. It is still not DEV authority or an atomicity guarantee for the later independent call. The field is false in `get` and other observation responses. Reading an old preview does not replace fresh preparation checks. Retrying the same prepare idempotency key re-verifies an original whose external intent is still pending.
 
+早期查询和事务内并发命中的 prepare 幂等记录共用同一复核路径：核验实际返回 intent 的冻结原文、连接和最终状态，不能借用竞争请求的候选材料证明。update 幂等重放先于旧副本的可更新状态检查，因此成功纠错使旧副本 superseded 后，相同输入/key 仍返回已存在结果且不可再次执行；当前身份授权和同 key 异参冲突检查始终保留。
+
+Prepare idempotency hits from either the early lookup or the concurrent transaction share the same validation path. Checks bind to the returned intent's frozen source, connection and final state, never the competing request's candidate payload. An update replay resolves before testing whether its predecessor can be updated: after a successful correction supersedes that predecessor, the same input/key returns the existing result without permitting another execution. Current identity authorization and same-key input conflicts remain enforced.
+
 人工移除先记录 `followUpExternalPublication {action:"removal"}`，实际操作由原账号在 DEV 完成。随后 `{action:"verify-removal"}` 只读核验指定远端 ID 的 404/410，并复查当前身份与连接后才登记 removed；这不调用 DELETE。相关历史副本保留最后有效 URL/证据，仍未解决的独立请求继续阻止新 create。
 
 For manual removal, first record `followUpExternalPublication {action:"removal"}` and complete the actual removal on DEV using the original account. Then `{action:"verify-removal"}` checks the selected remote ID for 404/410 and rechecks identity and connection before recording removed; it never calls DELETE. Related historical copies retain their last valid URL/evidence, and unresolved independent requests continue to prevent a new create.
+
+移除读取还绑定同一 owner、connection、target、remoteId 的关联记录集合及版本。读取期间有新登记、更新或观察改变关联记录时，旧的 404/410 不再有效，必须重新读取；不能覆盖刚成功的新副本，也不能因此放开重复 create。
+
+Removal reads also bind to the set and versions of records sharing the same owner, connection, target and remoteId. A registration, update or observation that changes those records while the read is pending invalidates its 404/410 proof and requires another read. A stale result cannot overwrite a newly verified copy or permit a duplicate create.
 
 ## 只读同步运行 / Running read-only synchronization
 
@@ -71,6 +79,10 @@ Run `npm run sync:external` with the same configuration and database as the inte
 同步继续使用保存的调用者和指定连接并在线验证。短期 delegation 到期会要求同一 owner 重新授权/手动刷新，不回退管理员或其他账号，也不把临时 token 视为永久读取凭据。远端内容变化、429、连接失效和私有指标不可读均保留观察与错误分类，最后一次有效证据不被“Unavailable”覆盖。正常同步永不发布、更新或删除 DEV 内容。
 
 Synchronization uses the retained caller and selected connection with online validation. An expired short-lived delegation requires the same owner to reauthorize or manually refresh. It never falls back to an administrator or another account, and a temporary token is not a permanent read credential. Remote changes, rate limits, disabled connections and unavailable private metrics remain visible as observations and classified errors while the last valid evidence is retained. Synchronization never publishes, updates or deletes DEV content.
+
+批量同步只预选 ID；处理每条记录时从同一最新快照读取状态、到期时间、凭据和 generation。批次等待期间已刷新且未到期的记录会跳过，失败也绑定实际使用的快照版本，避免旧凭据的失败覆盖新授权后的成功。
+
+Batch synchronization selects IDs only, then reads each record's state, due time, credential and generation from the same current snapshot. Records refreshed while waiting in the batch are skipped until due. Failure recording remains tied to the snapshot actually used, so a stale credential failure cannot replace a success under renewed authorization.
 
 `DEV_API_URL` 为运维配置的 DEV API 根地址，`DEV_PUBLIC_HOSTS` 为平台返回文章 URL 的精确可信 hostname 列表（默认 `dev.to`），不可由客户端传入。URL 必须为 HTTPS、无用户信息/非标准端口/query/fragment，并且身份及内容验证同时通过；可信域不是发布成功证明。
 

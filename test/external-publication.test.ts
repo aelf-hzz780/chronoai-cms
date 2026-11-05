@@ -136,3 +136,69 @@ test('external synchronization failures mark existing metrics unavailable withou
 test('manual external sync never returns a frozen payload after caller authority is revoked during a read',async t=>{
  const f=await setup();t.after(()=>f.store.close());const intent=await f.prepare();f.place(intent);await f.service.register(f.actor,intent.id,registration(),'t');await f.service.sync(f.actor,intent.id,'initial');const before=f.store.get('SELECT * FROM external_publications WHERE delivery_id=?',intent.id)!;const metrics=f.store.get('SELECT * FROM external_metrics WHERE delivery_id=?',intent.id)!;f.onRead(async()=>{f.revoked.add('solo');});await assert.rejects(f.service.sync(f.actor,intent.id,'revoked'),{code:'IDENTITY_UNAVAILABLE'});const after=f.store.get('SELECT * FROM external_publications WHERE delivery_id=?',intent.id)!;assert.equal(after.sync_status,'reauthorization_required');assert.equal(after.sync_error_code,'IDENTITY_UNAVAILABLE');assert.equal(after.last_verified_at,before.last_verified_at);assert.equal(f.store.get('SELECT url FROM deliveries WHERE id=?',intent.id)!.url,'https://dev.to/author/article-100');assert.equal(f.store.get('SELECT updated_at FROM external_metrics WHERE delivery_id=?',intent.id)!.updated_at,metrics.updated_at);
 });
+
+function promiseGate(){
+  let release!:()=>void;
+  const promise=new Promise<void>(resolve=>{release=resolve;});
+  return {promise,release};
+}
+
+async function settledExternalUpdate(){
+  const f=await setup(),created=await f.prepare();f.place(created);
+  await f.service.register(f.actor,created.id,registration(),'initial-register');
+  const updateInput={...f.input,action:'update',copyId:created.id,idempotencyKey:'settled-update'};
+  const updated=await f.service.prepare(f.actor,f.release.id,updateInput,'prepare-update');f.place(updated);
+  await f.service.register(f.actor,updated.id,registration('100','settled-update-register'),'register-update');
+  assert.equal((await f.service.get(f.actor,created.id)).state,'superseded');
+  return {...f,created,updated,updateInput};
+}
+
+test('008-IR01: concurrent same-key prepare cannot return executable content after the source is withdrawn',async t=>{
+  const f=await setup();t.after(()=>f.store.close());
+  const firstVerification=promiseGate(),secondVerification=promiseGate(),bothVerifying=promiseGate();let reads=0;
+  f.original.verify=async()=>{const call=++reads;if(call===2)bothVerifying.release();await(call===1?firstVerification.promise:secondVerification.promise);return true;};
+  const first=f.prepare(),second=f.prepare();
+  await bothVerifying.promise;firstVerification.release();const saved=await first;
+  f.store.run("UPDATE releases SET state='unpublished' WHERE id=?",f.release.id);secondVerification.release();
+  const [outcome]=await Promise.allSettled([second]);
+  if(outcome.status==='rejected')assert.equal(outcome.reason.code,'ORIGINAL_NOT_LIVE');
+  else{assert.equal(outcome.value.id,saved.id);assert.equal(outcome.value.executionAllowed,false,'A concurrent idempotency hit must not bypass fresh source validation');}
+  assert.equal(f.store.get('SELECT count(*) n FROM deliveries')!.n,1);
+  assert.equal(f.store.get("SELECT count(*) n FROM jobs WHERE kind='delivery'")!.n,0);
+});
+
+test('008-IR01: concurrent same-key prepare validates the stored intent account after connection rebind',async t=>{
+  const f=await setup();t.after(()=>f.store.close());
+  const firstVerification=promiseGate(),firstVerifying=promiseGate(),secondConnection=promiseGate(),secondConnecting=promiseGate();
+  const originalConnection=f.distribution.connections.connection.bind(f.distribution.connections);let connectionCalls=0,verifications=0;
+  f.distribution.connections.connection=async(...args)=>{if(++connectionCalls===2){secondConnecting.release();await secondConnection.promise;}return originalConnection(...args);};
+  f.original.verify=async()=>{if(++verifications===1){firstVerifying.release();await firstVerification.promise;}return true;};
+  const first=f.prepare(),second=f.prepare();await Promise.all([firstVerifying.promise,secondConnecting.promise]);
+  firstVerification.release();const saved=await first;assert.equal(saved.accountId,'4223973');
+  f.setAccount('4223974');secondConnection.release();
+  const [outcome]=await Promise.allSettled([second]);
+  if(outcome.status==='rejected')assert.equal(outcome.reason.code,'CONNECTION_CHANGED');
+  else{assert.equal(outcome.value.id,saved.id);assert.equal(outcome.value.accountId,saved.accountId);assert.equal(outcome.value.executionAllowed,false,'Validation of the losing preparation account cannot authorize the stored intent account');}
+  assert.equal(f.store.get('SELECT count(*) n FROM deliveries')!.n,1);
+  assert.equal(f.store.get("SELECT count(*) n FROM jobs WHERE kind='delivery'")!.n,0);
+});
+
+test('008-IR02: retrying a registered update returns its existing intent after its source copy is superseded',async t=>{
+  const f=await settledExternalUpdate();t.after(()=>f.store.close());const deliveryCount=f.store.get('SELECT count(*) n FROM deliveries')!.n,jobCount=f.store.get('SELECT count(*) n FROM jobs')!.n;
+  const retried=await f.service.prepare(f.actor,f.release.id,f.updateInput,'retry-settled-update');
+  assert.equal(retried.id,f.updated.id);assert.equal(retried.state,'published');assert.equal(retried.remoteId,'100');assert.equal(retried.executionAllowed,false);
+  assert.equal(f.store.get('SELECT count(*) n FROM deliveries')!.n,deliveryCount);assert.equal(f.store.get('SELECT count(*) n FROM jobs')!.n,jobCount);
+});
+
+test('008-IR02: a settled update key still rejects changed input before historical source-copy validation',async t=>{
+  const f=await settledExternalUpdate();t.after(()=>f.store.close());
+  await assert.rejects(f.service.prepare(f.actor,f.release.id,{...f.updateInput,format:'excerpt',excerpt:'Conflicting text'},'conflicting-retry'),{code:'CONFLICT'});
+  assert.equal(f.store.get('SELECT count(*) n FROM deliveries')!.n,2);assert.equal(f.store.get("SELECT count(*) n FROM jobs WHERE kind='delivery'")!.n,0);
+});
+
+test('008-IR02: idempotent update replay still requires current actor and owner authorization',async t=>{
+  const f=await settledExternalUpdate();t.after(()=>f.store.close());
+  await assert.rejects(f.service.prepare(f.actors.outsider,f.release.id,f.updateInput,'wrong-owner'),{code:'FORBIDDEN'});
+  f.revoked.add('solo');await assert.rejects(f.service.prepare(f.actor,f.release.id,f.updateInput,'revoked-retry'),{code:'IDENTITY_UNAVAILABLE'});
+  assert.equal(f.store.get('SELECT count(*) n FROM deliveries')!.n,2);assert.equal(f.store.get("SELECT count(*) n FROM jobs WHERE kind='delivery'")!.n,0);
+});

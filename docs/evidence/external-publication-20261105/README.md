@@ -1,5 +1,9 @@
 # 008 验证证据 / Validation evidence
 
+以下为首轮交付 `41a320c` 的证据。其独立验收退回的 4 项时序问题已另行修复，最新结果见 [review-fixes.json](review-fixes.json)：新增 12 项回归，标准检查 513 PASS、本地发布集成 4 PASS，等待协调对话复验。旧现场证据及其 source manifest 保持原版本，本轮没有重跑真实模型或外部平台。
+
+The evidence below describes the initial `41a320c` delivery. Four timing issues returned by independent review have been fixed separately; [review-fixes.json](review-fixes.json) records 12 new regressions, 513 passing standard checks and 4 passing local publishing integrations, pending coordinator reacceptance. Existing live evidence and its source manifest retain their original revision. These fixes did not rerun a real model or external platform.
+
 业务实现固定于 `f7a1c8b5a1bcc60cd168b214d898bb8926a2b0f7`，本地 HTTP/Studio 集成与可复用现场脚本固定于 `858ff2f`。后续本目录提交仅归档证据，不将不同级别的验证混为正式验收。
 
 Business implementation is pinned to `f7a1c8b5a1bcc60cd168b214d898bb8926a2b0f7`; local HTTP/Studio integration and reusable live scripts are pinned to `858ff2f`. Subsequent commits in this directory archive evidence without treating different validation levels as formal acceptance.

@@ -1,0 +1,167 @@
+{
+  "reviewedBaseline": "41a320c1d33c046214272942739a3d48bb9826f9",
+  "status": "FIXED_PENDING_COORDINATOR_REACCEPTANCE",
+  "updatedAt": "2026-11-05T07:52:44.993335+00:00",
+  "scope": [
+    "CMS external publication service",
+    "Regression tests",
+    "Design and evidence documentation"
+  ],
+  "findings": [
+    {
+      "id": "008-IR01",
+      "requirements": [
+        "A25",
+        "A33",
+        "D6"
+      ],
+      "fix": "Both idempotency paths revalidate the returned intent frozen source, connection and current state.",
+      "regressions": [
+        "Concurrent same-key source withdrawal",
+        "Concurrent same-key connection rebind"
+      ]
+    },
+    {
+      "id": "008-IR02",
+      "requirements": [
+        "A30",
+        "A36",
+        "A39",
+        "D7"
+      ],
+      "fix": "Resolve authorized matching idempotency before checking predecessor update eligibility; completed replay remains non-executable.",
+      "regressions": [
+        "Completed update replay after predecessor supersession",
+        "Same-key changed-input conflict",
+        "Current identity and owner authorization"
+      ]
+    },
+    {
+      "id": "008-IR03",
+      "requirements": [
+        "A35",
+        "A36",
+        "A39",
+        "D7"
+      ],
+      "fix": "Bind removal proof to the full related remote-copy snapshot; reject EXTERNAL_REMOVAL_STALE before any observation or lifecycle mutation.",
+      "regressions": [
+        "Historical 404 versus concurrent successful registration",
+        "New pending update during removal read",
+        "Related generation changes without state changes",
+        "Unchanged 404 preserves outstanding updates"
+      ]
+    },
+    {
+      "id": "008-IR04",
+      "requirements": [
+        "D7",
+        "D8"
+      ],
+      "fix": "Select IDs for a batch and load credential, generation, lifecycle and due time together when each item is processed.",
+      "regressions": [
+        "Queued entry refreshed before its turn",
+        "Still-due entry uses fresh credential",
+        "Expired in-flight credential failure cannot replace manual refresh"
+      ]
+    }
+  ],
+  "validation": {
+    "check": {
+      "command": "npm run check",
+      "pass": 513,
+      "fail": 0,
+      "skipped": 0
+    },
+    "localPublishing": {
+      "command": "npm run test:local-publishing",
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0,
+      "scope": "Loopback protocol simulation with real CMS HTTP/Studio; not real DEV/NyxBot"
+    },
+    "newRegressionTests": 12,
+    "readOnlyCrossReview": "No additional blocking findings",
+    "diffCheck": "PASS"
+  },
+  "sourceFiles": {
+    "src/external-publication.ts": "cc427ff7f7d68ce74f8a08d7739779b214d1bcc122d77ae65c11a5ab25679ee3",
+    "test/external-publication.test.ts": "55407be14e8e3daa06d0261a6f71239c41b25bc442065060e16fb3c6cb08d92b",
+    "test/external-publication-removal-race.test.ts": "3c37543c151b0ac703d51930cc55d7c4e53c83dfaf4fbeef5aedc2cd6bc3c3fa",
+    "test/external-sync.test.ts": "a0117ea338f518f9c93944b10d8d65185c0d03bbeed699497af665dbea6e5007"
+  },
+  "logs": {
+    "008-IR03-green.log": {
+      "sha256": "d6486b77fe3bb24160607bed57c0e1dac89114fb15e1b4205579336dbad6c490",
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    "008-IR03-red.log": {
+      "sha256": "0360f8e09ebbb5ea22ec491705da4a7917b675715241d7728716f46ed2ded14e",
+      "tests": 3,
+      "pass": 1,
+      "fail": 2,
+      "skipped": 0
+    },
+    "008-IR03-typecheck.log": {
+      "sha256": "8267129bd1b7dc4fba3452d09171cba65da9d29c53356c0ab75b8933912a885a"
+    },
+    "008-IR04-green.log": {
+      "sha256": "5aee0fba750c20a9471e7a7643d3852c50378420e11b3dc8b26a26a83f71f9ce",
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0
+    },
+    "008-IR04-red.log": {
+      "sha256": "10e0a3e081f83122295128851151d3ee7e72a2cc88be69a00748e9eeb489b15b",
+      "tests": 5,
+      "pass": 4,
+      "fail": 1,
+      "skipped": 0
+    },
+    "008-IR04-typecheck.log": {
+      "sha256": "8267129bd1b7dc4fba3452d09171cba65da9d29c53356c0ab75b8933912a885a"
+    },
+    "check-final.log": {
+      "sha256": "710448d1d698b48f7ca65778a6d540b599e72246cdd2ef2edb8828c8dedd1b70",
+      "tests": 513,
+      "pass": 513,
+      "fail": 0,
+      "skipped": 0
+    },
+    "ir01-ir02-test-green.log": {
+      "sha256": "6336fb9aff13b955da75eeff53f0319bb1e1a0a8ef75279f9818a4b3d292dbb2",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    "ir01-ir02-test-red.log": {
+      "sha256": "fa4413d0d94f2f36c440b0c3fcfbcf6e4385987c830ebf51e847f2920bcc1ce2",
+      "tests": 5,
+      "pass": 1,
+      "fail": 4,
+      "skipped": 0
+    },
+    "local-publishing-final.log": {
+      "sha256": "edfe1c3807f144d69029d0c884c85cdf6e5519b4d928252e1bbff4c6c37e14e7",
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "runtimeLogDirectory": ".runtime/cms-external-publication-20261105/review-fixes",
+  "limits": [
+    "No real model or external provider rerun for these fixes",
+    "No NyxID/NyxBot source changes, runtime migrations or old service restarts",
+    "Existing real-system evidence retains its original source manifest and negative-only verdict",
+    "Authenticated normal src/main.ts live startup remains unverified",
+    "Public positive DEV authorization and Internet-accessible original remain missing",
+    "Organization exact Admin path remains unsupported and rejected",
+    "Formal acceptance remains coordinator-owned"
+  ]
+}

@@ -75,6 +75,15 @@ export class ExternalPublicationService {
     if(prior){requireValue(prior.digest===fingerprint,409,'CONFLICT','Idempotency key was already used with different external publication input');return String(prior.resource_id);}
     if(id)this.store.run('INSERT INTO idempotency VALUES (?,?,?,?,?)',this.actorKey(actor),operation,key,fingerprint,id);return null;
   }
+  private async reusePrepared(actor:Actor,id:string){
+    const saved=await this.context(actor,id);
+    if(saved.delivery.state!=='awaiting_external')return this.view(id);
+    const source=this.assertSource(saved),original=this.distribution.originals.input(source);
+    requireValue(source.remote_id&&source.url&&await this.original.verify(original,{remoteId:source.remote_id,url:source.url}),409,'ORIGINAL_NOT_LIVE','The frozen Ghost original must still be publicly verified before reusing a prepared payload');
+    await this.policy.publish(actor,saved.delivery.owner_id,'access');await this.connection(actor,saved);await this.policy.publish(actor,saved.delivery.owner_id,'access');
+    this.store.transaction(()=>{this.unchanged(saved);this.assertSource(saved);});
+    return this.view(id,true);
+  }
   async prepare(actor:Actor,releaseId:string,input:Record<string,unknown>,trace:string){
     this.allowedInput(input,['ownerId','target','connectionId','action','format','excerpt','copyId','rightsConfirmed','idempotencyKey']);
     assertCommandRequest(actor,'POST',`/api/service/releases/${releaseId}/external-publications`);
@@ -87,21 +96,13 @@ export class ExternalPublicationService {
     requireValue(['create','update'].includes(String(input.action))&&['full','excerpt'].includes(String(input.format)),400,'INVALID_INPUT','Use create/update and full/excerpt format');
     requireValue(input.rightsConfirmed===true,400,'CONFIRMATION_REQUIRED','Confirm text and image publication rights');
     requireValue(input.action!=='create'||input.copyId==null,400,'INVALID_INPUT','Create cannot select an existing remote copy');
+    if(input.action==='update')text(input.copyId,'copyId');
+    const fingerprint=digest(JSON.stringify({releaseId,ownerId:owner.id,target:target.name,connectionId,action:input.action,format:input.format,excerpt:input.excerpt,copyId:input.copyId}));
+    const previous=this.idempotency(actor,'external.prepare',key,fingerprint);
+    if(previous)return this.reusePrepared(actor,previous);
     if(input.action==='update'){
       const copy=this.row(text(input.copyId,'copyId'));
       requireValue(copy.delivery.state==='published'&&copy.delivery.source_verified===1,409,'EXTERNAL_INTENT_STATE','Only a verified external copy can be corrected through a newly frozen update');
-    }
-    const fingerprint=digest(JSON.stringify({releaseId,ownerId:owner.id,target:target.name,connectionId,action:input.action,format:input.format,excerpt:input.excerpt,copyId:input.copyId}));
-    const previous=this.idempotency(actor,'external.prepare',key,fingerprint);
-    if(previous){
-      const saved=await this.context(actor,previous);
-      if(saved.delivery.state==='awaiting_external'){
-        const source=this.assertSource(saved),original=this.distribution.originals.input(source);
-        requireValue(source.remote_id&&source.url&&await this.original.verify(original,{remoteId:source.remote_id,url:source.url}),409,'ORIGINAL_NOT_LIVE','The frozen Ghost original must still be publicly verified before reusing a prepared payload');
-        await this.policy.publish(actor,saved.delivery.owner_id,'access');await this.connection(actor,saved);await this.policy.publish(actor,saved.delivery.owner_id,'access');
-        this.store.transaction(()=>{this.unchanged(saved);this.assertSource(saved);});
-      }
-      return this.view(previous,true);
     }
     const id=randomUUID(),prepared=await this.distribution.prepareIntent(actor,owner,release,target,connectionId,input,id,true);
     requireValue(prepared.connection.active!==false,409,'CONNECTION_DISABLED','The selected connection is disabled');
@@ -124,7 +125,7 @@ export class ExternalPublicationService {
       this.store.run('INSERT INTO external_publications(delivery_id,revision_id,execution_mode,request_json,connection_json,sync_actor_json,sync_status,next_sync_at) VALUES (?,?,?,?,?,?,?,?)',id,release.revision_id,'external',JSON.stringify(request),JSON.stringify(snapshot),this.distribution.originals.vault.seal(actor),'not_synced',this.nextSync());
       this.idempotency(actor,'external.prepare',key,fingerprint,id);
       this.distribution.event(id,'awaiting_external',trace);this.store.audit(actor.subject,owner.id,'external.prepare',id,trace,{revisionId:release.revision_id,contentDigest:prepared.contentDigest,connectionId,accountId:prepared.payload.accountId,action:input.action,executionMode:'external'});return id;
-    });return this.view(resultId,true);
+    });return resultId===id?this.view(resultId,true):this.reusePrepared(actor,resultId);
   }
   private send(actor:Actor,context:ExternalContext,connection:any):Send {
     return async(request:RemoteRequest)=>{
@@ -204,11 +205,15 @@ export class ExternalPublicationService {
   }
   async syncDue(limit=20){
     requireValue(Number.isSafeInteger(limit)&&limit>0&&limit<=100,400,'INVALID_INPUT','Sync batch must be between 1 and 100');
-    const due=this.store.all("SELECT e.delivery_id,e.sync_actor_json FROM external_publications e JOIN deliveries d ON d.id=e.delivery_id WHERE d.state='published' AND d.remote_id IS NOT NULL AND e.next_sync_at<=? ORDER BY e.next_sync_at LIMIT ?",new Date().toISOString(),limit),results=[];
+    const due=this.store.all("SELECT e.delivery_id FROM external_publications e JOIN deliveries d ON d.id=e.delivery_id WHERE d.state='published' AND d.remote_id IS NOT NULL AND e.next_sync_at<=? ORDER BY e.next_sync_at LIMIT ?",new Date().toISOString(),limit),results=[];
     for(const item of due){
-      const saved=this.row(item.delivery_id),owner=this.store.get('SELECT * FROM owners WHERE id=?',saved.delivery.owner_id)!;
+      const saved=this.row(item.delivery_id);
+      if(saved.delivery.state!=='published'||!saved.delivery.remote_id||saved.external.next_sync_at>new Date().toISOString())continue;
+      const owner=this.store.get('SELECT * FROM owners WHERE id=?',saved.delivery.owner_id)!;
       const context:ExternalContext={...saved,owner:{kind:owner.kind,issuer:owner.issuer,subject:owner.subject}},trace=randomUUID();
-      try{const actor=this.distribution.originals.vault.open<Actor>(item.sync_actor_json);await this.context(actor,item.delivery_id);results.push(await this.syncContext(actor,context,trace));}
+      // Keep the credential and generation from the same current snapshot so a
+      // failed read cannot overwrite evidence recorded with refreshed authority.
+      try{const actor=this.distribution.originals.vault.open<Actor>(saved.external.sync_actor_json);await this.context(actor,item.delivery_id);results.push(await this.syncContext(actor,context,trace));}
       catch(error){this.failure(context,error,trace);results.push(this.view(item.delivery_id));}
     }return results;
   }
@@ -223,8 +228,17 @@ export class ExternalPublicationService {
     if(input.action==='verify-removal')return this.verifyRemoval(actor,context,trace);
     this.store.transaction(()=>{this.unchanged(context);this.store.run('UPDATE external_publications SET follow_up_state=?,generation=generation+1 WHERE delivery_id=?',`${input.action}_requested`,id);if(typeof input.note==='string'&&input.note.trim())this.store.run('INSERT INTO delivery_notes VALUES (?,?,?,?,?,?)',randomUUID(),id,input.note,actor.subject,trace,new Date().toISOString());this.store.audit(actor.subject,context.delivery.owner_id,'external.follow-up',id,trace,{action:input.action,remoteWrite:false});});return this.view(id);
   }
+  private removalSnapshot(context:ExternalContext){
+    // Removal affects every history for this remote identity. Include unresolved
+    // updates and legacy rows as well as the generations of external records.
+    return JSON.stringify(this.store.all(`SELECT d.id,d.release_id,d.owner_id,d.connection_id,d.target,d.action,d.format,d.digest,d.state,d.remote_id,d.url,d.source_verified,d.updated_at,
+      e.execution_mode,e.revision_id,e.generation,e.follow_up_state
+      FROM deliveries d LEFT JOIN external_publications e ON e.delivery_id=d.id
+      WHERE d.owner_id=? AND d.connection_id=? AND d.target=? AND d.remote_id=? ORDER BY d.id`,context.delivery.owner_id,context.delivery.connection_id,context.delivery.target,context.delivery.remote_id));
+  }
   private async verifyRemoval(actor:Actor,context:ExternalContext,trace:string){
     requireValue(context.external.follow_up_state==='removal_requested',409,'EXTERNAL_INTENT_STATE','First record a manual removal request for the known remote copy');
+    const relatedSnapshot=this.removalSnapshot(context);
     const connection=await this.connection(actor,context),target=this.target(context);
     let gone=false;
     try{await target.reconcileExternal!({...context.payload,remoteId:context.delivery.remote_id},connection,this.send(actor,context,connection));}
@@ -232,7 +246,9 @@ export class ExternalPublicationService {
     requireValue(gone,409,'REMOVAL_UNVERIFIED','The known remote copy still exists; CMS does not delete it');
     await this.policy.publish(actor,context.delivery.owner_id,'access');await this.connection(actor,context);await this.policy.publish(actor,context.delivery.owner_id,'access');
     this.store.transaction(()=>{
-      this.unchanged(context);this.observe(context,'removed',null,trace);this.store.run("UPDATE external_publications SET follow_up_state='removed' WHERE delivery_id=?",context.delivery.id);
+      this.unchanged(context);
+      requireValue(this.removalSnapshot(context)===relatedSnapshot,409,'EXTERNAL_REMOVAL_STALE','A related remote copy changed during removal verification; perform a fresh read-only verification');
+      this.observe(context,'removed',null,trace);this.store.run("UPDATE external_publications SET follow_up_state='removed' WHERE delivery_id=?",context.delivery.id);
       for(const previous of this.store.all("SELECT d.id FROM deliveries d JOIN external_publications e ON e.delivery_id=d.id WHERE d.owner_id=? AND d.connection_id=? AND d.target=? AND d.remote_id=? AND d.id<>? AND d.state IN ('published','superseded')",context.delivery.owner_id,context.delivery.connection_id,context.delivery.target,context.delivery.remote_id,context.delivery.id)){const saved=this.row(previous.id);this.observe({...saved,owner:context.owner},'removed',null,trace);this.store.run("UPDATE external_publications SET follow_up_state='removed' WHERE delivery_id=?",previous.id);this.distribution.event(previous.id,'removed',trace);}
       this.distribution.settleCopy(context.delivery,context.delivery.remote_id,'removed',trace);this.distribution.event(context.delivery.id,'removed',trace);
       this.store.audit(actor.subject,context.delivery.owner_id,'external.removal-verified',context.delivery.id,trace,{remoteId:context.delivery.remote_id,remoteWrite:false});
