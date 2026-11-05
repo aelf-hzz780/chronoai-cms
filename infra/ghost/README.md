@@ -1,5 +1,7 @@
 # 本地双 Ghost 实验
 
+> **实际站点运维入口 / Site operations**：[简体中文](../../docs/operations/README.md) · [English](../../docs/operations/README.en.md)。下面是历史实验，初始化/恢复实验会发测试文章，不适用于仅部署、绑定和只读核验的工单。 / The historical experiment below publishes test articles during initialization/resumption; do not use it for configuration-only acceptance.
+
 用途：阶段 0 验证每个双语 publication 的两个独立 Ghost 实例。此配置只监听本机，不是生产部署模板，不包含 CMS、NyxID、外部分发或指标实现。
 
 Ghost 镜像不增加源码补丁或自定义构建层。两个实例分别使用数据库、数据库凭证、网络和 content volume。镜像在准备时解析为 digest，避免重现实验时漂移。镜像版本与验证结果写入 [阶段 0 记录](../../docs/phase-0.md)。

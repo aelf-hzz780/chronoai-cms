@@ -1,5 +1,7 @@
 # 单机部署与运维交接
 
+> **按步骤执行的运维须知 / Step-by-step operator runbook**：[简体中文](operations/README.md) · [English](operations/README.en.md)。先按该手册判断适用环境和站点 URL；配置验收阶段保持外发暂停、Worker 停止。本文保留完整部署、备份恢复与后续恢复运行参考，不代表允许直接启动 Worker。 / Start with the runbook and keep outbound paused and the Worker stopped during configuration acceptance. The reference below also covers later recovery/resumption; it does not authorize starting the Worker.
+
 当前支持：单 Linux 主机、Node24.18.x、Fastify API+独立 Worker、本地持久盘 SQLite WAL；每 owner×language 一套官方 Ghost6.73.0+MySQL8.0.44。禁止多个主机共享 SQLite/NFS。以下是部署模板；生产 DNS/HTTPS、容量、付款方、隐私 retention、RPO/RTO 尚未指定，公开部署与生产恢复验收保持 BLOCKED。
 
 首次运行与开通见[开发指南](development.md)，业务操作见[API 指南](api-guide.md)，身份与精确连接见[NyxID 注册](nyxid-registration.md)。当前证据和已知缺口以[交付台账](delivery-status.md)及[验收矩阵](acceptance.md)为入口，Local 实测不替代目标环境上线验收。
