@@ -1,0 +1,3624 @@
+{
+  "runId": "7939a554-6964-48d7-88b6-e653e06535d5",
+  "classification": "LOCAL_PROTOCOL_SIMULATION_REAL_CMS_UI_HTTP_EXTERNAL_REGISTRATION",
+  "status": "PASS_LOCAL_END_TO_END_PROTOCOL_SIMULATION",
+  "realNyxUsed": false,
+  "realGhostUsed": false,
+  "realDevUsed": false,
+  "realProviderWrites": 0,
+  "formalAcceptance": "NOT_ACCEPTED",
+  "startedAt": "2026-11-05T06:58:21.719Z",
+  "stages": [
+    {
+      "stage": "real_cms_oidc_session_from_local_identity_fixture",
+      "at": "2026-11-05T06:58:22.833Z",
+      "subject": "fixture-solo",
+      "ownerId": "personal-0eb62dbfa4fcaccec8047839c3747d2e"
+    },
+    {
+      "stage": "studio_created_and_saved_english_article",
+      "at": "2026-11-05T06:58:23.117Z",
+      "articleId": "1029d8e5-d4d0-4712-980d-63ec0b183f53",
+      "revisionId": "f310e638-0610-461f-a2bd-38419d441d68",
+      "sourceDigest": "858ccc52cb2c14354f99c0eca187c46553e901cfb7ecd453aeb944047a5fb8f9"
+    },
+    {
+      "stage": "real_release_worker_published_to_local_ghost_fixture",
+      "at": "2026-11-05T06:58:26.147Z",
+      "releaseId": "d1dbe9ca-721c-40cd-bf94-cbc99445a855",
+      "state": "published",
+      "url": "http://127.0.0.1:51984/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/"
+    },
+    {
+      "stage": "cms_prepared_frozen_external_materials_without_worker_job",
+      "at": "2026-11-05T06:58:28.275Z",
+      "deliveryId": "2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f",
+      "state": "awaiting_external",
+      "revisionId": "f310e638-0610-461f-a2bd-38419d441d68",
+      "accountId": "fixture-author",
+      "connectionId": "fixture-dev-connection",
+      "requestDigest": "f4103eed19619bf330a3f2cc5be2d8f597c87d49d27ea45e4710528d10a871fa",
+      "localDevWrites": 0
+    },
+    {
+      "stage": "independent_local_tool_called_local_nyx_proxy_and_dev",
+      "at": "2026-11-05T06:58:28.359Z",
+      "remoteId": "1",
+      "logicalPlatformUrl": "https://dev.local.invalid/fixture-author/1",
+      "localDevWrites": 1,
+      "realNyxBotUsed": false,
+      "localToolCredentialSeparateFromCms": true
+    },
+    {
+      "stage": "cms_independently_verified_registered_exact_remote_copy",
+      "at": "2026-11-05T06:58:28.478Z",
+      "deliveryId": "2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f",
+      "state": "published",
+      "remoteId": "1",
+      "url": "https://dev.local.invalid/fixture-author/1",
+      "history": [
+        "awaiting_external",
+        "published"
+      ],
+      "providerReadbackRequests": 1
+    },
+    {
+      "stage": "repeated_registration_and_sync_never_dispatch",
+      "at": "2026-11-05T06:58:28.999Z",
+      "localDevWrites": 1,
+      "localDevPosts": 1,
+      "readOnlySyncRequests": 3,
+      "views": 17,
+      "workerJobs": 0
+    }
+  ],
+  "screenshots": [
+    "01-studio-local-session.png",
+    "02-saved-article.png",
+    "03-original-confirmation.png",
+    "04-anonymous-ghost-fixture.png",
+    "05-external-materials-confirmation.png",
+    "06-external-payload-awaiting-independent-execution.png",
+    "07-external-copy-registered-history.png",
+    "08-anonymous-dev-fixture.png",
+    "09-external-copy-readonly-sync.png"
+  ],
+  "articleId": "1029d8e5-d4d0-4712-980d-63ec0b183f53",
+  "releaseId": "d1dbe9ca-721c-40cd-bf94-cbc99445a855",
+  "deliveryId": "2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f",
+  "executionMode": "external",
+  "realNyxBotUsed": false,
+  "logicalDevUrl": "https://dev.local.invalid/fixture-author/1",
+  "localDevPageUrl": "http://127.0.0.1:51983/fixture-author/1",
+  "localDevWrites": 1,
+  "localDevPosts": 1,
+  "externalBrowserAttempts": 0,
+  "externalServerAttempts": 0,
+  "localCmsDevWrites": 0,
+  "finishedAt": "2026-11-05T06:58:29.092Z",
+  "cleanup": {
+    "browser": "closed",
+    "fetch": "restored",
+    "fixture": "closed"
+  },
+  "allowedLocalOrigins": [
+    "http://127.0.0.1:51986",
+    "http://127.0.0.1:51985",
+    "http://127.0.0.1:51984",
+    "http://127.0.0.1:51983"
+  ],
+  "blockedBrowser": [],
+  "blockedServer": [],
+  "browserRequests": [
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/styles.css"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/studio.css"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/main.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/vendor/markdown-it.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/ui.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/dialogs.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/transport.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/bytes.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/components.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/i18n.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/pickers.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/library.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/editor.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/editor-guidance.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/publication.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/publication-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/tasks.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/task-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/polling.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/analytics.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/analytics-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/members.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/members-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/workspace-views.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/connection-controller.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-controller.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/translations.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/channel-policy.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/workflow-i18n.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/connection-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/external-publication-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/me"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/auth/login"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/authorize"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/auth/callback"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/styles.css"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/studio.css"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/main.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/vendor/markdown-it.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/ui.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/dialogs.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/transport.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/bytes.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/components.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/i18n.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/pickers.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/library.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/editor.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/editor-guidance.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/publication.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/publication-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/tasks.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/task-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/polling.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/analytics.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/analytics-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/members.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/members-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/workspace-views.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/connection-controller.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-controller.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/translations.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/channel-policy.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/workflow-i18n.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/connection-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/external-publication-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/me"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/content-summary"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/sites"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/sites"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/content-summary"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/revisions"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/sites"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/content-summary"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/sites"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/releases"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/preview"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/releases"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/release/d1dbe9ca-721c-40cd-bf94-cbc99445a855"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/release/d1dbe9ca-721c-40cd-bf94-cbc99445a855"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/content-summary"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/releases"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/deliveries"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/targets"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/connections"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/release/d1dbe9ca-721c-40cd-bf94-cbc99445a855"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/releases/d1dbe9ca-721c-40cd-bf94-cbc99445a855/external-publications"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/delivery/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/targets"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/connections"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/deliveries"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/external-publications/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/release/d1dbe9ca-721c-40cd-bf94-cbc99445a855"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/external-publications/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f/register"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/delivery/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/deliveries"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/styles.css"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/studio.css"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/main.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/vendor/markdown-it.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/ui.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/dialogs.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/transport.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/bytes.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/components.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/i18n.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/pickers.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/library.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/editor.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/editor-guidance.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/publication.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/publication-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/tasks.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/task-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/polling.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/analytics.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/analytics-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/members.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/members-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/workspace-views.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/connection-controller.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-controller.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-model.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/translations.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/channel-policy.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/workflow-i18n.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/connection-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/external-publication-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/studio/assets/dist/distribution-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/me"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/delivery/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/targets"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/connections"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/deliveries"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/external-publications/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/release/d1dbe9ca-721c-40cd-bf94-cbc99445a855"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51983",
+      "path": "/fixture-author/1"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/external-publications/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f/sync"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/delivery/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/articles/1029d8e5-d4d0-4712-980d-63ec0b183f53/deliveries"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/external-publications/2b1b9774-3fe2-4978-b4bb-3b3d3c9f6b3f"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51986",
+      "path": "/api/cms/owners/personal-0eb62dbfa4fcaccec8047839c3747d2e/tasks/release/d1dbe9ca-721c-40cd-bf94-cbc99445a855"
+    }
+  ],
+  "serverRequests": [
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/.well-known/openid-configuration"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/token"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/jwks"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/.well-known/openid-configuration"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/jwks"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/ghost/api/admin/posts/"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/ghost/api/admin/posts/"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/ghost/api/admin/posts/"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/ghost/api/admin/posts/"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/ghost/api/admin/posts/"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51984",
+      "path": "/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/proxy/s/fixture-dev/articles"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51983",
+      "path": "/api/articles"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/proxy/s/fixture-dev/articles/1"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51983",
+      "path": "/api/articles/1"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/proxy/s/fixture-dev/articles/1"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51983",
+      "path": "/api/articles/1"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/proxy/s/fixture-dev/articles/1"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51983",
+      "path": "/api/articles/1"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/proxy/s/fixture-dev/articles/me/published"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51983",
+      "path": "/api/articles/me/published"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "GET",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/api/v1/user-services"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    },
+    {
+      "method": "POST",
+      "origin": "http://127.0.0.1:51985",
+      "path": "/introspect"
+    }
+  ],
+  "fixtureRequests": [
+    {
+      "at": "2026-11-05T06:58:22.667Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/.well-known/openid-configuration",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.675Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/authorize",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.680Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/token",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.685Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/jwks",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.689Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/.well-known/openid-configuration",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.692Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/jwks",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.694Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.751Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.753Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.756Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.781Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.784Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.786Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.793Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.795Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.797Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.826Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.829Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.831Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.955Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.957Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:22.960Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.028Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.030Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.032Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.035Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.044Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.046Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.049Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.056Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.057Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.058Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.060Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.060Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.064Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.073Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.075Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.077Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.238Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.240Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.242Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.249Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.249Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.250Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.250Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.251Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.252Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.252Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.252Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.253Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.256Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.256Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.256Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.442Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.444Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.446Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.448Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.456Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.460Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.460Z",
+      "service": "ghost",
+      "method": "GET",
+      "path": "/ghost/api/admin/posts/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.462Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.464Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.464Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.466Z",
+      "service": "ghost",
+      "method": "POST",
+      "path": "/ghost/api/admin/posts/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.469Z",
+      "service": "ghost",
+      "method": "GET",
+      "path": "/ghost/api/admin/posts/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:23.471Z",
+      "service": "ghost",
+      "method": "GET",
+      "path": "/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:24.797Z",
+      "service": "ghost",
+      "method": "GET",
+      "path": "/ghost/api/admin/posts/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:24.798Z",
+      "service": "ghost",
+      "method": "GET",
+      "path": "/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:25.477Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:25.479Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:25.481Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.136Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.138Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.143Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.144Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.145Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.272Z",
+      "service": "ghost",
+      "method": "GET",
+      "path": "/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.363Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.363Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.363Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.363Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.365Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.365Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.365Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.366Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.368Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.368Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.371Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.371Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.377Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.378Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.380Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.380Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.381Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.381Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.384Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.386Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.390Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.392Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.394Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.807Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.809Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.811Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.813Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.816Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.818Z",
+      "service": "ghost",
+      "method": "GET",
+      "path": "/ghost/api/admin/posts/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:26.820Z",
+      "service": "ghost",
+      "method": "GET",
+      "path": "/chrono-1029d8e5-d4d0-4712-980d-63ec0b183f53/",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.177Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.179Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.181Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.190Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.192Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.194Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.194Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.197Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.199Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.206Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.206Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.209Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.209Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.211Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.211Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.212Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.214Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.219Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.222Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.224Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.229Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.230Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.232Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.234Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.238Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.240Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.242Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.357Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/api/v1/proxy/s/fixture-dev/articles",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.358Z",
+      "service": "dev",
+      "method": "POST",
+      "path": "/api/articles",
+      "providerWrite": true
+    },
+    {
+      "at": "2026-11-05T06:58:28.441Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.443Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.445Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.447Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.450Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.452Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.454Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.456Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/fixture-dev/articles/1",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.458Z",
+      "service": "dev",
+      "method": "GET",
+      "path": "/api/articles/1",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.460Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.462Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.464Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.470Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.472Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.472Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.474Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.474Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.476Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.483Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.485Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.487Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.524Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.526Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.528Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.533Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.536Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.537Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.544Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.545Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.546Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.547Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.549Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.549Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.551Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.554Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.561Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.562Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.564Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.570Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.571Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.573Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.575Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.579Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.581Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.583Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.623Z",
+      "service": "dev",
+      "method": "GET",
+      "path": "/fixture-author/1",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.709Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.711Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.713Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.715Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.717Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.719Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.721Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.723Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/fixture-dev/articles/1",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.725Z",
+      "service": "dev",
+      "method": "GET",
+      "path": "/api/articles/1",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.727Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.729Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.732Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.734Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.736Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.738Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.740Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/fixture-dev/articles/1",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.741Z",
+      "service": "dev",
+      "method": "GET",
+      "path": "/api/articles/1",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.743Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.745Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.751Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/fixture-dev/articles/me/published",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.753Z",
+      "service": "dev",
+      "method": "GET",
+      "path": "/api/articles/me/published",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.756Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.758Z",
+      "service": "nyx",
+      "method": "GET",
+      "path": "/api/v1/user-services",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.759Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.762Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.764Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.770Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.772Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.773Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.780Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.782Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.784Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.789Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.791Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.793Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.795Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.799Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.801Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.803Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.887Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.889Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.891Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.896Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.898Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.899Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    },
+    {
+      "at": "2026-11-05T06:58:28.901Z",
+      "service": "nyx",
+      "method": "POST",
+      "path": "/introspect",
+      "providerWrite": false
+    }
+  ]
+}

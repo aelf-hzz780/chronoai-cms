@@ -1,0 +1,211 @@
+{
+  "at": "2026-11-05T07:06:18.433019+00:00",
+  "checks": [
+    {
+      "url": "http://127.0.0.1:3000",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3001/health",
+      "status": 200
+    },
+    {
+      "url": "https://192.168.3.48:9443",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8088/healthz",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3457/health",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3458/health",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3468",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3469",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3478",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:3479",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:2468",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:2469",
+      "status": 200
+    }
+  ],
+  "containers": [
+    {
+      "name": "nyxid-m0-ghost-relay",
+      "id": "902a48516d5388306927c431a9bf720f8edfd29adc32443bc5f29063a222db4e",
+      "status": "running",
+      "startedAt": "2026-11-05T04:17:05.821050712Z"
+    },
+    {
+      "name": "nyxid-native-ghost-personal-r2",
+      "id": "ada6c7ee1e7b101508f6f5e709e6f140c19247ae09c846b67b72558f4bb7520a",
+      "status": "running",
+      "startedAt": "2026-11-05T04:16:45.567268509Z"
+    },
+    {
+      "name": "nyxid-native-ghost-organization",
+      "id": "c310da279f01a2135da84fcd63a675ae13ee7e9a20d3c481b2c3363bef467851",
+      "status": "running",
+      "startedAt": "2026-11-05T04:10:33.411910078Z"
+    },
+    {
+      "name": "nyxid-m0-relay",
+      "id": "05a30590fa196179fbf17db0b8125c127a67db0f734208c6ab3280ab6c87b5bf",
+      "status": "running",
+      "startedAt": "2026-11-05T03:50:48.287579245Z"
+    },
+    {
+      "name": "nyxid-m0-backend",
+      "id": "e047b5a7c8ad35678afbd7d0faabec895f795d20d34ac65c3e767b16dafe31c9",
+      "status": "running",
+      "startedAt": "2026-11-05T03:47:28.909787713Z"
+    },
+    {
+      "name": "nyxid-m0-provider",
+      "id": "91bfc9dd13aecfb21c86310ff49a8db3eda653190f44895ebe96dc03208f03a5",
+      "status": "running",
+      "startedAt": "2026-11-05T03:45:16.550642207Z"
+    },
+    {
+      "name": "nyxid-m0-mongo",
+      "id": "64a327295b5388a30205a10db1948b09c91208edd0a14ad3af05d3126c84dc8a",
+      "status": "running",
+      "startedAt": "2026-11-05T03:42:04.007195857Z"
+    },
+    {
+      "name": "blogsystem-cms-dev-live-20261104",
+      "id": "37482838252a3cf99d6841407792fc4613ca3ab3b192d5da2e40b1004d99222c",
+      "status": "running",
+      "startedAt": "2026-11-05T02:30:51.370068172Z"
+    },
+    {
+      "name": "blogsystem-command-candidate-c16cde700963-r2",
+      "id": "0c15fe50e841145b92080546b6758596be78cb9d8d542d094b46a05613ca110d",
+      "status": "running",
+      "startedAt": "2026-11-04T10:03:05.232013163Z"
+    },
+    {
+      "name": "nyxid-native-http-relay-20261102",
+      "id": "c9b1c4c7e4676c1241757efd8c743fa45b868c67022a5a0a8f9390017078fc28",
+      "status": "running",
+      "startedAt": "2026-11-04T10:03:05.124014788Z"
+    },
+    {
+      "name": "nyxid-native-mongo-relay-20261102",
+      "id": "df58cc841ca5805c087f7e3f3d7f9448d76f8919a4914a53ce3cd07c7a54dd50",
+      "status": "running",
+      "startedAt": "2026-11-04T10:02:31.503974077Z"
+    },
+    {
+      "name": "nyxid-blogsystem-local-frontend-1",
+      "id": "aadcefc557ad4fa3ba4ba8e4eb2defbe4f8174ebd68fa99d3f43e1e1dc37ebcb",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.551181624Z"
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-zh-1",
+      "id": "88c720bf221840a3354ce469e22f3b37461058b4d9ecdd61270dc3e4232221cf",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.526772208Z"
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-ghost-en-1",
+      "id": "e4352883f33d565bea3986f45c45b8f281be150a221efdb8e9e309803945c802",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.542692249Z"
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-zh-1",
+      "id": "76f30619c2699dd20edf40827a701ae0846d851fb75cec00661f646fff21e396",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.530091624Z"
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-organization-db-en-1",
+      "id": "54c72a39aa2f275b2bcd47ee5668688a68faca7193d6cf8e2ccf30ae16d3ecd4",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.552479374Z"
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-zh-1",
+      "id": "dc0ac4e2a7030044a25701b37668b7abe5ecd5816dad01078ee56018fa0bea88",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.538819249Z"
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-ghost-en-1",
+      "id": "1a603bcfadc1815f55d35d82c8ec553904d7b5af8ab3714d6ea4de6744e3d540",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:37.215525092Z"
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-zh-1",
+      "id": "d63bd4d5d56dc2e3ac91505ad6b8e033b5c0c9b116452b57a353702f7ce01e2e",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.550424374Z"
+    },
+    {
+      "name": "blogsystem-restore-native-041-r1-personal-db-en-1",
+      "id": "5826f64ed1b194cf7e982dc210966e652c618475bc8caf4cab9e675a8f2f8506",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.515486208Z"
+    },
+    {
+      "name": "nyxid-blogsystem-local-mongodb-1",
+      "id": "8b9ad4e5bf0865807cef0c913ce8baa2ffa9448a03794425209b0df2d95d140c",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.551749958Z"
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-zh-1",
+      "id": "c05ff732086508187e37d6955270ae447d03f176dbf10450dadd68b7381b91d3",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:38.044310676Z"
+    },
+    {
+      "name": "blogsystem-current-machine-ghost-en-1",
+      "id": "35696bce4301569f3a0202b7d152ab030dbb1da344516c5b11265b374d58b329",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:37.839407551Z"
+    },
+    {
+      "name": "blogsystem-current-machine-db-zh-1",
+      "id": "7f0cb13ddf366338acefbb7d687a82aa5fd52d13e378a7ed07bc4131a6856991",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.548248916Z"
+    },
+    {
+      "name": "blogsystem-current-machine-db-en-1",
+      "id": "88d0f5d64c7fc899c174fabc90071af7f1771df814868214abbcddba1275d5c8",
+      "status": "running",
+      "startedAt": "2026-11-04T10:01:34.531349666Z"
+    }
+  ],
+  "changedExistingSources": false,
+  "readOrWroteMongo37018": false,
+  "restartedExistingServices": false,
+  "heartbeatChanged": false,
+  "newContainers": 0,
+  "newPort": 33417
+}

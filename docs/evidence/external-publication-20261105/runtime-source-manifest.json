@@ -1,0 +1,16 @@
+{
+  "commit": "f7a1c8b5a1bcc60cd168b214d898bb8926a2b0f7",
+  "at": 1793862062.649961,
+  "pid": 49037,
+  "port": 33417,
+  "sourceFiles": {
+    "src/external-publication.ts": "e926ee0ce812dc7a25d5a5015c084a8798479c13bd8b3ee422ffdb68ea9ec6b0",
+    "src/targets.ts": "f6ec0ec9a077ee7eb7b10d1b3cda18d4fa73d187365154ed64ce67bc6f08aaab",
+    "src/distribution.ts": "66b7d1f66d6b216ca391b8b0dab43c03edd2ed192a6807471fd683e0ce7cb032",
+    "src/app.ts": "7bf96fadaf4bb1f99f480238b0f0a9665b5ba1ff920ad701c9a114dc83d5acec",
+    "src/openapi.ts": "2138ca04d92d902b7b911b9091e504516535cbf1b9ede39e0024ec0e8931a4a0",
+    "scripts/external-publication-live-server.ts": "41cec4289aad7321450e0a96cd86af4c1231e148f5e876ed47fc99fc08a9805d"
+  },
+  "ghostSourceTrackerUrl": "http://localhost:3458",
+  "workersStarted": false
+}

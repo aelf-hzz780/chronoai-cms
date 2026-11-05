@@ -1,0 +1,303 @@
+{
+  "at": "2026-11-05T07:15:14.490945+00:00",
+  "status": "BOUNDED_LIVE_NEGATIVE_CHAIN_VERIFIED_PUBLIC_POSITIVE_PENDING",
+  "businessCommit": "f7a1c8b5a1bcc60cd168b214d898bb8926a2b0f7",
+  "sourceManifest": "runtime-source-manifest.json",
+  "formalAcceptance": false,
+  "levels": {
+    "Document": "Exact prepared payload, account, revision, source URL, full Markdown, and screenshots saved. Public action approval remains absent.",
+    "OfficialLocal": "Real official NyxID signature/introspection -> isolated CMS33417 -> exact existing Ghost3468 admin/public/render verification; new SQLite only, no Worker or queue jobs.",
+    "Live": "Real gpt-6.1-sol NyxBot in one completed 47-second turn fetched frozen CMS payload, read historical unpublished DEV draft, submitted invalid receipt to CMS, and read uncertain state. Registration correctly refused remote404. No successful public DEV publication is claimed."
+  },
+  "runtime": {
+    "cmsPort": 33417,
+    "pid": 49037,
+    "database": ".runtime/cms-external-publication-20261105/live/private/cms/cms.sqlite",
+    "environmentFile": ".runtime/cms-external-publication-20261105/live/private/cms/environment.json",
+    "serverScript": "scripts/external-publication-live-server.ts",
+    "sourceCmsUrl": "http://localhost:3458",
+    "sourceTrackerExcluded": "http://localhost:3458/tracker.js",
+    "reason": "Historical original includes this exact CMS-owned tracker; the existing renderer constructor excludes it while preserving all real visible-content proof. Normal src/main.ts separately passed real /me auth and schema discovery.",
+    "workersStarted": false,
+    "jobs": 0,
+    "outboundPaused": true
+  },
+  "catalog": {
+    "serviceId": "60fefbc7-0944-4f81-b9de-c8fccc37731c",
+    "slug": "blog-external-008-20261105",
+    "connectionId": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+    "operations": 56,
+    "newCmsIngressPolicy": "AutoAllow for this isolated source service only",
+    "existingApprovalPoliciesUnchanged": true,
+    "devApprovalPolicyChanged": false
+  },
+  "preview": {
+    "intentId": "d3308f76-0b88-4293-8b1a-b8fbdf570b9a",
+    "releaseId": "1bca49fa-8caa-4e7f-90b2-012e1fde3edc",
+    "revisionId": "e338f045-c499-403e-9111-ec9f30de62b9",
+    "ownerId": "personal-f043eb15cd25b163f90fa41ff84e4f5e",
+    "accountId": "4223973",
+    "username": "aelfhzz780",
+    "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+    "title": "Verifying a NyxID-managed publishing workflow",
+    "creditedAuthor": "BlogSystem Local Operator",
+    "sourceUrl": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/",
+    "request": {
+      "method": "POST",
+      "url": "https://dev.to/api/articles",
+      "body": {
+        "article": {
+          "title": "Verifying a NyxID-managed publishing workflow",
+          "body_markdown": "# Verifying a NyxID-managed publishing workflow\n\nThis article is a local integration test of an English publishing workflow. It connects a content management system, a self-hosted Ghost original, and a publishing account managed through NyxID.\n\n## Identity and ownership\n\nThe author signs in through a real local NyxID service. The CMS keeps personal ownership separate from organization publishing roles. The destination must use the explicitly selected connection and account, with no silent account fallback.\n\n## Confirmed content\n\nPublishing starts from a specific saved revision. The title, Markdown, credited author, owner, language, destination, and content rights are confirmed before the corresponding action. Later draft edits must not silently replace the confirmed version.\n\n## Original and receipt\n\nThe original is hosted on a local Ghost installation. Its visible page and saved revision are checked before any external copy is requested. A destination result must retain its remote article identifier and URL, and a readback must match the confirmed content and source link.\n\nThis local original is accessible on the test machine. Its localhost address is not evidence of public Internet reachability.\n\n## Safe execution\n\nThe integration run handles one explicitly selected task at a time. NyxID execution approvals remain applicable. If an operation times out or its result cannot be proved, it must be reconciled before another write is considered.\n\nThis test does not claim production readiness, organization-wide acceptance, or completion of all external publishing requirements. It contains no credentials, private keys, or user secrets.\n\n\nAuthor: BlogSystem Local Operator\n\nOriginal: [http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/](http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/)\n\n<!-- chrono-delivery:d3308f76-0b88-4293-8b1a-b8fbdf570b9a -->",
+          "published": true,
+          "canonical_url": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/"
+        }
+      }
+    },
+    "json": "prepared-preview.json",
+    "html": "publication-preview.html",
+    "screenshot": "publication-preview.png",
+    "sourceScreenshot": "ghost-original.png",
+    "sourcePublicInternetReachability": false,
+    "publicActionAuthorized": false
+  },
+  "model": {
+    "conversationId": "nyxa-5bde2cfbffb94ec39699a6c864be5945",
+    "profile": "nyxagent/chat",
+    "model": "gpt-6.1-sol",
+    "firstLongTurn": "Failed after120s outcome_unknown before business tool; only search_tools completed. Preserved separately.",
+    "shortTurnsCompleted": [
+      "payload",
+      "dev",
+      "register"
+    ],
+    "singleTurnNegativeChain": true,
+    "singleTurnActivityCount": 4,
+    "singleTurnAuditedBusinessToolOrder": [
+      {
+        "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+        "response_status": 200,
+        "tool": "blog-external-008-20261105__getexternalpublication"
+      },
+      {
+        "service_id": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+        "response_status": 200,
+        "tool": "devto-blogsystem__request"
+      },
+      {
+        "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+        "response_status": 502,
+        "tool": "blog-external-008-20261105__registerexternalpublication"
+      },
+      {
+        "service_id": "d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+        "response_status": 200,
+        "tool": "blog-external-008-20261105__getexternalpublication"
+      }
+    ],
+    "singleTurnPositivePublishedChain": false,
+    "auditMethodVisibility": "NyxID mcp_tool_call audit exposes generic tool name and status but omits HTTP method/arguments; zero-write claim is bounded by explicit GET-only model instructions, responses, unchanged DEV approval policy, zero DEV approval decisions, CMS GET-only enforcement, and unchanged draft readback."
+  },
+  "results": {
+    "ghostReadVerified": true,
+    "initialPrepareHttp": 201,
+    "prepareElapsedSeconds": 7.572893209,
+    "registerHttp": 502,
+    "registerError": "REMOTE_NOT_FOUND",
+    "providerReadHttp": 404,
+    "remoteCopyRegistered": false,
+    "finalIntents": [
+      [
+        "d3308f76-0b88-4293-8b1a-b8fbdf570b9a",
+        "uncertain",
+        null,
+        null,
+        "REMOTE_NOT_FOUND"
+      ]
+    ],
+    "taskApiConsistency": {
+      "stateMatches": true,
+      "urlMatches": true,
+      "historyMatches": true,
+      "remoteIdMatches": true,
+      "noVerifiedCopy": true
+    },
+    "sameKeyRetry": {
+      "at": "2026-11-05T07:12:57.801797+00:00",
+      "sameKeyPrepareReturnedSameIntent": true,
+      "state": "uncertain",
+      "executionAllowed": false,
+      "remoteId": null,
+      "url": null,
+      "history": [
+        {
+          "state": "awaiting_external",
+          "code": null,
+          "traceId": "a90c9d64-b4a1-4448-b5d8-7678b5b85e76",
+          "createdAt": "2026-11-05T07:01:10.651Z"
+        },
+        {
+          "state": "uncertain",
+          "code": "REMOTE_NOT_FOUND",
+          "traceId": "e648e2fd-12ce-44c2-8fa7-2fb23e900ec5",
+          "createdAt": "2026-11-05T07:07:01.627Z"
+        },
+        {
+          "state": "uncertain",
+          "code": "REMOTE_NOT_FOUND",
+          "traceId": "36be586b-60a9-4d85-be20-7d1cc5779ae7",
+          "createdAt": "2026-11-05T07:09:42.916Z"
+        }
+      ],
+      "http": [
+        {
+          "at": "2026-11-05T07:12:56.310173+00:00",
+          "trace_id": "6023296a47404c3db5905fcf1230d1be",
+          "method": "POST",
+          "path": "/api/v1/auth/login",
+          "status": 200,
+          "code": null
+        },
+        {
+          "at": "2026-11-05T07:12:56.543091+00:00",
+          "trace_id": "6023296a47404c3db5905fcf1230d1be",
+          "method": "GET",
+          "path": "/api/v1/users/me",
+          "status": 200,
+          "code": null
+        },
+        {
+          "at": "2026-11-05T07:12:56.667504+00:00",
+          "trace_id": "6023296a47404c3db5905fcf1230d1be",
+          "method": "POST",
+          "path": "/api/v1/auth/login",
+          "status": 200,
+          "code": null
+        },
+        {
+          "at": "2026-11-05T07:12:56.790532+00:00",
+          "trace_id": "6023296a47404c3db5905fcf1230d1be",
+          "method": "GET",
+          "path": "/api/v1/users/me",
+          "status": 200,
+          "code": null
+        },
+        {
+          "at": "2026-11-05T07:12:57.801777+00:00",
+          "trace_id": "6023296a47404c3db5905fcf1230d1be",
+          "method": "POST",
+          "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/releases/1bca49fa-8caa-4e7f-90b2-012e1fde3edc/external-publications?_nyxid_via=d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+          "status": 201,
+          "code": null
+        }
+      ]
+    },
+    "providerWritesRequested": 0,
+    "devApprovalDecisions": 0,
+    "sourceGhostWrites": 0,
+    "draftUnchangedAfterModel": {
+      "at": "2026-11-05T07:16:22.754316+00:00",
+      "draftId": 4969744,
+      "bodySha256": "ec2107df7d1bc25f42f027024998ca1b12a65553963f94c025ca11ca2763c48e",
+      "bodyUnchangedAfterModel": true,
+      "published": false,
+      "publishedAt": null,
+      "exactTitleUnchanged": true,
+      "sameTitleCount": 1,
+      "pendingDevApprovalCount": 0,
+      "http": [
+        {
+          "at": "2026-11-05T07:16:21.426535+00:00",
+          "trace_id": "faa2cf03f1724cb5ba5017f32a73b60c",
+          "method": "POST",
+          "path": "/api/v1/auth/login",
+          "status": 200,
+          "code": null
+        },
+        {
+          "at": "2026-11-05T07:16:21.651443+00:00",
+          "trace_id": "faa2cf03f1724cb5ba5017f32a73b60c",
+          "method": "GET",
+          "path": "/api/v1/users/me",
+          "status": 200,
+          "code": null
+        },
+        {
+          "at": "2026-11-05T07:16:22.609813+00:00",
+          "trace_id": "faa2cf03f1724cb5ba5017f32a73b60c",
+          "method": "GET",
+          "path": "/api/v1/proxy/s/devto-blogsystem/articles/me/unpublished?_nyxid_via=fd39d48d-01a5-4fa0-b540-36f06597e2f7&per_page=100&page=1",
+          "status": 200,
+          "code": null
+        },
+        {
+          "at": "2026-11-05T07:16:22.754292+00:00",
+          "trace_id": "faa2cf03f1724cb5ba5017f32a73b60c",
+          "method": "GET",
+          "path": "/api/v1/approvals/requests?status=pending&per_page=100",
+          "status": 200,
+          "code": null
+        }
+      ]
+    }
+  },
+  "blockers": [
+    {
+      "type": "permission",
+      "id": "PUBLIC_DEV_ACTION_NOT_AUTHORIZED",
+      "detail": "Existing authorization permits only the exact unpublished connection-test draft4969744; new prepared published:true content must receive explicit account/content/action authorization through coordinator."
+    },
+    {
+      "type": "environment",
+      "id": "ORIGINAL_PUBLIC_INTERNET_REACHABILITY_UNPROVEN",
+      "detail": "Frozen original is real and locally published at localhost:3468; no Internet-reachable source URL exists for formal public DEV canonical/source acceptance."
+    },
+    {
+      "type": "scope",
+      "id": "ORGANIZATION_EXACT_ADMIN_AUTHORIZATION",
+      "detail": "Personal external route refuses organization publishing; organization exact content/destination/action Admin approval not delivered or accepted."
+    }
+  ],
+  "notClaimed": [
+    "Positive public DEV creation/readback/registration",
+    "Organization publication acceptance",
+    "CMS browser one-click DEV publication",
+    "Private metrics after indefinite token expiry",
+    "All D6/D7 passed"
+  ],
+  "protectedEnvironment": "protected-environment.json",
+  "secrets": "All account/session/source-env material and raw histories stay private/0600 outside git. Public evidence contains no keys.",
+  "evidence": [
+    "dev-current-read.json",
+    "ghost-source-read.json",
+    "ghost-original.png",
+    "prepared-preview.json",
+    "publication-preview.html",
+    "publication-preview.png",
+    "prepare-http.json",
+    "cms-real-auth.json",
+    "openapi-final-discovery.json",
+    "cms-ingress-policy.json",
+    "model-negative-chain.json",
+    "model-payload.json",
+    "model-dev.json",
+    "model-register.json",
+    "model-singleturn.json",
+    "model-audit-summary.json",
+    "cms-api-consistency.json",
+    "same-key-prepare-after-negative.json",
+    "protected-environment.json",
+    "runtime-source-manifest.json",
+    "dev-after-model-read.json"
+  ],
+  "fullEvidenceLocation": ".runtime/cms-external-publication-20261105/live (local handoff, outside repository)",
+  "archivedFiles": [
+    "live-summary.json",
+    "prepared-preview.json",
+    "publication-preview.png",
+    "model-audit-summary.json",
+    "cms-api-consistency.json",
+    "protected-environment.json",
+    "runtime-source-manifest.json"
+  ]
+}

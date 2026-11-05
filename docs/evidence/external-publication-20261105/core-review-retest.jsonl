@@ -1,0 +1,4 @@
+{"case":"prepare-replay-after-original-unpublished","code":"ORIGINAL_NOT_LIVE"}
+{"case":"metrics-after-authorization-loss","syncStatus":"reauthorization_required","previous":{"views":10,"error_code":null,"updated_at":"2026-11-05T06:52:41.308Z"},"current":{"views":10,"error_code":"REMOTE_AUTHORIZATION","updated_at":"2026-11-05T06:52:41.308Z"},"preserved":true}
+{"case":"manual-sync-revoked-during-read","returned":false,"code":"IDENTITY_UNAVAILABLE"}
+{"case":"manual-sync-owner-change-during-read","returned":false,"code":"FORBIDDEN"}

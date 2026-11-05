@@ -1,0 +1,221 @@
+{
+  "at": "2026-11-05T07:10:42.338537+00:00",
+  "checks": {
+    "stateMatches": true,
+    "urlMatches": true,
+    "historyMatches": true,
+    "remoteIdMatches": true,
+    "noVerifiedCopy": true
+  },
+  "intent": {
+    "id": "d3308f76-0b88-4293-8b1a-b8fbdf570b9a",
+    "intentId": "d3308f76-0b88-4293-8b1a-b8fbdf570b9a",
+    "deliveryId": "d3308f76-0b88-4293-8b1a-b8fbdf570b9a",
+    "executionMode": "external",
+    "revisionId": "e338f045-c499-403e-9111-ec9f30de62b9",
+    "ownerId": "personal-f043eb15cd25b163f90fa41ff84e4f5e",
+    "releaseId": "1bca49fa-8caa-4e7f-90b2-012e1fde3edc",
+    "target": "dev",
+    "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+    "accountId": "4223973",
+    "action": "create",
+    "format": "full",
+    "digest": "3fd7af339f4f558cc4890b51a32ffe5821a64ec2301243aeb0f91e3b6d7fa516",
+    "state": "uncertain",
+    "remoteId": null,
+    "url": null,
+    "request": {
+      "method": "POST",
+      "url": "https://dev.to/api/articles",
+      "body": {
+        "article": {
+          "title": "Verifying a NyxID-managed publishing workflow",
+          "body_markdown": "# Verifying a NyxID-managed publishing workflow\n\nThis article is a local integration test of an English publishing workflow. It connects a content management system, a self-hosted Ghost original, and a publishing account managed through NyxID.\n\n## Identity and ownership\n\nThe author signs in through a real local NyxID service. The CMS keeps personal ownership separate from organization publishing roles. The destination must use the explicitly selected connection and account, with no silent account fallback.\n\n## Confirmed content\n\nPublishing starts from a specific saved revision. The title, Markdown, credited author, owner, language, destination, and content rights are confirmed before the corresponding action. Later draft edits must not silently replace the confirmed version.\n\n## Original and receipt\n\nThe original is hosted on a local Ghost installation. Its visible page and saved revision are checked before any external copy is requested. A destination result must retain its remote article identifier and URL, and a readback must match the confirmed content and source link.\n\nThis local original is accessible on the test machine. Its localhost address is not evidence of public Internet reachability.\n\n## Safe execution\n\nThe integration run handles one explicitly selected task at a time. NyxID execution approvals remain applicable. If an operation times out or its result cannot be proved, it must be reconciled before another write is considered.\n\nThis test does not claim production readiness, organization-wide acceptance, or completion of all external publishing requirements. It contains no credentials, private keys, or user secrets.\n\n\nAuthor: BlogSystem Local Operator\n\nOriginal: [http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/](http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/)\n\n<!-- chrono-delivery:d3308f76-0b88-4293-8b1a-b8fbdf570b9a -->",
+          "published": true,
+          "canonical_url": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/"
+        }
+      }
+    },
+    "executionAllowed": false,
+    "sourceUrl": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/",
+    "creditedAuthor": "BlogSystem Local Operator",
+    "lastSyncAt": "2026-11-05T07:09:42.916Z",
+    "lastVerifiedAt": null,
+    "syncStatus": "unavailable",
+    "syncErrorCode": "REMOTE_NOT_FOUND",
+    "followUpState": "none",
+    "remoteCancellationGuaranteed": false,
+    "traceId": "a90c9d64-b4a1-4448-b5d8-7678b5b85e76",
+    "createdAt": "2026-11-05T07:01:10.648Z",
+    "updatedAt": "2026-11-05T07:09:42.916Z",
+    "history": [
+      {
+        "state": "awaiting_external",
+        "code": null,
+        "traceId": "a90c9d64-b4a1-4448-b5d8-7678b5b85e76",
+        "createdAt": "2026-11-05T07:01:10.651Z"
+      },
+      {
+        "state": "uncertain",
+        "code": "REMOTE_NOT_FOUND",
+        "traceId": "e648e2fd-12ce-44c2-8fa7-2fb23e900ec5",
+        "createdAt": "2026-11-05T07:07:01.627Z"
+      },
+      {
+        "state": "uncertain",
+        "code": "REMOTE_NOT_FOUND",
+        "traceId": "36be586b-60a9-4d85-be20-7d1cc5779ae7",
+        "createdAt": "2026-11-05T07:09:42.916Z"
+      }
+    ],
+    "observations": [
+      {
+        "id": "6f1bec31-9295-4f77-9b33-369c2664bc3c",
+        "state": "unavailable",
+        "code": "REMOTE_NOT_FOUND",
+        "remoteId": null,
+        "url": null,
+        "traceId": "e648e2fd-12ce-44c2-8fa7-2fb23e900ec5",
+        "observedAt": "2026-11-05T07:07:01.627Z"
+      },
+      {
+        "id": "cdc8a897-7d68-4f84-876b-d4988b8c81d0",
+        "state": "unavailable",
+        "code": "REMOTE_NOT_FOUND",
+        "remoteId": null,
+        "url": null,
+        "traceId": "36be586b-60a9-4d85-be20-7d1cc5779ae7",
+        "observedAt": "2026-11-05T07:09:42.916Z"
+      }
+    ],
+    "instructions": "Use the exact selected account and this frozen payload through the independent top-level NyxID DEV tool only after content/action authorization. Return remoteId for independent CMS verification. If a receipt is lost, reconcile without resending. Local cancellation cannot revoke an independent DEV request."
+  },
+  "task": {
+    "id": "d3308f76-0b88-4293-8b1a-b8fbdf570b9a",
+    "kind": "delivery",
+    "ownerId": "personal-f043eb15cd25b163f90fa41ff84e4f5e",
+    "articleId": "5c71a85d-1e45-40ae-85c5-4ecd2dd14824",
+    "language": "en",
+    "title": "Verifying a NyxID-managed publishing workflow",
+    "revisionId": "e338f045-c499-403e-9111-ec9f30de62b9",
+    "action": "create",
+    "state": "uncertain",
+    "createdAt": "2026-11-05T07:01:10.648Z",
+    "updatedAt": "2026-11-05T07:09:42.916Z",
+    "traceId": "a90c9d64-b4a1-4448-b5d8-7678b5b85e76",
+    "errorCode": "REMOTE_NOT_FOUND",
+    "url": null,
+    "allowedActions": [
+      "external-register",
+      "external-reconcile",
+      "external-cancel"
+    ],
+    "executionMode": "external",
+    "externalPublication": {
+      "lastSyncAt": "2026-11-05T07:09:42.916Z",
+      "lastVerifiedAt": null,
+      "syncStatus": "unavailable",
+      "syncErrorCode": "REMOTE_NOT_FOUND",
+      "followUpState": "none",
+      "observations": [
+        {
+          "id": "6f1bec31-9295-4f77-9b33-369c2664bc3c",
+          "state": "unavailable",
+          "code": "REMOTE_NOT_FOUND",
+          "remoteId": null,
+          "url": null,
+          "traceId": "e648e2fd-12ce-44c2-8fa7-2fb23e900ec5",
+          "observedAt": "2026-11-05T07:07:01.627Z"
+        },
+        {
+          "id": "cdc8a897-7d68-4f84-876b-d4988b8c81d0",
+          "state": "unavailable",
+          "code": "REMOTE_NOT_FOUND",
+          "remoteId": null,
+          "url": null,
+          "traceId": "36be586b-60a9-4d85-be20-7d1cc5779ae7",
+          "observedAt": "2026-11-05T07:09:42.916Z"
+        }
+      ]
+    },
+    "snapshot": {
+      "revisionId": "e338f045-c499-403e-9111-ec9f30de62b9",
+      "title": "Verifying a NyxID-managed publishing workflow",
+      "markdown": "# Verifying a NyxID-managed publishing workflow\n\nThis article is a local integration test of an English publishing workflow. It connects a content management system, a self-hosted Ghost original, and a publishing account managed through NyxID.\n\n## Identity and ownership\n\nThe author signs in through a real local NyxID service. The CMS keeps personal ownership separate from organization publishing roles. The destination must use the explicitly selected connection and account, with no silent account fallback.\n\n## Confirmed content\n\nPublishing starts from a specific saved revision. The title, Markdown, credited author, owner, language, destination, and content rights are confirmed before the corresponding action. Later draft edits must not silently replace the confirmed version.\n\n## Original and receipt\n\nThe original is hosted on a local Ghost installation. Its visible page and saved revision are checked before any external copy is requested. A destination result must retain its remote article identifier and URL, and a readback must match the confirmed content and source link.\n\nThis local original is accessible on the test machine. Its localhost address is not evidence of public Internet reachability.\n\n## Safe execution\n\nThe integration run handles one explicitly selected task at a time. NyxID execution approvals remain applicable. If an operation times out or its result cannot be proved, it must be reconciled before another write is considered.\n\nThis test does not claim production readiness, organization-wide acceptance, or completion of all external publishing requirements. It contains no credentials, private keys, or user secrets.\n",
+      "creditedAuthor": "BlogSystem Local Operator",
+      "digest": "ffae4899cc19853b7b769ae15a3df411dc348c5c7bcf002952a38e56e7c89224"
+    },
+    "distribution": {
+      "releaseId": "1bca49fa-8caa-4e7f-90b2-012e1fde3edc",
+      "target": "dev",
+      "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+      "accountId": "4223973",
+      "format": "full",
+      "sourceUrl": "http://localhost:3468/chrono-5c71a85d-1e45-40ae-85c5-4ecd2dd14824/",
+      "sourceDigest": "ffae4899cc19853b7b769ae15a3df411dc348c5c7bcf002952a38e56e7c89224"
+    },
+    "confirmationDigest": "3fd7af339f4f558cc4890b51a32ffe5821a64ec2301243aeb0f91e3b6d7fa516",
+    "history": [
+      {
+        "state": "awaiting_external",
+        "code": null,
+        "traceId": "a90c9d64-b4a1-4448-b5d8-7678b5b85e76",
+        "createdAt": "2026-11-05T07:01:10.651Z"
+      },
+      {
+        "state": "uncertain",
+        "code": "REMOTE_NOT_FOUND",
+        "traceId": "e648e2fd-12ce-44c2-8fa7-2fb23e900ec5",
+        "createdAt": "2026-11-05T07:07:01.627Z"
+      },
+      {
+        "state": "uncertain",
+        "code": "REMOTE_NOT_FOUND",
+        "traceId": "36be586b-60a9-4d85-be20-7d1cc5779ae7",
+        "createdAt": "2026-11-05T07:09:42.916Z"
+      }
+    ],
+    "notes": [],
+    "observations": [],
+    "copy": {
+      "target": "dev",
+      "connectionId": "fd39d48d-01a5-4fa0-b540-36f06597e2f7",
+      "remoteId": null,
+      "url": null
+    }
+  },
+  "http": [
+    {
+      "at": "2026-11-05T07:10:40.791952+00:00",
+      "trace_id": "2573e5faa555481ea8108a38f7919629",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-05T07:10:41.023024+00:00",
+      "trace_id": "2573e5faa555481ea8108a38f7919629",
+      "method": "GET",
+      "path": "/api/v1/users/me",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-05T07:10:41.771244+00:00",
+      "trace_id": "2573e5faa555481ea8108a38f7919629",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/external-publications/d3308f76-0b88-4293-8b1a-b8fbdf570b9a?_nyxid_via=d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+      "status": 200,
+      "code": null
+    },
+    {
+      "at": "2026-11-05T07:10:42.338514+00:00",
+      "trace_id": "2573e5faa555481ea8108a38f7919629",
+      "method": "GET",
+      "path": "/api/v1/proxy/s/blog-external-008-20261105/api/service/owners/personal-f043eb15cd25b163f90fa41ff84e4f5e/tasks/delivery/d3308f76-0b88-4293-8b1a-b8fbdf570b9a?_nyxid_via=d60b0e5a-607d-4a50-8fdd-aa8b30f64c40",
+      "status": 200,
+      "code": null
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "createdAt": "2026-11-05T07:04:18.244657+00:00",
+  "businessCommit": "f7a1c8b5a1bcc60cd168b214d898bb8926a2b0f7",
+  "integrationCommit": "858ff2f",
+  "standardCheck": {
+    "pass": 501,
+    "fail": 0,
+    "skipped": 0
+  },
+  "localIntegration": {
+    "pass": 4,
+    "fail": 0,
+    "skipped": 0
+  },
+  "scope": "Local application code and loopback protocol simulation. This evidence is not real DEV publication or real NyxBot execution.",
+  "formalAcceptance": false,
+  "independentReview": "Three reproducible security/consistency findings fixed and retested; coordinator acceptance remains pending.",
+  "files": {
+    "check.log": "7ee136f43f1f91c14d6a70f84d30f29c75e41c0b736698e3000560d57cad36a6",
+    "local-publishing.log": "f78abbc399b428dc22c4e415233455c93d8f4c050f6867f70b41b4a1052274e1",
+    "local-http-studio.json": "342c2f48e4c6b1c9212f8a7234a03549e61e88a9dd28f61b5662603f90188052",
+    "local-http-preview.png": "f3093e97ae63108190888a8e3b1c87d4958e5f4f88f51e53f1bd206279127ea3",
+    "local-http-registration.png": "67814362cc53fa99fbdd3e726b79866890637515e1761e57b47f0f400aa14c25",
+    "core-review-retest.jsonl": "250a727a24bd506f5d1ea699caef5c79591fe7145d07c365269bf4b0d966e7dd"
+  }
+}
